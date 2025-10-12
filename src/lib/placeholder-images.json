@@ -1,3 +1,46 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "hero-gym",
+      "description": "A modern gym with various workout equipment.",
+      "imageUrl": "https://picsum.photos/seed/hero-gym/1920/1080",
+      "imageHint": "modern gym"
+    },
+    {
+      "id": "avatar-1",
+      "description": "Avatar for a student",
+      "imageUrl": "https://picsum.photos/seed/avatar1/100/100",
+      "imageHint": "person portrait"
+    },
+    {
+      "id": "avatar-2",
+      "description": "Avatar for a student",
+      "imageUrl": "https://picsum.photos/seed/avatar2/100/100",
+      "imageHint": "person portrait"
+    },
+    {
+      "id": "avatar-3",
+      "description": "Avatar for a student",
+      "imageUrl": "https://picsum.photos/seed/avatar3/100/100",
+      "imageHint": "person portrait"
+    },
+    {
+      "id": "avatar-4",
+      "description": "Avatar for a student",
+      "imageUrl": "https://picsum.photos/seed/avatar4/100/100",
+      "imageHint": "person portrait"
+    },
+    {
+      "id": "avatar-5",
+      "description": "Avatar for a student",
+      "imageUrl": "https://picsum.photos/seed/avatar5/100/100",
+      "imageHint": "person portrait"
+    },
+    {
+      "id": "avatar-6",
+      "description": "Avatar for a student",
+      "imageUrl": "https://picsum.photos/seed/avatar6/100/100",
+      "imageHint": "person portrait"
+    }
+  ]
 }

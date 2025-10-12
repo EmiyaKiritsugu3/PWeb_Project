@@ -1,0 +1,99 @@
+"use client";
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PageHeader } from "@/components/page-header";
+import { Users, UserCheck, UserX, DollarSign } from "lucide-react";
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts";
+import { DADOS_DASHBOARD } from "@/lib/data";
+
+const kpiData = [
+  {
+    title: "Total de Alunos",
+    value: DADOS_DASHBOARD.totalAlunos.toLocaleString("pt-BR"),
+    icon: <Users className="h-6 w-6 text-muted-foreground" />,
+  },
+  {
+    title: "Matrículas Ativas",
+    value: DADOS_DASHBOARD.matriculasAtivas.toLocaleString("pt-BR"),
+    icon: <UserCheck className="h-6 w-6 text-muted-foreground" />,
+  },
+  {
+    title: "Inadimplentes",
+    value: DADOS_DASHBOARD.alunosInadimplentes.toLocaleString("pt-BR"),
+    icon: <UserX className="h-6 w-6 text-destructive" />,
+    isDestructive: true,
+  },
+  {
+    title: "Faturamento Mensal",
+    value: DADOS_DASHBOARD.faturamentoMensal.toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }),
+    icon: <DollarSign className="h-6 w-6 text-muted-foreground" />,
+  },
+];
+
+export default function DashboardPage() {
+  return (
+    <>
+      <PageHeader
+        title="Dashboard"
+        description="Visão geral do seu negócio."
+      />
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        {kpiData.map((kpi) => (
+          <Card key={kpi.title}>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">{kpi.title}</CardTitle>
+              {kpi.icon}
+            </CardHeader>
+            <CardContent>
+              <div
+                className={`text-2xl font-bold ${
+                  kpi.isDestructive ? "text-destructive" : ""
+                }`}
+              >
+                {kpi.value}
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+      <div className="mt-6 grid grid-cols-1">
+        <Card>
+          <CardHeader>
+            <CardTitle>Crescimento de Alunos (Últimos 12 meses)</CardTitle>
+          </CardHeader>
+          <CardContent className="pl-2">
+            <ResponsiveContainer width="100%" height={350}>
+              <BarChart data={DADOS_DASHBOARD.crescimentoAnual}>
+                <XAxis
+                  dataKey="mes"
+                  stroke="#888888"
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <YAxis
+                  stroke="#888888"
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                  tickFormatter={(value) => `${value}`}
+                />
+                 <Tooltip
+                    contentStyle={{ 
+                        backgroundColor: 'hsl(var(--background))',
+                        borderColor: 'hsl(var(--border))'
+                    }}
+                    cursor={{ fill: 'hsl(var(--primary) / 0.1)' }}
+                 />
+                <Bar dataKey="alunos" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      </div>
+    </>
+  );
+}

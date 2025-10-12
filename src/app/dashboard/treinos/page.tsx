@@ -1,0 +1,147 @@
+"use client";
+
+import { useState } from 'react';
+import { PageHeader } from "@/components/page-header";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ALUNOS, EXERCICIOS_BASE } from "@/lib/data";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { PlusCircle, Save, Trash2 } from "lucide-react";
+import type { Exercicio } from '@/lib/definitions';
+import { useToast } from '@/hooks/use-toast';
+
+
+export default function TreinosPage() {
+    const [selectedAlunoId, setSelectedAlunoId] = useState<string | null>(null);
+    const [objetivo, setObjetivo] = useState('');
+    const [exercicios, setExercicios] = useState<Partial<Exercicio>[]>([]);
+    const { toast } = useToast();
+
+    const selectedAluno = ALUNOS.find(a => a.id === selectedAlunoId);
+
+    const handleAddExercicio = () => {
+        setExercicios([...exercicios, { id: `${Date.now()}`, nomeExercicio: '', series: 3, repeticoes: '10-12', observacoes: '' }]);
+    };
+
+    const handleRemoveExercicio = (id: string) => {
+        setExercicios(exercicios.filter(ex => ex.id !== id));
+    };
+
+    const handleExercicioChange = (id: string, field: keyof Exercicio, value: string | number) => {
+        setExercicios(exercicios.map(ex => ex.id === id ? { ...ex, [field]: value } : ex));
+    };
+
+    const handleSaveTreino = () => {
+        if (!selectedAlunoId || !objetivo || exercicios.length === 0) {
+            toast({
+                title: "Erro ao salvar",
+                description: "Preencha todos os campos do treino antes de salvar.",
+                variant: "destructive"
+            });
+            return;
+        }
+        
+        toast({
+            title: "Treino Salvo com Sucesso!",
+            description: `O treino de ${objetivo} para ${selectedAluno?.nomeCompleto} foi salvo.`,
+            className: 'bg-accent text-accent-foreground'
+        })
+
+        // Reset state
+        setSelectedAlunoId(null);
+        setObjetivo('');
+        setExercicios([]);
+    }
+
+    return (
+        <>
+        <PageHeader
+            title="Gestão de Treinos"
+            description="Monte e gerencie as fichas de treino dos seus alunos."
+        />
+
+        <div className="grid gap-6">
+            <Card>
+            <CardHeader>
+                <CardTitle>Selecionar Aluno</CardTitle>
+                <CardDescription>Escolha um aluno para criar ou visualizar um treino.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Select onValueChange={setSelectedAlunoId} value={selectedAlunoId || ''}>
+                <SelectTrigger className="w-full md:w-1/2">
+                    <SelectValue placeholder="Selecione um aluno..." />
+                </SelectTrigger>
+                <SelectContent>
+                    {ALUNOS.map((aluno) => (
+                    <SelectItem key={aluno.id} value={aluno.id}>
+                        {aluno.nomeCompleto}
+                    </SelectItem>
+                    ))}
+                </SelectContent>
+                </Select>
+            </CardContent>
+            </Card>
+
+            {selectedAluno && (
+            <Card>
+                <CardHeader>
+                    <CardTitle>Novo Treino para {selectedAluno.nomeCompleto}</CardTitle>
+                    <CardDescription>Defina o objetivo e adicione os exercícios abaixo.</CardDescription>
+                </CardHeader>
+                <CardContent className="grid gap-6">
+                    <div className='grid gap-2'>
+                        <Label htmlFor="objetivo">Objetivo do Treino</Label>
+                        <Input id="objetivo" placeholder="Ex: Hipertrofia, Perda de Peso" value={objetivo} onChange={(e) => setObjetivo(e.target.value)} />
+                    </div>
+
+                    <div className="grid gap-4">
+                        <h3 className='font-medium'>Exercícios</h3>
+                        {exercicios.map((exercicio, index) => (
+                            <div key={exercicio.id} className="grid grid-cols-[1fr_auto_auto_1fr_auto] items-end gap-3 rounded-md border p-4">
+                                <div className="grid gap-2">
+                                     {index === 0 && <Label>Nome do Exercício</Label>}
+                                     <Input placeholder="Ex: Supino Reto" value={exercicio.nomeExercicio} onChange={(e) => handleExercicioChange(exercicio.id!, 'nomeExercicio', e.target.value)}/>
+                                </div>
+                                <div className="grid gap-2">
+                                     {index === 0 && <Label>Séries</Label>}
+                                     <Input type="number" className='w-20' value={exercicio.series || ''} onChange={(e) => handleExercicioChange(exercicio.id!, 'series', parseInt(e.target.value))}/>
+                                </div>
+                                 <div className="grid gap-2">
+                                     {index === 0 && <Label>Repetições</Label>}
+                                     <Input placeholder="10-12" className='w-24' value={exercicio.repeticoes} onChange={(e) => handleExercicioChange(exercicio.id!, 'repeticoes', e.target.value)}/>
+                                </div>
+                                <div className="grid gap-2">
+                                     {index === 0 && <Label>Observações</Label>}
+                                     <Input placeholder="Opcional" value={exercicio.observacoes} onChange={(e) => handleExercicioChange(exercicio.id!, 'observacoes', e.target.value)}/>
+                                </div>
+                                <Button variant="ghost" size="icon" onClick={() => handleRemoveExercicio(exercicio.id!)} aria-label="Remover exercício">
+                                    <Trash2 className='h-4 w-4 text-destructive'/>
+                                </Button>
+                            </div>
+                        ))}
+                         <Button variant="outline" onClick={handleAddExercicio}>
+                            <PlusCircle className="mr-2 h-4 w-4" />
+                            Adicionar Exercício
+                        </Button>
+                    </div>
+                </CardContent>
+                <CardFooter>
+                    <Button onClick={handleSaveTreino} className="bg-accent hover:bg-accent/90 text-accent-foreground">
+                        <Save className="mr-2 h-4 w-4" />
+                        Salvar Treino
+                    </Button>
+                </CardFooter>
+            </Card>
+            )}
+        </div>
+        </>
+    );
+}
