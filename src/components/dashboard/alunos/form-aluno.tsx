@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -23,11 +24,12 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import type { Aluno } from "@/lib/definitions";
+import React from "react";
 
 const formSchema = z.object({
   nomeCompleto: z.string().min(3, "O nome deve ter no mínimo 3 caracteres."),
   email: z.string().email("Email inválido."),
-  cpf: z.string().length(14, "O CPF deve ter 11 dígitos (formato: xxx.xxx.xxx-xx)."),
+  cpf: z.string().regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, "CPF inválido. Use o formato xxx.xxx.xxx-xx."),
   telefone: z.string().min(10, "Telefone inválido."),
   dataNascimento: z.string().refine((val) => !isNaN(Date.parse(val)), {
     message: "Data de nascimento inválida.",
@@ -49,8 +51,7 @@ export function FormAluno({ isOpen, onOpenChange, onSubmit, aluno }: FormAlunoPr
     resolver: zodResolver(formSchema),
     defaultValues: aluno
       ? {
-          ...aluno,
-          cpf: aluno.cpf,
+          ...aluno
         }
       : {
           nomeCompleto: "",
@@ -70,6 +71,15 @@ export function FormAluno({ isOpen, onOpenChange, onSubmit, aluno }: FormAlunoPr
     });
     onOpenChange(false);
     form.reset();
+  };
+
+  const formatCPF = (value: string) => {
+    return value
+      .replace(/\D/g, '')
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d{1,2})/, '$1-$2')
+      .substring(0, 14);
   };
 
   return (
@@ -116,7 +126,11 @@ export function FormAluno({ isOpen, onOpenChange, onSubmit, aluno }: FormAlunoPr
                 <FormItem>
                   <FormLabel>CPF</FormLabel>
                   <FormControl>
-                    <Input placeholder="xxx.xxx.xxx-xx" {...field} />
+                    <Input 
+                      placeholder="xxx.xxx.xxx-xx" 
+                      {...field} 
+                      onChange={(e) => field.onChange(formatCPF(e.target.value))}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
