@@ -1,0 +1,161 @@
+/**
+ * @fileoverview Firestore Security Rules for Five Star Gym.
+ *
+ * Core Philosophy:
+ * This ruleset enforces a strict ownership model for student data,
+ * ensuring only the authenticated user (student) or authorized employees can
+ * access specific information. Data for employees is secured based on their roles.
+ *
+ * Data Structure:
+ * - /alunos/{alunoId}: Stores student data.
+ * - /alunos/{alunoId}/matriculas/{matriculaId}: Stores enrollment data for a student.
+ * - /alunos/{alunoId}/pagamentos/{pagamentoId}: Stores payment history for a student.
+ * - /alunos/{alunoId}/treinos/{treinoId}: Stores workout plans for a student.
+ * - /alunos/{alunoId}/treinos/{treinoId}/exercicios/{exercicioId}: Stores exercises within a workout plan.
+ * - /planos/{planoId}: Stores a catalog of available plans.
+ * - /funcionarios/{funcionarioId}: Stores employee data, including roles.
+ *
+ * Key Security Decisions:
+ * - Aluno data is primarily accessible to the authenticated Aluno.
+ * - Funcionario access is role-based but is not enforced in this Prototyping Phase.
+ * - Listing of documents is allowed only when it's secure (e.g., listing one's own documents).
+ * - Plan data is assumed to be public.
+ *
+ * Denormalization for Authorization:
+ * - None: The data structure uses path-based ownership.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * @description Grants access to student data based on ownership.
+     * @path /alunos/{alunoId}
+     * @allow (get, list) if request.auth.uid == alunoId
+     * @allow (create, update, delete) if request.auth.uid == alunoId
+     * @deny (get, list) if request.auth.uid != alunoId
+     * @deny (create, update, delete) if request.auth.uid != alunoId
+     * @principle Enforces document ownership for all operations.
+     */
+    match /alunos/{alunoId} {
+      function isOwner(alunoId) {
+        return request.auth != null && request.auth.uid == alunoId;
+      }
+
+      function isExistingOwner(alunoId) {
+        return isOwner(alunoId) && resource != null;
+      }
+
+      allow get: if isOwner(alunoId);
+      allow list: if isOwner(alunoId);
+      allow create: if isOwner(alunoId);
+      allow update: if isExistingOwner(alunoId);
+      allow delete: if isExistingOwner(alunoId);
+
+      /**
+       * @description Grants access to enrollment data based on student ownership.
+       * @path /alunos/{alunoId}/matriculas/{matriculaId}
+       * @allow (get, list) if request.auth.uid == alunoId
+       * @allow (create, update, delete) if request.auth.uid == alunoId
+       * @deny (get, list) if request.auth.uid != alunoId
+       * @deny (create, update, delete) if request.auth.uid != alunoId
+       * @principle Enforces document ownership for all operations.
+       */
+      match /matriculas/{matriculaId} {
+        allow get: if isOwner(alunoId);
+        allow list: if isOwner(alunoId);
+        allow create: if isOwner(alunoId);
+        allow update: if isExistingOwner(alunoId);
+        allow delete: if isExistingOwner(alunoId);
+      }
+
+      /**
+       * @description Grants access to payment data based on student ownership.
+       * @path /alunos/{alunoId}/pagamentos/{pagamentoId}
+       * @allow (get, list) if request.auth.uid == alunoId
+       * @allow (create, update, delete) if request.auth.uid == alunoId
+       * @deny (get, list) if request.auth.uid != alunoId
+       * @deny (create, update, delete) if request.auth.uid != alunoId
+       * @principle Enforces document ownership for all operations.
+       */
+      match /pagamentos/{pagamentoId} {
+        allow get: if isOwner(alunoId);
+        allow list: if isOwner(alunoId);
+        allow create: if isOwner(alunoId);
+        allow update: if isExistingOwner(alunoId);
+        allow delete: if isExistingOwner(alunoId);
+      }
+
+      /**
+       * @description Grants access to workout plans based on student ownership.
+       * @path /alunos/{alunoId}/treinos/{treinoId}
+       * @allow (get, list) if request.auth.uid == alunoId
+       * @allow (create, update, delete) if request.auth.uid == alunoId
+       * @deny (get, list) if request.auth.uid != alunoId
+       * @deny (create, update, delete) if request.auth.uid != alunoId
+       * @principle Enforces document ownership for all operations.
+       */
+      match /treinos/{treinoId} {
+        allow get: if isOwner(alunoId);
+        allow list: if isOwner(alunoId);
+        allow create: if isOwner(alunoId);
+        allow update: if isExistingOwner(alunoId);
+        allow delete: if isExistingOwner(alunoId);
+
+        /**
+         * @description Grants access to exercises within a workout plan based on student ownership.
+         * @path /alunos/{alunoId}/treinos/{treinoId}/exercicios/{exercicioId}
+         * @allow (get, list) if request.auth.uid == alunoId
+         * @allow (create, update, delete) if request.auth.uid == alunoId
+         * @deny (get, list) if request.auth.uid != alunoId
+         * @deny (create, update, delete) if request.auth.uid != alunoId
+         * @principle Enforces document ownership for all operations.
+         */
+        match /exercicios/{exercicioId} {
+          allow get: if isOwner(alunoId);
+          allow list: if isOwner(alunoId);
+          allow create: if isOwner(alunoId);
+          allow update: if isExistingOwner(alunoId);
+          allow delete: if isExistingOwner(alunoId);
+        }
+      }
+    }
+
+    /**
+     * @description Allows public read access to the catalog of plans. Writes are denied in this prototype.
+     * @path /planos/{planoId}
+     * @allow get, list: if true
+     * @deny create, update, delete: if true
+     * @principle Grants public read access to plan information.
+     */
+    match /planos/{planoId} {
+      allow get, list: if true;
+      allow create, update, delete: if false;
+    }
+
+    /**
+     * @description Grants access to employee data based on their own ID.
+     * @path /funcionarios/{funcionarioId}
+     * @allow (get, list) if request.auth.uid == funcionarioId
+     * @allow (create, update, delete) if request.auth.uid == funcionarioId
+     * @deny (get, list) if request.auth.uid != funcionarioId
+     * @deny (create, update, delete) if request.auth.uid != funcionarioId
+     * @principle Enforces document ownership for all operations.
+     */
+    match /funcionarios/{funcionarioId} {
+      function isOwner(funcionarioId) {
+        return request.auth != null && request.auth.uid == funcionarioId;
+      }
+
+      function isExistingOwner(funcionarioId) {
+        return isOwner(funcionarioId) && resource != null;
+      }
+
+      allow get: if isOwner(funcionarioId);
+      allow list: if isOwner(funcionarioId);
+      allow create: if isOwner(funcionarioId);
+      allow update: if isExistingOwner(funcionarioId);
+      allow delete: if isExistingOwner(funcionarioId);
+    }
+  }
+}
