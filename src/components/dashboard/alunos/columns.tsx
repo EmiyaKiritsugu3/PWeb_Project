@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { MoreHorizontal } from "lucide-react"
+import { useToast } from "@/hooks/use-toast"
 
 const getInitials = (name: string) => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
@@ -23,7 +24,12 @@ const getStatusVariant = (status: Aluno["statusMatricula"]): "default" | "destru
     }
 }
 
-export const columns: ColumnDef<Aluno>[] = [
+interface ColumnsProps {
+    onEdit: (aluno: Aluno) => void;
+    onDelete: (aluno: Aluno) => void;
+}
+
+export const columns = ({ onEdit, onDelete }: ColumnsProps): ColumnDef<Aluno>[] => [
   {
     accessorKey: "fotoUrl",
     header: "",
@@ -56,7 +62,8 @@ export const columns: ColumnDef<Aluno>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const aluno = row.original
+      const aluno = row.original;
+      const { toast } = useToast();
  
       return (
         <div className="text-right">
@@ -70,14 +77,24 @@ export const columns: ColumnDef<Aluno>[] = [
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Ações</DropdownMenuLabel>
               <DropdownMenuItem
-                onClick={() => navigator.clipboard.writeText(aluno.id)}
+                onClick={() => {
+                  navigator.clipboard.writeText(aluno.id);
+                  toast({ title: "ID copiado!", description: "O ID do aluno foi copiado para a área de transferência." });
+                }}
               >
                 Copiar ID do aluno
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Ver detalhes</DropdownMenuItem>
-              <DropdownMenuItem>Editar</DropdownMenuItem>
-               <DropdownMenuItem className="text-destructive focus:bg-destructive/10 focus:text-destructive">
+              <DropdownMenuItem onClick={() => onEdit(aluno)}>
+                Ver detalhes
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onEdit(aluno)}>
+                Editar
+              </DropdownMenuItem>
+               <DropdownMenuItem 
+                className="text-destructive focus:bg-destructive/10 focus:text-destructive"
+                onClick={() => onDelete(aluno)}
+               >
                 Excluir
               </DropdownMenuItem>
             </DropdownMenuContent>
