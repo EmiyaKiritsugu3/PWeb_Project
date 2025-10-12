@@ -20,7 +20,7 @@ import { Dumbbell } from "lucide-react";
 import { useAuth, useUser } from "@/firebase";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 
 const formSchema = z.object({
   email: z.string().email("Por favor, insira um email válido."),
@@ -39,7 +39,7 @@ export default function LoginPage() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: "gerente@fivestar.com",
-      password: "",
+      password: "123456",
     },
   });
 
@@ -60,15 +60,34 @@ export default function LoginPage() {
         });
         router.push('/dashboard');
     } catch (error: any) {
-        let description = "Ocorreu um erro ao tentar fazer login.";
-        if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
-            description = "Email ou senha inválidos. Por favor, tente novamente.";
+        if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
+            // Se o usuário não existe, tenta criar um novo
+            try {
+                await createUserWithEmailAndPassword(auth, data.email, data.password);
+                toast({
+                    title: "Conta de gerente criada!",
+                    description: "Redirecionando para o painel...",
+                    className: "bg-accent text-accent-foreground"
+                });
+                router.push('/dashboard');
+            } catch (creationError: any) {
+                 toast({
+                    title: "Erro ao criar conta",
+                    description: creationError.message || "Não foi possível criar a conta de gerente.",
+                    variant: "destructive"
+                })
+            }
+        } else {
+            let description = "Ocorreu um erro ao tentar fazer login.";
+            if (error.code === 'auth/wrong-password') {
+                description = "Senha inválida. Por favor, tente novamente.";
+            }
+            toast({
+                title: "Erro de autenticação",
+                description,
+                variant: "destructive"
+            })
         }
-        toast({
-            title: "Erro de autenticação",
-            description,
-            variant: "destructive"
-        })
     }
   };
 
