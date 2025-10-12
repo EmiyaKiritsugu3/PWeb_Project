@@ -2,7 +2,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { 
   LayoutDashboard, 
   Users, 
@@ -16,10 +16,8 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem
 } from "@/components/ui/sidebar";
+import { useAuth } from "@/firebase";
 
 const navItems = [
   { href: "/dashboard", icon: <LayoutDashboard />, label: "Dashboard" },
@@ -28,11 +26,6 @@ const navItems = [
   { href: "/dashboard/financeiro", icon: <DollarSign />, label: "Financeiro" },
   { href: "/dashboard/planos", icon: <FileText />, label: "Planos" },
 ];
-
-const bottomNavItems = [
-    { href: "#", icon: <Settings />, label: "Configurações" },
-    { href: "/", icon: <LogOut />, label: "Sair" },
-]
 
 export function DashboardNav() {
   const pathname = usePathname();
@@ -61,16 +54,27 @@ export function DashboardNav() {
 }
 
 export function DashboardNavBottom() {
+    const auth = useAuth();
+    const router = useRouter();
+
+    const handleLogout = () => {
+        auth?.signOut();
+        router.push('/login');
+    };
+
+    const bottomNavItems = [
+        { href: "#", icon: <Settings />, label: "Configurações", action: () => {} },
+        { href: "#", icon: <LogOut />, label: "Sair", action: handleLogout },
+    ];
+
     return (
         <SidebarMenu>
         {bottomNavItems.map((item) => (
             <SidebarMenuItem key={item.label}>
-            <Link href={item.href}>
-                <SidebarMenuButton tooltip={item.label}>
-                {item.icon}
-                <span>{item.label}</span>
+                <SidebarMenuButton tooltip={item.label} onClick={item.action}>
+                    {item.icon}
+                    <span>{item.label}</span>
                 </SidebarMenuButton>
-            </Link>
             </SidebarMenuItem>
         ))}
         </SidebarMenu>

@@ -1,0 +1,136 @@
+
+"use client";
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dumbbell } from "lucide-react";
+import { useAuth, useUser } from "@/firebase";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { signInWithEmailAndPassword } from "firebase/auth";
+
+const formSchema = z.object({
+  email: z.string().email("Por favor, insira um email válido."),
+  password: z.string().min(6, "A senha deve ter no mínimo 6 caracteres."),
+});
+
+type FormValues = z.infer<typeof formSchema>;
+
+export default function LoginPage() {
+  const { toast } = useToast();
+  const auth = useAuth();
+  const { user, isUserLoading } = useUser();
+  const router = useRouter();
+
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: "gerente@fivestar.com",
+      password: "",
+    },
+  });
+
+  useEffect(() => {
+    if (!isUserLoading && user) {
+      router.push("/dashboard");
+    }
+  }, [user, isUserLoading, router]);
+
+
+  const handleFormSubmit = async (data: FormValues) => {
+    try {
+        await signInWithEmailAndPassword(auth, data.email, data.password);
+        toast({
+            title: "Login bem-sucedido!",
+            description: "Redirecionando para o painel...",
+            className: "bg-accent text-accent-foreground"
+        });
+        router.push('/dashboard');
+    } catch (error: any) {
+        let description = "Ocorreu um erro ao tentar fazer login.";
+        if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+            description = "Email ou senha inválidos. Por favor, tente novamente.";
+        }
+        toast({
+            title: "Erro de autenticação",
+            description,
+            variant: "destructive"
+        })
+    }
+  };
+
+  if (isUserLoading || user) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+            <Dumbbell className="h-12 w-12 animate-pulse text-primary" />
+            <p className="text-muted-foreground">Verificando sessão...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4">
+        <Card className="w-full max-w-sm">
+            <CardHeader className="text-center">
+                <div className="mb-4 flex justify-center">
+                    <Dumbbell className="h-10 w-10 text-primary" />
+                </div>
+                <CardTitle className="text-2xl">Acesso Restrito</CardTitle>
+                <CardDescription>
+                    Faça login para gerenciar a academia.
+                </CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Form {...form}>
+                <form onSubmit={form.handleSubmit(handleFormSubmit)} className="grid gap-4">
+                    <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                            <Input placeholder="seu@email.com" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                    />
+                    <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>Senha</FormLabel>
+                        <FormControl>
+                            <Input type="password" placeholder="••••••••" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                    />
+                    <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+                        {form.formState.isSubmitting ? 'Entrando...' : 'Entrar'}
+                    </Button>
+                </form>
+                </Form>
+            </CardContent>
+        </Card>
+    </div>
+  );
+}
