@@ -1,0 +1,162 @@
+"use client";
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import type { Aluno } from "@/lib/definitions";
+
+const formSchema = z.object({
+  nomeCompleto: z.string().min(3, "O nome deve ter no mínimo 3 caracteres."),
+  email: z.string().email("Email inválido."),
+  cpf: z.string().length(14, "O CPF deve ter 11 dígitos (formato: xxx.xxx.xxx-xx)."),
+  telefone: z.string().min(10, "Telefone inválido."),
+  dataNascimento: z.string().refine((val) => !isNaN(Date.parse(val)), {
+    message: "Data de nascimento inválida.",
+  }),
+});
+
+type FormValues = z.infer<typeof formSchema>;
+
+interface FormAlunoProps {
+  isOpen: boolean;
+  onOpenChange: (isOpen: boolean) => void;
+  onSubmit: (data: FormValues) => void;
+  aluno?: Aluno;
+}
+
+export function FormAluno({ isOpen, onOpenChange, onSubmit, aluno }: FormAlunoProps) {
+  const { toast } = useToast();
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: aluno
+      ? {
+          ...aluno,
+          cpf: aluno.cpf,
+        }
+      : {
+          nomeCompleto: "",
+          email: "",
+          cpf: "",
+          telefone: "",
+          dataNascimento: "",
+        },
+  });
+
+  const handleFormSubmit = (data: FormValues) => {
+    onSubmit(data);
+    toast({
+      title: "Sucesso!",
+      description: `Aluno ${aluno ? 'atualizado' : 'cadastrado'} com sucesso.`,
+      className: 'bg-accent text-accent-foreground'
+    });
+    onOpenChange(false);
+    form.reset();
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>{aluno ? "Editar Aluno" : "Cadastrar Novo Aluno"}</DialogTitle>
+          <DialogDescription>
+            Preencha as informações abaixo para {aluno ? "editar os dados do" : "cadastrar um novo"} aluno.
+          </DialogDescription>
+        </DialogHeader>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleFormSubmit)} className="grid gap-4 py-4">
+            <FormField
+              control={form.control}
+              name="nomeCompleto"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Nome Completo</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Ex: João da Silva" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Ex: joao.silva@email.com" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="cpf"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>CPF</FormLabel>
+                  <FormControl>
+                    <Input placeholder="xxx.xxx.xxx-xx" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="telefone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Telefone</FormLabel>
+                  <FormControl>
+                    <Input placeholder="(xx) xxxxx-xxxx" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+             <FormField
+              control={form.control}
+              name="dataNascimento"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Data de Nascimento</FormLabel>
+                  <FormControl>
+                    <Input type="date" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+                Cancelar
+              </Button>
+              <Button type="submit">{aluno ? 'Salvar Alterações' : 'Cadastrar'}</Button>
+            </DialogFooter>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
+  );
+}
