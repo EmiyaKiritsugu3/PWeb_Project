@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect } from "react";
@@ -43,7 +44,7 @@ export default function DashboardLayout({
 
   const handleLogout = () => {
     auth?.signOut();
-    router.push("/login");
+    router.push("/");
   };
   
   if (isUserLoading || !user) {
