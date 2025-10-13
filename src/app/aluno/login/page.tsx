@@ -20,7 +20,7 @@ import { Dumbbell } from "lucide-react";
 import { useAuth, useUser } from "@/firebase";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 
 const formSchema = z.object({
   email: z.string().email("Por favor, insira um email válido."),
@@ -50,8 +50,16 @@ export default function AlunoLoginPage() {
   }, [user, isUserLoading, router]);
 
   const handleFormSubmit = async (data: FormValues) => {
+    if (!auth) {
+        toast({
+            title: "Erro de configuração",
+            description: "O serviço de autenticação não está disponível.",
+            variant: "destructive"
+        });
+        return;
+    }
+    
     try {
-        if (!auth) throw new Error("Auth service not available");
         await signInWithEmailAndPassword(auth, data.email, data.password);
         toast({
             title: "Login bem-sucedido!",
@@ -60,15 +68,34 @@ export default function AlunoLoginPage() {
         });
         router.push('/aluno/dashboard');
     } catch (error: any) {
-        let description = "Ocorreu um erro ao tentar fazer login.";
-        if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
-            description = "Email ou senha inválidos. Por favor, tente novamente.";
+        if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
+            // Se o usuário não existe, tenta criar um novo
+             try {
+                await createUserWithEmailAndPassword(auth, data.email, data.password);
+                toast({
+                    title: "Conta criada com sucesso!",
+                    description: "Bem-vindo(a)! Redirecionando para o painel...",
+                    className: "bg-accent text-accent-foreground"
+                });
+                router.push('/aluno/dashboard');
+            } catch (creationError: any) {
+                 toast({
+                    title: "Erro ao criar conta",
+                    description: creationError.message || "Não foi possível criar sua conta.",
+                    variant: "destructive"
+                })
+            }
+        } else {
+            let description = "Ocorreu um erro ao tentar fazer login.";
+            if (error.code === 'auth/wrong-password') {
+                description = "Senha inválida. Por favor, tente novamente.";
+            }
+            toast({
+                title: "Erro de autenticação",
+                description,
+                variant: "destructive"
+            })
         }
-        toast({
-            title: "Erro de autenticação",
-            description,
-            variant: "destructive"
-        })
     }
   };
 
