@@ -15,12 +15,14 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dumbbell } from "lucide-react";
 import { useAuth, useUser } from "@/firebase";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import Link from "next/link";
+import { Separator } from "@/components/ui/separator";
 
 const formSchema = z.object({
   email: z.string().email("Por favor, insira um email válido."),
@@ -51,6 +53,14 @@ export default function LoginPage() {
 
 
   const handleFormSubmit = async (data: FormValues) => {
+    if (!auth) {
+        toast({
+            title: "Erro de configuração",
+            description: "O serviço de autenticação não está disponível.",
+            variant: "destructive"
+        });
+        return;
+    }
     try {
         await signInWithEmailAndPassword(auth, data.email, data.password);
         toast({
@@ -149,6 +159,12 @@ export default function LoginPage() {
                 </form>
                 </Form>
             </CardContent>
+             <CardFooter className="flex-col gap-4">
+                <Separator />
+                <Button variant="link" size="sm" asChild className="w-full text-muted-foreground">
+                    <Link href="/aluno/login">Acessar Portal do Aluno</Link>
+                </Button>
+            </CardFooter>
         </Card>
     </div>
   );
