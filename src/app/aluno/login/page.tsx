@@ -101,8 +101,12 @@ export default function AlunoLoginPage() {
     }
   };
 
-  // Não exibe a tela de carregamento aqui, renderiza o formulário diretamente
-  // O useEffect vai cuidar do redirecionamento se o usuário já estiver logado.
+  // Se o usuário já estiver logado, o useEffect cuidará do redirecionamento.
+  // Não há necessidade de exibir uma tela de carregamento aqui.
+  if (!isUserLoading && user) {
+    return null; // ou um loader simples, enquanto o redirect acontece
+  }
+
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4">
