@@ -20,7 +20,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
-import { ALUNOS } from "@/lib/data"; // Revertido para dados estáticos
+import { ALUNOS } from "@/lib/data"; // Usando dados estáticos
 
 export default function AlunosPage() {
   // Estado local para simular o banco de dados
@@ -51,7 +51,8 @@ export default function AlunosPage() {
   const handleFormSubmit = (data: Omit<Aluno, "id" | "dataCadastro" | "fotoUrl" | "statusMatricula" | "biometriaHash">) => {
     if (editingAluno) {
       // Editar aluno existente
-      setAlunos(alunos.map(a => a.id === editingAluno.id ? { ...a, ...data } : a));
+      const updatedAluno = { ...editingAluno, ...data };
+      setAlunos(alunos.map(a => a.id === editingAluno.id ? updatedAluno : a));
       toast({
         title: "Aluno atualizado!",
         description: `${data.nomeCompleto} foi atualizado com sucesso.`,
@@ -66,7 +67,7 @@ export default function AlunosPage() {
         statusMatricula: 'ATIVA',
         biometriaHash: "",
       };
-      setAlunos([...alunos, novoAluno]);
+      setAlunos([novoAluno, ...alunos]);
        toast({
         title: "Aluno cadastrado!",
         description: `${novoAluno.nomeCompleto} foi adicionado ao sistema.`,
@@ -125,7 +126,7 @@ export default function AlunosPage() {
       </AlertDialog>
       <DataTable 
         columns={columns({ onEdit: openFormForEdit, onDelete: openDeleteAlert })} 
-        data={alunos ?? []}
+        data={alunos}
         isLoading={false} 
       />
     </>

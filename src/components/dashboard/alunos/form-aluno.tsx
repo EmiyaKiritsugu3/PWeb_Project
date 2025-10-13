@@ -24,7 +24,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import type { Aluno } from "@/lib/definitions";
-import React from "react";
+import React, { useEffect } from "react";
 
 const formSchema = z.object({
   nomeCompleto: z.string().min(3, "O nome deve ter no mínimo 3 caracteres."),
@@ -49,28 +49,32 @@ export function FormAluno({ isOpen, onOpenChange, onSubmit, aluno }: FormAlunoPr
   const { toast } = useToast();
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: aluno
-      ? {
-          ...aluno
-        }
-      : {
-          nomeCompleto: "",
-          email: "",
-          cpf: "",
-          telefone: "",
-          dataNascimento: "",
-        },
+    defaultValues: {
+      nomeCompleto: "",
+      email: "",
+      cpf: "",
+      telefone: "",
+      dataNascimento: "",
+    },
   });
+
+  useEffect(() => {
+    if (aluno) {
+      form.reset(aluno);
+    } else {
+      form.reset({
+        nomeCompleto: "",
+        email: "",
+        cpf: "",
+        telefone: "",
+        dataNascimento: "",
+      });
+    }
+  }, [aluno, form]);
 
   const handleFormSubmit = (data: FormValues) => {
     onSubmit(data);
-    toast({
-      title: "Sucesso!",
-      description: `Aluno ${aluno ? 'atualizado' : 'cadastrado'} com sucesso.`,
-      className: 'bg-accent text-accent-foreground'
-    });
     onOpenChange(false);
-    form.reset();
   };
 
   const formatCPF = (value: string) => {
@@ -156,7 +160,7 @@ export function FormAluno({ isOpen, onOpenChange, onSubmit, aluno }: FormAlunoPr
                 <FormItem>
                   <FormLabel>Data de Nascimento</FormLabel>
                   <FormControl>
-                    <Input type="date" {...field} />
+                    <Input type="date" {...field} value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
