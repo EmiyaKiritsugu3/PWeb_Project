@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,19 +24,22 @@ export default function AlunoLayout({
   const { user, isUserLoading } = useUser();
   const auth = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
-    if (!isUserLoading && !user) {
+    // Se não está carregando, não há usuário e a rota NÃO é a de login, redireciona.
+    if (!isUserLoading && !user && pathname !== "/aluno/login") {
       router.push("/aluno/login");
     }
-  }, [user, isUserLoading, router]);
+  }, [user, isUserLoading, router, pathname]);
 
   const handleLogout = () => {
     auth?.signOut();
     router.push("/aluno/login");
   };
   
-  if (isUserLoading || !user) {
+  // Exibe a tela de carregamento apenas se estiver verificando o usuário E não estiver na página de login
+  if (isUserLoading && pathname !== "/aluno/login") {
     return (
       <div className="flex h-screen w-full items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-4">
@@ -47,50 +50,61 @@ export default function AlunoLayout({
     );
   }
 
-  return (
-    <div className="flex min-h-screen w-full flex-col bg-background">
-       <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-sm md:px-6">
-        <div className="flex items-center gap-2">
-            <Dumbbell className="h-6 w-6 text-primary" />
-            <span className="font-bold">Academia Five Star</span>
-        </div>
-        
-        <div className="flex w-full items-center justify-end gap-4 md:ml-auto">
-            <span className="hidden text-sm text-muted-foreground md:inline-block">Olá, {user.displayName || 'Aluno(a)'}!</span>
-             <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-9 w-9 rounded-full">
-                    <Avatar>
-                    <AvatarImage src={user.photoURL || "https://picsum.photos/seed/student/100/100"} alt="Aluno" data-ai-hint="person portrait"/>
-                    <AvatarFallback>{user.email?.[0].toUpperCase()}</AvatarFallback>
-                    </Avatar>
-                </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56" align="end">
-                <DropdownMenuLabel>
-                    <p>{user.displayName || 'Aluno(a)'}</p>
-                    <p className="text-xs font-normal text-muted-foreground">
-                    {user.email}
-                    </p>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                    <UserIcon className="mr-2 h-4 w-4" />
-                    <span>Meu Perfil</span>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleLogout}>
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>Sair</span>
-                </DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
-        </div>
-      </header>
-        <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6 lg:p-8">
-            {children}
-        </main>
-    </div>
-  );
-}
+  // Se não tem usuário e está na página de login, renderiza o login.
+  if (!user && pathname === '/aluno/login') {
+    return <main>{children}</main>;
+  }
 
+  // Se tem usuário, mostra o layout completo
+  if(user) {
+    return (
+        <div className="flex min-h-screen w-full flex-col bg-background">
+        <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-sm md:px-6">
+            <div className="flex items-center gap-2">
+                <Dumbbell className="h-6 w-6 text-primary" />
+                <span className="font-bold">Academia Five Star</span>
+            </div>
+            
+            <div className="flex w-full items-center justify-end gap-4 md:ml-auto">
+                <span className="hidden text-sm text-muted-foreground md:inline-block">Olá, {user.displayName || 'Aluno(a)'}!</span>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="relative h-9 w-9 rounded-full">
+                        <Avatar>
+                        <AvatarImage src={user.photoURL || "https://picsum.photos/seed/student/100/100"} alt="Aluno" data-ai-hint="person portrait"/>
+                        <AvatarFallback>{user.email?.[0].toUpperCase()}</AvatarFallback>
+                        </Avatar>
+                    </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-56" align="end">
+                    <DropdownMenuLabel>
+                        <p>{user.displayName || 'Aluno(a)'}</p>
+                        <p className="text-xs font-normal text-muted-foreground">
+                        {user.email}
+                        </p>
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem>
+                        <UserIcon className="mr-2 h-4 w-4" />
+                        <span>Meu Perfil</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleLogout}>
+                        <LogOut className="mr-2 h-4 w-4" />
+                        <span>Sair</span>
+                    </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </div>
+        </header>
+            <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6 lg:p-8">
+                {children}
+            </main>
+        </div>
+    );
+  }
+
+  // Fallback para renderizar o children enquanto o useEffect decide se redireciona
+  // (por exemplo, ao acessar /aluno/login sem estar logado)
+  return <main>{children}</main>;
+}
