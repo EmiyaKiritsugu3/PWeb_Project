@@ -8,7 +8,8 @@ import { PlusCircle } from "lucide-react";
 import { columns } from "@/components/dashboard/alunos/columns";
 import { DataTable } from "@/components/dashboard/alunos/data-table";
 import { FormAluno } from "@/components/dashboard/alunos/form-aluno";
-import type { Aluno } from "@/lib/definitions";
+import { FormMatricula } from "@/components/dashboard/alunos/form-matricula";
+import type { Aluno, Plano, Matricula } from "@/lib/definitions";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,13 +21,16 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
-import { ALUNOS } from "@/lib/data"; // Usando dados estáticos
+import { ALUNOS, PLANOS } from "@/lib/data"; // Usando dados estáticos
 
 export default function AlunosPage() {
   // Estado local para simular o banco de dados
   const [alunos, setAlunos] = useState<Aluno[]>(ALUNOS);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingAluno, setEditingAluno] = useState<Aluno | null>(null);
+
+  const [isMatriculaFormOpen, setIsMatriculaFormOpen] = useState(false);
+  const [matriculaAluno, setMatriculaAluno] = useState<Aluno | null>(null);
 
   const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false);
   const [deletingAluno, setDeletingAluno] = useState<Aluno | null>(null);
@@ -41,6 +45,11 @@ export default function AlunosPage() {
   const openFormForEdit = (aluno: Aluno) => {
     setEditingAluno(aluno);
     setIsFormOpen(true);
+  };
+
+  const openMatriculaForm = (aluno: Aluno) => {
+    setMatriculaAluno(aluno);
+    setIsMatriculaFormOpen(true);
   };
 
   const openDeleteAlert = (aluno: Aluno) => {
@@ -90,6 +99,34 @@ export default function AlunosPage() {
     setDeletingAluno(null);
   };
 
+  const handleMatriculaSubmit = (aluno: Aluno, plano: Plano) => {
+     // Simular a criação de uma matrícula
+    const dataInicio = new Date();
+    const dataVencimento = new Date();
+    dataVencimento.setDate(dataInicio.getDate() + plano.duracaoDias);
+
+    const novaMatricula: Matricula = {
+      id: `mat-${Date.now()}`,
+      alunoId: aluno.id,
+      planoId: plano.id,
+      dataInicio: dataInicio.toISOString(),
+      dataVencimento: dataVencimento.toISOString(),
+      status: "ATIVA",
+    };
+
+    // Atualizar o status do aluno
+    setAlunos(alunos.map(a => a.id === aluno.id ? { ...a, statusMatricula: 'ATIVA' } : a));
+
+    toast({
+      title: "Matrícula realizada com sucesso!",
+      description: `${aluno.nomeCompleto} foi matriculado(a) no ${plano.nome}.`,
+      className: "bg-accent text-accent-foreground",
+    });
+
+    setIsMatriculaFormOpen(false);
+    setMatriculaAluno(null);
+  };
+
   return (
     <>
       <PageHeader
@@ -108,6 +145,13 @@ export default function AlunosPage() {
         onSubmit={handleFormSubmit}
         aluno={editingAluno || undefined}
       />
+       <FormMatricula
+        isOpen={isMatriculaFormOpen}
+        onOpenChange={setIsMatriculaFormOpen}
+        aluno={matriculaAluno}
+        planos={PLANOS}
+        onSubmit={handleMatriculaSubmit}
+      />
       <AlertDialog open={isDeleteAlertOpen} onOpenChange={setIsDeleteAlertOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -125,7 +169,7 @@ export default function AlunosPage() {
         </AlertDialogContent>
       </AlertDialog>
       <DataTable 
-        columns={columns({ onEdit: openFormForEdit, onDelete: openDeleteAlert })} 
+        columns={columns({ onEdit: openFormForEdit, onDelete: openDeleteAlert, onNewMatricula: openMatriculaForm })} 
         data={alunos}
         isLoading={false} 
       />

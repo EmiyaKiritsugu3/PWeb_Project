@@ -1,3 +1,4 @@
+
 "use client"
 
 import type { ColumnDef } from "@tanstack/react-table"
@@ -27,9 +28,10 @@ const getStatusVariant = (status: Aluno["statusMatricula"]): "default" | "destru
 interface ColumnsProps {
     onEdit: (aluno: Aluno) => void;
     onDelete: (aluno: Aluno) => void;
+    onNewMatricula: (aluno: Aluno) => void;
 }
 
-export const columns = ({ onEdit, onDelete }: ColumnsProps): ColumnDef<Aluno>[] => [
+export const columns = ({ onEdit, onDelete, onNewMatricula }: ColumnsProps): ColumnDef<Aluno>[] => [
   {
     accessorKey: "fotoUrl",
     header: "",
@@ -76,6 +78,13 @@ export const columns = ({ onEdit, onDelete }: ColumnsProps): ColumnDef<Aluno>[] 
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Ações</DropdownMenuLabel>
+              <DropdownMenuItem onClick={() => onNewMatricula(aluno)}>
+                Nova Matrícula
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onEdit(aluno)}>
+                Editar Aluno
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={() => {
                   navigator.clipboard.writeText(aluno.id);
@@ -85,12 +94,6 @@ export const columns = ({ onEdit, onDelete }: ColumnsProps): ColumnDef<Aluno>[] 
                 Copiar ID do aluno
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => onEdit(aluno)}>
-                Ver detalhes
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onEdit(aluno)}>
-                Editar
-              </DropdownMenuItem>
                <DropdownMenuItem 
                 className="text-destructive focus:bg-destructive/10 focus:text-destructive"
                 onClick={() => onDelete(aluno)}
