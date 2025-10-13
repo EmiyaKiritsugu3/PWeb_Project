@@ -1,3 +1,4 @@
+
 export type Aluno = {
   id: string;
   nomeCompleto: string;
@@ -7,6 +8,7 @@ export type Aluno = {
   dataNascimento: string; 
   dataCadastro: string;
   fotoUrl: string;
+  biometriaHash: string;
   statusMatricula: "ATIVA" | "INADIMPLENTE" | "INATIVA";
 };
 

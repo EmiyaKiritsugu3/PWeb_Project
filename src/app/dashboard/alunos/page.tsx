@@ -1,11 +1,10 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/page-header";
 import { PlusCircle } from "lucide-react";
-import { ALUNOS } from "@/lib/data";
 import { columns } from "@/components/dashboard/alunos/columns";
 import { DataTable } from "@/components/dashboard/alunos/data-table";
 import { FormAluno } from "@/components/dashboard/alunos/form-aluno";
@@ -21,9 +20,14 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
+import { useCollection, useFirestore, useMemoFirebase } from "@/firebase";
+import { addDocumentNonBlocking, deleteDocumentNonBlocking, updateDocumentNonBlocking } from "@/firebase/non-blocking-updates";
+import { collection, doc } from "firebase/firestore";
 
 export default function AlunosPage() {
-  const [alunos, setAlunos] = useState<Aluno[]>(ALUNOS);
+  const firestore = useFirestore();
+  const alunosCollectionRef = useMemoFirebase(() => collection(firestore, "alunos"), [firestore]);
+  const { data: alunos, isLoading } = useCollection<Aluno>(alunosCollectionRef);
   
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingAluno, setEditingAluno] = useState<Aluno | null>(null);
@@ -51,27 +55,26 @@ export default function AlunosPage() {
   const handleFormSubmit = (data: Omit<Aluno, "id" | "dataCadastro" | "fotoUrl" | "statusMatricula">) => {
     if (editingAluno) {
       // Editar aluno existente
-      setAlunos(prevAlunos => 
-        prevAlunos.map(a => 
-          a.id === editingAluno.id ? { ...a, ...data } : a
-        )
-      );
+      const alunoDocRef = doc(firestore, "alunos", editingAluno.id);
+      updateDocumentNonBlocking(alunoDocRef, data);
     } else {
       // Adicionar novo aluno
-      const alunoComDefaults: Aluno = {
+      const alunoComDefaults = {
         ...data,
-        id: `${Date.now()}`,
-        dataCadastro: new Date().toISOString().split('T')[0],
+        dataCadastro: new Date().toISOString(),
         fotoUrl: `https://picsum.photos/seed/${Date.now()}/100/100`,
-        statusMatricula: 'ATIVA'
+        statusMatricula: 'ATIVA' as const,
+        biometriaHash: "", // Placeholder
       };
-      setAlunos(prevAlunos => [alunoComDefaults, ...prevAlunos]);
+      addDocumentNonBlocking(alunosCollectionRef, alunoComDefaults);
     }
   };
 
   const handleDeleteAluno = () => {
     if (!deletingAluno) return;
-    setAlunos(prev => prev.filter(a => a.id !== deletingAluno.id));
+    const alunoDocRef = doc(firestore, "alunos", deletingAluno.id);
+    deleteDocumentNonBlocking(alunoDocRef);
+    
     toast({
         title: "Aluno excluído!",
         description: `${deletingAluno.nomeCompleto} foi removido do sistema.`,
@@ -116,7 +119,8 @@ export default function AlunosPage() {
       </AlertDialog>
       <DataTable 
         columns={columns({ onEdit: openFormForEdit, onDelete: openDeleteAlert })} 
-        data={alunos} 
+        data={alunos ?? []}
+        isLoading={isLoading} 
       />
     </>
   );
