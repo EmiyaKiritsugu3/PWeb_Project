@@ -35,7 +35,7 @@ export default function AlunoLayout({
 
   const handleLogout = () => {
     auth?.signOut();
-    router.push("/");
+    router.push("/aluno/login");
   };
   
   // Exibe a tela de carregamento apenas se estiver verificando o usuário E não estiver na página de login
