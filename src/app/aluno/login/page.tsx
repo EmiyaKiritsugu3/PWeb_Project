@@ -99,6 +99,9 @@ export default function AlunoLoginPage() {
     }
   };
 
+  // Não exibe a tela de carregamento aqui, renderiza o formulário diretamente
+  // O useEffect vai cuidar do redirecionamento se o usuário já estiver logado.
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4">
         <Card className="w-full max-w-sm">
