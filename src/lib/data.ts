@@ -1,3 +1,4 @@
+
 import type { Aluno, Plano, Treino, Exercicio } from './definitions';
 import { PlaceHolderImages } from './placeholder-images';
 
@@ -89,6 +90,48 @@ export const EXERCICIOS_BASE: Pick<Exercicio, 'nomeExercicio'>[] = [
     { nomeExercicio: 'Tríceps Pulley' },
     { nomeExercicio: 'Leg Press 45°' },
     { nomeExercicio: 'Puxada Frontal' },
+];
+
+export const TREINOS: Treino[] = [
+    {
+        id: 't1',
+        alunoId: '1', // Ana Silva
+        instrutorId: 'func1',
+        objetivo: 'Hipertrofia - Membros Superiores',
+        dataCriacao: '2024-01-15',
+        ativo: true,
+        exercicios: [
+            { id: 'ex1', nomeExercicio: 'Supino Reto com Barra', series: 4, repeticoes: '8-10', observacoes: 'Controlar a descida.' },
+            { id: 'ex2', nomeExercicio: 'Remada Curvada', series: 4, repeticoes: '8-10', observacoes: 'Manter a coluna reta.' },
+            { id: 'ex3', nomeExercicio: 'Desenvolvimento Militar', series: 3, repeticoes: '10-12', observacoes: '' },
+            { id: 'ex4', nomeExercicio: 'Rosca Direta', series: 3, repeticoes: '12-15', observacoes: 'Evitar balançar o corpo.' },
+            { id: 'ex5', nomeExercicio: 'Tríceps Pulley', series: 3, repeticoes: '12-15', observacoes: 'Estender completamente os cotovelos.' },
+        ]
+    },
+    {
+        id: 't2',
+        alunoId: '2', // Bruno Costa
+        instrutorId: 'func1',
+        objetivo: 'Perda de Peso',
+        dataCriacao: '2024-01-20',
+        ativo: true,
+        exercicios: [
+             { id: 'ex6', nomeExercicio: 'Agachamento Livre', series: 5, repeticoes: '15-20', observacoes: 'Foco na amplitude.' },
+             { id: 'ex7', nomeExercicio: 'Levantamento Terra', series: 3, repeticoes: '10', observacoes: 'Cuidado com a lombar.' },
+             { id: 'ex8', nomeExercicio: 'Leg Press 45°', series: 4, repeticoes: '15', observacoes: 'Não travar os joelhos.' },
+        ]
+    },
+    {
+        id: 't3',
+        alunoId: '1', // Ana Silva
+        instrutorId: 'func1',
+        objetivo: 'Hipertrofia - Membros Inferiores',
+        dataCriacao: '2023-11-15',
+        ativo: false, // Treino antigo
+        exercicios: [
+             { id: 'ex9', nomeExercicio: 'Agachamento Livre', series: 4, repeticoes: '8-10', observacoes: '' },
+        ]
+    }
 ];
 
 export const DADOS_DASHBOARD = {
