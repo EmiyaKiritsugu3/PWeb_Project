@@ -38,8 +38,8 @@ export default function AlunoLoginPage() {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      email: "ana.silva@example.com",
+      password: "123456",
     },
   });
 
@@ -51,6 +51,7 @@ export default function AlunoLoginPage() {
 
   const handleFormSubmit = async (data: FormValues) => {
     try {
+        if (!auth) throw new Error("Auth service not available");
         await signInWithEmailAndPassword(auth, data.email, data.password);
         toast({
             title: "Login bem-sucedido!",
@@ -70,17 +71,6 @@ export default function AlunoLoginPage() {
         })
     }
   };
-
-   if (isUserLoading || user) {
-    return (
-      <div className="flex h-screen w-full items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-            <Dumbbell className="h-12 w-12 animate-pulse text-primary" />
-            <p className="text-muted-foreground">Verificando sessão...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4">
