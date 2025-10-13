@@ -1,11 +1,11 @@
+
 "use client";
 
 import { PageHeader } from "@/components/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useCollection, useFirestore, useMemoFirebase } from "@/firebase";
-import { collection, query } from "firebase/firestore";
 import type { Plano } from "@/lib/definitions";
+import { PLANOS } from "@/lib/data"; // Usando dados estáticos
 
 function PlanoSkeleton() {
   return (
@@ -22,14 +22,9 @@ function PlanoSkeleton() {
 }
 
 export default function PlanosPage() {
-  const firestore = useFirestore();
-  
-  const planosQuery = useMemoFirebase(() => {
-    if (!firestore) return null;
-    return query(collection(firestore, "planos"));
-  }, [firestore]);
-
-  const { data: planos, isLoading } = useCollection<Plano>(planosQuery);
+  // Simulação de carregamento e dados
+  const planos: Plano[] = PLANOS;
+  const isLoading = false;
 
   return (
     <>
