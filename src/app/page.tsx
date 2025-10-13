@@ -28,9 +28,14 @@ export default function LandingPage() {
             nível. Gerencie alunos, treinos e finanças de forma eficiente e
             intuitiva.
           </p>
-          <Button asChild size="lg">
-            <Link href="/dashboard">Acessar Painel de Gestão</Link>
-          </Button>
+          <div className="flex flex-wrap justify-center gap-4">
+            <Button asChild size="lg">
+              <Link href="/dashboard">Acessar Painel de Gestão</Link>
+            </Button>
+            <Button asChild size="lg" variant="secondary">
+              <Link href="/aluno/login">Portal do Aluno</Link>
+            </Button>
+          </div>
         </main>
       </div>
       <footer className="relative z-10 w-full py-4 text-center text-xs text-primary-foreground/60">
