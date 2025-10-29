@@ -8,12 +8,12 @@ export type Aluno = {
   dataNascimento: string; 
   dataCadastro: string;
   fotoUrl: string;
-  biometriaHash: string;
+  biometriaHash?: string;
   statusMatricula: "ATIVA" | "INADIMPLENTE" | "INATIVA";
 };
 
 export type Plano = {
-  id: string;
+  id?: string;
   nome: string;
   preco: number;
   duracaoDias: number;
