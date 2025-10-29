@@ -13,7 +13,7 @@ export type Aluno = {
 };
 
 export type Plano = {
-  id?: string;
+  id: string;
   nome: string;
   preco: number;
   duracaoDias: number;
