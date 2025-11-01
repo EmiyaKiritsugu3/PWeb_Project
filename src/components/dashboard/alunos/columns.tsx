@@ -9,8 +9,10 @@ import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { MoreHorizontal } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
+import { format } from 'date-fns';
 
 const getInitials = (name: string) => {
+    if (!name) return '';
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
 }
 
@@ -54,6 +56,19 @@ export const columns = ({ onEdit, onDelete, onNewMatricula }: ColumnsProps): Col
     header: "Email",
   },
   {
+    accessorKey: "dataCadastro",
+    header: "Data de Cadastro",
+    cell: ({ row }) => {
+        const date = row.getValue("dataCadastro") as string;
+        if (!date) return null;
+        try {
+            return format(new Date(date), 'dd/MM/yyyy');
+        } catch {
+            return date;
+        }
+    }
+  },
+  {
     accessorKey: "statusMatricula",
     header: "Status",
     cell: ({ row }) => {
@@ -87,8 +102,10 @@ export const columns = ({ onEdit, onDelete, onNewMatricula }: ColumnsProps): Col
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={() => {
-                  navigator.clipboard.writeText(aluno.id);
-                  toast({ title: "ID copiado!", description: "O ID do aluno foi copiado para a área de transferência." });
+                  if (aluno.id) {
+                    navigator.clipboard.writeText(aluno.id);
+                    toast({ title: "ID copiado!", description: "O ID do aluno foi copiado para a área de transferência." });
+                  }
                 }}
               >
                 Copiar ID do aluno
