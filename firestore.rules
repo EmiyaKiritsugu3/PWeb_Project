@@ -126,10 +126,6 @@ service cloud.firestore {
         return request.auth != null && request.auth.uid == funcionarioId;
       }
 
-      function isExistingOwner(funcionarioId) {
-        return isOwner(funcionarioId) && resource != null;
-      }
-
       allow read: if request.auth != null; // Allow any authenticated user to read employee roles
       allow write: if isOwner(funcionarioId); // Only the employee can write to their own document
     }
