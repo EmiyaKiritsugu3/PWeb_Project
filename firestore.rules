@@ -42,7 +42,7 @@ service cloud.firestore {
       function isOwner(alunoId) {
         return request.auth != null && request.auth.uid == alunoId;
       }
-
+      
       // Allow any authenticated employee to list all students.
       allow list: if isFuncionario();
       
