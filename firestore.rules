@@ -34,43 +34,43 @@ service cloud.firestore {
       return request.auth != null && request.auth.uid == userId;
     }
 
-    match /alunos {
-      allow list, create: if request.auth != null; // DEBUG: Allow any authenticated user
-    }
-
     match /alunos/{alunoId} {
-      allow get, update: if isOwner(alunoId) || request.auth != null; // DEBUG: Allow any authenticated user
-      allow delete: if request.auth != null; // DEBUG: Allow any authenticated user
+      // COLLECTION-LEVEL Rules: Apply to the collection as a whole
+      allow list, create: if isFuncionario();
+
+      // DOCUMENT-LEVEL Rules: Apply to specific documents
+      allow get, update: if isOwner(alunoId) || isFuncionario();
+      allow delete: if isFuncionario();
 
       match /matriculas/{matriculaId} {
-        allow get, list: if isOwner(alunoId) || request.auth != null;
-        allow create, update, delete: if request.auth != null;
+        allow get, list: if isOwner(alunoId) || isFuncionario();
+        allow create, update, delete: if isFuncionario();
       }
 
       match /pagamentos/{pagamentoId} {
-        allow get, list: if isOwner(alunoId) || request.auth != null;
-        allow create, update, delete: if request.auth != null;
+        allow get, list: if isOwner(alunoId) || isFuncionario();
+        allow create, update, delete: if isFuncionario();
       }
 
       match /treinos/{treinoId} {
-        allow get, list: if isOwner(alunoId) || request.auth != null;
-        allow create, update, delete: if isOwner(alunoId) || request.auth != null;
+        allow get, list: if isOwner(alunoId) || isFuncionario();
+        allow create, update, delete: if isFuncionario();
 
         match /exercicios/{exercicioId} {
-          allow get, list: if isOwner(alunoId) || request.auth != null;
-          allow create, update, delete: if isOwner(alunoId) || request.auth != null;
+          allow get, list: if isOwner(alunoId) || isFuncionario();
+          allow create, update, delete: if isFuncionario();
         }
       }
     }
 
     match /planos/{planoId} {
-      allow get, list: if true;
-      allow create, update, delete: if false;
+      allow get, list: if request.auth != null;
+      allow create, update, delete: if isFuncionario();
     }
 
     match /funcionarios/{funcionarioId} {
-      allow read: if request.auth != null;
-      allow write: if isOwner(funcionarioId);
+      allow read: if request.auth != null; // Allow any authenticated user to read from funcionarios
+      allow write: if isOwner(funcionarioId); // Only owner can write to their own document
     }
   }
 }
