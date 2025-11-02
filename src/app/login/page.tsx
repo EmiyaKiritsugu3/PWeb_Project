@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dumbbell } from "lucide-react";
-import { useAuth, useUser, useFirestore } from "@/firebase";
+import { useAuth, useUser, useFirestore, FirestorePermissionError, errorEmitter } from "@/firebase";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, UserCredential } from "firebase/auth";
@@ -54,24 +54,29 @@ export default function LoginPage() {
   }, [user, isUserLoading, router]);
 
   // Função para criar/atualizar o documento do funcionário
-  const upsertFuncionarioDocument = async (userCredential: UserCredential) => {
+  const upsertFuncionarioDocument = (userCredential: UserCredential) => {
     const user = userCredential.user;
     if (!firestore) return;
     const funcionarioRef = doc(firestore, "funcionarios", user.uid);
-    try {
-      await setDoc(funcionarioRef, {
-        nomeCompleto: user.displayName || 'Gerente',
-        email: user.email,
-        role: 'GERENTE'
-      }, { merge: true }); // Use merge para não sobrescrever outros campos se já existir
-    } catch (error) {
+    
+    // Non-blocking write
+    setDoc(funcionarioRef, {
+      nomeCompleto: user.displayName || 'Gerente',
+      email: user.email,
+      role: 'GERENTE'
+    }, { merge: true }).catch((error) => {
       console.error("Erro ao criar documento do funcionário:", error);
-      toast({
-        title: "Erro de Sincronização",
-        description: "Não foi possível criar o registro de funcionário no banco de dados.",
-        variant: "destructive",
-      });
-    }
+      const permissionError = new FirestorePermissionError({
+          path: funcionarioRef.path,
+          operation: 'write',
+          requestResourceData: {
+            nomeCompleto: user.displayName || 'Gerente',
+            email: user.email,
+            role: 'GERENTE'
+          },
+        });
+      errorEmitter.emit('permission-error', permissionError);
+    });
   };
 
   const handleFormSubmit = async (data: FormValues) => {
@@ -85,7 +90,7 @@ export default function LoginPage() {
     }
     try {
         const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
-        await upsertFuncionarioDocument(userCredential);
+        upsertFuncionarioDocument(userCredential); // Agora pode funcionar
         toast({
             title: "Login bem-sucedido!",
             description: "Redirecionando para o painel...",
@@ -96,7 +101,7 @@ export default function LoginPage() {
         if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
             try {
                 const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
-                await upsertFuncionarioDocument(userCredential);
+                upsertFuncionarioDocument(userCredential); // Agora pode funcionar
                 toast({
                     title: "Conta de gerente criada!",
                     description: "Redirecionando para o painel...",
