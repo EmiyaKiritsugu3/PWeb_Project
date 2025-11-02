@@ -101,8 +101,16 @@ export default function LoginPage() {
     }
   };
 
-  // Se o usuário já estiver logado, o useEffect cuidará do redirecionamento.
-  // Não há necessidade de exibir uma tela de carregamento aqui.
+  if (isUserLoading || user) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-4">
+          <Dumbbell className="h-12 w-12 animate-pulse text-primary" />
+          <p className="text-muted-foreground">Carregando...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4">
