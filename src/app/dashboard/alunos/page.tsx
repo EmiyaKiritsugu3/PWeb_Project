@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { collection } from "firebase/firestore";
+import { addDoc, collection, doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/page-header";
 import { PlusCircle } from "lucide-react";
@@ -28,11 +28,9 @@ import { useCollection, useFirestore, useMemoFirebase } from "@/firebase";
 export default function AlunosPage() {
   const firestore = useFirestore();
 
-  // Busca os dados da coleção 'alunos' do Firestore em tempo real
-  const alunosQuery = useMemoFirebase(() => collection(firestore, 'alunos'), [firestore]);
-  const { data: alunos, isLoading } = useCollection<Aluno>(alunosQuery);
+  const alunosCollection = useMemoFirebase(() => collection(firestore, 'alunos'), [firestore]);
+  const { data: alunos, isLoading } = useCollection<Aluno>(alunosCollection);
 
-  // Estados para controlar os modais e diálogos
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingAluno, setEditingAluno] = useState<Aluno | null>(null);
 
@@ -64,43 +62,61 @@ export default function AlunosPage() {
     setIsDeleteAlertOpen(true);
   };
 
-  const handleFormSubmit = (data: Omit<Aluno, "id" | "dataCadastro" | "fotoUrl" | "statusMatricula" | "biometriaHash">) => {
-    if (editingAluno) {
-      // Lógica de Edição (será conectada ao Firebase no próximo passo)
-      console.log("Editando aluno:", { ...editingAluno, ...data });
-      toast({
-        title: "Aluno atualizado! (Simulação)",
-        description: `${data.nomeCompleto} foi atualizado com sucesso.`,
-      });
-    } else {
-      // Lógica de Adição (será conectada ao Firebase no próximo passo)
-      const novoAluno: Aluno = {
-        ...data,
-        id: (alunos?.length || 0 + 1).toString(), // ID simples para simulação
-        dataCadastro: new Date().toISOString(),
-        fotoUrl: `https://picsum.photos/seed/${Date.now()}/100/100`,
-        statusMatricula: 'ATIVA',
-      };
-      console.log("Adicionando novo aluno:", novoAluno);
+  const handleFormSubmit = async (data: Omit<Aluno, "id" | "dataCadastro" | "fotoUrl" | "statusMatricula" | "biometriaHash">) => {
+    try {
+      if (editingAluno) {
+        // Lógica de Edição
+        const alunoRef = doc(firestore, "alunos", editingAluno.id);
+        await updateDoc(alunoRef, data);
+        toast({
+          title: "Aluno atualizado!",
+          description: `${data.nomeCompleto} foi atualizado com sucesso.`,
+        });
+      } else {
+        // Lógica de Adição
+        const novoAluno: Omit<Aluno, 'id' | 'biometriaHash'> = {
+          ...data,
+          dataCadastro: new Date().toISOString(),
+          fotoUrl: `https://picsum.photos/seed/${Date.now()}/100/100`,
+          statusMatricula: 'ATIVA',
+        };
+        await addDoc(alunosCollection, novoAluno);
+         toast({
+          title: "Aluno cadastrado!",
+          description: `${novoAluno.nomeCompleto} foi adicionado ao sistema.`,
+        });
+      }
+      setIsFormOpen(false);
+      setEditingAluno(null);
+    } catch (error) {
+       console.error("Erro ao salvar aluno: ", error);
        toast({
-        title: "Aluno cadastrado! (Simulação)",
-        description: `${novoAluno.nomeCompleto} foi adicionado ao sistema.`,
-      });
+        title: "Erro ao salvar",
+        description: "Ocorreu um erro ao salvar o aluno. Tente novamente.",
+        variant: "destructive",
+       });
     }
-    setIsFormOpen(false);
-    setEditingAluno(null);
   };
 
-  const handleDeleteAluno = () => {
-    if (!deletingAluno) return;
+  const handleDeleteAluno = async () => {
+    if (!deletingAluno || !deletingAluno.id) return;
     
-    // Lógica de exclusão (será conectada ao Firebase)
-    console.log("Excluindo aluno:", deletingAluno);
-    
-    toast({
-        title: "Aluno excluído! (Simulação)",
-        description: `${deletingAluno.nomeCompleto} foi removido do sistema.`,
-    });
+    try {
+        const alunoRef = doc(firestore, "alunos", deletingAluno.id);
+        await deleteDoc(alunoRef);
+        toast({
+            title: "Aluno excluído!",
+            description: `${deletingAluno.nomeCompleto} foi removido do sistema.`,
+        });
+    } catch (error) {
+        console.error("Erro ao excluir aluno: ", error);
+        toast({
+            title: "Erro ao excluir",
+            description: "Ocorreu um erro ao excluir o aluno. Tente novamente.",
+            variant: "destructive",
+        });
+    }
+
     setIsDeleteAlertOpen(false);
     setDeletingAluno(null);
   };

@@ -22,7 +22,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
 import type { Aluno } from "@/lib/definitions";
 import React, { useEffect } from "react";
 
@@ -46,7 +45,6 @@ interface FormAlunoProps {
 }
 
 export function FormAluno({ isOpen, onOpenChange, onSubmit, aluno }: FormAlunoProps) {
-  const { toast } = useToast();
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -60,7 +58,14 @@ export function FormAluno({ isOpen, onOpenChange, onSubmit, aluno }: FormAlunoPr
 
   useEffect(() => {
     if (aluno) {
-      form.reset(aluno);
+      // Se a data de nascimento for um timestamp, converta para o formato YYYY-MM-DD
+      const dataNascimentoFormatada = aluno.dataNascimento
+        ? new Date(aluno.dataNascimento).toISOString().split('T')[0]
+        : '';
+      form.reset({
+        ...aluno,
+        dataNascimento: dataNascimentoFormatada,
+      });
     } else {
       form.reset({
         nomeCompleto: "",
@@ -70,11 +75,10 @@ export function FormAluno({ isOpen, onOpenChange, onSubmit, aluno }: FormAlunoPr
         dataNascimento: "",
       });
     }
-  }, [aluno, form]);
+  }, [aluno, isOpen, form]);
 
   const handleFormSubmit = (data: FormValues) => {
     onSubmit(data);
-    onOpenChange(false);
   };
 
   const formatCPF = (value: string) => {
@@ -160,7 +164,7 @@ export function FormAluno({ isOpen, onOpenChange, onSubmit, aluno }: FormAlunoPr
                 <FormItem>
                   <FormLabel>Data de Nascimento</FormLabel>
                   <FormControl>
-                    <Input type="date" {...field} value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''} />
+                    <Input type="date" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
