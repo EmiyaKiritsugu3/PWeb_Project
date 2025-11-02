@@ -42,10 +42,12 @@ service cloud.firestore {
       function isOwner(alunoId) {
         return request.auth != null && request.auth.uid == alunoId;
       }
-      
+
       // Allow any authenticated employee to list all students.
+      allow list: if isFuncionario();
+      
       // Allow any employee to create a new student document.
-      allow list, create: if isFuncionario();
+      allow create: if isFuncionario();
 
       // Allow the owner or an employee to get, update, or delete their document.
       allow get, update: if isOwner(alunoId) || isFuncionario();
