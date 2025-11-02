@@ -43,12 +43,11 @@ service cloud.firestore {
         return request.auth != null && request.auth.uid == alunoId;
       }
       
-      // Allow employees to list all students and create new ones.
+      // Rules for the collection (listing and creating)
       allow list, create: if isFuncionario();
       
-      // Allow the owner or an employee to get or update their own document.
+      // Rules for a specific document (reading, updating, deleting)
       allow get, update: if isOwner(alunoId) || isFuncionario();
-      // Only employees can delete students.
       allow delete: if isFuncionario();
 
       /**
