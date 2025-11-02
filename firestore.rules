@@ -35,34 +35,21 @@ service cloud.firestore {
     }
 
     /**
-     * @description Grants access to student data based on ownership or employee status.
+     * @description Grants access to the students collection and individual documents.
      * @path /alunos/{alunoId}
-     * @allow list if request.auth != null // Any authenticated user (like a manager) can list students.
-     * @allow get if isOwner(alunoId) || isFuncionario()
-     * @allow create if isFuncionario() // Only employees can create students.
-     * @allow update, delete if isOwner(alunoId) || isFuncionario()
-     * @principle Segregates list permissions from document-specific permissions.
      */
     match /alunos/{alunoId} {
       function isOwner(alunoId) {
         return request.auth != null && request.auth.uid == alunoId;
       }
-
-      function isExistingOwner(alunoId) {
-        return isOwner(alunoId) && resource != null;
-      }
-
-      // Any authenticated user (manager, receptionist) can list all students for the management panel.
-      allow list: if request.auth != null; 
-
-      // Only the student themselves or an employee can get, update, or delete a specific student's document.
-      allow get: if isOwner(alunoId) || isFuncionario();
-      allow update: if isOwner(alunoId) || isFuncionario();
-      allow delete: if isFuncionario();
       
-      // Only an employee can create a new student document. The student can't create their own profile directly this way.
-      allow create: if isFuncionario();
+      // Allow any authenticated employee to list all students.
+      // Allow any employee to create a new student document.
+      allow list, create: if isFuncionario();
 
+      // Allow the owner or an employee to get, update, or delete their document.
+      allow get, update: if isOwner(alunoId) || isFuncionario();
+      allow delete: if isFuncionario();
 
       /**
        * @description Grants access to enrollment data based on student ownership.
