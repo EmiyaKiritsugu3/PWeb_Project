@@ -17,10 +17,11 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dumbbell } from "lucide-react";
-import { useAuth, useUser } from "@/firebase";
+import { useAuth, useUser, useFirestore } from "@/firebase";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, UserCredential } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
 
@@ -34,6 +35,7 @@ type FormValues = z.infer<typeof formSchema>;
 export default function LoginPage() {
   const { toast } = useToast();
   const auth = useAuth();
+  const firestore = useFirestore();
   const { user, isUserLoading } = useUser();
   const router = useRouter();
 
@@ -51,6 +53,26 @@ export default function LoginPage() {
     }
   }, [user, isUserLoading, router]);
 
+  // Função para criar/atualizar o documento do funcionário
+  const upsertFuncionarioDocument = async (userCredential: UserCredential) => {
+    const user = userCredential.user;
+    if (!firestore) return;
+    const funcionarioRef = doc(firestore, "funcionarios", user.uid);
+    try {
+      await setDoc(funcionarioRef, {
+        nomeCompleto: user.displayName || 'Gerente',
+        email: user.email,
+        role: 'GERENTE'
+      }, { merge: true }); // Use merge para não sobrescrever outros campos se já existir
+    } catch (error) {
+      console.error("Erro ao criar documento do funcionário:", error);
+      toast({
+        title: "Erro de Sincronização",
+        description: "Não foi possível criar o registro de funcionário no banco de dados.",
+        variant: "destructive",
+      });
+    }
+  };
 
   const handleFormSubmit = async (data: FormValues) => {
     if (!auth) {
@@ -62,7 +84,8 @@ export default function LoginPage() {
         return;
     }
     try {
-        await signInWithEmailAndPassword(auth, data.email, data.password);
+        const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
+        await upsertFuncionarioDocument(userCredential);
         toast({
             title: "Login bem-sucedido!",
             description: "Redirecionando para o painel...",
@@ -71,9 +94,9 @@ export default function LoginPage() {
         router.push('/dashboard');
     } catch (error: any) {
         if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
-            // Se o usuário não existe, tenta criar um novo
             try {
-                await createUserWithEmailAndPassword(auth, data.email, data.password);
+                const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
+                await upsertFuncionarioDocument(userCredential);
                 toast({
                     title: "Conta de gerente criada!",
                     description: "Redirecionando para o painel...",
