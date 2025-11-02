@@ -17,12 +17,9 @@
  *
  * Key Security Decisions:
  * - Aluno data is primarily accessible to the authenticated Aluno.
- * - Funcionario access is role-based but is not enforced in this Prototyping Phase.
- * - Listing of documents is allowed only when it's secure (e.g., listing one's own documents).
+ * - Funcionario access is role-based and validated by checking for their existence in the /funcionarios collection.
+ * - Listing of documents is allowed only when it's secure (e.g., listing one's own documents or employees listing all students).
  * - Plan data is assumed to be public.
- *
- * Denormalization for Authorization:
- * - None: The data structure uses path-based ownership.
  */
 rules_version = '2';
 service cloud.firestore {
@@ -30,7 +27,6 @@ service cloud.firestore {
 
     function isFuncionario() {
       // Allow if the user exists in the 'funcionarios' collection.
-      // This is a basic check. In a real app, you might check for a specific role.
       return request.auth != null && exists(/databases/$(database)/documents/funcionarios/$(request.auth.uid));
     }
     
@@ -39,7 +35,7 @@ service cloud.firestore {
     }
 
     /**
-     * @description Rules for the 'alunos' collection.
+     * @description Rules for the 'alunos' collection as a whole.
      * Allows employees to list and create students.
      * @path /alunos
      */
