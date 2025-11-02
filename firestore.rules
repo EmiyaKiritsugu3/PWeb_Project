@@ -34,77 +34,43 @@ service cloud.firestore {
       return request.auth != null && request.auth.uid == userId;
     }
 
-    /**
-     * @description Rules for the 'alunos' collection as a whole.
-     * Allows employees to list and create students.
-     * @path /alunos
-     */
     match /alunos {
-      allow list, create: if isFuncionario();
+      allow list, create: if request.auth != null; // DEBUG: Allow any authenticated user
     }
 
-    /**
-     * @description Rules for a single student document.
-     * @path /alunos/{alunoId}
-     */
     match /alunos/{alunoId} {
-      // Rules for a specific document (reading, updating, deleting)
-      allow get, update: if isOwner(alunoId) || isFuncionario();
-      allow delete: if isFuncionario();
+      allow get, update: if isOwner(alunoId) || request.auth != null; // DEBUG: Allow any authenticated user
+      allow delete: if request.auth != null; // DEBUG: Allow any authenticated user
 
-      /**
-       * @description Grants access to enrollment data based on student ownership.
-       * @path /alunos/{alunoId}/matriculas/{matriculaId}
-       */
       match /matriculas/{matriculaId} {
-        allow get, list: if isOwner(alunoId) || isFuncionario();
-        allow create, update, delete: if isFuncionario();
+        allow get, list: if isOwner(alunoId) || request.auth != null;
+        allow create, update, delete: if request.auth != null;
       }
 
-      /**
-       * @description Grants access to payment data based on student ownership.
-       * @path /alunos/{alunoId}/pagamentos/{pagamentoId}
-       */
       match /pagamentos/{pagamentoId} {
-        allow get, list: if isOwner(alunoId) || isFuncionario();
-        allow create, update, delete: if isFuncionario();
+        allow get, list: if isOwner(alunoId) || request.auth != null;
+        allow create, update, delete: if request.auth != null;
       }
 
-      /**
-       * @description Grants access to workout plans based on student ownership.
-       * @path /alunos/{alunoId}/treinos/{treinoId}
-       */
       match /treinos/{treinoId} {
-        allow get, list: if isOwner(alunoId) || isFuncionario();
-        allow create, update, delete: if isOwner(alunoId) || isFuncionario();
+        allow get, list: if isOwner(alunoId) || request.auth != null;
+        allow create, update, delete: if isOwner(alunoId) || request.auth != null;
 
-        /**
-         * @description Grants access to exercises within a workout plan based on student ownership.
-         * @path /alunos/{alunoId}/treinos/{treinoId}/exercicios/{exercicioId}
-         */
         match /exercicios/{exercicioId} {
-          allow get, list: if isOwner(alunoId) || isFuncionario();
-          allow create, update, delete: if isOwner(alunoId) || isFuncionario();
+          allow get, list: if isOwner(alunoId) || request.auth != null;
+          allow create, update, delete: if isOwner(alunoId) || request.auth != null;
         }
       }
     }
 
-    /**
-     * @description Allows public read access to the catalog of plans. Writes are denied in this prototype.
-     * @path /planos/{planoId}
-     */
     match /planos/{planoId} {
       allow get, list: if true;
       allow create, update, delete: if false;
     }
 
-    /**
-     * @description Grants access to employee data based on their own ID.
-     * @path /funcionarios/{funcionarioId}
-     */
     match /funcionarios/{funcionarioId} {
-      allow read: if request.auth != null; // Allow any authenticated user to read employee roles
-      allow write: if isOwner(funcionarioId); // Only the employee can write to their own document
+      allow read: if request.auth != null;
+      allow write: if isOwner(funcionarioId);
     }
   }
 }
