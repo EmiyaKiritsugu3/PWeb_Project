@@ -2,6 +2,7 @@
 "use client";
 
 import { useState } from "react";
+import { collection } from "firebase/firestore";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/page-header";
 import { PlusCircle } from "lucide-react";
@@ -21,11 +22,17 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
-import { ALUNOS, PLANOS } from "@/lib/data"; // Usando dados estáticos
+import { PLANOS } from "@/lib/data"; // Planos ainda são estáticos por enquanto
+import { useCollection, useFirestore, useMemoFirebase } from "@/firebase";
 
 export default function AlunosPage() {
-  // Estado local para simular o banco de dados
-  const [alunos, setAlunos] = useState<Aluno[]>(ALUNOS);
+  const firestore = useFirestore();
+
+  // Busca os dados da coleção 'alunos' do Firestore em tempo real
+  const alunosQuery = useMemoFirebase(() => collection(firestore, 'alunos'), [firestore]);
+  const { data: alunos, isLoading } = useCollection<Aluno>(alunosQuery);
+
+  // Estados para controlar os modais e diálogos
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingAluno, setEditingAluno] = useState<Aluno | null>(null);
 
@@ -59,26 +66,24 @@ export default function AlunosPage() {
 
   const handleFormSubmit = (data: Omit<Aluno, "id" | "dataCadastro" | "fotoUrl" | "statusMatricula" | "biometriaHash">) => {
     if (editingAluno) {
-      // Editar aluno existente
-      const updatedAluno = { ...editingAluno, ...data };
-      setAlunos(alunos.map(a => a.id === editingAluno.id ? updatedAluno : a));
+      // Lógica de Edição (será conectada ao Firebase no próximo passo)
+      console.log("Editando aluno:", { ...editingAluno, ...data });
       toast({
-        title: "Aluno atualizado!",
+        title: "Aluno atualizado! (Simulação)",
         description: `${data.nomeCompleto} foi atualizado com sucesso.`,
       });
     } else {
-      // Adicionar novo aluno
+      // Lógica de Adição (será conectada ao Firebase no próximo passo)
       const novoAluno: Aluno = {
         ...data,
-        id: (alunos.length + 1).toString(), // ID simples para simulação
+        id: (alunos?.length || 0 + 1).toString(), // ID simples para simulação
         dataCadastro: new Date().toISOString(),
         fotoUrl: `https://picsum.photos/seed/${Date.now()}/100/100`,
         statusMatricula: 'ATIVA',
-        biometriaHash: "",
       };
-      setAlunos([novoAluno, ...alunos]);
+      console.log("Adicionando novo aluno:", novoAluno);
        toast({
-        title: "Aluno cadastrado!",
+        title: "Aluno cadastrado! (Simulação)",
         description: `${novoAluno.nomeCompleto} foi adicionado ao sistema.`,
       });
     }
@@ -89,10 +94,11 @@ export default function AlunosPage() {
   const handleDeleteAluno = () => {
     if (!deletingAluno) return;
     
-    setAlunos(alunos.filter(a => a.id !== deletingAluno.id));
+    // Lógica de exclusão (será conectada ao Firebase)
+    console.log("Excluindo aluno:", deletingAluno);
     
     toast({
-        title: "Aluno excluído!",
+        title: "Aluno excluído! (Simulação)",
         description: `${deletingAluno.nomeCompleto} foi removido do sistema.`,
     });
     setIsDeleteAlertOpen(false);
@@ -100,25 +106,11 @@ export default function AlunosPage() {
   };
 
   const handleMatriculaSubmit = (aluno: Aluno, plano: Plano) => {
-     // Simular a criação de uma matrícula
-    const dataInicio = new Date();
-    const dataVencimento = new Date();
-    dataVencimento.setDate(dataInicio.getDate() + plano.duracaoDias);
-
-    const novaMatricula: Matricula = {
-      id: `mat-${Date.now()}`,
-      alunoId: aluno.id,
-      planoId: plano.id,
-      dataInicio: dataInicio.toISOString(),
-      dataVencimento: dataVencimento.toISOString(),
-      status: "ATIVA",
-    };
-
-    // Atualizar o status do aluno
-    setAlunos(alunos.map(a => a.id === aluno.id ? { ...a, statusMatricula: 'ATIVA' } : a));
+    // Lógica de matrícula (será conectada ao Firebase)
+    console.log(`Matriculando ${aluno.nomeCompleto} no plano ${plano.nome}`);
 
     toast({
-      title: "Matrícula realizada com sucesso!",
+      title: "Matrícula realizada com sucesso! (Simulação)",
       description: `${aluno.nomeCompleto} foi matriculado(a) no ${plano.nome}.`,
       className: "bg-accent text-accent-foreground",
     });
@@ -170,8 +162,8 @@ export default function AlunosPage() {
       </AlertDialog>
       <DataTable 
         columns={columns({ onEdit: openFormForEdit, onDelete: openDeleteAlert, onNewMatricula: openMatriculaForm })} 
-        data={alunos}
-        isLoading={false} 
+        data={alunos || []}
+        isLoading={isLoading} 
       />
     </>
   );

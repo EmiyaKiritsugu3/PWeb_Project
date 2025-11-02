@@ -4,7 +4,7 @@ import { PlaceHolderImages } from './placeholder-images';
 
 const findImage = (id: string) => PlaceHolderImages.find(img => img.id === id)?.imageUrl || '';
 
-export const ALUNOS: Aluno[] = [
+export const ALUNOS: Omit<Aluno, 'biometriaHash'>[] = [
   {
     id: '1',
     nomeCompleto: 'Ana Silva',
@@ -148,7 +148,7 @@ export const DADOS_DASHBOARD = {
         { mes: "Jun", alunos: 123 },
         { mes: "Jul", alunos: 130 },
         { mes: "Ago", alunos: 138 },
-        { mes: "Set", alunos: 145 },
+        { mesS: "Set", alunos: 145 },
         { mes: "Out", alunos: 150 },
         { mes: "Nov", alunos: 155 },
         { mes: "Dez", alunos: 157 },
