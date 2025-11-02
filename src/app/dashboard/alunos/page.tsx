@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { PLANOS } from "@/lib/data"; // Planos ainda são estáticos por enquanto
-import { useCollection, useFirestore, useMemoFirebase } from "@/firebase";
+import { useCollection, useFirestore, useMemoFirebase, errorEmitter, FirestorePermissionError } from "@/firebase";
 
 export default function AlunosPage() {
   const firestore = useFirestore();
@@ -63,59 +63,70 @@ export default function AlunosPage() {
   };
 
   const handleFormSubmit = async (data: Omit<Aluno, "id" | "dataCadastro" | "fotoUrl" | "statusMatricula" | "biometriaHash">) => {
-    try {
-      if (editingAluno) {
-        // Lógica de Edição
-        const alunoRef = doc(firestore, "alunos", editingAluno.id);
-        await updateDoc(alunoRef, data);
-        toast({
-          title: "Aluno atualizado!",
-          description: `${data.nomeCompleto} foi atualizado com sucesso.`,
+    if (editingAluno) {
+      // Lógica de Edição
+      const alunoRef = doc(firestore, "alunos", editingAluno.id);
+      updateDoc(alunoRef, data)
+        .then(() => {
+          toast({
+            title: "Aluno atualizado!",
+            description: `${data.nomeCompleto} foi atualizado com sucesso.`,
+          });
+        })
+        .catch((error) => {
+          const permissionError = new FirestorePermissionError({
+            path: alunoRef.path,
+            operation: 'update',
+            requestResourceData: data,
+          });
+          errorEmitter.emit('permission-error', permissionError);
         });
-      } else {
-        // Lógica de Adição
-        const novoAluno: Omit<Aluno, 'id' | 'biometriaHash'> = {
-          ...data,
-          dataCadastro: new Date().toISOString(),
-          fotoUrl: `https://picsum.photos/seed/${Date.now()}/100/100`,
-          statusMatricula: 'ATIVA',
-        };
-        await addDoc(alunosCollection, novoAluno);
-         toast({
-          title: "Aluno cadastrado!",
-          description: `${novoAluno.nomeCompleto} foi adicionado ao sistema.`,
+    } else {
+      // Lógica de Adição
+      const novoAluno: Omit<Aluno, 'id' | 'biometriaHash'> = {
+        ...data,
+        dataCadastro: new Date().toISOString(),
+        fotoUrl: `https://picsum.photos/seed/${Date.now()}/100/100`,
+        statusMatricula: 'ATIVA',
+      };
+      addDoc(alunosCollection, novoAluno)
+        .then(() => {
+          toast({
+            title: "Aluno cadastrado!",
+            description: `${novoAluno.nomeCompleto} foi adicionado ao sistema.`,
+          });
+        })
+        .catch((error) => {
+          const permissionError = new FirestorePermissionError({
+            path: alunosCollection.path,
+            operation: 'create',
+            requestResourceData: novoAluno,
+          });
+          errorEmitter.emit('permission-error', permissionError);
         });
-      }
-      setIsFormOpen(false);
-      setEditingAluno(null);
-    } catch (error) {
-       console.error("Erro ao salvar aluno: ", error);
-       toast({
-        title: "Erro ao salvar",
-        description: "Ocorreu um erro ao salvar o aluno. Tente novamente.",
-        variant: "destructive",
-       });
     }
+    setIsFormOpen(false);
+    setEditingAluno(null);
   };
 
   const handleDeleteAluno = async () => {
     if (!deletingAluno || !deletingAluno.id) return;
     
-    try {
-        const alunoRef = doc(firestore, "alunos", deletingAluno.id);
-        await deleteDoc(alunoRef);
-        toast({
-            title: "Aluno excluído!",
-            description: `${deletingAluno.nomeCompleto} foi removido do sistema.`,
+    const alunoRef = doc(firestore, "alunos", deletingAluno.id);
+    deleteDoc(alunoRef)
+        .then(() => {
+            toast({
+                title: "Aluno excluído!",
+                description: `${deletingAluno.nomeCompleto} foi removido do sistema.`,
+            });
+        })
+        .catch((error) => {
+            const permissionError = new FirestorePermissionError({
+                path: alunoRef.path,
+                operation: 'delete',
+            });
+            errorEmitter.emit('permission-error', permissionError);
         });
-    } catch (error) {
-        console.error("Erro ao excluir aluno: ", error);
-        toast({
-            title: "Erro ao excluir",
-            description: "Ocorreu um erro ao excluir o aluno. Tente novamente.",
-            variant: "destructive",
-        });
-    }
 
     setIsDeleteAlertOpen(false);
     setDeletingAluno(null);
