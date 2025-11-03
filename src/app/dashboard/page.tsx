@@ -1,39 +1,70 @@
+
 "use client";
 
+import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageHeader } from "@/components/page-header";
 import { Users, UserCheck, UserX, DollarSign } from "lucide-react";
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts";
-import { DADOS_DASHBOARD } from "@/lib/data";
-
-const kpiData = [
-  {
-    title: "Total de Alunos",
-    value: DADOS_DASHBOARD.totalAlunos.toLocaleString("pt-BR"),
-    icon: <Users className="h-6 w-6 text-muted-foreground" />,
-  },
-  {
-    title: "Matrículas Ativas",
-    value: DADOS_DASHBOARD.matriculasAtivas.toLocaleString("pt-BR"),
-    icon: <UserCheck className="h-6 w-6 text-muted-foreground" />,
-  },
-  {
-    title: "Inadimplentes",
-    value: DADOS_DASHBOARD.alunosInadimplentes.toLocaleString("pt-BR"),
-    icon: <UserX className="h-6 w-6 text-destructive" />,
-    isDestructive: true,
-  },
-  {
-    title: "Faturamento Mensal",
-    value: DADOS_DASHBOARD.faturamentoMensal.toLocaleString("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }),
-    icon: <DollarSign className="h-6 w-6 text-muted-foreground" />,
-  },
-];
+import { DADOS_DASHBOARD, ALUNOS as mockAlunos } from "@/lib/data"; // Mantemos para faturamento e gráfico
+import { useCollection, useFirestore, useMemoFirebase } from "@/firebase";
+import { collection } from "firebase/firestore";
+import type { Aluno } from "@/lib/definitions";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function DashboardPage() {
+  const firestore = useFirestore();
+
+  const alunosCollection = useMemoFirebase(() => 
+    firestore ? collection(firestore, "alunos") : null, 
+    [firestore]
+  );
+  
+  const { data: alunos, isLoading } = useCollection<Aluno>(alunosCollection);
+
+  const kpiData = useMemo(() => {
+    if (isLoading) {
+      return [
+        { title: "Total de Alunos" },
+        { title: "Matrículas Ativas" },
+        { title: "Inadimplentes" },
+        { title: "Faturamento Mensal" },
+      ];
+    }
+
+    const totalAlunos = alunos?.length ?? 0;
+    const matriculasAtivas = alunos?.filter(a => a.statusMatricula === 'ATIVA').length ?? 0;
+    const alunosInadimplentes = alunos?.filter(a => a.statusMatricula === 'INADIMPLENTE').length ?? 0;
+
+    return [
+      {
+        title: "Total de Alunos",
+        value: totalAlunos.toLocaleString("pt-BR"),
+        icon: <Users className="h-6 w-6 text-muted-foreground" />,
+      },
+      {
+        title: "Matrículas Ativas",
+        value: matriculasAtivas.toLocaleString("pt-BR"),
+        icon: <UserCheck className="h-6 w-6 text-muted-foreground" />,
+      },
+      {
+        title: "Inadimplentes",
+        value: alunosInadimplentes.toLocaleString("pt-BR"),
+        icon: <UserX className="h-6 w-6 text-destructive" />,
+        isDestructive: true,
+      },
+      {
+        title: "Faturamento Mensal",
+        value: DADOS_DASHBOARD.faturamentoMensal.toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        }),
+        icon: <DollarSign className="h-6 w-6 text-muted-foreground" />,
+      },
+    ];
+  }, [alunos, isLoading]);
+
+
   return (
     <>
       <PageHeader
@@ -48,13 +79,17 @@ export default function DashboardPage() {
               {kpi.icon}
             </CardHeader>
             <CardContent>
-              <div
-                className={`text-2xl font-bold ${
-                  kpi.isDestructive ? "text-destructive" : ""
-                }`}
-              >
-                {kpi.value}
-              </div>
+              {isLoading ? (
+                <Skeleton className="h-8 w-24" />
+              ) : (
+                <div
+                  className={`text-2xl font-bold ${
+                    kpi.isDestructive ? "text-destructive" : ""
+                  }`}
+                >
+                  {kpi.value}
+                </div>
+              )}
             </CardContent>
           </Card>
         ))}
@@ -97,3 +132,4 @@ export default function DashboardPage() {
     </>
   );
 }
+
