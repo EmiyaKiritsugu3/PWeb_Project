@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -9,23 +10,28 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ALUNOS, EXERCICIOS_BASE } from "@/lib/data";
+import { EXERCICIOS_BASE } from "@/lib/data";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { PlusCircle, Save, Trash2 } from "lucide-react";
-import type { Exercicio } from '@/lib/definitions';
+import type { Aluno, Exercicio } from '@/lib/definitions';
 import { useToast } from '@/hooks/use-toast';
-
+import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
+import { collection } from 'firebase/firestore';
 
 export default function TreinosPage() {
+    const firestore = useFirestore();
+    const alunosCollection = useMemoFirebase(() => firestore ? collection(firestore, 'alunos') : null, [firestore]);
+    const { data: alunos, isLoading: isLoadingAlunos } = useCollection<Aluno>(alunosCollection);
+
     const [selectedAlunoId, setSelectedAlunoId] = useState<string | null>(null);
     const [objetivo, setObjetivo] = useState('');
     const [exercicios, setExercicios] = useState<Partial<Exercicio>[]>([]);
     const { toast } = useToast();
 
-    const selectedAluno = ALUNOS.find(a => a.id === selectedAlunoId);
+    const selectedAluno = alunos?.find(a => a.id === selectedAlunoId);
 
     const handleAddExercicio = () => {
         setExercicios([...exercicios, { id: `${Date.now()}`, nomeExercicio: '', series: 3, repeticoes: '10-12', observacoes: '' }]);
@@ -75,16 +81,19 @@ export default function TreinosPage() {
                 <CardDescription>Escolha um aluno para criar ou visualizar um treino.</CardDescription>
             </CardHeader>
             <CardContent>
-                <Select onValueChange={setSelectedAlunoId} value={selectedAlunoId || ''}>
+                <Select onValueChange={setSelectedAlunoId} value={selectedAlunoId || ''} disabled={isLoadingAlunos}>
                 <SelectTrigger className="w-full md:w-1/2">
-                    <SelectValue placeholder="Selecione um aluno..." />
+                    <SelectValue placeholder={isLoadingAlunos ? "Carregando alunos..." : "Selecione um aluno..."} />
                 </SelectTrigger>
                 <SelectContent>
-                    {ALUNOS.map((aluno) => (
+                    {!isLoadingAlunos && alunos?.map((aluno) => (
                     <SelectItem key={aluno.id} value={aluno.id}>
                         {aluno.nomeCompleto}
                     </SelectItem>
                     ))}
+                     {!isLoadingAlunos && alunos?.length === 0 && (
+                        <div className="p-4 text-center text-sm text-muted-foreground">Nenhum aluno cadastrado.</div>
+                    )}
                 </SelectContent>
                 </Select>
             </CardContent>
