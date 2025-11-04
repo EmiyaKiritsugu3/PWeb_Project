@@ -81,16 +81,69 @@ export const PLANOS: Plano[] = [
 ];
 
 export const EXERCICIOS_BASE: Pick<Exercicio, 'nomeExercicio'>[] = [
+    // Peito
     { nomeExercicio: 'Supino Reto com Barra' },
-    { nomeExercicio: 'Agachamento Livre' },
+    { nomeExercicio: 'Supino Reto com Halteres' },
+    { nomeExercicio: 'Supino Inclinado com Barra' },
+    { nomeExercicio: 'Supino Inclinado com Halteres' },
+    { nomeExercicio: 'Supino Declinado com Barra' },
+    { nomeExercicio: 'Crucifixo Reto com Halteres' },
+    { nomeExercicio: 'Crucifixo Inclinado com Halteres' },
+    { nomeExercicio: 'Peck Deck (Voador)' },
+    { nomeExercicio: 'Flexão de Braço' },
+    
+    // Costas
     { nomeExercicio: 'Levantamento Terra' },
-    { nomeExercicio: 'Remada Curvada' },
-    { nomeExercicio: 'Desenvolvimento Militar' },
-    { nomeExercicio: 'Rosca Direta' },
-    { nomeExercicio: 'Tríceps Pulley' },
+    { nomeExercicio: 'Barra Fixa (Pull-up)' },
+    { nomeExercicio: 'Puxada Frontal com Polia' },
+    { nomeExercicio: 'Remada Curvada com Barra' },
+    { nomeExercicio: 'Remada Cavalinho' },
+    { nomeExercicio: 'Remada Unilateral com Halter (Serrote)' },
+    { nomeExercicio: 'Remada Sentada na Máquina' },
+    { nomeExercicio: 'Pulldown com Corda' },
+
+    // Pernas (Quadríceps, Isquiotibiais e Glúteos)
+    { nomeExercicio: 'Agachamento Livre' },
     { nomeExercicio: 'Leg Press 45°' },
-    { nomeExercicio: 'Puxada Frontal' },
+    { nomeExercicio: 'Cadeira Extensora' },
+    { nomeExercicio: 'Mesa Flexora' },
+    { nomeExercicio: 'Stiff com Barra' },
+    { nomeExercicio: 'Afundo com Halteres' },
+    { nomeExercicio: 'Elevação Pélvica (Hip Thrust)' },
+    { nomeExercicio: 'Cadeira Abdutora' },
+    { nomeExercicio: 'Cadeira Adutora' },
+    
+    // Panturrilhas
+    { nomeExercicio: 'Panturrilha em Pé na Máquina (Gêmeos)' },
+    { nomeExercicio: 'Panturrilha Sentado (Sóleo)' },
+
+    // Ombros
+    { nomeExercicio: 'Desenvolvimento Militar com Barra' },
+    { nomeExercicio: 'Desenvolvimento com Halteres' },
+    { nomeExercicio: 'Elevação Lateral com Halteres' },
+    { nomeExercicio: 'Elevação Frontal com Halteres' },
+    { nomeExercicio: 'Remada Alta' },
+    { nomeExercicio: 'Encolhimento com Halteres (Trapézio)' },
+
+    // Bíceps
+    { nomeExercicio: 'Rosca Direta com Barra' },
+    { nomeExercicio: 'Rosca Alternada com Halteres' },
+    { nomeExercicio: 'Rosca Scott com Barra W' },
+    { nomeExercicio: 'Rosca Martelo' },
+
+    // Tríceps
+    { nomeExercicio: 'Tríceps Pulley com Barra' },
+    { nomeExercicio: 'Tríceps Pulley com Corda' },
+    { nomeExercicio: 'Tríceps Testa com Barra' },
+    { nomeExercicio: 'Mergulho no Banco' },
+
+    // Abdômen
+    { nomeExercicio: 'Abdominal Supra' },
+    { nomeExercicio: 'Abdominal Infra (Elevação de Pernas)' },
+    { nomeExercicio: 'Prancha Isométrica' },
+    { nomeExercicio: 'Abdominal Oblíquo na Polia' },
 ];
+
 
 export const TREINOS: Treino[] = [
     {
@@ -102,10 +155,10 @@ export const TREINOS: Treino[] = [
         ativo: true,
         exercicios: [
             { id: 'ex1', nomeExercicio: 'Supino Reto com Barra', series: 4, repeticoes: '8-10', observacoes: 'Controlar a descida.' },
-            { id: 'ex2', nomeExercicio: 'Remada Curvada', series: 4, repeticoes: '8-10', observacoes: 'Manter a coluna reta.' },
-            { id: 'ex3', nomeExercicio: 'Desenvolvimento Militar', series: 3, repeticoes: '10-12', observacoes: '' },
-            { id: 'ex4', nomeExercicio: 'Rosca Direta', series: 3, repeticoes: '12-15', observacoes: 'Evitar balançar o corpo.' },
-            { id: 'ex5', nomeExercicio: 'Tríceps Pulley', series: 3, repeticoes: '12-15', observacoes: 'Estender completamente os cotovelos.' },
+            { id: 'ex2', nomeExercicio: 'Remada Curvada com Barra', series: 4, repeticoes: '8-10', observacoes: 'Manter a coluna reta.' },
+            { id: 'ex3', nomeExercicio: 'Desenvolvimento Militar com Barra', series: 3, repeticoes: '10-12', observacoes: '' },
+            { id: 'ex4', nomeExercicio: 'Rosca Direta com Barra', series: 3, repeticoes: '12-15', observacoes: 'Evitar balançar o corpo.' },
+            { id: 'ex5', nomeExercicio: 'Tríceps Pulley com Corda', series: 3, repeticoes: '12-15', observacoes: 'Estender completamente os cotovelos.' },
         ]
     },
     {
