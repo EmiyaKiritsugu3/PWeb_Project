@@ -30,12 +30,6 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'www.hipertrofia.org',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
         hostname: 'i.imgur.com',
         port: '',
         pathname: '/**',

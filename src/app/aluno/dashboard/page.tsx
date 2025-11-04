@@ -44,7 +44,6 @@ function ExercicioViewer({ exercicio, isOpen, onOpenChange }: { exercicio: Exerc
                             alt={`Demonstração do exercício ${exercicio.nomeExercicio}`}
                             width={400}
                             height={400}
-                            unoptimized // GIFs não são otimizados pelo Next/Image por padrão
                             className="rounded-lg"
                         />
                     ) : (
