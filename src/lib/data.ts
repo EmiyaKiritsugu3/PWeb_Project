@@ -91,27 +91,27 @@ export const EXERCICIOS_POR_GRUPO: { grupo: string; exercicios: ExercicioData[] 
   {
     grupo: 'Peito',
     exercicios: [
-      { nomeExercicio: 'Supino Reto com Barra', gifUrl: createUrl('Supino Reto') },
-      { nomeExercicio: 'Supino Reto com Halteres', gifUrl: createUrl('Supino Halteres') },
-      { nomeExercicio: 'Supino Inclinado com Barra', gifUrl: createUrl('Supino Inclinado') },
-      { nomeExercicio: 'Supino Inclinado com Halteres' },
-      { nomeExercicio: 'Supino Declinado com Barra' },
+      { nomeExercicio: 'Supino Reto com Barra', gifUrl: 'https://www.hipertrofia.org/blog/wp-content/uploads/2016/06/supino-reto.gif' },
+      { nomeExercicio: 'Supino Reto com Halteres', gifUrl: 'https://www.hipertrofia.org/blog/wp-content/uploads/2019/02/supino-reto-com-halteres.gif' },
+      { nomeExercicio: 'Supino Inclinado com Barra', gifUrl: 'https://www.hipertrofia.org/blog/wp-content/uploads/2016/06/supino-inclinado.gif' },
+      { nomeExercicio: 'Supino Inclinado com Halteres', gifUrl: 'https://www.hipertrofia.org/blog/wp-content/uploads/2019/02/supino-inclinado-com-halteres.gif' },
+      { nomeExercicio: 'Supino Declinado com Barra', gifUrl: 'https://www.hipertrofia.org/blog/wp-content/uploads/2019/02/supino-declinado-com-barra.gif' },
       { nomeExercicio: 'Crucifixo Reto com Halteres' },
       { nomeExercicio: 'Crucifixo Inclinado com Halteres' },
-      { nomeExercicio: 'Peck Deck (Voador)', gifUrl: createUrl('Peck Deck') },
-      { nomeExercicio: 'Flexão de Braço', gifUrl: createUrl('Flexão') },
-      { nomeExercicio: 'Cross Over Polia Alta', gifUrl: createUrl('Cross Over Alto') },
+      { nomeExercicio: 'Peck Deck (Voador)', gifUrl: 'https://www.hipertrofia.org/blog/wp-content/uploads/2019/04/peck-deck.gif' },
+      { nomeExercicio: 'Flexão de Braço' },
+      { nomeExercicio: 'Cross Over Polia Alta', gifUrl: 'https://www.hipertrofia.org/blog/wp-content/uploads/2019/02/cross-over.gif' },
       { nomeExercicio: 'Cross Over Polia Baixa' },
     ]
   },
   {
     grupo: 'Costas',
     exercicios: [
-      { nomeExercicio: 'Levantamento Terra', gifUrl: createUrl('Levantamento\nTerra') },
-      { nomeExercicio: 'Barra Fixa (Pull-up)', gifUrl: createUrl('Barra Fixa') },
+      { nomeExercicio: 'Levantamento Terra', gifUrl: 'https://www.hipertrofia.org/blog/wp-content/uploads/2018/11/levantamento-terra-min.gif' },
+      { nomeExercicio: 'Barra Fixa (Pull-up)' },
       { nomeExercicio: 'Puxada Frontal com Polia' },
       { nomeExercicio: 'Puxada Triângulo' },
-      { nomeExercicio: 'Remada Curvada com Barra', gifUrl: createUrl('Remada Curvada') },
+      { nomeExercicio: 'Remada Curvada com Barra', gifUrl: 'https://www.hipertrofia.org/blog/wp-content/uploads/2021/04/remada-curvada.gif' },
       { nomeExercicio: 'Remada Cavalinho' },
       { nomeExercicio: 'Remada Unilateral com Halter (Serrote)' },
       { nomeExercicio: 'Remada Sentada na Máquina' },
@@ -125,9 +125,9 @@ export const EXERCICIOS_POR_GRUPO: { grupo: string; exercicios: ExercicioData[] 
       { nomeExercicio: 'Agachamento Livre', gifUrl: 'https://i.imgur.com/gI2t3b4.gif' },
       { nomeExercicio: 'Agachamento Smith' },
       { nomeExercicio: 'Agachamento Hack' },
-      { nomeExercicio: 'Leg Press 45°', gifUrl: createUrl('Leg Press 45') },
+      { nomeExercicio: 'Leg Press 45°' },
       { nomeExercicio: 'Leg Press Horizontal' },
-      { nomeExercicio: 'Cadeira Extensora', gifUrl: createUrl('Cadeira Extensora') },
+      { nomeExercicio: 'Cadeira Extensora', gifUrl: 'https://www.hipertrofia.org/blog/wp-content/uploads/2021/04/cadeira-extensora.gif' },
       { nomeExercicio: 'Afundo (Passada)' },
       { nomeExercicio: 'Elevação Pélvica (Hip Thrust)' },
       { nomeExercicio: 'Cadeira Abdutora' },
@@ -136,12 +136,12 @@ export const EXERCICIOS_POR_GRUPO: { grupo: string; exercicios: ExercicioData[] 
   {
     grupo: 'Pernas (Posterior e Glúteos)',
     exercicios: [
-      { nomeExercicio: 'Stiff com Barra', gifUrl: createUrl('Stiff') },
+      { nomeExercicio: 'Stiff com Barra', gifUrl: 'https://www.hipertrofia.org/blog/wp-content/uploads/2021/04/stiff.gif' },
       { nomeExercicio: 'Stiff com Halteres' },
-      { nomeExercicio: 'Mesa Flexora', gifUrl: createUrl('Mesa Flexora') },
+      { nomeExercicio: 'Mesa Flexora' },
       { nomeExercicio: 'Cadeira Flexora' },
       { nomeExercicio: 'Levantamento Terra Romeno' },
-      { nomeExercicio: 'Bom Dia (Good Morning)', gifUrl: createUrl('Good Morning') },
+      { nomeExercicio: 'Bom Dia (Good Morning)' },
     ]
   },
   {
@@ -156,8 +156,8 @@ export const EXERCICIOS_POR_GRUPO: { grupo: string; exercicios: ExercicioData[] 
     grupo: 'Ombros',
     exercicios: [
       { nomeExercicio: 'Desenvolvimento Militar com Barra' },
-      { nomeExercicio: 'Desenvolvimento com Halteres', gifUrl: createUrl('Desenvolvimento\nCom Halteres') },
-      { nomeExercicio: 'Elevação Lateral com Halteres', gifUrl: createUrl('Elevação Lateral') },
+      { nomeExercicio: 'Desenvolvimento com Halteres', gifUrl: 'https://www.hipertrofia.org/blog/wp-content/uploads/2021/04/desenvolvimento-com-halteres.gif' },
+      { nomeExercicio: 'Elevação Lateral com Halteres', gifUrl: 'https://www.hipertrofia.org/blog/wp-content/uploads/2021/04/elevacao-lateral.gif' },
       { nomeExercicio: 'Elevação Frontal com Halteres' },
       { nomeExercicio: 'Elevação Lateral na Polia' },
       { nomeExercicio: 'Crucifixo Inverso na Polia' },
@@ -175,7 +175,7 @@ export const EXERCICIOS_POR_GRUPO: { grupo: string; exercicios: ExercicioData[] 
   {
     grupo: 'Bíceps',
     exercicios: [
-      { nomeExercicio: 'Rosca Direta com Barra', gifUrl: createUrl('Rosca Direta') },
+      { nomeExercicio: 'Rosca Direta com Barra', gifUrl: 'https://www.hipertrofia.org/blog/wp-content/uploads/2021/04/rosca-direta-com-barra.gif' },
       { nomeExercicio: 'Rosca Alternada com Halteres' },
       { nomeExercicio: 'Rosca Scott com Barra W' },
       { nomeExercicio: 'Rosca Concentrada' },
@@ -187,7 +187,7 @@ export const EXERCICIOS_POR_GRUPO: { grupo: string; exercicios: ExercicioData[] 
     grupo: 'Tríceps',
     exercicios: [
       { nomeExercicio: 'Tríceps Pulley com Barra' },
-      { nomeExercicio: 'Tríceps Pulley com Corda', gifUrl: createUrl('Tríceps Corda') },
+      { nomeExercicio: 'Tríceps Pulley com Corda' },
       { nomeExercicio: 'Tríceps Testa com Barra' },
       { nomeExercicio: 'Tríceps Francês com Halter' },
       { nomeExercicio: 'Mergulho no Banco' },
@@ -199,7 +199,7 @@ export const EXERCICIOS_POR_GRUPO: { grupo: string; exercicios: ExercicioData[] 
     exercicios: [
       { nomeExercicio: 'Abdominal Supra (Crunch)' },
       { nomeExercicio: 'Abdominal Infra (Elevação de Pernas)' },
-      { nomeExercicio: 'Prancha Isométrica', gifUrl: createUrl('Prancha') },
+      { nomeExercicio: 'Prancha Isométrica' },
       { nomeExercicio: 'Abdominal na Roda (Ab Wheel)' },
       { nomeExercicio: 'Abdominal Oblíquo (Giro Russo)' },
       { nomeExercicio: 'Abdominal na Polia Alta' },
@@ -217,11 +217,11 @@ export const TREINOS: Treino[] = [
         dataCriacao: '2024-01-15',
         ativo: true,
         exercicios: [
-            { id: 'ex1', nomeExercicio: 'Supino Reto com Barra', series: 4, repeticoes: '8-10', observacoes: 'Controlar a descida.', gifUrl: createUrl('Supino Reto') },
-            { id: 'ex2', nomeExercicio: 'Remada Curvada com Barra', series: 4, repeticoes: '8-10', observacoes: 'Manter a coluna reta.', gifUrl: createUrl('Remada Curvada') },
-            { id: 'ex3', nomeExercicio: 'Desenvolvimento Militar com Barra', series: 3, repeticoes: '10-12', observacoes: '' },
-            { id: 'ex4', nomeExercicio: 'Rosca Direta com Barra', series: 3, repeticoes: '12-15', observacoes: 'Evitar balançar o corpo.', gifUrl: createUrl('Rosca Direta') },
-            { id: 'ex5', nomeExercicio: 'Tríceps Pulley com Corda', series: 3, repeticoes: '12-15', observacoes: 'Estender completamente os cotovelos.', gifUrl: createUrl('Tríceps Corda') },
+            { id: 'ex1', nomeExercicio: 'Supino Reto com Barra', series: 4, repeticoes: '8-10', observacoes: 'Controlar a descida.', gifUrl: 'https://www.hipertrofia.org/blog/wp-content/uploads/2016/06/supino-reto.gif' },
+            { id: 'ex2', nomeExercicio: 'Remada Curvada com Barra', series: 4, repeticoes: '8-10', observacoes: 'Manter a coluna reta.', gifUrl: 'https://www.hipertrofia.org/blog/wp-content/uploads/2021/04/remada-curvada.gif' },
+            { id: 'ex3', nomeExercicio: 'Desenvolvimento com Halteres', series: 3, repeticoes: '10-12', observacoes: '', gifUrl: 'https://www.hipertrofia.org/blog/wp-content/uploads/2021/04/desenvolvimento-com-halteres.gif' },
+            { id: 'ex4', nomeExercicio: 'Rosca Direta com Barra', series: 3, repeticoes: '12-15', observacoes: 'Evitar balançar o corpo.', gifUrl: 'https://www.hipertrofia.org/blog/wp-content/uploads/2021/04/rosca-direta-com-barra.gif' },
+            { id: 'ex5', nomeExercicio: 'Tríceps Pulley com Corda', series: 3, repeticoes: '12-15', observacoes: 'Estender completamente os cotovelos.' },
         ]
     },
     {
@@ -233,8 +233,8 @@ export const TREINOS: Treino[] = [
         ativo: true,
         exercicios: [
              { id: 'ex6', nomeExercicio: 'Agachamento Livre', series: 5, repeticoes: '15-20', observacoes: 'Foco na amplitude.', gifUrl: 'https://i.imgur.com/gI2t3b4.gif' },
-             { id: 'ex7', nomeExercicio: 'Levantamento Terra', series: 3, repeticoes: '10', observacoes: 'Cuidado com a lombar.', gifUrl: createUrl('Levantamento\nTerra') },
-             { id: 'ex8', nomeExercicio: 'Leg Press 45°', series: 4, repeticoes: '15', observacoes: 'Não travar os joelhos.', gifUrl: createUrl('Leg Press 45') },
+             { id: 'ex7', nomeExercicio: 'Levantamento Terra', series: 3, repeticoes: '10', observacoes: 'Cuidado com a lombar.', gifUrl: 'https://www.hipertrofia.org/blog/wp-content/uploads/2018/11/levantamento-terra-min.gif' },
+             { id: 'ex8', nomeExercicio: 'Leg Press 45°', series: 4, repeticoes: '15', observacoes: 'Não travar os joelhos.' },
         ]
     },
     {
