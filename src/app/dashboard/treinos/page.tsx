@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from 'react';
@@ -20,6 +19,12 @@ import type { Aluno, Exercicio } from '@/lib/definitions';
 import { useToast } from '@/hooks/use-toast';
 import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
 import { collection } from 'firebase/firestore';
+import { Combobox } from '@/components/ui/combobox';
+
+const exerciciosOptions = EXERCICIOS_BASE.map(ex => ({
+    value: ex.nomeExercicio,
+    label: ex.nomeExercicio
+}));
 
 export default function TreinosPage() {
     const firestore = useFirestore();
@@ -46,10 +51,10 @@ export default function TreinosPage() {
     };
 
     const handleSaveTreino = () => {
-        if (!selectedAlunoId || !objetivo || exercicios.length === 0) {
+        if (!selectedAlunoId || !objetivo || exercicios.length === 0 || exercicios.some(e => !e.nomeExercicio)) {
             toast({
                 title: "Erro ao salvar",
-                description: "Preencha todos os campos do treino antes de salvar.",
+                description: "Preencha o aluno, objetivo e todos os exercícios antes de salvar.",
                 variant: "destructive"
             });
             return;
@@ -117,7 +122,14 @@ export default function TreinosPage() {
                             <div key={exercicio.id} className="grid grid-cols-[1fr_auto_auto_1fr_auto] items-end gap-3 rounded-md border p-4">
                                 <div className="grid gap-2">
                                      {index === 0 && <Label>Nome do Exercício</Label>}
-                                     <Input placeholder="Ex: Supino Reto" value={exercicio.nomeExercicio} onChange={(e) => handleExercicioChange(exercicio.id!, 'nomeExercicio', e.target.value)}/>
+                                     <Combobox 
+                                        options={exerciciosOptions} 
+                                        value={exercicio.nomeExercicio}
+                                        onChange={(value) => handleExercicioChange(exercicio.id!, 'nomeExercicio', value)}
+                                        placeholder='Selecione um exercício...'
+                                        searchPlaceholder='Buscar exercício...'
+                                        notFoundMessage='Nenhum exercício encontrado.'
+                                     />
                                 </div>
                                 <div className="grid gap-2">
                                      {index === 0 && <Label>Séries</Label>}
