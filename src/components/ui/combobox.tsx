@@ -12,7 +12,6 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-  CommandSeparator,
 } from "@/components/ui/command"
 import {
   Popover,
@@ -24,6 +23,7 @@ import {
 interface Option {
     value: string;
     label: string;
+    keywords?: string[];
 }
 
 interface GroupedOption {
@@ -80,6 +80,7 @@ export function Combobox({
                         <CommandItem
                         key={option.value}
                         value={option.value}
+                        keywords={option.keywords}
                         onSelect={(currentValue) => {
                             onChange(currentValue === value ? "" : currentValue)
                             setOpen(false)
@@ -102,3 +103,5 @@ export function Combobox({
     </Popover>
   )
 }
+
+    

@@ -26,7 +26,8 @@ const exerciciosOptions = EXERCICIOS_POR_GRUPO.map(grupo => ({
     label: grupo.grupo,
     options: grupo.exercicios.map(ex => ({
         value: ex.nomeExercicio,
-        label: ex.nomeExercicio
+        label: ex.nomeExercicio,
+        keywords: [grupo.grupo] // Adiciona o nome do grupo como keyword
     }))
 }));
 
@@ -136,7 +137,7 @@ export default function TreinosPage() {
                                         value={exercicio.nomeExercicio}
                                         onChange={(value) => handleExercicioChange(exercicio.id!, 'nomeExercicio', value)}
                                         placeholder='Selecione um exercício...'
-                                        searchPlaceholder='Buscar exercício...'
+                                        searchPlaceholder='Buscar exercício ou grupo...'
                                         notFoundMessage='Nenhum exercício encontrado.'
                                      />
                                 </div>
@@ -175,3 +176,5 @@ export default function TreinosPage() {
         </>
     );
 }
+
+    
