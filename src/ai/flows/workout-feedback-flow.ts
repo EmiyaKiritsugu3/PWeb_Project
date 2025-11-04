@@ -49,10 +49,9 @@ const feedbackPrompt = ai.definePrompt({
     - Exercícios Concluídos: 
       {{#each completedExercises}}
       - {{{this}}}
-      {{/each}}
-      {{#if (eq completedExercises.length 0)}}
+      {{else}}
         Nenhum exercício concluído.
-      {{/if}}
+      {{/each}}
 
     Com base nisso, gere uma resposta seguindo o formato de saída.
     
