@@ -2,16 +2,62 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useUser } from "@/firebase";
 import { ALUNOS, TREINOS } from "@/lib/data";
-import type { Treino, Aluno } from "@/lib/definitions";
+import type { Treino, Aluno, Exercicio } from "@/lib/definitions";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Sparkles, BrainCircuit } from "lucide-react";
+import { Sparkles, BrainCircuit, PlayCircle } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { generateWorkoutFeedback } from "@/ai/flows/workout-feedback-flow";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+} from "@/components/ui/alert-dialog";
+
+
+// Componente para o Modal de Visualização do Exercício
+function ExercicioViewer({ exercicio, isOpen, onOpenChange }: { exercicio: Exercicio | null; isOpen: boolean; onOpenChange: (open: boolean) => void; }) {
+    if (!exercicio) return null;
+
+    return (
+        <AlertDialog open={isOpen} onOpenChange={onOpenChange}>
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                    <AlertDialogTitle>{exercicio.nomeExercicio}</AlertDialogTitle>
+                    <AlertDialogDescription>
+                        Visualize a execução correta do exercício.
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+                <div className="flex justify-center items-center p-4">
+                    {exercicio.gifUrl ? (
+                         <Image
+                            src={exercicio.gifUrl}
+                            alt={`Demonstração do exercício ${exercicio.nomeExercicio}`}
+                            width={400}
+                            height={400}
+                            unoptimized // GIFs não são otimizados pelo Next/Image por padrão
+                            className="rounded-lg"
+                        />
+                    ) : (
+                        <p className="text-muted-foreground">Nenhuma visualização disponível.</p>
+                    )}
+                </div>
+                <AlertDialogFooter>
+                    <AlertDialogCancel>Fechar</AlertDialogCancel>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
+    );
+}
 
 // Componente para o Card de Matrícula
 function CardMatricula({ aluno }: { aluno: Aluno | undefined }) {
@@ -63,11 +109,13 @@ function CardMatricula({ aluno }: { aluno: Aluno | undefined }) {
 function CardTreino({ 
     treino, 
     onFinishTraining, 
-    isFeedbackLoading 
+    isFeedbackLoading,
+    onViewExercicio
 }: { 
     treino: Treino | undefined;
     onFinishTraining: (completedExercises: string[]) => void;
     isFeedbackLoading: boolean;
+    onViewExercicio: (exercicio: Exercicio) => void;
 }) {
     const [checkedExercises, setCheckedExercises] = useState<Record<string, boolean>>({});
 
@@ -124,14 +172,14 @@ function CardTreino({
             <CardContent className="grid gap-4">
                 {allExercises.map((exercicio) => (
                     <div key={exercicio.id} className={cn("rounded-lg border p-4 transition-all", checkedExercises[exercicio.id] && "bg-accent/50")}>
-                        <div className="flex items-start gap-4">
+                        <div className="flex items-center gap-4">
                              <Checkbox
                                 id={exercicio.id}
                                 checked={checkedExercises[exercicio.id] || false}
                                 onCheckedChange={() => handleCheckChange(exercicio.id)}
                                 className="mt-1 h-5 w-5"
                             />
-                            <div className="grid gap-1">
+                            <div className="grid flex-1 gap-1">
                                 <label htmlFor={exercicio.id} className="font-bold text-base cursor-pointer">{exercicio.nomeExercicio}</label>
                                 <p className="text-sm text-muted-foreground">
                                     <span className="font-medium text-foreground">{exercicio.series} séries</span> de <span className="font-medium text-foreground">{exercicio.repeticoes} repetições</span>
@@ -142,6 +190,11 @@ function CardTreino({
                                     </p>
                                 )}
                             </div>
+                             {exercicio.gifUrl && (
+                                <Button variant="ghost" size="icon" onClick={() => onViewExercicio(exercicio)}>
+                                    <PlayCircle className="h-6 w-6 text-muted-foreground" />
+                                </Button>
+                            )}
                         </div>
                     </div>
                 ))}
@@ -190,7 +243,7 @@ function CardFeedback({ feedback, isLoading }: { feedback: { title: string; mess
                 </CardTitle>
             </CardHeader>
             <CardContent>
-                <p className="text-accent/90">{feedback.message}</p>
+                <p className="text-accent">{feedback.message}</p>
             </CardContent>
         </Card>
     )
@@ -205,6 +258,16 @@ export default function AlunoDashboardPage() {
 
     const [feedback, setFeedback] = useState<{ title: string; message: string; } | null>(null);
     const [isFeedbackLoading, setIsFeedbackLoading] = useState(false);
+    
+    const [isViewerOpen, setIsViewerOpen] = useState(false);
+    const [selectedExercicio, setSelectedExercicio] = useState<Exercicio | null>(null);
+
+
+    const handleViewExercicio = (exercicio: Exercicio) => {
+        setSelectedExercicio(exercicio);
+        setIsViewerOpen(true);
+    };
+
 
     const handleFinishTraining = async (completedExercises: string[]) => {
         if (!treinoAtivo) return;
@@ -238,22 +301,29 @@ export default function AlunoDashboardPage() {
 
 
     return (
-       <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-3 lg:gap-8">
-            {/* Coluna principal com o treino */}
-            <div className="col-span-1 grid auto-rows-max items-start gap-6 lg:col-span-2 lg:gap-8">
-                <CardTreino 
-                    treino={treinoAtivo} 
-                    onFinishTraining={handleFinishTraining}
-                    isFeedbackLoading={isFeedbackLoading}
-                />
-            </div>
+       <>
+            <ExercicioViewer 
+                exercicio={selectedExercicio}
+                isOpen={isViewerOpen}
+                onOpenChange={setIsViewerOpen}
+            />
+            <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-3 lg:gap-8">
+                    {/* Coluna principal com o treino */}
+                    <div className="col-span-1 grid auto-rows-max items-start gap-6 lg:col-span-2 lg:gap-8">
+                        <CardTreino 
+                            treino={treinoAtivo} 
+                            onFinishTraining={handleFinishTraining}
+                            isFeedbackLoading={isFeedbackLoading}
+                            onViewExercicio={handleViewExercicio}
+                        />
+                    </div>
 
-            {/* Coluna lateral com status e feedback */}
-            <div className="col-span-1 grid auto-rows-max items-start gap-6 lg:gap-8">
-                <CardMatricula aluno={aluno} />
-                <CardFeedback feedback={feedback} isLoading={isFeedbackLoading} />
+                    {/* Coluna lateral com status e feedback */}
+                    <div className="col-span-1 grid auto-rows-max items-start gap-6 lg:gap-8">
+                        <CardMatricula aluno={aluno} />
+                        <CardFeedback feedback={feedback} isLoading={isFeedbackLoading} />
+                    </div>
             </div>
-       </div>
+       </>
     );
 }
-

@@ -27,12 +27,17 @@ const exerciciosOptions = EXERCICIOS_POR_GRUPO.map(grupo => ({
     options: grupo.exercicios.map(ex => ({
         value: ex.nomeExercicio,
         label: ex.nomeExercicio,
-        keywords: [grupo.grupo] // Adiciona o nome do grupo como keyword
+        keywords: [grupo.grupo], // Adiciona o nome do grupo como keyword
+        gifUrl: ex.gifUrl,
     }))
 }));
 
 // Cria uma lista plana para facilitar a busca do valor
-const flatExerciciosOptions = EXERCICIOS_POR_GRUPO.flatMap(g => g.exercicios.map(ex => ({ value: ex.nomeExercicio, label: ex.nomeExercicio })));
+const flatExerciciosOptions = EXERCICIOS_POR_GRUPO.flatMap(g => g.exercicios.map(ex => ({ 
+    value: ex.nomeExercicio, 
+    label: ex.nomeExercicio,
+    gifUrl: ex.gifUrl,
+})));
 
 
 export default function TreinosPage() {
@@ -56,7 +61,20 @@ export default function TreinosPage() {
     };
 
     const handleExercicioChange = (id: string, field: keyof Exercicio, value: string | number) => {
-        setExercicios(exercicios.map(ex => ex.id === id ? { ...ex, [field]: value } : ex));
+        setExercicios(exercicios.map(ex => {
+            if (ex.id !== id) return ex;
+
+            // Quando o nome do exercício muda, atualiza também a URL do GIF
+            if (field === 'nomeExercicio' && typeof value === 'string') {
+                const selectedOption = flatExerciciosOptions.find(opt => opt.value === value);
+                return { 
+                    ...ex, 
+                    nomeExercicio: value,
+                    gifUrl: selectedOption?.gifUrl // Atualiza o GIF
+                };
+            }
+            return { ...ex, [field]: value };
+        }));
     };
 
     const handleSaveTreino = () => {
@@ -176,5 +194,3 @@ export default function TreinosPage() {
         </>
     );
 }
-
-    

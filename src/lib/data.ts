@@ -80,32 +80,38 @@ export const PLANOS: Plano[] = [
   { id: '4', nome: 'Plano Anual', preco: 1080, duracaoDias: 365 },
 ];
 
+type ExercicioData = {
+    nomeExercicio: string;
+    gifUrl?: string;
+}
 
-export const EXERCICIOS_POR_GRUPO = [
+const createUrl = (text: string) => `https://placehold.co/400x400.gif/EBF5FF/1E40AF?text=${encodeURIComponent(text)}`
+
+export const EXERCICIOS_POR_GRUPO: { grupo: string; exercicios: ExercicioData[] }[] = [
   {
     grupo: 'Peito',
     exercicios: [
-      { nomeExercicio: 'Supino Reto com Barra' },
-      { nomeExercicio: 'Supino Reto com Halteres' },
-      { nomeExercicio: 'Supino Inclinado com Barra' },
+      { nomeExercicio: 'Supino Reto com Barra', gifUrl: createUrl('Supino Reto') },
+      { nomeExercicio: 'Supino Reto com Halteres', gifUrl: createUrl('Supino Halteres') },
+      { nomeExercicio: 'Supino Inclinado com Barra', gifUrl: createUrl('Supino Inclinado') },
       { nomeExercicio: 'Supino Inclinado com Halteres' },
       { nomeExercicio: 'Supino Declinado com Barra' },
       { nomeExercicio: 'Crucifixo Reto com Halteres' },
       { nomeExercicio: 'Crucifixo Inclinado com Halteres' },
-      { nomeExercicio: 'Peck Deck (Voador)' },
-      { nomeExercicio: 'Flexão de Braço' },
-      { nomeExercicio: 'Cross Over Polia Alta' },
+      { nomeExercicio: 'Peck Deck (Voador)', gifUrl: createUrl('Peck Deck') },
+      { nomeExercicio: 'Flexão de Braço', gifUrl: createUrl('Flexão') },
+      { nomeExercicio: 'Cross Over Polia Alta', gifUrl: createUrl('Cross Over Alto') },
       { nomeExercicio: 'Cross Over Polia Baixa' },
     ]
   },
   {
     grupo: 'Costas',
     exercicios: [
-      { nomeExercicio: 'Levantamento Terra' },
-      { nomeExercicio: 'Barra Fixa (Pull-up)' },
+      { nomeExercicio: 'Levantamento Terra', gifUrl: createUrl('Levantamento\nTerra') },
+      { nomeExercicio: 'Barra Fixa (Pull-up)', gifUrl: createUrl('Barra Fixa') },
       { nomeExercicio: 'Puxada Frontal com Polia' },
       { nomeExercicio: 'Puxada Triângulo' },
-      { nomeExercicio: 'Remada Curvada com Barra' },
+      { nomeExercicio: 'Remada Curvada com Barra', gifUrl: createUrl('Remada Curvada') },
       { nomeExercicio: 'Remada Cavalinho' },
       { nomeExercicio: 'Remada Unilateral com Halter (Serrote)' },
       { nomeExercicio: 'Remada Sentada na Máquina' },
@@ -116,12 +122,12 @@ export const EXERCICIOS_POR_GRUPO = [
   {
     grupo: 'Pernas (Quadríceps e Glúteos)',
     exercicios: [
-      { nomeExercicio: 'Agachamento Livre' },
+      { nomeExercicio: 'Agachamento Livre', gifUrl: createUrl('Agachamento') },
       { nomeExercicio: 'Agachamento Smith' },
       { nomeExercicio: 'Agachamento Hack' },
-      { nomeExercicio: 'Leg Press 45°' },
+      { nomeExercicio: 'Leg Press 45°', gifUrl: createUrl('Leg Press 45') },
       { nomeExercicio: 'Leg Press Horizontal' },
-      { nomeExercicio: 'Cadeira Extensora' },
+      { nomeExercicio: 'Cadeira Extensora', gifUrl: createUrl('Cadeira Extensora') },
       { nomeExercicio: 'Afundo (Passada)' },
       { nomeExercicio: 'Elevação Pélvica (Hip Thrust)' },
       { nomeExercicio: 'Cadeira Abdutora' },
@@ -130,12 +136,12 @@ export const EXERCICIOS_POR_GRUPO = [
   {
     grupo: 'Pernas (Posterior e Glúteos)',
     exercicios: [
-      { nomeExercicio: 'Stiff com Barra' },
+      { nomeExercicio: 'Stiff com Barra', gifUrl: createUrl('Stiff') },
       { nomeExercicio: 'Stiff com Halteres' },
-      { nomeExercicio: 'Mesa Flexora' },
+      { nomeExercicio: 'Mesa Flexora', gifUrl: createUrl('Mesa Flexora') },
       { nomeExercicio: 'Cadeira Flexora' },
       { nomeExercicio: 'Levantamento Terra Romeno' },
-      { nomeExercicio: 'Bom Dia (Good Morning)' },
+      { nomeExercicio: 'Bom Dia (Good Morning)', gifUrl: createUrl('Good Morning') },
     ]
   },
   {
@@ -150,8 +156,8 @@ export const EXERCICIOS_POR_GRUPO = [
     grupo: 'Ombros',
     exercicios: [
       { nomeExercicio: 'Desenvolvimento Militar com Barra' },
-      { nomeExercicio: 'Desenvolvimento com Halteres' },
-      { nomeExercicio: 'Elevação Lateral com Halteres' },
+      { nomeExercicio: 'Desenvolvimento com Halteres', gifUrl: createUrl('Desenvolvimento\nCom Halteres') },
+      { nomeExercicio: 'Elevação Lateral com Halteres', gifUrl: createUrl('Elevação Lateral') },
       { nomeExercicio: 'Elevação Frontal com Halteres' },
       { nomeExercicio: 'Elevação Lateral na Polia' },
       { nomeExercicio: 'Crucifixo Inverso na Polia' },
@@ -169,7 +175,7 @@ export const EXERCICIOS_POR_GRUPO = [
   {
     grupo: 'Bíceps',
     exercicios: [
-      { nomeExercicio: 'Rosca Direta com Barra' },
+      { nomeExercicio: 'Rosca Direta com Barra', gifUrl: createUrl('Rosca Direta') },
       { nomeExercicio: 'Rosca Alternada com Halteres' },
       { nomeExercicio: 'Rosca Scott com Barra W' },
       { nomeExercicio: 'Rosca Concentrada' },
@@ -181,7 +187,7 @@ export const EXERCICIOS_POR_GRUPO = [
     grupo: 'Tríceps',
     exercicios: [
       { nomeExercicio: 'Tríceps Pulley com Barra' },
-      { nomeExercicio: 'Tríceps Pulley com Corda' },
+      { nomeExercicio: 'Tríceps Pulley com Corda', gifUrl: createUrl('Tríceps Corda') },
       { nomeExercicio: 'Tríceps Testa com Barra' },
       { nomeExercicio: 'Tríceps Francês com Halter' },
       { nomeExercicio: 'Mergulho no Banco' },
@@ -193,7 +199,7 @@ export const EXERCICIOS_POR_GRUPO = [
     exercicios: [
       { nomeExercicio: 'Abdominal Supra (Crunch)' },
       { nomeExercicio: 'Abdominal Infra (Elevação de Pernas)' },
-      { nomeExercicio: 'Prancha Isométrica' },
+      { nomeExercicio: 'Prancha Isométrica', gifUrl: createUrl('Prancha') },
       { nomeExercicio: 'Abdominal na Roda (Ab Wheel)' },
       { nomeExercicio: 'Abdominal Oblíquo (Giro Russo)' },
       { nomeExercicio: 'Abdominal na Polia Alta' },
@@ -211,11 +217,11 @@ export const TREINOS: Treino[] = [
         dataCriacao: '2024-01-15',
         ativo: true,
         exercicios: [
-            { id: 'ex1', nomeExercicio: 'Supino Reto com Barra', series: 4, repeticoes: '8-10', observacoes: 'Controlar a descida.' },
-            { id: 'ex2', nomeExercicio: 'Remada Curvada com Barra', series: 4, repeticoes: '8-10', observacoes: 'Manter a coluna reta.' },
+            { id: 'ex1', nomeExercicio: 'Supino Reto com Barra', series: 4, repeticoes: '8-10', observacoes: 'Controlar a descida.', gifUrl: createUrl('Supino Reto') },
+            { id: 'ex2', nomeExercicio: 'Remada Curvada com Barra', series: 4, repeticoes: '8-10', observacoes: 'Manter a coluna reta.', gifUrl: createUrl('Remada Curvada') },
             { id: 'ex3', nomeExercicio: 'Desenvolvimento Militar com Barra', series: 3, repeticoes: '10-12', observacoes: '' },
-            { id: 'ex4', nomeExercicio: 'Rosca Direta com Barra', series: 3, repeticoes: '12-15', observacoes: 'Evitar balançar o corpo.' },
-            { id: 'ex5', nomeExercicio: 'Tríceps Pulley com Corda', series: 3, repeticoes: '12-15', observacoes: 'Estender completamente os cotovelos.' },
+            { id: 'ex4', nomeExercicio: 'Rosca Direta com Barra', series: 3, repeticoes: '12-15', observacoes: 'Evitar balançar o corpo.', gifUrl: createUrl('Rosca Direta') },
+            { id: 'ex5', nomeExercicio: 'Tríceps Pulley com Corda', series: 3, repeticoes: '12-15', observacoes: 'Estender completamente os cotovelos.', gifUrl: createUrl('Tríceps Corda') },
         ]
     },
     {
@@ -226,9 +232,9 @@ export const TREINOS: Treino[] = [
         dataCriacao: '2024-01-20',
         ativo: true,
         exercicios: [
-             { id: 'ex6', nomeExercicio: 'Agachamento Livre', series: 5, repeticoes: '15-20', observacoes: 'Foco na amplitude.' },
-             { id: 'ex7', nomeExercicio: 'Levantamento Terra', series: 3, repeticoes: '10', observacoes: 'Cuidado com a lombar.' },
-             { id: 'ex8', nomeExercicio: 'Leg Press 45°', series: 4, repeticoes: '15', observacoes: 'Não travar os joelhos.' },
+             { id: 'ex6', nomeExercicio: 'Agachamento Livre', series: 5, repeticoes: '15-20', observacoes: 'Foco na amplitude.', gifUrl: createUrl('Agachamento') },
+             { id: 'ex7', nomeExercicio: 'Levantamento Terra', series: 3, repeticoes: '10', observacoes: 'Cuidado com a lombar.', gifUrl: createUrl('Levantamento\nTerra') },
+             { id: 'ex8', nomeExercicio: 'Leg Press 45°', series: 4, repeticoes: '15', observacoes: 'Não travar os joelhos.', gifUrl: createUrl('Leg Press 45') },
         ]
     },
     {
@@ -239,7 +245,7 @@ export const TREINOS: Treino[] = [
         dataCriacao: '2023-11-15',
         ativo: false, // Treino antigo
         exercicios: [
-             { id: 'ex9', nomeExercicio: 'Agachamento Livre', series: 4, repeticoes: '8-10', observacoes: '' },
+             { id: 'ex9', nomeExercicio: 'Agachamento Livre', series: 4, repeticoes: '8-10', observacoes: '', gifUrl: createUrl('Agachamento') },
         ]
     }
 ];
