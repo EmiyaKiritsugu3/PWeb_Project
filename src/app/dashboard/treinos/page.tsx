@@ -151,7 +151,6 @@ export default function TreinosPage() {
                                      {index === 0 && <Label>Nome do Exercício</Label>}
                                      <Combobox 
                                         options={exerciciosOptions} 
-                                        flatOptions={flatExerciciosOptions}
                                         value={exercicio.nomeExercicio}
                                         onChange={(value) => handleExercicioChange(exercicio.id!, 'nomeExercicio', value)}
                                         placeholder='Selecione um exercício...'
@@ -194,3 +193,5 @@ export default function TreinosPage() {
         </>
     );
 }
+
+    

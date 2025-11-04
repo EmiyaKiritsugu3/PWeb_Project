@@ -91,7 +91,7 @@ export const EXERCICIOS_POR_GRUPO: { grupo: string; exercicios: ExercicioData[] 
   {
     grupo: 'Peito',
     exercicios: [
-      { nomeExercicio: 'Supino Reto com Barra', gifUrl: createUrl('Supino Reto') },
+      { nomeExercicio: 'Supino Reto com Barra', gifUrl: 'https://i.imgur.com/sT6p4sZ.gif' },
       { nomeExercicio: 'Supino Reto com Halteres', gifUrl: createUrl('Supino Halteres') },
       { nomeExercicio: 'Supino Inclinado com Barra', gifUrl: createUrl('Supino Inclinado') },
       { nomeExercicio: 'Supino Inclinado com Halteres' },
@@ -122,7 +122,7 @@ export const EXERCICIOS_POR_GRUPO: { grupo: string; exercicios: ExercicioData[] 
   {
     grupo: 'Pernas (Quadríceps e Glúteos)',
     exercicios: [
-      { nomeExercicio: 'Agachamento Livre', gifUrl: createUrl('Agachamento') },
+      { nomeExercicio: 'Agachamento Livre', gifUrl: 'https://i.imgur.com/gI2t3b4.gif' },
       { nomeExercicio: 'Agachamento Smith' },
       { nomeExercicio: 'Agachamento Hack' },
       { nomeExercicio: 'Leg Press 45°', gifUrl: createUrl('Leg Press 45') },
@@ -217,7 +217,7 @@ export const TREINOS: Treino[] = [
         dataCriacao: '2024-01-15',
         ativo: true,
         exercicios: [
-            { id: 'ex1', nomeExercicio: 'Supino Reto com Barra', series: 4, repeticoes: '8-10', observacoes: 'Controlar a descida.', gifUrl: createUrl('Supino Reto') },
+            { id: 'ex1', nomeExercicio: 'Supino Reto com Barra', series: 4, repeticoes: '8-10', observacoes: 'Controlar a descida.', gifUrl: 'https://i.imgur.com/sT6p4sZ.gif' },
             { id: 'ex2', nomeExercicio: 'Remada Curvada com Barra', series: 4, repeticoes: '8-10', observacoes: 'Manter a coluna reta.', gifUrl: createUrl('Remada Curvada') },
             { id: 'ex3', nomeExercicio: 'Desenvolvimento Militar com Barra', series: 3, repeticoes: '10-12', observacoes: '' },
             { id: 'ex4', nomeExercicio: 'Rosca Direta com Barra', series: 3, repeticoes: '12-15', observacoes: 'Evitar balançar o corpo.', gifUrl: createUrl('Rosca Direta') },
@@ -232,7 +232,7 @@ export const TREINOS: Treino[] = [
         dataCriacao: '2024-01-20',
         ativo: true,
         exercicios: [
-             { id: 'ex6', nomeExercicio: 'Agachamento Livre', series: 5, repeticoes: '15-20', observacoes: 'Foco na amplitude.', gifUrl: createUrl('Agachamento') },
+             { id: 'ex6', nomeExercicio: 'Agachamento Livre', series: 5, repeticoes: '15-20', observacoes: 'Foco na amplitude.', gifUrl: 'https://i.imgur.com/gI2t3b4.gif' },
              { id: 'ex7', nomeExercicio: 'Levantamento Terra', series: 3, repeticoes: '10', observacoes: 'Cuidado com a lombar.', gifUrl: createUrl('Levantamento\nTerra') },
              { id: 'ex8', nomeExercicio: 'Leg Press 45°', series: 4, repeticoes: '15', observacoes: 'Não travar os joelhos.', gifUrl: createUrl('Leg Press 45') },
         ]
@@ -245,7 +245,7 @@ export const TREINOS: Treino[] = [
         dataCriacao: '2023-11-15',
         ativo: false, // Treino antigo
         exercicios: [
-             { id: 'ex9', nomeExercicio: 'Agachamento Livre', series: 4, repeticoes: '8-10', observacoes: '', gifUrl: createUrl('Agachamento') },
+             { id: 'ex9', nomeExercicio: 'Agachamento Livre', series: 4, repeticoes: '8-10', observacoes: '', gifUrl: 'https://i.imgur.com/gI2t3b4.gif' },
         ]
     }
 ];
@@ -270,3 +270,5 @@ export const DADOS_DASHBOARD = {
         { mes: "Dez", alunos: 157 },
     ]
 }
+
+    
