@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -63,7 +62,7 @@ export default function AlunosPage() {
     setIsDeleteAlertOpen(true);
   };
 
-  const handleFormSubmit = async (data: Omit<Aluno, "id" | "dataCadastro" | "fotoUrl" | "statusMatricula" | "biometriaHash">) => {
+  const handleFormSubmit = async (data: Omit<Aluno, "id" | "dataCadastro" | "fotoUrl" | "biometriaHash">) => {
     if (!firestore || !alunosCollection) return;
     
     if (editingAluno) {

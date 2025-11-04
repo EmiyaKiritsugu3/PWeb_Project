@@ -1,4 +1,3 @@
-
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,6 +19,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import type { Aluno } from "@/lib/definitions";
@@ -33,6 +39,7 @@ const formSchema = z.object({
   dataNascimento: z.string().refine((val) => !isNaN(Date.parse(val)), {
     message: "Data de nascimento inválida.",
   }),
+  statusMatricula: z.enum(["ATIVA", "INADIMPLENTE", "INATIVA"]),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -53,6 +60,7 @@ export function FormAluno({ isOpen, onOpenChange, onSubmit, aluno }: FormAlunoPr
       cpf: "",
       telefone: "",
       dataNascimento: "",
+      statusMatricula: "ATIVA",
     },
   });
 
@@ -73,6 +81,7 @@ export function FormAluno({ isOpen, onOpenChange, onSubmit, aluno }: FormAlunoPr
         cpf: "",
         telefone: "",
         dataNascimento: "",
+        statusMatricula: "ATIVA",
       });
     }
   }, [aluno, isOpen, form]);
@@ -170,6 +179,32 @@ export function FormAluno({ isOpen, onOpenChange, onSubmit, aluno }: FormAlunoPr
                 </FormItem>
               )}
             />
+
+            {aluno && (
+              <FormField
+                control={form.control}
+                name="statusMatricula"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Status da Matrícula</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione um status" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="ATIVA">ATIVA</SelectItem>
+                        <SelectItem value="INADIMPLENTE">INADIMPLENTE</SelectItem>
+                        <SelectItem value="INATIVA">INATIVA</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+            
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                 Cancelar
