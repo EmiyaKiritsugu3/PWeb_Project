@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { EXERCICIOS_BASE } from "@/lib/data";
+import { EXERCICIOS_POR_GRUPO } from "@/lib/data";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -21,10 +21,18 @@ import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
 import { collection } from 'firebase/firestore';
 import { Combobox } from '@/components/ui/combobox';
 
-const exerciciosOptions = EXERCICIOS_BASE.map(ex => ({
-    value: ex.nomeExercicio,
-    label: ex.nomeExercicio
+// Transforma os dados agrupados para o formato que o Combobox espera
+const exerciciosOptions = EXERCICIOS_POR_GRUPO.map(grupo => ({
+    label: grupo.grupo,
+    options: grupo.exercicios.map(ex => ({
+        value: ex.nomeExercicio,
+        label: ex.nomeExercicio
+    }))
 }));
+
+// Cria uma lista plana para facilitar a busca do valor
+const flatExerciciosOptions = EXERCICIOS_POR_GRUPO.flatMap(g => g.exercicios.map(ex => ({ value: ex.nomeExercicio, label: ex.nomeExercicio })));
+
 
 export default function TreinosPage() {
     const firestore = useFirestore();
@@ -124,6 +132,7 @@ export default function TreinosPage() {
                                      {index === 0 && <Label>Nome do Exercício</Label>}
                                      <Combobox 
                                         options={exerciciosOptions} 
+                                        flatOptions={flatExerciciosOptions}
                                         value={exercicio.nomeExercicio}
                                         onChange={(value) => handleExercicioChange(exercicio.id!, 'nomeExercicio', value)}
                                         placeholder='Selecione um exercício...'

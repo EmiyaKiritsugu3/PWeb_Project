@@ -1,4 +1,3 @@
-
 import type { Aluno, Plano, Treino, Exercicio } from './definitions';
 import { PlaceHolderImages } from './placeholder-images';
 
@@ -80,68 +79,125 @@ export const PLANOS: Plano[] = [
   { id: '4', nome: 'Plano Anual', preco: 1080, duracaoDias: 365 },
 ];
 
-export const EXERCICIOS_BASE: Pick<Exercicio, 'nomeExercicio'>[] = [
-    // Peito
-    { nomeExercicio: 'Supino Reto com Barra' },
-    { nomeExercicio: 'Supino Reto com Halteres' },
-    { nomeExercicio: 'Supino Inclinado com Barra' },
-    { nomeExercicio: 'Supino Inclinado com Halteres' },
-    { nomeExercicio: 'Supino Declinado com Barra' },
-    { nomeExercicio: 'Crucifixo Reto com Halteres' },
-    { nomeExercicio: 'Crucifixo Inclinado com Halteres' },
-    { nomeExercicio: 'Peck Deck (Voador)' },
-    { nomeExercicio: 'Flexão de Braço' },
-    
-    // Costas
-    { nomeExercicio: 'Levantamento Terra' },
-    { nomeExercicio: 'Barra Fixa (Pull-up)' },
-    { nomeExercicio: 'Puxada Frontal com Polia' },
-    { nomeExercicio: 'Remada Curvada com Barra' },
-    { nomeExercicio: 'Remada Cavalinho' },
-    { nomeExercicio: 'Remada Unilateral com Halter (Serrote)' },
-    { nomeExercicio: 'Remada Sentada na Máquina' },
-    { nomeExercicio: 'Pulldown com Corda' },
 
-    // Pernas (Quadríceps, Isquiotibiais e Glúteos)
-    { nomeExercicio: 'Agachamento Livre' },
-    { nomeExercicio: 'Leg Press 45°' },
-    { nomeExercicio: 'Cadeira Extensora' },
-    { nomeExercicio: 'Mesa Flexora' },
-    { nomeExercicio: 'Stiff com Barra' },
-    { nomeExercicio: 'Afundo com Halteres' },
-    { nomeExercicio: 'Elevação Pélvica (Hip Thrust)' },
-    { nomeExercicio: 'Cadeira Abdutora' },
-    { nomeExercicio: 'Cadeira Adutora' },
-    
-    // Panturrilhas
-    { nomeExercicio: 'Panturrilha em Pé na Máquina (Gêmeos)' },
-    { nomeExercicio: 'Panturrilha Sentado (Sóleo)' },
-
-    // Ombros
-    { nomeExercicio: 'Desenvolvimento Militar com Barra' },
-    { nomeExercicio: 'Desenvolvimento com Halteres' },
-    { nomeExercicio: 'Elevação Lateral com Halteres' },
-    { nomeExercicio: 'Elevação Frontal com Halteres' },
-    { nomeExercicio: 'Remada Alta' },
-    { nomeExercicio: 'Encolhimento com Halteres (Trapézio)' },
-
-    // Bíceps
-    { nomeExercicio: 'Rosca Direta com Barra' },
-    { nomeExercicio: 'Rosca Alternada com Halteres' },
-    { nomeExercicio: 'Rosca Scott com Barra W' },
-    { nomeExercicio: 'Rosca Martelo' },
-
-    // Tríceps
-    { nomeExercicio: 'Tríceps Pulley com Barra' },
-    { nomeExercicio: 'Tríceps Pulley com Corda' },
-    { nomeExercicio: 'Tríceps Testa com Barra' },
-    { nomeExercicio: 'Mergulho no Banco' },
-
-    // Abdômen
-    { nomeExercicio: 'Abdominal Supra' },
-    { nomeExercicio: 'Abdominal Infra (Elevação de Pernas)' },
-    { nomeExercicio: 'Prancha Isométrica' },
-    { nomeExercicio: 'Abdominal Oblíquo na Polia' },
+export const EXERCICIOS_POR_GRUPO = [
+  {
+    grupo: 'Peito',
+    exercicios: [
+      { nomeExercicio: 'Supino Reto com Barra' },
+      { nomeExercicio: 'Supino Reto com Halteres' },
+      { nomeExercicio: 'Supino Inclinado com Barra' },
+      { nomeExercicio: 'Supino Inclinado com Halteres' },
+      { nomeExercicio: 'Supino Declinado com Barra' },
+      { nomeExercicio: 'Crucifixo Reto com Halteres' },
+      { nomeExercicio: 'Crucifixo Inclinado com Halteres' },
+      { nomeExercicio: 'Peck Deck (Voador)' },
+      { nomeExercicio: 'Flexão de Braço' },
+      { nomeExercicio: 'Cross Over Polia Alta' },
+      { nomeExercicio: 'Cross Over Polia Baixa' },
+    ]
+  },
+  {
+    grupo: 'Costas',
+    exercicios: [
+      { nomeExercicio: 'Levantamento Terra' },
+      { nomeExercicio: 'Barra Fixa (Pull-up)' },
+      { nomeExercicio: 'Puxada Frontal com Polia' },
+      { nomeExercicio: 'Puxada Triângulo' },
+      { nomeExercicio: 'Remada Curvada com Barra' },
+      { nomeExercicio: 'Remada Cavalinho' },
+      { nomeExercicio: 'Remada Unilateral com Halter (Serrote)' },
+      { nomeExercicio: 'Remada Sentada na Máquina' },
+      { nomeExercicio: 'Pulldown com Corda' },
+      { nomeExercicio: 'Hiperextensão Lombar (Banco Romano)' },
+    ]
+  },
+  {
+    grupo: 'Pernas (Quadríceps e Glúteos)',
+    exercicios: [
+      { nomeExercicio: 'Agachamento Livre' },
+      { nomeExercicio: 'Agachamento Smith' },
+      { nomeExercicio: 'Agachamento Hack' },
+      { nomeExercicio: 'Leg Press 45°' },
+      { nomeExercicio: 'Leg Press Horizontal' },
+      { nomeExercicio: 'Cadeira Extensora' },
+      { nomeExercicio: 'Afundo (Passada)' },
+      { nomeExercicio: 'Elevação Pélvica (Hip Thrust)' },
+      { nomeExercicio: 'Cadeira Abdutora' },
+    ]
+  },
+  {
+    grupo: 'Pernas (Posterior e Glúteos)',
+    exercicios: [
+      { nomeExercicio: 'Stiff com Barra' },
+      { nomeExercicio: 'Stiff com Halteres' },
+      { nomeExercicio: 'Mesa Flexora' },
+      { nomeExercicio: 'Cadeira Flexora' },
+      { nomeExercicio: 'Levantamento Terra Romeno' },
+      { nomeExercicio: 'Bom Dia (Good Morning)' },
+    ]
+  },
+  {
+    grupo: 'Panturrilhas',
+    exercicios: [
+      { nomeExercicio: 'Panturrilha em Pé na Máquina (Gêmeos)' },
+      { nomeExercicio: 'Panturrilha Sentado (Sóleo)' },
+      { nomeExercicio: 'Panturrilha no Leg Press' },
+    ]
+  },
+  {
+    grupo: 'Ombros',
+    exercicios: [
+      { nomeExercicio: 'Desenvolvimento Militar com Barra' },
+      { nomeExercicio: 'Desenvolvimento com Halteres' },
+      { nomeExercicio: 'Elevação Lateral com Halteres' },
+      { nomeExercicio: 'Elevação Frontal com Halteres' },
+      { nomeExercicio: 'Elevação Lateral na Polia' },
+      { nomeExercicio: 'Crucifixo Inverso na Polia' },
+      { nomeExercicio: 'Face Pull' },
+      { nomeExercicio: 'Remada Alta' },
+    ]
+  },
+  {
+    grupo: 'Trapézio',
+    exercicios: [
+        { nomeExercicio: 'Encolhimento com Barra' },
+        { nomeExercicio: 'Encolhimento com Halteres' },
+    ]
+  },
+  {
+    grupo: 'Bíceps',
+    exercicios: [
+      { nomeExercicio: 'Rosca Direta com Barra' },
+      { nomeExercicio: 'Rosca Alternada com Halteres' },
+      { nomeExercicio: 'Rosca Scott com Barra W' },
+      { nomeExercicio: 'Rosca Concentrada' },
+      { nomeExercicio: 'Rosca Martelo' },
+      { nomeExercicio: 'Rosca na Polia Alta' },
+    ]
+  },
+  {
+    grupo: 'Tríceps',
+    exercicios: [
+      { nomeExercicio: 'Tríceps Pulley com Barra' },
+      { nomeExercicio: 'Tríceps Pulley com Corda' },
+      { nomeExercicio: 'Tríceps Testa com Barra' },
+      { nomeExercicio: 'Tríceps Francês com Halter' },
+      { nomeExercicio: 'Mergulho no Banco' },
+      { nomeExercicio: 'Supino Fechado' },
+    ]
+  },
+  {
+    grupo: 'Abdômen',
+    exercicios: [
+      { nomeExercicio: 'Abdominal Supra (Crunch)' },
+      { nomeExercicio: 'Abdominal Infra (Elevação de Pernas)' },
+      { nomeExercicio: 'Prancha Isométrica' },
+      { nomeExercicio: 'Abdominal na Roda (Ab Wheel)' },
+      { nomeExercicio: 'Abdominal Oblíquo (Giro Russo)' },
+      { nomeExercicio: 'Abdominal na Polia Alta' },
+    ]
+  }
 ];
 
 
