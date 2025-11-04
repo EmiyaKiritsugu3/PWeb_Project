@@ -1,3 +1,4 @@
+
 import type { Aluno, Plano, Treino, Exercicio } from './definitions';
 import { PlaceHolderImages } from './placeholder-images';
 
