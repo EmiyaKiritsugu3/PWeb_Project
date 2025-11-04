@@ -23,12 +23,13 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { PLANOS } from "@/lib/data"; // Planos ainda são estáticos por enquanto
-import { useCollection, useFirestore, useMemoFirebase, errorEmitter, FirestorePermissionError } from "@/firebase";
+import { useCollection, useFirestore, useMemoFirebase, FirestorePermissionError, errorEmitter } from "@/firebase";
+
 
 export default function AlunosPage() {
   const firestore = useFirestore();
 
-  const alunosCollection = useMemoFirebase(() => collection(firestore, 'alunos'), [firestore]);
+  const alunosCollection = useMemoFirebase(() => firestore ? collection(firestore, 'alunos') : null, [firestore]);
   const { data: alunos, isLoading } = useCollection<Aluno>(alunosCollection);
 
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -63,24 +64,26 @@ export default function AlunosPage() {
   };
 
   const handleFormSubmit = async (data: Omit<Aluno, "id" | "dataCadastro" | "fotoUrl" | "statusMatricula" | "biometriaHash">) => {
+    if (!firestore || !alunosCollection) return;
+    
     if (editingAluno) {
       // Lógica de Edição
       const alunoRef = doc(firestore, "alunos", editingAluno.id);
       updateDoc(alunoRef, data)
-        .then(() => {
-          toast({
-            title: "Aluno atualizado!",
-            description: `${data.nomeCompleto} foi atualizado com sucesso.`,
-          });
-        })
-        .catch((error) => {
-          const permissionError = new FirestorePermissionError({
-            path: alunoRef.path,
-            operation: 'update',
-            requestResourceData: data,
-          });
-          errorEmitter.emit('permission-error', permissionError);
+        .catch(async (serverError) => {
+            const permissionError = new FirestorePermissionError({
+              path: alunoRef.path,
+              operation: 'update',
+              requestResourceData: data,
+            });
+            errorEmitter.emit('permission-error', permissionError);
         });
+
+      toast({
+          title: "Aluno atualizado!",
+          description: `${data.nomeCompleto} foi atualizado com sucesso.`,
+      });
+
     } else {
       // Lógica de Adição
       const novoAluno: Omit<Aluno, 'id' | 'biometriaHash'> = {
@@ -90,13 +93,7 @@ export default function AlunosPage() {
         statusMatricula: 'ATIVA',
       };
       addDoc(alunosCollection, novoAluno)
-        .then(() => {
-          toast({
-            title: "Aluno cadastrado!",
-            description: `${novoAluno.nomeCompleto} foi adicionado ao sistema.`,
-          });
-        })
-        .catch((error) => {
+        .catch(async (serverError) => {
           const permissionError = new FirestorePermissionError({
             path: alunosCollection.path,
             operation: 'create',
@@ -104,29 +101,33 @@ export default function AlunosPage() {
           });
           errorEmitter.emit('permission-error', permissionError);
         });
+      
+      toast({
+          title: "Aluno cadastrado!",
+          description: `${novoAluno.nomeCompleto} foi adicionado ao sistema.`,
+      });
     }
     setIsFormOpen(false);
     setEditingAluno(null);
   };
 
   const handleDeleteAluno = async () => {
-    if (!deletingAluno || !deletingAluno.id) return;
+    if (!deletingAluno || !deletingAluno.id || !firestore) return;
     
     const alunoRef = doc(firestore, "alunos", deletingAluno.id);
     deleteDoc(alunoRef)
-        .then(() => {
-            toast({
-                title: "Aluno excluído!",
-                description: `${deletingAluno.nomeCompleto} foi removido do sistema.`,
-            });
-        })
-        .catch((error) => {
+        .catch(async (serverError) => {
             const permissionError = new FirestorePermissionError({
                 path: alunoRef.path,
                 operation: 'delete',
             });
             errorEmitter.emit('permission-error', permissionError);
         });
+
+    toast({
+        title: "Aluno excluído!",
+        description: `${deletingAluno.nomeCompleto} foi removido do sistema.`,
+    });
 
     setIsDeleteAlertOpen(false);
     setDeletingAluno(null);
