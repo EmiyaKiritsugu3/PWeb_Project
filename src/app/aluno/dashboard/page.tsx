@@ -184,13 +184,13 @@ function CardFeedback({ feedback, isLoading }: { feedback: { title: string; mess
     return (
         <Card className="bg-accent/10 border-accent">
             <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-accent-foreground">
+                <CardTitle className="flex items-center gap-2 text-accent">
                     <Sparkles className="h-6 w-6 text-accent" />
                     {feedback.title}
                 </CardTitle>
             </CardHeader>
             <CardContent>
-                <p className="text-accent-foreground/90">{feedback.message}</p>
+                <p className="text-accent/90">{feedback.message}</p>
             </CardContent>
         </Card>
     )
