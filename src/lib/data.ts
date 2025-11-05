@@ -157,51 +157,57 @@ export const TREINOS: Treino[] = [
         id: 't1',
         alunoId: '1', // Ana Silva
         instrutorId: 'func1',
-        objetivo: 'Hipertrofia - Superiores A',
+        objetivo: 'Treino A - Superiores (Ênfase Peito/Ombro)',
         dataCriacao: '2024-01-15',
         diaSemana: 1, // Segunda-feira
         exercicios: [
             { id: 'ex1', nomeExercicio: 'Supino Reto com Barra', series: 4, repeticoes: '8-10', observacoes: 'Controlar a descida.', descricao: 'Deite-se em um banco reto, segure a barra com as mãos um pouco mais afastadas que a largura dos ombros. Desça a barra até tocar o peito e empurre de volta à posição inicial.' },
-            { id: 'ex2', nomeExercicio: 'Remada Curvada com Barra', series: 4, repeticoes: '8-10', observacoes: 'Manter a coluna reta.', descricao: 'Incline o tronco para frente, mantendo a coluna reta. Puxe a barra em direção ao abdômen.' },
-            { id: 'ex3', nomeExercicio: 'Desenvolvimento Militar com Barra', series: 3, repeticoes: '10-12', observacoes: '', descricao: 'Em pé ou sentado, segure a barra na altura dos ombros e empurre-a para cima da cabeça, estendendo completamente os cotovelos.' },
-        ]
-    },
-     {
-        id: 't1-b',
-        alunoId: '1', // Ana Silva
-        instrutorId: 'func1',
-        objetivo: 'Hipertrofia - Superiores B',
-        dataCriacao: '2024-01-15',
-        diaSemana: 4, // Quinta-feira
-        exercicios: [
-            { id: 'ex4', nomeExercicio: 'Rosca Direta com Barra', series: 3, repeticoes: '12-15', observacoes: 'Evitar balançar o corpo.', descricao: 'Segure a barra com as palmas das mãos para cima (supinação). Flexione os cotovelos, trazendo a barra em direção aos ombros.' },
-            { id: 'ex5', nomeExercicio: 'Tríceps Pulley com Barra', series: 3, repeticoes: '12-15', observacoes: 'Estender completamente os cotovelos.', descricao: 'Na polia alta, segure a barra e empurre-a para baixo até estender completamente os cotovelos. Mantenha os cotovelos fixos ao lado do corpo.' },
-        ]
-    },
-    {
-        id: 't2',
-        alunoId: '2', // Bruno Costa
-        instrutorId: 'func1',
-        objetivo: 'Perda de Peso',
-        dataCriacao: '2024-01-20',
-        diaSemana: 2, // Terça-feira
-        exercicios: [
-             { id: 'ex6', nomeExercicio: 'Agachamento Livre', series: 5, repeticoes: '15-20', observacoes: 'Foco na amplitude.', descricao: 'Com a barra nos ombros, agache como se fosse sentar em uma cadeira, mantendo a coluna reta e os joelhos alinhados com os pés. Desça até os quadris ficarem paralelos ao chão ou mais baixo.' },
-             { id: 'ex7', nomeExercicio: 'Levantamento Terra', series: 3, repeticoes: '10', observacoes: 'Cuidado com a lombar.', descricao: 'Com a barra no chão, agache-se com a coluna reta e segure a barra. Levante-se estendendo as pernas e o quadril. Mantenha a barra próxima ao corpo.' },
-             { id: 'ex8', nomeExercicio: 'Leg Press 45°', series: 4, repeticoes: '15', observacoes: 'Não travar os joelhos.', descricao: 'Sente-se na máquina e coloque os pés na plataforma. Empurre a plataforma para cima e controle a descida.' },
+            { id: 'ex2', nomeExercicio: 'Desenvolvimento Militar com Barra', series: 3, repeticoes: '10-12', observacoes: 'Não curvar a lombar.', descricao: 'Em pé ou sentado, segure a barra na altura dos ombros e empurre-a para cima da cabeça, estendendo completamente os cotovelos.' },
+            { id: 'ex3', nomeExercicio: 'Elevação Lateral com Halteres', series: 3, repeticoes: '12-15', observacoes: 'Não usar impulso.', descricao: 'Em pé, com um halter em cada mão, eleve os braços para os lados até a altura dos ombros, com os cotovelos levemente flexionados.' },
+            { id: 'ex4', nomeExercicio: 'Tríceps Pulley com Barra', series: 3, repeticoes: '12-15', observacoes: 'Estender completamente os cotovelos.', descricao: 'Na polia alta, segure a barra e empurre-a para baixo até estender completamente os cotovelos. Mantenha os cotovelos fixos ao lado do corpo.' },
         ]
     },
     {
         id: 't3',
         alunoId: '1', // Ana Silva
         instrutorId: 'func1',
-        objetivo: 'Hipertrofia - Inferiores',
+        objetivo: 'Treino B - Inferiores (Ênfase Quadríceps/Glúteos)',
         dataCriacao: '2023-11-15',
         diaSemana: 3, // Quarta-feira
         exercicios: [
-             { id: 'ex9', nomeExercicio: 'Agachamento Livre', series: 4, repeticoes: '8-10', observacoes: '', descricao: 'Com a barra nos ombros, agache como se fosse sentar em uma cadeira, mantendo a coluna reta e os joelhos alinhados com os pés. Desça até os quadris ficarem paralelos ao chão ou mais baixo.' },
+             { id: 'ex9', nomeExercicio: 'Agachamento Livre', series: 4, repeticoes: '8-10', observacoes: 'Manter a coluna reta.', descricao: 'Com a barra nos ombros, agache como se fosse sentar em uma cadeira, mantendo a coluna reta e os joelhos alinhados com os pés. Desça até os quadris ficarem paralelos ao chão ou mais baixo.' },
+             { id: 'ex10', nomeExercicio: 'Leg Press 45°', series: 4, repeticoes: '10-12', observacoes: 'Não travar os joelhos no final.', descricao: 'Sente-se na máquina e coloque os pés na plataforma. Empurre a plataforma para cima e controle a descida.' },
+             { id: 'ex11', nomeExercicio: 'Cadeira Extensora', series: 3, repeticoes: '15', observacoes: 'Pico de contração no topo.', descricao: 'Sente-se na máquina e posicione os tornozelos atrás do rolo. Estenda as pernas para cima, contraindo o quadríceps.' },
+             { id: 'ex12', nomeExercicio: 'Stiff com Barra', series: 3, repeticoes: '12', observacoes: 'Alongar bem o posterior.', descricao: 'Segurando uma barra, desça o tronco com as pernas quase retas, sentindo alongar a parte de trás das coxas. Mantenha a coluna reta.' },
         ]
-    }
+    },
+     {
+        id: 't1-b',
+        alunoId: '1', // Ana Silva
+        instrutorId: 'func1',
+        objetivo: 'Treino C - Superiores (Ênfase Costas/Bíceps)',
+        dataCriacao: '2024-01-15',
+        diaSemana: 5, // Sexta-feira
+        exercicios: [
+            { id: 'ex5', nomeExercicio: 'Barra Fixa (Pull-up)', series: 3, repeticoes: 'Máximo', observacoes: 'Pode usar ajuda se necessário.', descricao: 'Segure a barra com as mãos em pronação (palmas para frente). Puxe o corpo para cima até o queixo passar da barra.' },
+            { id: 'ex6', nomeExercicio: 'Remada Curvada com Barra', series: 4, repeticoes: '8-10', observacoes: 'Manter a coluna reta.', descricao: 'Incline o tronco para frente, mantendo a coluna reta. Puxe a barra em direção ao abdômen.' },
+            { id: 'ex7', nomeExercicio: 'Rosca Direta com Barra', series: 3, repeticoes: '12-15', observacoes: 'Evitar balançar o corpo.', descricao: 'Segure a barra com as palmas das mãos para cima (supinação). Flexione os cotovelos, trazendo a barra em direção aos ombros.' },
+        ]
+    },
+    {
+        id: 't2',
+        alunoId: '2', // Bruno Costa
+        instrutorId: 'func1',
+        objetivo: 'Full Body - Perda de Peso',
+        dataCriacao: '2024-01-20',
+        diaSemana: 2, // Terça-feira
+        exercicios: [
+             { id: 'ex13', nomeExercicio: 'Agachamento Livre', series: 3, repeticoes: '15-20', observacoes: 'Foco na amplitude.', descricao: 'Com a barra nos ombros, agache como se fosse sentar em uma cadeira, mantendo a coluna reta e os joelhos alinhados com os pés. Desça até os quadris ficarem paralelos ao chão ou mais baixo.' },
+             { id: 'ex14', nomeExercicio: 'Supino Reto com Halteres', series: 3, repeticoes: '15-20', observacoes: 'Controlar o movimento.', descricao: 'Deite-se em um banco reto com um halter em cada mão. Desça os halteres até a altura do peito e empurre-os para cima, quase se tocando no topo.' },
+             { id: 'ex15', nomeExercicio: 'Remada Unilateral com Halter (Serrote)', series: 3, repeticoes: '15-20', observacoes: 'Puxar com as costas.', descricao: 'Apoie um joelho e uma mão em um banco. Com a outra mão, puxe um halter para cima, mantendo o cotovelo próximo ao corpo.' },
+             { id: 'ex16', nomeExercicio: 'Afundo (Passada)', series: 3, repeticoes: '15-20 por perna', observacoes: 'Manter o equilíbrio.', descricao: 'Dê um passo à frente e flexione ambos os joelhos, descendo o corpo até que o joelho de trás quase toque o chão. Retorne e alterne as pernas.' },
+        ]
+    },
 ];
 
 export const DADOS_DASHBOARD = {
