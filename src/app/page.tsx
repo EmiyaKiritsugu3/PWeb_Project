@@ -10,7 +10,7 @@ export default function LandingPage() {
       {/* Hero Section */}
       <section className="relative flex h-[60vh] items-center justify-center text-center text-white md:h-[70vh]">
         <Image
-            src="https://images.unsplash.com/photo-1571902943202-507ec2618e8f?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            src="https://source.unsplash.com/random/1920x1080/?gym,workout"
             alt="A modern gym with various workout equipment"
             fill
             className="object-cover"
