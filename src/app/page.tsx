@@ -1,3 +1,4 @@
+
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Dumbbell } from 'lucide-react';
@@ -10,7 +11,7 @@ export default function LandingPage() {
       {/* Hero Section */}
       <section className="relative flex h-[60vh] items-center justify-center text-center text-white md:h-[70vh]">
         <Image
-            src="https://source.unsplash.com/random/1920x1080/?gym,workout"
+            src="https://picsum.photos/seed/gym-hero/1920/1080"
             alt="A modern gym with various workout equipment"
             fill
             className="object-cover"
