@@ -17,7 +17,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, Save, Trash2, Wand2, BrainCircuit, Pencil } from "lucide-react";
+import { PlusCircle, Save, Trash2, Wand2, BrainCircuit, Pencil, FileSignature, User, Dumbbell } from "lucide-react";
 import type { Exercicio, Treino } from '@/lib/definitions';
 import { useToast } from '@/hooks/use-toast';
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
@@ -156,7 +156,7 @@ function WorkoutGenerator({ onGenerate, isGenerating }: { onGenerate: (data: Wor
             </CardContent>
             <CardFooter>
                  <Button type="submit" form="ai-generator-form" disabled={isGenerating}>
-                    {isGenerating ? <><BrainCircuit className="mr-2 h-4 w-4 animate-pulse" /> Gerando Plano...</> : <><Wand2 className="mr-2 h-4 w-4" /> Gerar Plano Semanal</>}
+                    {isGenerating ? <><BrainCircuit className="mr-2 h-4 w-4 animate-pulse" /> Gerando Plano...</> : <><Wand2 className="mr-2 h-4 w-4" /> Gerar Plano Pessoal com IA</>}
                  </Button>
             </CardFooter>
         </Card>
@@ -215,13 +215,16 @@ function WorkoutEditor({ onSave, treinoToEdit, onCancel }: { onSave: (treino: Om
         <div className='grid gap-6'>
             <Card>
                 <CardHeader>
-                    <CardTitle>{treinoToEdit ? 'Editar Treino' : 'Criar Novo Treino'}</CardTitle>
-                    <CardDescription>Ajuste os exercícios manualmente. Para gerar um novo plano com IA, use o gerador acima.</CardDescription>
+                    <CardTitle className='flex items-center gap-2'>
+                        <Dumbbell />
+                        {treinoToEdit ? 'Editar Treino Pessoal' : 'Criar Novo Treino Pessoal'}
+                    </CardTitle>
+                    <CardDescription>Crie um plano de treino do zero ou ajuste um existente que você criou.</CardDescription>
                 </CardHeader>
                 <CardContent className="grid gap-6">
                     <div className='grid gap-2'>
                         <Label htmlFor="objetivo">Nome/Objetivo do Treino</Label>
-                        <Input id="objetivo" placeholder="Ex: Treino A - Peito e Tríceps" value={objetivo} onChange={(e) => setObjetivo(e.target.value)} />
+                        <Input id="objetivo" placeholder="Ex: Treino de adaptação" value={objetivo} onChange={(e) => setObjetivo(e.target.value)} />
                     </div>
 
                     <div className="grid gap-4">
@@ -297,8 +300,18 @@ export default function MeusTreinosPage() {
     const [isAlertOpen, setIsAlertOpen] = useState(false);
     const [deletingTreino, setDeletingTreino] = useState<Treino | null>(null);
 
+    const { treinosDoPersonal, treinosDoAluno } = useMemo(() => {
+        if (!meusTreinos || !user) {
+            return { treinosDoPersonal: [], treinosDoAluno: [] };
+        }
+        const treinosDoPersonal = meusTreinos.filter(t => t.instrutorId !== user.uid && t.instrutorId !== 'IA');
+        const treinosDoAluno = meusTreinos.filter(t => t.instrutorId === user.uid || t.instrutorId === 'IA');
+        return { treinosDoPersonal, treinosDoAluno };
+    }, [meusTreinos, user]);
+
+
     const handleSave = async (treinoData: Omit<Treino, 'id' | 'alunoId' | 'instrutorId'>) => {
-        if (!treinosCollectionRef) return;
+        if (!treinosCollectionRef || !user) return;
     
         try {
             if (editingTreino) {
@@ -332,7 +345,7 @@ export default function MeusTreinosPage() {
         const novoDia = dia === "nenhum" ? null : parseInt(dia, 10);
 
         if (novoDia !== null && meusTreinos.some(t => t.diaSemana === novoDia && t.id !== treinoId)) {
-            toast({ title: "Dia já ocupado", variant: "destructive" });
+            toast({ title: "Dia já ocupado", description: "Já existe outro treino agendado para este dia.", variant: "destructive" });
             return;
         }
 
@@ -373,7 +386,7 @@ export default function MeusTreinosPage() {
     }
 
     const handleGenerate = async (data: WorkoutGeneratorInput) => {
-        if (!treinosCollectionRef || !meusTreinos) return;
+        if (!treinosCollectionRef || !meusTreinos || !user) return;
 
         setIsGenerating(true);
         setIsFormVisible(false);
@@ -395,8 +408,8 @@ export default function MeusTreinosPage() {
                 const isDayOccupied = meusTreinos.some(t => t.diaSemana === diaSugerido);
 
                 await addDoc(treinosCollectionRef, {
-                    alunoId: user!.uid,
-                    instrutorId: 'IA',
+                    alunoId: user.uid,
+                    instrutorId: 'IA', // Marcado como IA
                     objetivo: workout.nome,
                     exercicios: novosExercicios,
                     diaSemana: isDayOccupied ? null : diaSugerido,
@@ -405,8 +418,8 @@ export default function MeusTreinosPage() {
             }
             
             toast({
-                title: "Plano Semanal Gerado pela IA!",
-                description: `${result.planName} foi criado com ${result.workouts.length} treinos. Agende os dias da semana.`,
+                title: "Plano Pessoal Gerado pela IA!",
+                description: `${result.planName} foi criado com ${result.workouts.length} treinos. Agende-os na seção 'Meus Treinos Pessoais'.`,
                 duration: 5000,
             });
         } catch (error) {
@@ -422,91 +435,116 @@ export default function MeusTreinosPage() {
         return DIAS_DA_SEMANA.find(d => d.value === diaSemana)?.label;
     };
 
+    const renderWorkoutList = (treinos: Treino[], title: string, description: string, icon: React.ReactNode, allowEditing: boolean) => (
+        <Card>
+            <CardHeader>
+                <CardTitle className='flex items-center gap-2'>{icon} {title}</CardTitle>
+                <CardDescription>{description}</CardDescription>
+            </CardHeader>
+            <CardContent className='grid gap-4'>
+                {isLoadingTreinos && Array.from({length: 2}).map((_, i) => <Skeleton key={i} className='h-20 w-full' />)}
+                {!isLoadingTreinos && treinos.map(treino => (
+                    <div key={treino.id} className={cn("rounded-lg border p-4 transition-all flex flex-col sm:flex-row justify-between sm:items-center gap-4", treino.diaSemana !== null && "bg-accent/10 border-accent")}>
+                       <div className='flex-1'>
+                            <div className='flex items-center gap-3'>
+                                <h3 className="font-bold text-base">{treino.objetivo}</h3>
+                                {treino.diaSemana !== null && <Badge>{getDiaLabel(treino.diaSemana)}</Badge>}
+                                {treino.instrutorId === 'IA' && <Badge variant="secondary">Gerado por IA</Badge>}
+                            </div>
+                            <p className="text-sm text-muted-foreground">
+                                {treino.exercicios.length} exercícios
+                            </p>
+                       </div>
+                       <div className='flex items-center gap-2 flex-wrap'>
+                            <Select
+                                value={treino.diaSemana === null ? "nenhum" : String(treino.diaSemana)}
+                                onValueChange={(value) => handleDayChange(treino.id, value)}
+                            >
+                                <SelectTrigger className="w-full sm:w-[180px]">
+                                    <SelectValue placeholder="Agendar dia..." />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="nenhum">Nenhum (Desativado)</SelectItem>
+                                    {DIAS_DA_SEMANA.map(dia => (
+                                        <SelectItem key={dia.value} value={String(dia.value)}>
+                                            {dia.label}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            {allowEditing && (
+                                <>
+                                    <Button variant="secondary" size="sm" onClick={() => handleEdit(treino)}>
+                                        <Pencil className='mr-2 h-4 w-4' />
+                                        Editar
+                                    </Button>
+                                    <Button variant="destructive" size="sm" onClick={() => openDeleteAlert(treino)}>
+                                        <Trash2 className='mr-2 h-4 w-4' />
+                                        Excluir
+                                    </Button>
+                                </>
+                            )}
+                       </div>
+                    </div>
+                ))}
+                {!isLoadingTreinos && treinos.length === 0 && (
+                     <div className="text-center text-sm text-muted-foreground py-10">
+                        {allowEditing ? 'Você ainda não criou nenhum treino. Use o gerador de IA ou crie um manualmente.' : 'Nenhum treino prescrito pelo seu personal ainda.'}
+                     </div>
+                )}
+            </CardContent>
+        </Card>
+    );
+
     return (
         <>
             <PageHeader
                 title="Meus Treinos"
-                description="Crie, edite e agende seus planos de treino para a semana."
-                actions={
-                    !isFormVisible && (
-                        <Button onClick={handleOpenNewForm}>
-                            <PlusCircle className="mr-2 h-4 w-4" />
-                            Criar Treino Manual
-                        </Button>
-                    )
-                }
+                description="Agende os treinos enviados pelo seu personal ou crie e gerencie seus próprios planos."
             />
             
-             <div className='mb-8'>
-                <WorkoutGenerator onGenerate={handleGenerate} isGenerating={isGenerating} />
-            </div>
+             <div className='grid gap-8'>
 
-            {isFormVisible && (
-                 <div className='mb-8'>
-                    <WorkoutEditor 
-                        onSave={handleSave} 
-                        treinoToEdit={editingTreino}
-                        onCancel={() => {
-                            setIsFormVisible(false);
-                            setEditingTreino(null);
-                        }}
-                    />
-                 </div>
-            )}
-            
-            <Card>
-                <CardHeader>
-                    <CardTitle>Meus Planos Salvos</CardTitle>
-                    <CardDescription>Atribua cada treino a um dia da semana para ativá-lo. O treino do dia aparecerá no seu dashboard.</CardDescription>
-                </CardHeader>
-                <CardContent className='grid gap-4'>
-                    {isLoadingTreinos && Array.from({length: 3}).map((_, i) => <Skeleton key={i} className='h-20 w-full' />)}
-                    {meusTreinos && meusTreinos.map(treino => (
-                        <div key={treino.id} className={cn("rounded-lg border p-4 transition-all flex flex-col sm:flex-row justify-between sm:items-center gap-4", treino.diaSemana !== null && "bg-accent/10 border-accent")}>
-                           <div className='flex-1'>
-                                <div className='flex items-center gap-3'>
-                                    <h3 className="font-bold text-base">{treino.objetivo}</h3>
-                                    {treino.diaSemana !== null && <Badge>{getDiaLabel(treino.diaSemana)}</Badge>}
-                                </div>
-                                <p className="text-sm text-muted-foreground">
-                                    {treino.exercicios.length} exercícios
-                                </p>
-                           </div>
-                           <div className='flex items-center gap-2 flex-wrap'>
-                                <Select
-                                    value={treino.diaSemana === null ? "nenhum" : String(treino.diaSemana)}
-                                    onValueChange={(value) => handleDayChange(treino.id, value)}
-                                >
-                                    <SelectTrigger className="w-full sm:w-[180px]">
-                                        <SelectValue placeholder="Agendar dia..." />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="nenhum">Nenhum (Desativado)</SelectItem>
-                                        {DIAS_DA_SEMANA.map(dia => (
-                                            <SelectItem key={dia.value} value={String(dia.value)}>
-                                                {dia.label}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                                <Button variant="secondary" size="sm" onClick={() => handleEdit(treino)}>
-                                    <Pencil className='mr-2 h-4 w-4' />
-                                    Editar
-                                </Button>
-                                <Button variant="destructive" size="sm" onClick={() => openDeleteAlert(treino)}>
-                                    <Trash2 className='mr-2 h-4 w-4' />
-                                    Excluir
-                                </Button>
-                           </div>
-                        </div>
-                    ))}
-                    {!isLoadingTreinos && meusTreinos?.length === 0 && (
-                         <div className="text-center text-sm text-muted-foreground py-10">
-                            Você ainda não criou nenhum treino. Use o gerador de IA ou crie um manualmente.
-                         </div>
-                    )}
-                </CardContent>
-            </Card>
+                {renderWorkoutList(
+                    treinosDoPersonal,
+                    "Planos do Personal",
+                    "Treinos criados e enviados pelo seu instrutor. Agende um dia da semana para ativá-los.",
+                    <FileSignature className="text-primary" />,
+                    false
+                )}
+                
+                {renderWorkoutList(
+                    treinosDoAluno,
+                    "Meus Treinos Pessoais",
+                    "Treinos que você criou manualmente ou gerou com a IA. Você tem controle total sobre eles.",
+                    <User />,
+                    true
+                )}
+
+                <WorkoutGenerator onGenerate={handleGenerate} isGenerating={isGenerating} />
+                
+                {isFormVisible && (
+                     <div className='mb-8'>
+                        <WorkoutEditor 
+                            onSave={handleSave} 
+                            treinoToEdit={editingTreino}
+                            onCancel={() => {
+                                setIsFormVisible(false);
+                                setEditingTreino(null);
+                            }}
+                        />
+                     </div>
+                )}
+
+                 {!isFormVisible && (
+                     <div className="text-center">
+                        <Button onClick={handleOpenNewForm} variant="outline" size="lg">
+                            <PlusCircle className="mr-2 h-4 w-4" />
+                            Criar Novo Treino Manualmente
+                        </Button>
+                     </div>
+                 )}
+            </div>
 
              <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
                 <AlertDialogContent>
@@ -527,7 +565,3 @@ export default function MeusTreinosPage() {
         </>
     );
 }
-
-    
-
-    
