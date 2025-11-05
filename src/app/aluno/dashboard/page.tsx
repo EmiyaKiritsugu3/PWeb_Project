@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect, useState }s from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useUser, useCollection, useFirestore, useMemoFirebase } from "@/firebase";
@@ -357,5 +357,3 @@ export default function AlunoDashboardPage() {
        </>
     );
 }
-
-    
