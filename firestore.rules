@@ -55,11 +55,11 @@ service cloud.firestore {
 
       match /treinos/{treinoId} {
         allow get, list: if isOwner(alunoId) || isFuncionario();
-        allow create, update, delete: if isFuncionario();
+        allow create, update, delete: if isOwner(alunoId) || isFuncionario();
 
         match /exercicios/{exercicioId} {
           allow get, list: if isOwner(alunoId) || isFuncionario();
-          allow create, update, delete: if isFuncionario();
+          allow create, update, delete: if isOwner(alunoId) || isFuncionario();
         }
       }
     }
