@@ -53,22 +53,23 @@ const workoutPrompt = ai.definePrompt({
     ${exerciciosDisponiveisString}
 
     **Suas Diretrizes:**
-    1.  **Crie um Plano Semanal:** Gere uma sequência de treinos para a semana. O número de treinos diferentes deve ser apropriado para a quantidade de dias por semana.
+    1.  **Crie um Plano Semanal:** Gere uma sequência de treinos para a semana. O número de treinos distintos deve ser apropriado para a quantidade de dias por semana.
     2.  **Estrutura da Divisão (Split):**
         - **2-3 dias/semana:** Crie um plano "Full Body" (corpo todo) ou uma divisão "A/B". Se for A/B, o aluno repetirá o A na terceira sessão. Gere 2 treinos distintos (Treino A, Treino B).
         - **4 dias/semana:** Crie uma divisão "Superior/Inferior" (Upper/Lower). Gere 2 treinos para superiores e 2 para inferiores, ou 2 treinos distintos (Treino A - Superiores, Treino B - Inferiores).
         - **5+ dias/semana:** Crie uma divisão por grupo muscular (ex: A: Peito/Tríceps, B: Costas/Bíceps, C: Pernas, D: Ombros, E: Cardio/Abdômen). Gere de 3 a 5 treinos distintos.
     3.  **Nomeie os Treinos:** Dê nomes claros para cada treino na divisão (ex: "Treino A - Peito e Tríceps", "Treino B - Costas e Bíceps").
-    4.  **Seleção de Exercícios:** Escolha os exercícios MAIS EFICAZES da lista para o objetivo e nível do aluno. Não invente exercícios.
+    4.  **SUGIRA OS DIAS:** Para cada treino gerado, preencha o campo 'diaSugerido' com um número de 0 (Domingo) a 6 (Sábado). Distribua os treinos de forma lógica na semana, respeitando dias de descanso. Ex: Para uma divisão A/B de 3 dias, sugira dias 1 (Seg), 3 (Qua) e 5 (Sex). Para uma Superior/Inferior de 4 dias, sugira dias 1 (Seg), 2 (Ter), 4 (Qui), 5 (Sex).
+    5.  **Seleção de Exercícios:** Escolha os exercícios MAIS EFICAZES da lista para o objetivo e nível do aluno. Não invente exercícios.
         - Para 'Iniciante', selecione de 4 a 5 exercícios por treino, priorizando máquinas e movimentos básicos.
         - Para 'Intermediário', selecione de 5 a 7 exercícios por treino, incluindo pesos livres.
         - Para 'Avançado', selecione de 6 a 8 exercícios, com foco em exercícios compostos e variações complexas.
-    5.  **Séries e Repetições:**
+    6.  **Séries e Repetições:**
         - **Hipertrofia:** 3-4 séries, 8-12 repetições.
         - **Força:** 4-5 séries, 4-6 repetições (para exercícios principais).
         - **Perda de Peso:** 3-4 séries, 15-20 repetições.
-    6.  **Observações:** Adicione dicas úteis e de segurança quando relevante.
-    7.  **Formato de Saída:** Sua resposta DEVE ser um objeto JSON que corresponda EXATAMENTE ao schema de saída. Preencha 'planName' com um nome descritivo para o plano geral (ex: "Plano de Hipertrofia - 4 dias/semana") e 'workouts' com o array de treinos que você criou.
+    7.  **Observações:** Adicione dicas úteis e de segurança quando relevante.
+    8.  **Formato de Saída:** Sua resposta DEVE ser um objeto JSON que corresponda EXATAMENTE ao schema de saída. Preencha 'planName' com um nome descritivo para o plano geral (ex: "Plano de Hipertrofia - 4 dias/semana") e 'workouts' com o array de treinos que você criou.
   `,
 });
 

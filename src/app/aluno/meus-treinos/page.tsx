@@ -375,13 +375,17 @@ export default function MeusTreinosPage() {
                     descricao: flatExerciciosOptions.find(opt => opt.value === ex.nomeExercicio)?.label || ""
                 }));
 
+                // Garante que o dia sugerido não conflita com um já existente
+                const diaSugerido = workout.diaSugerido;
+                const isDayOccupied = meusTreinos.some(t => t.diaSemana === diaSugerido);
+
                 return {
                     id: `t-${Date.now()}-${workoutIndex}`,
                     alunoId: user!.uid,
                     instrutorId: 'IA', // O "instrutor" é a IA
                     objetivo: workout.nome, // Ex: "Treino A - Peito e Triceps"
                     exercicios: novosExercicios as Exercicio[],
-                    diaSemana: null, // Começam desativados por padrão
+                    diaSemana: isDayOccupied ? null : diaSugerido, // Começa desativado se o dia já estiver ocupado
                     dataCriacao: new Date().toISOString()
                 }
             });
@@ -390,7 +394,7 @@ export default function MeusTreinosPage() {
             
             toast({
                 title: "Plano Semanal Gerado pela IA!",
-                description: `${result.planName} foi criado com ${result.workouts.length} treinos. Veja abaixo.`,
+                description: `${result.planName} foi criado com ${result.workouts.length} treinos. Agende os dias da semana.`,
                 duration: 5000,
             });
         } catch (error) {
@@ -514,3 +518,4 @@ export default function MeusTreinosPage() {
     
 
     
+
