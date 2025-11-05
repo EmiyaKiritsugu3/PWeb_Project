@@ -4,7 +4,7 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useUser, useCollection, useFirestore, useMemoFirebase } from "@/firebase";
+import { useUser, useCollection, useFirestore, useMemoFirebase, useDoc } from "@/firebase";
 import { DIAS_DA_SEMANA } from "@/lib/data";
 import type { Treino, Aluno, Exercicio } from "@/lib/definitions";
 import { cn } from "@/lib/utils";
@@ -22,7 +22,7 @@ import {
   AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { collection, query, where } from "firebase/firestore";
+import { collection, query, doc } from "firebase/firestore";
 
 
 // Componente para o Modal de Visualização do Exercício
@@ -248,15 +248,14 @@ export default function AlunoDashboardPage() {
     const firestore = useFirestore();
     
     // Busca os dados do aluno do Firestore
-    const alunoQuery = useMemoFirebase(
+    const alunoDocRef = useMemoFirebase(
       () =>
         firestore && user?.uid
-          ? query(collection(firestore, "alunos"), where("id", "==", user.uid))
+          ? doc(firestore, "alunos", user.uid)
           : null,
       [firestore, user]
     );
-    const { data: alunoData, isLoading: isLoadingAluno } = useCollection<Aluno>(alunoQuery);
-    const aluno = alunoData?.[0];
+    const { data: aluno, isLoading: isLoadingAluno } = useDoc<Aluno>(alunoDocRef);
 
     // Lógica para encontrar o treino do dia
     const today = new Date().getDay();
