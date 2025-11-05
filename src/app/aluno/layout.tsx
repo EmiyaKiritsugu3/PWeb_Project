@@ -35,7 +35,9 @@ export default function AlunoLayout({
   }, [user, isUserLoading, router, pathname]);
 
   const handleLogout = () => {
-    auth?.signOut();
+    if (auth) {
+      auth.signOut();
+    }
     router.push("/aluno/login");
   };
   

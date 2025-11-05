@@ -230,9 +230,9 @@ function WorkoutEditor({ onSave, treinoToEdit, onCancel }: { onSave: (treino: Om
                     <div className="grid gap-4">
                         <h3 className='font-medium'>Exercícios</h3>
                         {exercicios.map((exercicio, index) => (
-                            <div key={exercicio.id} className="grid grid-cols-[1fr_auto_auto_1fr_auto] items-end gap-3 rounded-md border p-4">
+                            <div key={exercicio.id} className="grid grid-cols-1 md:grid-cols-[1fr_auto_auto_1fr_auto] items-end gap-3 rounded-md border p-4">
                                 <div className="grid gap-2">
-                                    {index === 0 && <Label>Nome do Exercício</Label>}
+                                    {index === 0 && <Label className='md:hidden'>Nome</Label>}
                                     <Combobox 
                                         options={exerciciosOptions} 
                                         flatOptions={flatExerciciosOptions}
@@ -244,18 +244,18 @@ function WorkoutEditor({ onSave, treinoToEdit, onCancel }: { onSave: (treino: Om
                                     />
                                 </div>
                                 <div className="grid gap-2">
-                                    {index === 0 && <Label>Séries</Label>}
-                                    <Input type="number" className='w-20' value={exercicio.series || ''} onChange={(e) => handleExercicioChange(exercicio.id!, 'series', parseInt(e.target.value))}/>
+                                    {index === 0 && <Label className='md:hidden'>Séries</Label>}
+                                    <Input type="number" className='w-full md:w-20' value={exercicio.series || ''} onChange={(e) => handleExercicioChange(exercicio.id!, 'series', parseInt(e.target.value))}/>
                                 </div>
                                 <div className="grid gap-2">
-                                    {index === 0 && <Label>Reps</Label>}
-                                    <Input placeholder="10-12" className='w-24' value={exercicio.repeticoes || ''} onChange={(e) => handleExercicioChange(exercicio.id!, 'repeticoes', e.target.value)}/>
+                                     {index === 0 && <Label className='md:hidden'>Reps</Label>}
+                                    <Input placeholder="10-12" className='w-full md:w-24' value={exercicio.repeticoes || ''} onChange={(e) => handleExercicioChange(exercicio.id!, 'repeticoes', e.target.value)}/>
                                 </div>
                                 <div className="grid gap-2">
-                                    {index === 0 && <Label>Obs</Label>}
+                                     {index === 0 && <Label className='md:hidden'>Obs</Label>}
                                     <Input placeholder="Opcional" value={exercicio.observacoes || ''} onChange={(e) => handleExercicioChange(exercicio.id!, 'observacoes', e.target.value)}/>
                                 </div>
-                                <Button variant="ghost" size="icon" onClick={() => handleRemoveExercicio(exercicio.id!)} aria-label="Remover exercício">
+                                <Button variant="ghost" size="icon" onClick={() => handleRemoveExercicio(exercicio.id!)} aria-label="Remover exercício" className='justify-self-end'>
                                     <Trash2 className='h-4 w-4 text-destructive'/>
                                 </Button>
                             </div>

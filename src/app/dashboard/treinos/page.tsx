@@ -75,7 +75,7 @@ function WorkoutGenerator({ onGenerate, isGenerating }: { onGenerate: (data: Wor
             </CardHeader>
             <CardContent>
                 <Form {...form}>
-                    <form id="ai-generator-form" onSubmit={form.handleSubmit(onGenerate)} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <form id="ai-generator-form" onSubmit={form.handleSubmit(onGenerate)} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                         <FormField
                             control={form.control}
                             name="objetivo"
@@ -125,7 +125,7 @@ function WorkoutGenerator({ onGenerate, isGenerating }: { onGenerate: (data: Wor
                                 </FormItem>
                             )}
                         />
-                         <div className='md:col-span-2 lg:col-span-1'>
+                         <div className='sm:col-span-2 lg:col-span-1'>
                              <FormField
                                 control={form.control}
                                 name="observacoesAdicionais"
@@ -351,9 +351,9 @@ export default function TreinosPage() {
                             <div className="grid gap-4">
                                 <h3 className='font-medium'>Exercícios</h3>
                                 {exercicios.map((exercicio, index) => (
-                                    <div key={exercicio.id} className="grid grid-cols-[1fr_auto_auto_1fr_auto] items-end gap-3 rounded-md border p-4">
-                                        <div className="grid gap-2">
-                                            {index === 0 && <Label>Nome do Exercício</Label>}
+                                    <div key={exercicio.id} className="grid grid-cols-1 sm:grid-cols-[1fr_auto] md:grid-cols-[1fr_auto_auto_1fr_auto] items-end gap-3 rounded-md border p-4">
+                                        <div className="grid gap-2 sm:col-span-2 md:col-span-1">
+                                            {index === 0 && <Label className='md:hidden'>Exercício</Label>}
                                             <Combobox 
                                                 options={exerciciosOptions} 
                                                 flatOptions={flatExerciciosOptions.map(e => ({ value: e.nomeExercicio, label: e.nomeExercicio }))}
@@ -365,18 +365,18 @@ export default function TreinosPage() {
                                             />
                                         </div>
                                         <div className="grid gap-2">
-                                            {index === 0 && <Label>Séries</Label>}
-                                            <Input type="number" className='w-20' value={exercicio.series || ''} onChange={(e) => handleExercicioChange(exercicio.id!, 'series', parseInt(e.target.value))}/>
+                                            {index === 0 && <Label className='md:hidden'>Séries</Label>}
+                                            <Input type="number" className='w-full md:w-20' value={exercicio.series || ''} onChange={(e) => handleExercicioChange(exercicio.id!, 'series', parseInt(e.target.value))}/>
                                         </div>
                                         <div className="grid gap-2">
-                                            {index === 0 && <Label>Repetições</Label>}
-                                            <Input placeholder="10-12" className='w-24' value={exercicio.repeticoes || ''} onChange={(e) => handleExercicioChange(exercicio.id!, 'repeticoes', e.target.value)}/>
+                                            {index === 0 && <Label className='md:hidden'>Reps</Label>}
+                                            <Input placeholder="10-12" className='w-full md:w-24' value={exercicio.repeticoes || ''} onChange={(e) => handleExercicioChange(exercicio.id!, 'repeticoes', e.target.value)}/>
                                         </div>
-                                        <div className="grid gap-2">
-                                            {index === 0 && <Label>Observações</Label>}
+                                        <div className="grid gap-2 sm:col-span-2 md:col-span-1">
+                                            {index === 0 && <Label className='md:hidden'>Obs</Label>}
                                             <Input placeholder="Opcional" value={exercicio.observacoes || ''} onChange={(e) => handleExercicioChange(exercicio.id!, 'observacoes', e.target.value)}/>
                                         </div>
-                                        <Button variant="ghost" size="icon" onClick={() => handleRemoveExercicio(exercicio.id!)} aria-label="Remover exercício">
+                                        <Button variant="ghost" size="icon" onClick={() => handleRemoveExercicio(exercicio.id!)} aria-label="Remover exercício" className='sm:col-start-2 md:col-start-auto justify-self-end'>
                                             <Trash2 className='h-4 w-4 text-destructive'/>
                                         </Button>
                                     </div>
