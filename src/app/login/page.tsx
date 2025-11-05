@@ -1,4 +1,3 @@
-
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -58,26 +57,23 @@ export default function LoginPage() {
     const user = userCredential.user;
     if (!firestore) return;
     const funcionarioRef = doc(firestore, "funcionarios", user.uid);
-    
-    // Non-blocking write
-    setDoc(funcionarioRef, {
+    const funcionarioData = {
       id: user.uid,
       nomeCompleto: user.displayName || 'Gerente',
       email: user.email,
       role: 'GERENTE'
-    }, { merge: true }).catch((error) => {
-      console.error("Erro ao criar documento do funcionário:", error);
-      const permissionError = new FirestorePermissionError({
-          path: funcionarioRef.path,
-          operation: 'write',
-          requestResourceData: {
-            nomeCompleto: user.displayName || 'Gerente',
-            email: user.email,
-            role: 'GERENTE'
-          },
-        });
-      errorEmitter.emit('permission-error', permissionError);
-    });
+    };
+    
+    // Non-blocking write with contextual error handling
+    setDoc(funcionarioRef, funcionarioData, { merge: true })
+      .catch(async (serverError) => {
+        const permissionError = new FirestorePermissionError({
+            path: funcionarioRef.path,
+            operation: 'write',
+            requestResourceData: funcionarioData,
+          });
+        errorEmitter.emit('permission-error', permissionError);
+      });
   };
 
   const handleFormSubmit = async (data: FormValues) => {

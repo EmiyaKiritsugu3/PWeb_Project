@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { PLANOS } from "@/lib/data"; // Planos ainda são estáticos por enquanto
-import { useCollection, useFirestore, useMemoFirebase } from "@/firebase";
+import { useCollection, useFirestore, useMemoFirebase, FirestorePermissionError, errorEmitter } from "@/firebase";
 
 
 export default function AlunosPage() {
@@ -74,15 +74,22 @@ export default function AlunosPage() {
         if (editingAluno) {
             // Atualiza um aluno existente
             const alunoRef = doc(firestore, "alunos", editingAluno.id);
-            await updateDoc(alunoRef, data);
+            await updateDoc(alunoRef, data)
+             .catch(async (serverError) => {
+                const permissionError = new FirestorePermissionError({
+                  path: alunoRef.path,
+                  operation: 'update',
+                  requestResourceData: data,
+                });
+                errorEmitter.emit('permission-error', permissionError);
+              });
+
             toast({
                 title: "Aluno atualizado!",
                 description: `${data.nomeCompleto} foi atualizado com sucesso.`,
             });
         } else {
-            // Cria um novo aluno. Em um cenário real, isso criaria uma conta de autenticação também.
-            // Por enquanto, apenas adicionamos ao Firestore. O aluno precisaria usar a tela de login
-            // para criar sua própria conta de autenticação que corresponda ao e-mail.
+            // Cria um novo aluno.
             const novoAlunoDoc = doc(alunosCollection); // Cria uma referência com ID gerado
             const novoAluno: Omit<Aluno, "id"> = {
                 ...data,
@@ -90,17 +97,26 @@ export default function AlunosPage() {
                 fotoUrl: `https://picsum.photos/seed/${novoAlunoDoc.id}/100/100`,
                 statusMatricula: 'ATIVA'
             };
-            await setDoc(novoAlunoDoc, novoAluno);
+            await setDoc(novoAlunoDoc, novoAluno)
+             .catch(async (serverError) => {
+                const permissionError = new FirestorePermissionError({
+                  path: novoAlunoDoc.path,
+                  operation: 'create',
+                  requestResourceData: novoAluno,
+                });
+                errorEmitter.emit('permission-error', permissionError);
+              });
             toast({
                 title: "Aluno cadastrado!",
                 description: `${data.nomeCompleto} foi adicionado ao sistema.`,
             });
         }
     } catch (error: any) {
+        // This catch block might still catch some synchronous errors, though Firestore errors are handled above.
         console.error("Erro ao salvar aluno: ", error);
         toast({
             title: "Erro ao salvar",
-            description: "Não foi possível salvar os dados do aluno. Verifique suas permissões.",
+            description: "Não foi possível salvar os dados do aluno.",
             variant: "destructive"
         });
     }
@@ -112,21 +128,27 @@ export default function AlunosPage() {
   const handleDeleteAluno = async () => {
     if (!deletingAluno || !firestore) return;
     
-    try {
-        await deleteDoc(doc(firestore, "alunos", deletingAluno.id));
+    const alunoRef = doc(firestore, "alunos", deletingAluno.id);
+    await deleteDoc(alunoRef)
+     .then(() => {
         toast({
             title: "Aluno excluído!",
             description: `${deletingAluno.nomeCompleto} foi removido do sistema.`,
             variant: "destructive"
         });
-    } catch (error) {
-        console.error("Erro ao excluir aluno: ", error);
+     })
+     .catch(async (serverError) => {
+        const permissionError = new FirestorePermissionError({
+          path: alunoRef.path,
+          operation: 'delete',
+        });
+        errorEmitter.emit('permission-error', permissionError);
         toast({
             title: "Erro ao excluir",
             description: "Não foi possível excluir o aluno. Verifique suas permissões.",
             variant: "destructive"
         });
-    }
+      });
 
     setIsDeleteAlertOpen(false);
     setDeletingAluno(null);

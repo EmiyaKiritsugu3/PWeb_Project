@@ -90,14 +90,21 @@ export default function AlunoLoginPage() {
             photoURL: alunoMock.fotoUrl
         });
 
-        // 4. Commita o batch
-        try {
-          await batch.commit();
-          toast({ title: "Dados de exemplo criados!", description: "Seu perfil e treinos de exemplo foram carregados." });
-        } catch(error) {
-          console.error("Erro ao semear dados:", error);
-          toast({ title: "Erro ao carregar dados de exemplo", variant: "destructive" });
-        }
+        // 4. Commita o batch com tratamento de erro contextual
+        batch.commit()
+          .then(() => {
+            toast({ title: "Dados de exemplo criados!", description: "Seu perfil e treinos de exemplo foram carregados." });
+          })
+          .catch(async (serverError) => {
+            console.error("Erro ao semear dados:", serverError);
+            const permissionError = new FirestorePermissionError({
+              path: `batch write to /alunos/${user.uid}`,
+              operation: 'write',
+              requestResourceData: { aluno: alunoData, treinos: treinosMock },
+            });
+            errorEmitter.emit('permission-error', permissionError);
+            toast({ title: "Erro ao carregar dados de exemplo", variant: "destructive" });
+        });
       }
   };
 
