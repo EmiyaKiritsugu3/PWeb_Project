@@ -2,7 +2,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useUser } from "@/firebase";
@@ -10,7 +9,7 @@ import { ALUNOS, TREINOS } from "@/lib/data";
 import type { Treino, Aluno, Exercicio } from "@/lib/definitions";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Sparkles, BrainCircuit, PlayCircle } from "lucide-react";
+import { Sparkles, BrainCircuit, Info } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { generateWorkoutFeedback } from "@/ai/flows/workout-feedback-flow";
 import {
@@ -36,27 +35,16 @@ function ExercicioViewer({ exercicio, isOpen, onOpenChange }: { exercicio: Exerc
                     <AlertDialogTitle>{exercicio.nomeExercicio}</AlertDialogTitle>
                 </AlertDialogHeader>
                 <div className="grid gap-4 py-4">
-                    <div className="flex justify-center items-center rounded-md overflow-hidden border">
-                         {exercicio.imageUrl ? (
-                            <Image
-                                src={exercicio.imageUrl}
-                                alt={`Demonstração do exercício ${exercicio.nomeExercicio}`}
-                                width={300}
-                                height={300}
-                                className="object-cover"
-                                unoptimized
-                            />
-                        ) : (
-                            <div className="h-[300px] w-full flex items-center justify-center bg-muted text-muted-foreground text-sm">
-                                Nenhuma imagem disponível
-                            </div>
-                        )}
-                    </div>
-                     {exercicio.descricao && (
-                        <ScrollArea className="h-32 w-full rounded-md border p-4 text-sm">
+                    {exercicio.descricao && (
+                        <ScrollArea className="h-48 w-full rounded-md border p-4 text-sm">
                            <h3 className="font-semibold mb-2">Como Executar:</h3>
                            <p className="text-muted-foreground whitespace-pre-wrap">{exercicio.descricao}</p>
                         </ScrollArea>
+                    )}
+                     {!exercicio.descricao && (
+                        <div className="text-sm text-muted-foreground">
+                            Nenhuma descrição disponível para este exercício.
+                        </div>
                     )}
                 </div>
                 <AlertDialogFooter>
@@ -198,9 +186,9 @@ function CardTreino({
                                     </p>
                                 )}
                             </div>
-                             {(exercicio.imageUrl || exercicio.descricao) && (
+                             {exercicio.descricao && (
                                 <Button variant="ghost" size="icon" onClick={() => onViewExercicio(exercicio)}>
-                                    <PlayCircle className="h-6 w-6 text-muted-foreground" />
+                                    <Info className="h-6 w-6 text-muted-foreground" />
                                 </Button>
                             )}
                         </div>

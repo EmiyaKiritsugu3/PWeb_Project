@@ -1,8 +1,5 @@
 
 import type { Aluno, Plano, Treino, Exercicio } from './definitions';
-import { PlaceHolderImages } from './placeholder-images';
-
-const findImage = (id: string) => PlaceHolderImages.find(img => img.id === id)?.imageUrl || '';
 
 export const ALUNOS: Omit<Aluno, 'biometriaHash'>[] = [
   {
@@ -13,7 +10,7 @@ export const ALUNOS: Omit<Aluno, 'biometriaHash'>[] = [
     telefone: '(11) 98765-4321',
     dataNascimento: '1995-03-15',
     dataCadastro: '2023-01-10',
-    fotoUrl: findImage('avatar-1'),
+    fotoUrl: 'https://picsum.photos/seed/avatar-1/100/100',
     statusMatricula: 'ATIVA',
   },
   {
@@ -24,7 +21,7 @@ export const ALUNOS: Omit<Aluno, 'biometriaHash'>[] = [
     telefone: '(21) 91234-5678',
     dataNascimento: '1988-07-22',
     dataCadastro: '2022-11-20',
-    fotoUrl: findImage('avatar-2'),
+    fotoUrl: 'https://picsum.photos/seed/avatar-2/100/100',
     statusMatricula: 'INADIMPLENTE',
   },
   {
@@ -35,7 +32,7 @@ export const ALUNOS: Omit<Aluno, 'biometriaHash'>[] = [
     telefone: '(31) 95555-4444',
     dataNascimento: '2001-11-30',
     dataCadastro: '2023-05-01',
-    fotoUrl: findImage('avatar-3'),
+    fotoUrl: 'https://picsum.photos/seed/avatar-3/100/100',
     statusMatricula: 'ATIVA',
   },
   {
@@ -46,7 +43,7 @@ export const ALUNOS: Omit<Aluno, 'biometriaHash'>[] = [
     telefone: '(41) 98888-7777',
     dataNascimento: '1999-01-05',
     dataCadastro: '2023-02-15',
-    fotoUrl: findImage('avatar-4'),
+    fotoUrl: 'https://picsum.photos/seed/avatar-4/100/100',
     statusMatricula: 'INATIVA',
   },
   {
@@ -57,7 +54,7 @@ export const ALUNOS: Omit<Aluno, 'biometriaHash'>[] = [
     telefone: '(51) 97777-6666',
     dataNascimento: '1992-09-12',
     dataCadastro: '2021-08-30',
-    fotoUrl: findImage('avatar-5'),
+    fotoUrl: 'https://picsum.photos/seed/avatar-5/100/100',
     statusMatricula: 'ATIVA',
   },
    {
@@ -68,7 +65,7 @@ export const ALUNOS: Omit<Aluno, 'biometriaHash'>[] = [
     telefone: '(61) 96666-5555',
     dataNascimento: '2003-04-25',
     dataCadastro: '2024-01-05',
-    fotoUrl: findImage('avatar-6'),
+    fotoUrl: 'https://picsum.photos/seed/avatar-6/100/100',
     statusMatricula: 'ATIVA',
   },
 ];
@@ -86,61 +83,62 @@ export const EXERCICIOS_POR_GRUPO: { grupo: string; exercicios: ExercicioData[] 
   {
     grupo: 'Peito',
     exercicios: [
-      { nomeExercicio: 'Supino Reto com Barra', imageUrl: 'https://picsum.photos/seed/supino-reto/400/400', descricao: 'Deite-se em um banco reto, segure a barra com as mãos um pouco mais afastadas que a largura dos ombros. Desça a barra até tocar o peito e empurre de volta à posição inicial.' },
-      { nomeExercicio: 'Supino Reto com Halteres', imageUrl: 'https://picsum.photos/seed/supino-halteres/400/400', descricao: 'Deite-se em um banco reto com um halter em cada mão. Desça os halteres até a altura do peito e empurre-os para cima, quase se tocando no topo.' },
-      { nomeExercicio: 'Supino Inclinado com Barra', imageUrl: 'https://picsum.photos/seed/supino-inclinado/400/400', descricao: 'Similar ao supino reto, mas em um banco inclinado a 45 graus. Foco na parte superior do peitoral.' },
-      { nomeExercicio: 'Crucifixo Reto com Halteres', imageUrl: 'https://picsum.photos/seed/crucifixo/400/400', descricao: 'Deite-se em um banco reto com halteres. Com os cotovelos levemente flexionados, abra os braços até sentir o peitoral alongar e retorne à posição inicial.' },
-      { nomeExercicio: 'Peck Deck (Voador)', imageUrl: 'https://picsum.photos/seed/peck-deck/400/400', descricao: 'Sente-se na máquina com as costas apoiadas. Segure os pegadores e junte-os na frente do corpo, contraindo o peitoral.' },
+      { nomeExercicio: 'Supino Reto com Barra', descricao: 'Deite-se em um banco reto, segure a barra com as mãos um pouco mais afastadas que a largura dos ombros. Desça a barra até tocar o peito e empurre de volta à posição inicial.' },
+      { nomeExercicio: 'Supino Reto com Halteres', descricao: 'Deite-se em um banco reto com um halter em cada mão. Desça os halteres até a altura do peito e empurre-os para cima, quase se tocando no topo.' },
+      { nomeExercicio: 'Supino Inclinado com Barra', descricao: 'Similar ao supino reto, mas em um banco inclinado a 45 graus. Foco na parte superior do peitoral.' },
+      { nomeExercicio: 'Crucifixo Reto com Halteres', descricao: 'Deite-se em um banco reto com halteres. Com os cotovelos levemente flexionados, abra os braços até sentir o peitoral alongar e retorne à posição inicial.' },
+      { nomeExercicio: 'Peck Deck (Voador)', descricao: 'Sente-se na máquina com as costas apoiadas. Segure os pegadores e junte-os na frente do corpo, contraindo o peitoral.' },
     ]
   },
   {
     grupo: 'Costas',
     exercicios: [
-      { nomeExercicio: 'Levantamento Terra', imageUrl: 'https://picsum.photos/seed/levantamento-terra/400/400', descricao: 'Com a barra no chão, agache-se com a coluna reta e segure a barra. Levante-se estendendo as pernas e o quadril. Mantenha a barra próxima ao corpo.' },
-      { nomeExercicio: 'Barra Fixa (Pull-up)', imageUrl: 'https://picsum.photos/seed/barra-fixa/400/400', descricao: 'Segure a barra com as mãos em pronação (palmas para frente). Puxe o corpo para cima até o queixo passar da barra.' },
-      { nomeExercicio: 'Remada Curvada com Barra', imageUrl: 'https://picsum.photos/seed/remada-curvada/400/400', descricao: 'Incline o tronco para frente, mantendo a coluna reta. Puxe a barra em direção ao abdômen.' },
-      { nomeExercicio: 'Remada Unilateral com Halter (Serrote)', imageUrl: 'https://picsum.photos/seed/serrote/400/400', descricao: 'Apoie um joelho e uma mão em um banco. Com a outra mão, puxe um halter para cima, mantendo o cotovelo próximo ao corpo.' },
+      { nomeExercicio: 'Levantamento Terra', descricao: 'Com a barra no chão, agache-se com a coluna reta e segure a barra. Levante-se estendendo as pernas e o quadril. Mantenha a barra próxima ao corpo.' },
+      { nomeExercicio: 'Barra Fixa (Pull-up)', descricao: 'Segure a barra com as mãos em pronação (palmas para frente). Puxe o corpo para cima até o queixo passar da barra.' },
+      { nomeExercicio: 'Remada Curvada com Barra', descricao: 'Incline o tronco para frente, mantendo a coluna reta. Puxe a barra em direção ao abdômen.' },
+      { nomeExercicio: 'Remada Unilateral com Halter (Serrote)', descricao: 'Apoie um joelho e uma mão em um banco. Com a outra mão, puxe um halter para cima, mantendo o cotovelo próximo ao corpo.' },
     ]
   },
   {
     grupo: 'Pernas (Quadríceps e Glúteos)',
     exercicios: [
-      { nomeExercicio: 'Agachamento Livre', imageUrl: 'https://picsum.photos/seed/agachamento/400/400', descricao: 'Com a barra nos ombros, agache como se fosse sentar em uma cadeira, mantendo a coluna reta e os joelhos alinhados com os pés. Desça até os quadris ficarem paralelos ao chão ou mais baixo.' },
-      { nomeExercicio: 'Leg Press 45°', imageUrl: 'https://picsum.photos/seed/leg-press/400/400', descricao: 'Sente-se na máquina e coloque os pés na plataforma. Empurre a plataforma para cima e controle a descida.' },
-      { nomeExercicio: 'Cadeira Extensora', imageUrl: 'https://picsum.photos/seed/cadeira-extensora/400/400', descricao: 'Sente-se na máquina e posicione os tornozelos atrás do rolo. Estenda as pernas para cima, contraindo o quadríceps.' },
-      { nomeExercicio: 'Afundo (Passada)', imageUrl: 'https://picsum.photos/seed/afundo/400/400', descricao: 'Dê um passo à frente e flexione ambos os joelhos, descendo o corpo até que o joelho de trás quase toque o chão. Retorne e alterne as pernas.' },
-      { nomeExercicio: 'Elevação Pélvica (Hip Thrust)', imageUrl: 'https://picsum.photos/seed/elevacao-pelvica/400/400', descricao: 'Apoie as costas em um banco e coloque uma barra sobre o quadril. Eleve o quadril, contraindo os glúteos, até o corpo formar uma linha reta dos ombros aos joelhos.' },
+      { nomeExercicio: 'Agachamento Livre', descricao: 'Com a barra nos ombros, agache como se fosse sentar em uma cadeira, mantendo a coluna reta e os joelhos alinhados com os pés. Desça até os quadris ficarem paralelos ao chão ou mais baixo.' },
+      { nomeExercicio: 'Leg Press 45°', descricao: 'Sente-se na máquina e coloque os pés na plataforma. Empurre a plataforma para cima e controle a descida.' },
+      { nomeExercicio: 'Cadeira Extensora', descricao: 'Sente-se na máquina e posicione os tornozelos atrás do rolo. Estenda as pernas para cima, contraindo o quadríceps.' },
+      { nomeExercicio: 'Afundo (Passada)', descricao: 'Dê um passo à frente e flexione ambos os joelhos, descendo o corpo até que o joelho de trás quase toque o chão. Retorne e alterne as pernas.' },
+      { nomeExercicio: 'Elevação Pélvica (Hip Thrust)', descricao: 'Apoie as costas em um banco e coloque uma barra sobre o quadril. Eleve o quadril, contraindo os glúteos, até o corpo formar uma linha reta dos ombros aos joelhos.' },
     ]
   },
   {
     grupo: 'Pernas (Posterior e Glúteos)',
     exercicios: [
-      { nomeExercicio: 'Stiff com Barra', imageUrl: 'https://picsum.photos/seed/stiff/400/400', descricao: 'Segurando uma barra, desça o tronco com as pernas quase retas, sentindo alongar a parte de trás das coxas. Mantenha a coluna reta.' },
-      { nomeExercicio: 'Mesa Flexora', imageUrl: 'https://picsum.photos/seed/mesa-flexora/400/400', descricao: 'Deite-se de bruços na máquina e posicione os tornozelos sob o rolo. Flexione os joelhos, trazendo o rolo em direção aos glúteos.' },
-      { nomeExercicio: 'Cadeira Flexora', imageUrl: 'https://picsum.photos/seed/cadeira-flexora/400/400', descricao: 'Sente-se na máquina e prenda as pernas. Flexione os joelhos para baixo, contraindo os músculos posteriores da coxa.' },
+      { nomeExercicio: 'Stiff com Barra', descricao: 'Segurando uma barra, desça o tronco com as pernas quase retas, sentindo alongar a parte de trás das coxas. Mantenha a coluna reta.' },
+      { nomeExercicio: 'Mesa Flexora', descricao: 'Deite-se de bruços na máquina e posicione os tornozelos sob o rolo. Flexione os joelhos, trazendo o rolo em direção aos glúteos.' },
+      { nomeExercicio: 'Cadeira Flexora', descricao: 'Sente-se na máquina e prenda as pernas. Flexione os joelhos para baixo, contraindo os músculos posteriores da coxa.' },
+      { nomeExercicio: 'Bom Dia (Good Morning)', descricao: 'Com uma barra nos ombros (como no agachamento), incline o tronco para frente, mantendo a coluna reta e os joelhos levemente flexionados. Desça até o tronco ficar quase paralelo ao chão e retorne.' },
     ]
   },
   {
     grupo: 'Ombros',
     exercicios: [
-      { nomeExercicio: 'Desenvolvimento Militar com Barra', imageUrl: 'https://picsum.photos/seed/desenvolvimento-militar/400/400', descricao: 'Em pé ou sentado, segure a barra na altura dos ombros e empurre-a para cima da cabeça, estendendo completamente os cotovelos.' },
-      { nomeExercicio: 'Elevação Lateral com Halteres', imageUrl: 'https://picsum.photos/seed/elevacao-lateral/400/400', descricao: 'Em pé, com um halter em cada mão, eleve os braços para os lados até a altura dos ombros, com os cotovelos levemente flexionados.' },
-      { nomeExercicio: 'Face Pull', imageUrl: 'https://picsum.photos/seed/face-pull/400/400', descricao: 'Usando a polia alta com uma corda, puxe a corda em direção ao seu rosto, afastando as mãos e contraindo a parte de trás dos ombros.' },
+      { nomeExercicio: 'Desenvolvimento Militar com Barra', descricao: 'Em pé ou sentado, segure a barra na altura dos ombros e empurre-a para cima da cabeça, estendendo completamente os cotovelos.' },
+      { nomeExercicio: 'Elevação Lateral com Halteres', descricao: 'Em pé, com um halter em cada mão, eleve os braços para os lados até a altura dos ombros, com os cotovelos levemente flexionados.' },
+      { nomeExercicio: 'Face Pull', descricao: 'Usando a polia alta com uma corda, puxe a corda em direção ao seu rosto, afastando as mãos e contraindo a parte de trás dos ombros.' },
     ]
   },
    {
     grupo: 'Bíceps',
     exercicios: [
-      { nomeExercicio: 'Rosca Direta com Barra', imageUrl: 'https://picsum.photos/seed/rosca-direta/400/400', descricao: 'Segure a barra com as palmas das mãos para cima (supinação). Flexione os cotovelos, trazendo a barra em direção aos ombros.' },
-      { nomeExercicio: 'Rosca Martelo', imageUrl: 'https://picsum.photos/seed/rosca-martelo/400/400', descricao: 'Segure os halteres com as palmas das mãos voltadas uma para a outra (pegada neutra). Flexione os cotovelos.' },
+      { nomeExercicio: 'Rosca Direta com Barra', descricao: 'Segure a barra com as palmas das mãos para cima (supinação). Flexione os cotovelos, trazendo a barra em direção aos ombros.' },
+      { nomeExercicio: 'Rosca Martelo', descricao: 'Segure os halteres com as palmas das mãos voltadas uma para a outra (pegada neutra). Flexione os cotovelos.' },
     ]
   },
   {
     grupo: 'Tríceps',
     exercicios: [
-      { nomeExercicio: 'Tríceps Pulley com Barra', imageUrl: 'https://picsum.photos/seed/triceps-pulley/400/400', descricao: 'Na polia alta, segure a barra e empurre-a para baixo até estender completamente os cotovelos. Mantenha os cotovelos fixos ao lado do corpo.' },
-      { nomeExercicio: 'Tríceps Testa com Barra', imageUrl: 'https://picsum.photos/seed/triceps-testa/400/400', descricao: 'Deitado, segure a barra acima da cabeça. Desça a barra em direção à testa, flexionando os cotovelos, e depois estenda de volta.' },
-      { nomeExercicio: 'Tríceps Francês com Halter', imageUrl: 'https://picsum.photos/seed/triceps-frances/400/400', descricao: 'Sentado ou em pé, segure um halter com as duas mãos acima da cabeça. Desça o halter por trás da cabeça, flexionando os cotovelos, e retorne.' },
+      { nomeExercicio: 'Tríceps Pulley com Barra', descricao: 'Na polia alta, segure a barra e empurre-a para baixo até estender completamente os cotovelos. Mantenha os cotovelos fixos ao lado do corpo.' },
+      { nomeExercicio: 'Tríceps Testa com Barra', descricao: 'Deitado, segure a barra acima da cabeça. Desça a barra em direção à testa, flexionando os cotovelos, e depois estenda de volta.' },
+      { nomeExercicio: 'Tríceps Francês com Halter', descricao: 'Sentado ou em pé, segure um halter com as duas mãos acima da cabeça. Desça o halter por trás da cabeça, flexionando os cotovelos, e retorne.' },
     ]
   },
 ];
@@ -155,11 +153,11 @@ export const TREINOS: Treino[] = [
         dataCriacao: '2024-01-15',
         ativo: true,
         exercicios: [
-            { id: 'ex1', nomeExercicio: 'Supino Reto com Barra', series: 4, repeticoes: '8-10', observacoes: 'Controlar a descida.', imageUrl: 'https://picsum.photos/seed/supino-reto/400/400', descricao: 'Deite-se em um banco reto, segure a barra com as mãos um pouco mais afastadas que a largura dos ombros. Desça a barra até tocar o peito e empurre de volta à posição inicial.' },
-            { id: 'ex2', nomeExercicio: 'Remada Curvada com Barra', series: 4, repeticoes: '8-10', observacoes: 'Manter a coluna reta.', imageUrl: 'https://picsum.photos/seed/remada-curvada/400/400', descricao: 'Incline o tronco para frente, mantendo a coluna reta. Puxe a barra em direção ao abdômen.' },
-            { id: 'ex3', nomeExercicio: 'Desenvolvimento Militar com Barra', series: 3, repeticoes: '10-12', observacoes: '', imageUrl: 'https://picsum.photos/seed/desenvolvimento-militar/400/400', descricao: 'Em pé ou sentado, segure a barra na altura dos ombros e empurre-a para cima da cabeça, estendendo completamente os cotovelos.' },
-            { id: 'ex4', nomeExercicio: 'Rosca Direta com Barra', series: 3, repeticoes: '12-15', observacoes: 'Evitar balançar o corpo.', imageUrl: 'https://picsum.photos/seed/rosca-direta/400/400', descricao: 'Segure a barra com as palmas das mãos para cima (supinação). Flexione os cotovelos, trazendo a barra em direção aos ombros.' },
-            { id: 'ex5', nomeExercicio: 'Tríceps Pulley com Barra', series: 3, repeticoes: '12-15', observacoes: 'Estender completamente os cotovelos.', imageUrl: 'https://picsum.photos/seed/triceps-pulley/400/400', descricao: 'Na polia alta, segure a barra e empurre-a para baixo até estender completamente os cotovelos. Mantenha os cotovelos fixos ao lado do corpo.' },
+            { id: 'ex1', nomeExercicio: 'Supino Reto com Barra', series: 4, repeticoes: '8-10', observacoes: 'Controlar a descida.', descricao: 'Deite-se em um banco reto, segure a barra com as mãos um pouco mais afastadas que a largura dos ombros. Desça a barra até tocar o peito e empurre de volta à posição inicial.' },
+            { id: 'ex2', nomeExercicio: 'Remada Curvada com Barra', series: 4, repeticoes: '8-10', observacoes: 'Manter a coluna reta.', descricao: 'Incline o tronco para frente, mantendo a coluna reta. Puxe a barra em direção ao abdômen.' },
+            { id: 'ex3', nomeExercicio: 'Desenvolvimento Militar com Barra', series: 3, repeticoes: '10-12', observacoes: '', descricao: 'Em pé ou sentado, segure a barra na altura dos ombros e empurre-a para cima da cabeça, estendendo completamente os cotovelos.' },
+            { id: 'ex4', nomeExercicio: 'Rosca Direta com Barra', series: 3, repeticoes: '12-15', observacoes: 'Evitar balançar o corpo.', descricao: 'Segure a barra com as palmas das mãos para cima (supinação). Flexione os cotovelos, trazendo a barra em direção aos ombros.' },
+            { id: 'ex5', nomeExercicio: 'Tríceps Pulley com Barra', series: 3, repeticoes: '12-15', observacoes: 'Estender completamente os cotovelos.', descricao: 'Na polia alta, segure a barra e empurre-a para baixo até estender completamente os cotovelos. Mantenha os cotovelos fixos ao lado do corpo.' },
         ]
     },
     {
@@ -170,9 +168,9 @@ export const TREINOS: Treino[] = [
         dataCriacao: '2024-01-20',
         ativo: true,
         exercicios: [
-             { id: 'ex6', nomeExercicio: 'Agachamento Livre', series: 5, repeticoes: '15-20', observacoes: 'Foco na amplitude.', imageUrl: 'https://picsum.photos/seed/agachamento/400/400', descricao: 'Com a barra nos ombros, agache como se fosse sentar em uma cadeira, mantendo a coluna reta e os joelhos alinhados com os pés. Desça até os quadris ficarem paralelos ao chão ou mais baixo.' },
-             { id: 'ex7', nomeExercicio: 'Levantamento Terra', series: 3, repeticoes: '10', observacoes: 'Cuidado com a lombar.', imageUrl: 'https://picsum.photos/seed/levantamento-terra/400/400', descricao: 'Com a barra no chão, agache-se com a coluna reta e segure a barra. Levante-se estendendo as pernas e o quadril. Mantenha a barra próxima ao corpo.' },
-             { id: 'ex8', nomeExercicio: 'Leg Press 45°', series: 4, repeticoes: '15', observacoes: 'Não travar os joelhos.', imageUrl: 'https://picsum.photos/seed/leg-press/400/400', descricao: 'Sente-se na máquina e coloque os pés na plataforma. Empurre a plataforma para cima e controle a descida.' },
+             { id: 'ex6', nomeExercicio: 'Agachamento Livre', series: 5, repeticoes: '15-20', observacoes: 'Foco na amplitude.', descricao: 'Com a barra nos ombros, agache como se fosse sentar em uma cadeira, mantendo a coluna reta e os joelhos alinhados com os pés. Desça até os quadris ficarem paralelos ao chão ou mais baixo.' },
+             { id: 'ex7', nomeExercicio: 'Levantamento Terra', series: 3, repeticoes: '10', observacoes: 'Cuidado com a lombar.', descricao: 'Com a barra no chão, agache-se com a coluna reta e segure a barra. Levante-se estendendo as pernas e o quadril. Mantenha a barra próxima ao corpo.' },
+             { id: 'ex8', nomeExercicio: 'Leg Press 45°', series: 4, repeticoes: '15', observacoes: 'Não travar os joelhos.', descricao: 'Sente-se na máquina e coloque os pés na plataforma. Empurre a plataforma para cima e controle a descida.' },
         ]
     },
     {
@@ -183,7 +181,7 @@ export const TREINOS: Treino[] = [
         dataCriacao: '2023-11-15',
         ativo: false, // Treino antigo
         exercicios: [
-             { id: 'ex9', nomeExercicio: 'Agachamento Livre', series: 4, repeticoes: '8-10', observacoes: '', imageUrl: 'https://picsum.photos/seed/agachamento/400/400', descricao: 'Com a barra nos ombros, agache como se fosse sentar em uma cadeira, mantendo a coluna reta e os joelhos alinhados com os pés. Desça até os quadris ficarem paralelos ao chão ou mais baixo.' },
+             { id: 'ex9', nomeExercicio: 'Agachamento Livre', series: 4, repeticoes: '8-10', observacoes: '', descricao: 'Com a barra nos ombros, agache como se fosse sentar em uma cadeira, mantendo a coluna reta e os joelhos alinhados com os pés. Desça até os quadris ficarem paralelos ao chão ou mais baixo.' },
         ]
     }
 ];

@@ -1,26 +1,22 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Dumbbell } from 'lucide-react';
+import Image from 'next/image';
 
 export default function LandingPage() {
-  const heroImage = PlaceHolderImages.find((img) => img.id === 'hero-gym');
 
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
       {/* Hero Section */}
       <section className="relative flex h-[60vh] items-center justify-center text-center text-white md:h-[70vh]">
-        {heroImage && (
-          <Image
-            src={heroImage.imageUrl}
-            alt={heroImage.description}
+        <Image
+            src="https://images.unsplash.com/photo-1571902943202-507ec2618e8f?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            alt="A modern gym with various workout equipment"
             fill
             className="object-cover"
             priority
-            data-ai-hint={heroImage.imageHint}
+            data-ai-hint="modern gym"
           />
-        )}
         <div className="absolute inset-0 bg-black/60" />
         <div className="relative z-10 flex flex-col items-center space-y-4 px-4">
           <Dumbbell className="h-16 w-16 text-primary" />

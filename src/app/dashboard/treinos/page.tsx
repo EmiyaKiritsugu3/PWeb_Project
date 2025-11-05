@@ -31,11 +31,10 @@ const exerciciosOptions = EXERCICIOS_POR_GRUPO.map(grupo => ({
     }))
 }));
 
-// Cria uma lista plana para facilitar a busca do valor
+// Cria uma lista plana para facilitar a busca do valor e da descrição
 const flatExerciciosOptions = EXERCICIOS_POR_GRUPO.flatMap(g => g.exercicios.map(ex => ({ 
     value: ex.nomeExercicio, 
     label: ex.nomeExercicio,
-    imageUrl: ex.imageUrl,
     descricao: ex.descricao,
 })));
 
@@ -64,13 +63,12 @@ export default function TreinosPage() {
         setExercicios(exercicios.map(ex => {
             if (ex.id !== id) return ex;
 
-            // Quando o nome do exercício muda, atualiza também a URL da imagem e a descrição
+            // Quando o nome do exercício muda, atualiza também a descrição
             if (field === 'nomeExercicio' && typeof value === 'string') {
                 const selectedOption = flatExerciciosOptions.find(opt => opt.value === value);
                 return { 
                     ...ex, 
                     nomeExercicio: value,
-                    imageUrl: selectedOption?.imageUrl,
                     descricao: selectedOption?.descricao
                 };
             }

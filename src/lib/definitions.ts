@@ -43,7 +43,6 @@ export type Exercicio = {
   series: number;
   repeticoes: string;
   observacoes: string;
-  imageUrl?: string;
   descricao?: string;
 };
 
