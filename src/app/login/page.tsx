@@ -61,6 +61,7 @@ export default function LoginPage() {
     
     // Non-blocking write
     setDoc(funcionarioRef, {
+      id: user.uid,
       nomeCompleto: user.displayName || 'Gerente',
       email: user.email,
       role: 'GERENTE'
@@ -90,39 +91,38 @@ export default function LoginPage() {
     }
     
     try {
-        // Tenta criar o usuário primeiro para forçar um "reset"
-        const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
-        upsertFuncionarioDocument(userCredential);
+        // Tenta fazer o login primeiro
+        const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
+        upsertFuncionarioDocument(userCredential); 
         toast({
-            title: "Conta de gerente (re)criada!",
+            title: "Login bem-sucedido!",
             description: "Redirecionando para o painel...",
             className: "bg-accent text-accent-foreground"
         });
         router.push('/dashboard');
     } catch (error: any) {
-        // Se o usuário já existe, apenas faz o login
-        if (error.code === 'auth/email-already-in-use') {
+        // Se o usuário não existe, cria a conta
+        if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
             try {
-                const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
-                // Garante que o documento do funcionário existe
-                upsertFuncionarioDocument(userCredential); 
+                const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
+                upsertFuncionarioDocument(userCredential);
                 toast({
-                    title: "Login bem-sucedido!",
+                    title: "Conta de gerente criada!",
                     description: "Redirecionando para o painel...",
                     className: "bg-accent text-accent-foreground"
                 });
                 router.push('/dashboard');
-            } catch (loginError: any) {
-                toast({
-                    title: "Erro de autenticação",
-                    description: "Senha inválida ou outro erro de login.",
+            } catch (creationError: any) {
+                 toast({
+                    title: "Erro ao criar conta",
+                    description: creationError.message || "Não foi possível criar a conta de gerente.",
                     variant: "destructive"
                 });
             }
         } else {
              toast({
-                title: "Erro ao criar conta",
-                description: error.message || "Não foi possível criar a conta de gerente.",
+                title: "Erro de autenticação",
+                description: error.message || "Ocorreu um erro inesperado.",
                 variant: "destructive"
             });
         }

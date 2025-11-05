@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { addDoc, collection, doc, updateDoc, deleteDoc } from "firebase/firestore";
+import { addDoc, collection, doc, updateDoc, deleteDoc, setDoc } from "firebase/firestore";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/page-header";
 import { PlusCircle } from "lucide-react";
@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { PLANOS } from "@/lib/data"; // Planos ainda são estáticos por enquanto
-import { useCollection, useFirestore, useMemoFirebase, FirestorePermissionError, errorEmitter } from "@/firebase";
+import { useCollection, useFirestore, useMemoFirebase } from "@/firebase";
 
 
 export default function AlunosPage() {
@@ -68,10 +68,11 @@ export default function AlunosPage() {
   };
 
   const handleFormSubmit = async (data: Omit<Aluno, "id" | "dataCadastro" | "fotoUrl" | "biometriaHash">) => {
-    if (!alunosCollection) return;
+    if (!alunosCollection || !firestore) return;
 
     try {
         if (editingAluno) {
+            // Atualiza um aluno existente
             const alunoRef = doc(firestore, "alunos", editingAluno.id);
             await updateDoc(alunoRef, data);
             toast({
@@ -79,13 +80,17 @@ export default function AlunosPage() {
                 description: `${data.nomeCompleto} foi atualizado com sucesso.`,
             });
         } else {
+            // Cria um novo aluno. Em um cenário real, isso criaria uma conta de autenticação também.
+            // Por enquanto, apenas adicionamos ao Firestore. O aluno precisaria usar a tela de login
+            // para criar sua própria conta de autenticação que corresponda ao e-mail.
+            const novoAlunoDoc = doc(alunosCollection); // Cria uma referência com ID gerado
             const novoAluno: Omit<Aluno, "id"> = {
                 ...data,
                 dataCadastro: new Date().toISOString(),
-                fotoUrl: `https://picsum.photos/seed/${Date.now()}/100/100`,
+                fotoUrl: `https://picsum.photos/seed/${novoAlunoDoc.id}/100/100`,
+                statusMatricula: 'ATIVA'
             };
-            // Firestore gerará o ID. Para criar conta, use a página de login do aluno.
-            await addDoc(alunosCollection, novoAluno); 
+            await setDoc(novoAlunoDoc, novoAluno);
             toast({
                 title: "Aluno cadastrado!",
                 description: `${data.nomeCompleto} foi adicionado ao sistema.`,
@@ -112,6 +117,7 @@ export default function AlunosPage() {
         toast({
             title: "Aluno excluído!",
             description: `${deletingAluno.nomeCompleto} foi removido do sistema.`,
+            variant: "destructive"
         });
     } catch (error) {
         console.error("Erro ao excluir aluno: ", error);
@@ -188,5 +194,3 @@ export default function AlunosPage() {
     </>
   );
 }
-
-    
