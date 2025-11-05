@@ -18,7 +18,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { PlusCircle, Save, Trash2, Wand2, BrainCircuit, CheckCircle, Pencil } from "lucide-react";
-import type { Aluno, Exercicio, Treino } from '@/lib/definitions';
+import type { Exercicio, Treino } from '@/lib/definitions';
 import { useToast } from '@/hooks/use-toast';
 import { useUser } from '@/firebase';
 import { Combobox } from '@/components/ui/combobox';
@@ -51,7 +51,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 const flatExerciciosOptions = EXERCICIOS_POR_GRUPO.flatMap(g => g.exercicios.map(ex => ({ value: ex.nomeExercicio, label: ex.nomeExercicio })));
-const exerciciosOptions = EXERCICIOS_POR_GRUPO.map(grupo => ({
+const exerciciosOptions = EXERCicios_POR_GRUPO.map(grupo => ({
     label: grupo.grupo,
     options: grupo.exercicios.map(ex => ({
         value: ex.nomeExercicio,
@@ -77,10 +77,10 @@ function WorkoutGenerator({ onGenerate, isGenerating }: { onGenerate: (data: Wor
             <CardHeader>
                 <CardTitle className='flex items-center gap-2'>
                     <Wand2 className='text-primary' />
-                    Gerador de Treino com IA
+                    Gerador de Plano Semanal com IA
                 </CardTitle>
                 <CardDescription>
-                    Preencha seus dados para que a IA crie uma sugestão de treino para um dia.
+                    Preencha seus dados para que a IA crie uma divisão de treinos completa para sua semana.
                 </CardDescription>
             </CardHeader>
             <CardContent>
@@ -154,14 +154,14 @@ function WorkoutGenerator({ onGenerate, isGenerating }: { onGenerate: (data: Wor
             </CardContent>
             <CardFooter>
                  <Button type="submit" form="ai-generator-form" disabled={isGenerating}>
-                    {isGenerating ? <><BrainCircuit className="mr-2 h-4 w-4 animate-pulse" /> Gerando...</> : <><Wand2 className="mr-2 h-4 w-4" /> Gerar Treino</>}
+                    {isGenerating ? <><BrainCircuit className="mr-2 h-4 w-4 animate-pulse" /> Gerando Plano...</> : <><Wand2 className="mr-2 h-4 w-4" /> Gerar Plano Semanal</>}
                  </Button>
             </CardFooter>
         </Card>
     );
 }
 
-function WorkoutEditor({ onSave, isGenerating, onGenerate, treinoToEdit }: { onSave: (treino: Omit<Treino, 'id' | 'alunoId' | 'instrutorId'>) => void, isGenerating: boolean, onGenerate: (data: WorkoutGeneratorInput) => Promise<void>, treinoToEdit: Treino | null }) {
+function WorkoutEditor({ onSave, treinoToEdit, onCancel }: { onSave: (treino: Omit<Treino, 'id' | 'alunoId' | 'instrutorId'>) => void, treinoToEdit: Treino | null, onCancel: () => void }) {
     const {toast} = useToast();
     const [objetivo, setObjetivo] = useState('');
     const [exercicios, setExercicios] = useState<Partial<Exercicio>[]>([]);
@@ -209,22 +209,17 @@ function WorkoutEditor({ onSave, isGenerating, onGenerate, treinoToEdit }: { onS
         setExercicios([]);
     }
 
-    const handleSetGeneratedWorkout = async (data: WorkoutGeneratorInput) => {
-        onGenerate(data)
-    };
-
-
     return (
         <div className='grid gap-6'>
             <Card>
                 <CardHeader>
                     <CardTitle>{treinoToEdit ? 'Editar Treino' : 'Criar Novo Treino'}</CardTitle>
-                    <CardDescription>Ajuste os exercícios gerados pela IA ou adicione-os manually.</CardDescription>
+                    <CardDescription>Ajuste os exercícios manualmente. Para gerar um novo plano com IA, use o gerador acima.</CardDescription>
                 </CardHeader>
                 <CardContent className="grid gap-6">
                     <div className='grid gap-2'>
-                        <Label htmlFor="objetivo">Objetivo do Treino</Label>
-                        <Input id="objetivo" placeholder="Ex: Hipertrofia, Perda de Peso" value={objetivo} onChange={(e) => setObjetivo(e.target.value)} />
+                        <Label htmlFor="objetivo">Nome/Objetivo do Treino</Label>
+                        <Input id="objetivo" placeholder="Ex: Treino A - Peito e Tríceps" value={objetivo} onChange={(e) => setObjetivo(e.target.value)} />
                     </div>
 
                     <div className="grid gap-4">
@@ -269,10 +264,13 @@ function WorkoutEditor({ onSave, isGenerating, onGenerate, treinoToEdit }: { onS
                         </Button>
                     </div>
                 </CardContent>
-                <CardFooter>
+                <CardFooter className='gap-2'>
                     <Button onClick={handleSaveTreino} className="bg-accent hover:bg-accent/90 text-accent-foreground" disabled={exercicios.length === 0}>
                         <Save className="mr-2 h-4 w-4" />
-                        Salvar Treino
+                        {treinoToEdit ? 'Salvar Alterações' : 'Salvar Novo Treino'}
+                    </Button>
+                     <Button variant="ghost" onClick={onCancel}>
+                        Cancelar
                     </Button>
                 </CardFooter>
             </Card>
@@ -323,11 +321,22 @@ export default function MeusTreinosPage() {
     }
 
     const handleSetAtivo = (treinoId: string) => {
+        // Regra: Não pode haver mais de um treino ativo do mesmo "tipo" (ex: "Treino A")
+        const treinoSendoAtivado = meusTreinos.find(t => t.id === treinoId);
+        if(!treinoSendoAtivado) return;
+
+        const outrosTreinosAtivosDoMesmoTipo = meusTreinos.some(t => t.ativo && t.objetivo.startsWith(treinoSendoAtivado.objetivo.split(' - ')[0]));
+
+        if(outrosTreinosAtivosDoMesmoTipo){
+             toast({ title: 'Ação não permitida', description: `Você já tem um treino "${treinoSendoAtivado.objetivo.split(' - ')[0]}" ativo. Desative o antigo primeiro.`, variant: 'destructive' });
+             return;
+        }
+
         setMeusTreinos(meusTreinos.map(t => ({
             ...t,
-            ativo: t.id === treinoId
+            ativo: t.id === treinoId ? !t.ativo : t.ativo // toggle
         })));
-        toast({ title: 'Treino definido como ativo!', description: 'Ele agora aparecerá no seu dashboard.' });
+        toast({ title: 'Status do treino atualizado!', description: 'Ele agora aparecerá (ou não) no seu dashboard.' });
     }
     
     const openDeleteAlert = (treino: Treino) => {
@@ -351,38 +360,42 @@ export default function MeusTreinosPage() {
 
     const handleGenerate = async (data: WorkoutGeneratorInput) => {
         setIsGenerating(true);
+        setIsFormVisible(false);
+        setEditingTreino(null);
         try {
             const result = await generateWorkoutPlan(data);
-            const novosExercicios = result.exercicios.map((ex, index) => ({
-                id: `${Date.now()}-${index}`,
-                nomeExercicio: ex.nomeExercicio,
-                series: ex.series,
-                repeticoes: ex.repeticoes,
-                observacoes: ex.observacoes,
-            }));
-
-            // Criar um novo treino com os dados gerados
-            const newTreino: Treino = {
-                id: `t-${Date.now()}`,
-                alunoId: user!.uid,
-                instrutorId: user!.uid, // O próprio aluno é o "instrutor"
-                objetivo: result.objetivo,
-                exercicios: novosExercicios as Exercicio[],
-                ativo: false,
-                dataCriacao: new Date().toISOString()
-            };
             
-            // Simular edição para preencher o formulário
-            setEditingTreino(newTreino);
-            setIsFormVisible(true);
+            const novosTreinos: Treino[] = result.workouts.map((workout, workoutIndex) => {
+                 const novosExercicios = workout.exercicios.map((ex, index) => ({
+                    id: `${Date.now()}-${workoutIndex}-${index}`,
+                    nomeExercicio: ex.nomeExercicio,
+                    series: ex.series,
+                    repeticoes: ex.repeticoes,
+                    observacoes: ex.observacoes,
+                    descricao: flatExerciciosOptions.find(opt => opt.nomeExercicio === ex.nomeExercicio)?.descricao || ""
+                }));
 
+                return {
+                    id: `t-${Date.now()}-${workoutIndex}`,
+                    alunoId: user!.uid,
+                    instrutorId: 'IA', // O "instrutor" é a IA
+                    objetivo: workout.nome, // Ex: "Treino A - Peito e Triceps"
+                    exercicios: novosExercicios as Exercicio[],
+                    ativo: false, // Começam desativados por padrão
+                    dataCriacao: new Date().toISOString()
+                }
+            });
+
+            setMeusTreinos(prevTreinos => [...novosTreinos, ...prevTreinos]);
+            
             toast({
-                title: "Treino gerado pela IA!",
-                description: `Um treino de ${result.objetivo} foi criado. Revise e salve abaixo.`,
+                title: "Plano Semanal Gerado pela IA!",
+                description: `${result.planName} foi criado com ${result.workouts.length} treinos. Veja abaixo.`,
+                duration: 5000,
             });
         } catch (error) {
             console.error("Erro ao gerar treino com IA:", error);
-            toast({ title: "Erro da IA", description: "Não foi possível gerar o treino. Tente novamente.", variant: "destructive" });
+            toast({ title: "Erro da IA", description: "Não foi possível gerar o plano. Tente novamente.", variant: "destructive" });
         } finally {
             setIsGenerating(false);
         }
@@ -397,7 +410,7 @@ export default function MeusTreinosPage() {
                     !isFormVisible && (
                         <Button onClick={handleOpenNewForm}>
                             <PlusCircle className="mr-2 h-4 w-4" />
-                            Criar Novo Treino
+                            Criar Treino Manual
                         </Button>
                     )
                 }
@@ -411,9 +424,11 @@ export default function MeusTreinosPage() {
                  <div className='mb-8'>
                     <WorkoutEditor 
                         onSave={handleSave} 
-                        isGenerating={isGenerating} 
-                        onGenerate={handleGenerate}
                         treinoToEdit={editingTreino}
+                        onCancel={() => {
+                            setIsFormVisible(false);
+                            setEditingTreino(null);
+                        }}
                     />
                  </div>
             )}
@@ -421,6 +436,7 @@ export default function MeusTreinosPage() {
             <Card>
                 <CardHeader>
                     <CardTitle>Meus Planos Salvos</CardTitle>
+                    <CardDescription>Ative os treinos que você fará durante a semana. Eles aparecerão no seu dashboard no dia correspondente.</CardDescription>
                 </CardHeader>
                 <CardContent className='grid gap-4'>
                     {meusTreinos.map(treino => (
@@ -435,12 +451,10 @@ export default function MeusTreinosPage() {
                                 </p>
                            </div>
                            <div className='flex items-center gap-2'>
-                               {!treino.ativo && (
-                                   <Button variant="outline" size="sm" onClick={() => handleSetAtivo(treino.id)}>
-                                       <CheckCircle className='mr-2 h-4 w-4' />
-                                       Tornar Ativo
-                                   </Button>
-                               )}
+                                <Button variant={treino.ativo ? "secondary" : "outline"} size="sm" onClick={() => handleSetAtivo(treino.id)}>
+                                    <CheckCircle className='mr-2 h-4 w-4' />
+                                    {treino.ativo ? 'Desativar' : 'Ativar'}
+                                </Button>
                                 <Button variant="secondary" size="sm" onClick={() => handleEdit(treino)}>
                                     <Pencil className='mr-2 h-4 w-4' />
                                     Editar
@@ -453,7 +467,7 @@ export default function MeusTreinosPage() {
                     ))}
                     {meusTreinos.length === 0 && (
                          <div className="text-center text-sm text-muted-foreground py-10">
-                            Você ainda não criou nenhum treino.
+                            Você ainda não criou nenhum treino. Use o gerador de IA ou crie um manualmente.
                          </div>
                     )}
                 </CardContent>

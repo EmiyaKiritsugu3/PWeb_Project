@@ -16,8 +16,15 @@ export const WorkoutGeneratorInputSchema = z.object({
 });
 export type WorkoutGeneratorInput = z.infer<typeof WorkoutGeneratorInputSchema>;
 
+
+const GeneratedWorkoutSchema = z.object({
+    nome: z.string().describe("O nome do treino (ex: Treino A, Treino B, Peito & Tríceps)."),
+    objetivo: z.string().describe("O objetivo principal deste treino específico."),
+    exercicios: z.array(ExercicioGeradoSchema),
+});
+
 export const WorkoutGeneratorOutputSchema = z.object({
-  objetivo: z.string().describe("O objetivo principal do treino, para confirmação."),
-  exercicios: z.array(ExercicioGeradoSchema),
+  planName: z.string().describe("Um nome geral para o plano de treino semanal."),
+  workouts: z.array(GeneratedWorkoutSchema),
 });
 export type WorkoutGeneratorOutput = z.infer<typeof WorkoutGeneratorOutputSchema>;

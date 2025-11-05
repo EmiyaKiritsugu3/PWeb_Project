@@ -67,10 +67,10 @@ function WorkoutGenerator({ onGenerate, isGenerating }: { onGenerate: (data: Wor
             <CardHeader>
                 <CardTitle className='flex items-center gap-2'>
                     <Wand2 className='text-primary' />
-                    Gerador de Treino com IA
+                    Gerador de Plano Semanal com IA
                 </CardTitle>
                 <CardDescription>
-                    Preencha os dados do aluno para que a IA crie uma sugestão de treino para um dia.
+                    Preencha os dados do aluno para que a IA crie uma divisão de treinos completa para a semana.
                 </CardDescription>
             </CardHeader>
             <CardContent>
@@ -144,7 +144,7 @@ function WorkoutGenerator({ onGenerate, isGenerating }: { onGenerate: (data: Wor
             </CardContent>
             <CardFooter>
                  <Button type="submit" form="ai-generator-form" disabled={isGenerating}>
-                    {isGenerating ? <><BrainCircuit className="mr-2 h-4 w-4 animate-pulse" /> Gerando...</> : <><Wand2 className="mr-2 h-4 w-4" /> Gerar Treino</>}
+                    {isGenerating ? <><BrainCircuit className="mr-2 h-4 w-4 animate-pulse" /> Gerando Plano...</> : <><Wand2 className="mr-2 h-4 w-4" /> Gerar Plano Semanal</>}
                  </Button>
             </CardFooter>
         </Card>
@@ -178,7 +178,6 @@ export default function TreinosPage() {
         setExercicios(exercicios.map(ex => {
             if (ex.id !== id) return ex;
 
-            // Encontre o exercício correspondente nos dados para obter a descrição
             if (field === 'nomeExercicio' && typeof value === 'string') {
                 const selectedOption = flatExerciciosOptions.find(opt => opt.nomeExercicio === value);
                 return { 
@@ -222,9 +221,15 @@ export default function TreinosPage() {
         setIsGenerating(true);
         try {
             const result = await generateWorkoutPlan(data);
+
+            // A IA agora retorna múltiplos treinos. Por enquanto, vamos pegar apenas o primeiro.
+            const firstWorkout = result.workouts[0];
+            if (!firstWorkout) {
+                 toast({ title: "Erro da IA", description: "A IA não retornou nenhum treino.", variant: "destructive" });
+                 return;
+            }
             
-            // Mapear o resultado da IA para o estado de exercícios
-            const novosExercicios = result.exercicios.map((ex, index) => {
+            const novosExercicios = firstWorkout.exercicios.map((ex, index) => {
                 const exercicioBase = flatExerciciosOptions.find(opt => opt.nomeExercicio === ex.nomeExercicio);
                 return {
                     id: `${Date.now()}-${index}`,
@@ -236,19 +241,20 @@ export default function TreinosPage() {
                 };
             });
 
-            setObjetivo(result.objetivo);
+            setObjetivo(firstWorkout.nome);
             setExercicios(novosExercicios);
 
              toast({
-                title: "Treino gerado pela IA!",
-                description: `Um treino de ${result.objetivo} foi criado. Revise e salve abaixo.`,
+                title: "Plano Semanal Gerado pela IA!",
+                description: `${result.planName} foi criado. Revise e salve o primeiro treino abaixo.`,
+                duration: 5000,
             });
 
         } catch (error) {
             console.error("Erro ao gerar treino com IA:", error);
             toast({
                 title: "Erro da IA",
-                description: "Não foi possível gerar o treino. Tente novamente.",
+                description: "Não foi possível gerar o plano. Tente novamente.",
                 variant: "destructive"
             });
         } finally {
@@ -295,12 +301,12 @@ export default function TreinosPage() {
                     <Card>
                         <CardHeader>
                             <CardTitle>Passo 2: Revisar e Salvar o Treino para {selectedAluno.nomeCompleto}</CardTitle>
-                            <CardDescription>Ajuste os exercícios gerados pela IA ou adicione-os manualmente.</CardDescription>
+                            <CardDescription>Ajuste os exercícios gerados pela IA ou adicione-os manualmente. Apenas o primeiro treino da semana é mostrado aqui para revisão.</CardDescription>
                         </CardHeader>
                         <CardContent className="grid gap-6">
                             <div className='grid gap-2'>
-                                <Label htmlFor="objetivo">Objetivo do Treino</Label>
-                                <Input id="objetivo" placeholder="Ex: Hipertrofia, Perda de Peso" value={objetivo} onChange={(e) => setObjetivo(e.target.value)} />
+                                <Label htmlFor="objetivo">Nome/Objetivo do Treino</Label>
+                                <Input id="objetivo" placeholder="Ex: Treino A - Peito e Tríceps" value={objetivo} onChange={(e) => setObjetivo(e.target.value)} />
                             </div>
 
                             <div className="grid gap-4">
@@ -350,7 +356,7 @@ export default function TreinosPage() {
                         <CardFooter>
                             <Button onClick={handleSaveTreino} className="bg-accent hover:bg-accent/90 text-accent-foreground" disabled={exercicios.length === 0}>
                                 <Save className="mr-2 h-4 w-4" />
-                                Salvar Treino
+                                Salvar este Treino
                             </Button>
                         </CardFooter>
                     </Card>
