@@ -5,11 +5,11 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useUser } from "@/firebase";
-import { ALUNOS, TREINOS } from "@/lib/data";
+import { ALUNOS, TREINOS, DIAS_DA_SEMANA } from "@/lib/data";
 import type { Treino, Aluno, Exercicio } from "@/lib/definitions";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Sparkles, BrainCircuit, Info } from "lucide-react";
+import { Sparkles, BrainCircuit, Info, CalendarOff } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { generateWorkoutFeedback } from "@/ai/flows/workout-feedback-flow";
 import {
@@ -34,19 +34,11 @@ function ExercicioViewer({ exercicio, isOpen, onOpenChange }: { exercicio: Exerc
                 <AlertDialogHeader>
                     <AlertDialogTitle>{exercicio.nomeExercicio}</AlertDialogTitle>
                 </AlertDialogHeader>
-                <div className="grid gap-4 py-4">
-                    {exercicio.descricao && (
-                        <ScrollArea className="h-48 w-full rounded-md border p-4 text-sm">
-                           <h3 className="font-semibold mb-2">Como Executar:</h3>
-                           <p className="text-muted-foreground whitespace-pre-wrap">{exercicio.descricao}</p>
-                        </ScrollArea>
-                    )}
-                     {!exercicio.descricao && (
-                        <div className="text-sm text-muted-foreground">
-                            Nenhuma descrição disponível para este exercício.
-                        </div>
-                    )}
-                </div>
+                <ScrollArea className="max-h-80 w-full rounded-md pr-4">
+                    <div className="grid gap-4 py-4 text-sm text-muted-foreground whitespace-pre-wrap">
+                        {exercicio.descricao || "Nenhuma descrição disponível para este exercício."}
+                    </div>
+                </ScrollArea>
                 <AlertDialogFooter>
                     <AlertDialogCancel>Fechar</AlertDialogCancel>
                 </AlertDialogFooter>
@@ -116,26 +108,32 @@ function CardTreino({
     const [checkedExercises, setCheckedExercises] = useState<Record<string, boolean>>({});
 
     useEffect(() => {
-        const today = new Date().toISOString().split('T')[0];
-        const savedState = localStorage.getItem(`checkedExercises-${today}`);
+        // Gera uma chave única para o dia e para o treino específico
+        const storageKey = `checkedExercises-${new Date().toISOString().split('T')[0]}-${treino?.id}`;
+        
+        // Limpa o estado de dias anteriores
+        Object.keys(localStorage).forEach(key => {
+            if (key.startsWith('checkedExercises-') && !key.includes(new Date().toISOString().split('T')[0])) {
+                localStorage.removeItem(key);
+            }
+        });
+        
+        const savedState = localStorage.getItem(storageKey);
+
         if (savedState) {
             setCheckedExercises(JSON.parse(savedState));
         } else {
-            Object.keys(localStorage).forEach(key => {
-                if (key.startsWith('checkedExercises-')) {
-                    localStorage.removeItem(key);
-                }
-            });
-             // Ao carregar um novo treino, limpa os checkboxes
+             // Se não há estado salvo para o treino de hoje, reseta os checkboxes
             setCheckedExercises({});
         }
-    }, [treino]); // Roda o efeito quando o treino muda
+
+    }, [treino]); // Roda o efeito quando o treino do dia muda
 
     const handleCheckChange = (exerciseId: string) => {
-        const today = new Date().toISOString().split('T')[0];
+        const storageKey = `checkedExercises-${new Date().toISOString().split('T')[0]}-${treino?.id}`;
         const newState = { ...checkedExercises, [exerciseId]: !checkedExercises[exerciseId] };
         setCheckedExercises(newState);
-        localStorage.setItem(`checkedExercises-${today}`, JSON.stringify(newState));
+        localStorage.setItem(storageKey, JSON.stringify(newState));
     };
     
     const handleFinishClick = () => {
@@ -147,10 +145,12 @@ function CardTreino({
         return (
              <Card>
                 <CardHeader>
-                    <CardTitle>Meu Treino de Hoje</CardTitle>
+                    <CardTitle className="text-xl">Treino de Hoje</CardTitle>
                 </CardHeader>
-                <CardContent>
-                    <p className="text-muted-foreground">Nenhum treino ativo encontrado para você.</p>
+                <CardContent className="flex flex-col items-center justify-center text-center py-10 gap-4">
+                    <CalendarOff className="h-16 w-16 text-muted-foreground" />
+                    <p className="font-medium">Dia de descanso!</p>
+                    <p className="text-muted-foreground">Aproveite para se recuperar. Nenhum treino agendado para hoje.</p>
                 </CardContent>
             </Card>
         );
@@ -188,7 +188,7 @@ function CardTreino({
                             </div>
                              {exercicio.descricao && (
                                 <Button variant="ghost" size="icon" onClick={() => onViewExercicio(exercicio)}>
-                                    <Info className="h-6 w-6 text-muted-foreground" />
+                                    <Info className="h-5 w-5 text-muted-foreground" />
                                 </Button>
                             )}
                         </div>
@@ -239,7 +239,7 @@ function CardFeedback({ feedback, isLoading }: { feedback: { title: string; mess
                 </CardTitle>
             </CardHeader>
             <CardContent>
-                <p className="text-accent">{feedback.message}</p>
+                <p className="text-accent-foreground">{feedback.message}</p>
             </CardContent>
         </Card>
     )
@@ -250,7 +250,10 @@ export default function AlunoDashboardPage() {
     
     // Simulação de busca de dados
     const aluno = ALUNOS.find(a => a.email === user?.email);
-    const treinoAtivo = TREINOS.find(t => t.alunoId === aluno?.id && t.ativo);
+
+    // Lógica para encontrar o treino do dia
+    const [today, setToday] = useState(new Date().getDay());
+    const treinoDoDia = TREINOS.find(t => t.alunoId === aluno?.id && t.diaSemana === today);
 
     const [feedback, setFeedback] = useState<{ title: string; message: string; } | null>(null);
     const [isFeedbackLoading, setIsFeedbackLoading] = useState(false);
@@ -266,20 +269,20 @@ export default function AlunoDashboardPage() {
 
 
     const handleFinishTraining = async (completedExercises: string[]) => {
-        if (!treinoAtivo) return;
+        if (!treinoDoDia) return;
 
         setIsFeedbackLoading(true);
         setFeedback(null); // Limpa feedback anterior
 
         try {
             const exerciseNames = completedExercises
-                .map(id => treinoAtivo.exercicios.find(ex => ex.id === id)?.nomeExercicio)
+                .map(id => treinoDoDia.exercicios.find(ex => ex.id === id)?.nomeExercicio)
                 .filter((name): name is string => !!name);
 
             const result = await generateWorkoutFeedback({
-                goal: treinoAtivo.objetivo,
+                goal: treinoDoDia.objetivo,
                 completedExercises: exerciseNames,
-                totalExercises: treinoAtivo.exercicios.length,
+                totalExercises: treinoDoDia.exercicios.length,
             });
 
             setFeedback(result);
@@ -307,7 +310,7 @@ export default function AlunoDashboardPage() {
                     {/* Coluna principal com o treino */}
                     <div className="col-span-1 grid auto-rows-max items-start gap-6 lg:col-span-2 lg:gap-8">
                         <CardTreino 
-                            treino={treinoAtivo} 
+                            treino={treinoDoDia} 
                             onFinishTraining={handleFinishTraining}
                             isFeedbackLoading={isFeedbackLoading}
                             onViewExercicio={handleViewExercicio}

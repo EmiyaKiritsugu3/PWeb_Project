@@ -12,12 +12,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { EXERCICIOS_POR_GRUPO, TREINOS as mockTreinos } from "@/lib/data";
+import { EXERCICIOS_POR_GRUPO, TREINOS as mockTreinos, DIAS_DA_SEMANA } from "@/lib/data";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, Save, Trash2, Wand2, BrainCircuit, CheckCircle, Pencil } from "lucide-react";
+import { PlusCircle, Save, Trash2, Wand2, BrainCircuit, Pencil } from "lucide-react";
 import type { Exercicio, Treino } from '@/lib/definitions';
 import { useToast } from '@/hooks/use-toast';
 import { useUser } from '@/firebase';
@@ -198,10 +198,10 @@ function WorkoutEditor({ onSave, treinoToEdit, onCancel }: { onSave: (treino: Om
             return;
         }
 
-        const novoTreino = {
+        const novoTreino: Omit<Treino, 'id' | 'alunoId' | 'instrutorId'> = {
             objetivo,
             exercicios: exercicios as Exercicio[],
-            ativo: false,
+            diaSemana: null, // Novos treinos começam desativados
             dataCriacao: new Date().toISOString()
         }
         onSave(novoTreino);
@@ -296,7 +296,7 @@ export default function MeusTreinosPage() {
 
     const handleSave = (treinoData: Omit<Treino, 'id' | 'alunoId' | 'instrutorId'>) => {
         if (editingTreino) {
-            // Edita o treino existente
+            // Edita o treino existente, mantendo o dia da semana
             setMeusTreinos(meusTreinos.map(t => t.id === editingTreino.id ? { ...editingTreino, ...treinoData } : t));
             toast({ title: 'Treino atualizado com sucesso!', className: 'bg-accent text-accent-foreground' });
         } else {
@@ -320,33 +320,23 @@ export default function MeusTreinosPage() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    const handleSetAtivo = (treinoId: string) => {
-        const treinoSendoModificado = meusTreinos.find(t => t.id === treinoId);
-        if (!treinoSendoModificado) return;
+    const handleDayChange = (treinoId: string, dia: string) => {
+        const novoDia = dia === "nenhum" ? null : parseInt(dia, 10);
 
-        const isActivating = !treinoSendoModificado.ativo;
-
-        if (isActivating) {
-            const tipoTreino = treinoSendoModificado.objetivo.split(' - ')[0];
-            const outroAtivoDoMesmoTipo = meusTreinos.some(
-                t => t.id !== treinoId && t.ativo && t.objetivo.startsWith(tipoTreino)
-            );
-
-            if (outroAtivoDoMesmoTipo) {
-                toast({
-                    title: 'Ação não permitida',
-                    description: `Você já tem um treino "${tipoTreino}" ativo. Desative o antigo primeiro.`,
-                    variant: 'destructive',
-                });
-                return;
-            }
+        // Verifica se o dia já está ocupado por outro treino
+        if (novoDia !== null && meusTreinos.some(t => t.diaSemana === novoDia && t.id !== treinoId)) {
+            toast({
+                title: "Dia já ocupado",
+                description: "Outro treino já está agendado para este dia. Escolha outro dia ou desative o treino existente.",
+                variant: "destructive"
+            });
+            return;
         }
 
-        // Se for desativar, ou se for ativar e não houver conflito, prossegue
         setMeusTreinos(meusTreinos.map(t =>
-            t.id === treinoId ? { ...t, ativo: !t.ativo } : t
+            t.id === treinoId ? { ...t, diaSemana: novoDia } : t
         ));
-        toast({ title: 'Status do treino atualizado!' });
+        toast({ title: 'Agenda atualizada!' });
     };
     
     const openDeleteAlert = (treino: Treino) => {
@@ -391,7 +381,7 @@ export default function MeusTreinosPage() {
                     instrutorId: 'IA', // O "instrutor" é a IA
                     objetivo: workout.nome, // Ex: "Treino A - Peito e Triceps"
                     exercicios: novosExercicios as Exercicio[],
-                    ativo: false, // Começam desativados por padrão
+                    diaSemana: null, // Começam desativados por padrão
                     dataCriacao: new Date().toISOString()
                 }
             });
@@ -411,11 +401,16 @@ export default function MeusTreinosPage() {
         }
     };
 
+    const getDiaLabel = (diaSemana: number | null) => {
+        if (diaSemana === null) return null;
+        return DIAS_DA_SEMANA.find(d => d.value === diaSemana)?.label;
+    };
+
     return (
         <>
             <PageHeader
                 title="Meus Treinos"
-                description="Crie, edite e gerencie seus planos de treino."
+                description="Crie, edite e agende seus planos de treino para a semana."
                 actions={
                     !isFormVisible && (
                         <Button onClick={handleOpenNewForm}>
@@ -446,31 +441,44 @@ export default function MeusTreinosPage() {
             <Card>
                 <CardHeader>
                     <CardTitle>Meus Planos Salvos</CardTitle>
-                    <CardDescription>Ative os treinos que você fará durante a semana. Eles aparecerão no seu dashboard no dia correspondente.</CardDescription>
+                    <CardDescription>Atribua cada treino a um dia da semana para ativá-lo. O treino do dia aparecerá no seu dashboard.</CardDescription>
                 </CardHeader>
                 <CardContent className='grid gap-4'>
                     {meusTreinos.map(treino => (
-                        <div key={treino.id} className={cn("rounded-lg border p-4 transition-all flex justify-between items-center", treino.ativo && "bg-accent/10 border-accent")}>
-                           <div>
-                                <div className='flex items-center gap-2'>
+                        <div key={treino.id} className={cn("rounded-lg border p-4 transition-all flex flex-col sm:flex-row justify-between sm:items-center gap-4", treino.diaSemana !== null && "bg-accent/10 border-accent")}>
+                           <div className='flex-1'>
+                                <div className='flex items-center gap-3'>
                                     <h3 className="font-bold text-base">{treino.objetivo}</h3>
-                                    {treino.ativo && <Badge>Ativo</Badge>}
+                                    {treino.diaSemana !== null && <Badge>{getDiaLabel(treino.diaSemana)}</Badge>}
                                 </div>
                                 <p className="text-sm text-muted-foreground">
                                     {treino.exercicios.length} exercícios
                                 </p>
                            </div>
-                           <div className='flex items-center gap-2'>
-                                <Button variant={treino.ativo ? "secondary" : "outline"} size="sm" onClick={() => handleSetAtivo(treino.id)}>
-                                    <CheckCircle className='mr-2 h-4 w-4' />
-                                    {treino.ativo ? 'Desativar' : 'Ativar'}
-                                </Button>
+                           <div className='flex items-center gap-2 flex-wrap'>
+                                <Select
+                                    value={treino.diaSemana === null ? "nenhum" : String(treino.diaSemana)}
+                                    onValueChange={(value) => handleDayChange(treino.id, value)}
+                                >
+                                    <SelectTrigger className="w-full sm:w-[180px]">
+                                        <SelectValue placeholder="Agendar dia..." />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="nenhum">Nenhum (Desativado)</SelectItem>
+                                        {DIAS_DA_SEMANA.map(dia => (
+                                            <SelectItem key={dia.value} value={String(dia.value)}>
+                                                {dia.label}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
                                 <Button variant="secondary" size="sm" onClick={() => handleEdit(treino)}>
                                     <Pencil className='mr-2 h-4 w-4' />
                                     Editar
                                 </Button>
-                                <Button variant="destructive" size="icon" onClick={() => openDeleteAlert(treino)}>
-                                    <Trash2 className='h-4 w-4' />
+                                <Button variant="destructive" size="sm" onClick={() => openDeleteAlert(treino)}>
+                                    <Trash2 className='mr-2 h-4 w-4' />
+                                    Excluir
                                 </Button>
                            </div>
                         </div>

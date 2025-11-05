@@ -77,9 +77,17 @@ export const PLANOS: Plano[] = [
   { id: '4', nome: 'Plano Anual', preco: 1080, duracaoDias: 365 },
 ];
 
-type ExercicioData = Omit<Exercicio, 'id' | 'series' | 'repeticoes' | 'observacoes'>;
+export const DIAS_DA_SEMANA = [
+    { value: 1, label: 'Segunda-feira' },
+    { value: 2, label: 'Terça-feira' },
+    { value: 3, label: 'Quarta-feira' },
+    { value: 4, label: 'Quinta-feira' },
+    { value: 5, label: 'Sexta-feira' },
+    { value: 6, label: 'Sábado' },
+    { value: 0, label: 'Domingo' },
+];
 
-export const EXERCICIOS_POR_GRUPO: { grupo: string; exercicios: ExercicioData[] }[] = [
+export const EXERCICIOS_POR_GRUPO: { grupo: string; exercicios: Omit<Exercicio, 'id' | 'series' | 'repeticoes' | 'observacoes'>[] }[] = [
   {
     grupo: 'Peito',
     exercicios: [
@@ -149,13 +157,23 @@ export const TREINOS: Treino[] = [
         id: 't1',
         alunoId: '1', // Ana Silva
         instrutorId: 'func1',
-        objetivo: 'Hipertrofia - Membros Superiores',
+        objetivo: 'Hipertrofia - Superiores A',
         dataCriacao: '2024-01-15',
-        ativo: true,
+        diaSemana: 1, // Segunda-feira
         exercicios: [
             { id: 'ex1', nomeExercicio: 'Supino Reto com Barra', series: 4, repeticoes: '8-10', observacoes: 'Controlar a descida.', descricao: 'Deite-se em um banco reto, segure a barra com as mãos um pouco mais afastadas que a largura dos ombros. Desça a barra até tocar o peito e empurre de volta à posição inicial.' },
             { id: 'ex2', nomeExercicio: 'Remada Curvada com Barra', series: 4, repeticoes: '8-10', observacoes: 'Manter a coluna reta.', descricao: 'Incline o tronco para frente, mantendo a coluna reta. Puxe a barra em direção ao abdômen.' },
             { id: 'ex3', nomeExercicio: 'Desenvolvimento Militar com Barra', series: 3, repeticoes: '10-12', observacoes: '', descricao: 'Em pé ou sentado, segure a barra na altura dos ombros e empurre-a para cima da cabeça, estendendo completamente os cotovelos.' },
+        ]
+    },
+     {
+        id: 't1-b',
+        alunoId: '1', // Ana Silva
+        instrutorId: 'func1',
+        objetivo: 'Hipertrofia - Superiores B',
+        dataCriacao: '2024-01-15',
+        diaSemana: 4, // Quinta-feira
+        exercicios: [
             { id: 'ex4', nomeExercicio: 'Rosca Direta com Barra', series: 3, repeticoes: '12-15', observacoes: 'Evitar balançar o corpo.', descricao: 'Segure a barra com as palmas das mãos para cima (supinação). Flexione os cotovelos, trazendo a barra em direção aos ombros.' },
             { id: 'ex5', nomeExercicio: 'Tríceps Pulley com Barra', series: 3, repeticoes: '12-15', observacoes: 'Estender completamente os cotovelos.', descricao: 'Na polia alta, segure a barra e empurre-a para baixo até estender completamente os cotovelos. Mantenha os cotovelos fixos ao lado do corpo.' },
         ]
@@ -166,7 +184,7 @@ export const TREINOS: Treino[] = [
         instrutorId: 'func1',
         objetivo: 'Perda de Peso',
         dataCriacao: '2024-01-20',
-        ativo: true,
+        diaSemana: 2, // Terça-feira
         exercicios: [
              { id: 'ex6', nomeExercicio: 'Agachamento Livre', series: 5, repeticoes: '15-20', observacoes: 'Foco na amplitude.', descricao: 'Com a barra nos ombros, agache como se fosse sentar em uma cadeira, mantendo a coluna reta e os joelhos alinhados com os pés. Desça até os quadris ficarem paralelos ao chão ou mais baixo.' },
              { id: 'ex7', nomeExercicio: 'Levantamento Terra', series: 3, repeticoes: '10', observacoes: 'Cuidado com a lombar.', descricao: 'Com a barra no chão, agache-se com a coluna reta e segure a barra. Levante-se estendendo as pernas e o quadril. Mantenha a barra próxima ao corpo.' },
@@ -177,9 +195,9 @@ export const TREINOS: Treino[] = [
         id: 't3',
         alunoId: '1', // Ana Silva
         instrutorId: 'func1',
-        objetivo: 'Hipertrofia - Membros Inferiores',
+        objetivo: 'Hipertrofia - Inferiores',
         dataCriacao: '2023-11-15',
-        ativo: false, // Treino antigo
+        diaSemana: 3, // Quarta-feira
         exercicios: [
              { id: 'ex9', nomeExercicio: 'Agachamento Livre', series: 4, repeticoes: '8-10', observacoes: '', descricao: 'Com a barra nos ombros, agache como se fosse sentar em uma cadeira, mantendo a coluna reta e os joelhos alinhados com os pés. Desça até os quadris ficarem paralelos ao chão ou mais baixo.' },
         ]

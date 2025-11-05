@@ -52,6 +52,8 @@ export type Treino = {
   instrutorId: string;
   objetivo: string;
   dataCriacao: string;
-  ativo: boolean;
+  /** Dia da semana (0 = Domingo, 1 = Segunda, ..., 6 = Sábado). Null se não estiver ativo. */
+  diaSemana: number | null; 
   exercicios: Exercicio[];
 };
+
