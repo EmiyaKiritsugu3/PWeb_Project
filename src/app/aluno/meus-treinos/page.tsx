@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PageHeader } from "@/components/page-header";
@@ -31,10 +31,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import {
-  generateWorkoutPlan,
-  WorkoutGeneratorInputSchema,
-  type WorkoutGeneratorInput,
+  generateWorkoutPlan
 } from "@/ai/flows/workout-generator-flow";
+import {
+    WorkoutGeneratorInputSchema,
+    type WorkoutGeneratorInput,
+} from "@/ai/schemas";
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import {
@@ -160,6 +162,7 @@ function WorkoutGenerator({ onGenerate, isGenerating }: { onGenerate: (data: Wor
 }
 
 function WorkoutEditor({ onSave, isGenerating, onGenerate, treinoToEdit }: { onSave: (treino: Omit<Treino, 'id' | 'alunoId' | 'instrutorId'>) => void, isGenerating: boolean, onGenerate: (data: WorkoutGeneratorInput) => Promise<void>, treinoToEdit: Treino | null }) {
+    const {toast} = useToast();
     const [objetivo, setObjetivo] = useState('');
     const [exercicios, setExercicios] = useState<Partial<Exercicio>[]>([]);
     
@@ -207,38 +210,16 @@ function WorkoutEditor({ onSave, isGenerating, onGenerate, treinoToEdit }: { onS
     }
 
     const handleSetGeneratedWorkout = async (data: WorkoutGeneratorInput) => {
-        setIsGenerating(true);
-        try {
-            const result = await generateWorkoutPlan(data);
-            const novosExercicios = result.exercicios.map((ex, index) => ({
-                id: `${Date.now()}-${index}`,
-                nomeExercicio: ex.nomeExercicio,
-                series: ex.series,
-                repeticoes: ex.repeticoes,
-                observacoes: ex.observacoes,
-            }));
-            setObjetivo(result.objetivo);
-            setExercicios(novosExercicios);
-            toast({
-                title: "Treino gerado pela IA!",
-                description: `Um treino de ${result.objetivo} foi criado. Revise e salve abaixo.`,
-            });
-        } catch (error) {
-            console.error("Erro ao gerar treino com IA:", error);
-            toast({ title: "Erro da IA", description: "Não foi possível gerar o treino. Tente novamente.", variant: "destructive" });
-        } finally {
-            setIsGenerating(false);
-        }
+        onGenerate(data)
     };
 
 
     return (
         <div className='grid gap-6'>
-            <WorkoutGenerator onGenerate={handleSetGeneratedWorkout} isGenerating={isGenerating} />
             <Card>
                 <CardHeader>
                     <CardTitle>{treinoToEdit ? 'Editar Treino' : 'Criar Novo Treino'}</CardTitle>
-                    <CardDescription>Ajuste os exercícios gerados pela IA ou adicione-os manualmente.</CardDescription>
+                    <CardDescription>Ajuste os exercícios gerados pela IA ou adicione-os manually.</CardDescription>
                 </CardHeader>
                 <CardContent className="grid gap-6">
                     <div className='grid gap-2'>
@@ -368,6 +349,45 @@ export default function MeusTreinosPage() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    const handleGenerate = async (data: WorkoutGeneratorInput) => {
+        setIsGenerating(true);
+        try {
+            const result = await generateWorkoutPlan(data);
+            const novosExercicios = result.exercicios.map((ex, index) => ({
+                id: `${Date.now()}-${index}`,
+                nomeExercicio: ex.nomeExercicio,
+                series: ex.series,
+                repeticoes: ex.repeticoes,
+                observacoes: ex.observacoes,
+            }));
+
+            // Criar um novo treino com os dados gerados
+            const newTreino: Treino = {
+                id: `t-${Date.now()}`,
+                alunoId: user!.uid,
+                instrutorId: user!.uid, // O próprio aluno é o "instrutor"
+                objetivo: result.objetivo,
+                exercicios: novosExercicios as Exercicio[],
+                ativo: false,
+                dataCriacao: new Date().toISOString()
+            };
+            
+            // Simular edição para preencher o formulário
+            setEditingTreino(newTreino);
+            setIsFormVisible(true);
+
+            toast({
+                title: "Treino gerado pela IA!",
+                description: `Um treino de ${result.objetivo} foi criado. Revise e salve abaixo.`,
+            });
+        } catch (error) {
+            console.error("Erro ao gerar treino com IA:", error);
+            toast({ title: "Erro da IA", description: "Não foi possível gerar o treino. Tente novamente.", variant: "destructive" });
+        } finally {
+            setIsGenerating(false);
+        }
+    };
+
     return (
         <>
             <PageHeader
@@ -382,13 +402,17 @@ export default function MeusTreinosPage() {
                     )
                 }
             />
+            
+             <div className='mb-8'>
+                <WorkoutGenerator onGenerate={handleGenerate} isGenerating={isGenerating} />
+            </div>
 
             {isFormVisible && (
                  <div className='mb-8'>
                     <WorkoutEditor 
                         onSave={handleSave} 
                         isGenerating={isGenerating} 
-                        onGenerate={async (data) => {}} // A lógica de geração é interna do editor
+                        onGenerate={handleGenerate}
                         treinoToEdit={editingTreino}
                     />
                  </div>
@@ -454,4 +478,3 @@ export default function MeusTreinosPage() {
         </>
     );
 }
-

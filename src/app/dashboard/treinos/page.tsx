@@ -31,11 +31,12 @@ import {
   FormLabel,
 } from "@/components/ui/form";
 import {
-  generateWorkoutPlan,
-  WorkoutGeneratorInputSchema,
-  type WorkoutGeneratorInput,
+  generateWorkoutPlan
 } from "@/ai/flows/workout-generator-flow";
-
+import {
+    WorkoutGeneratorInputSchema,
+    type WorkoutGeneratorInput,
+} from "@/ai/schemas";
 
 // Transforma os dados agrupados para o formato que o Combobox espera
 const exerciciosOptions = EXERCICIOS_POR_GRUPO.map(grupo => ({
