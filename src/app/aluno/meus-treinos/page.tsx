@@ -50,6 +50,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { addDoc, collection, deleteDoc, doc, updateDoc } from 'firebase/firestore';
+import { Skeleton } from "@/components/ui/skeleton";
 
 const flatExerciciosOptions = EXERCICIOS_POR_GRUPO.flatMap(g => g.exercicios.map(ex => ({ value: ex.nomeExercicio, label: ex.nomeExercicio })));
 const exerciciosOptions = EXERCICIOS_POR_GRUPO.map(grupo => ({
@@ -526,5 +527,7 @@ export default function MeusTreinosPage() {
         </>
     );
 }
+
+    
 
     
