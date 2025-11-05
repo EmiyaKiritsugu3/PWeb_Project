@@ -28,7 +28,6 @@ const exerciciosOptions = EXERCICIOS_POR_GRUPO.map(grupo => ({
         value: ex.nomeExercicio,
         label: ex.nomeExercicio,
         keywords: [grupo.grupo], // Adiciona o nome do grupo como keyword
-        gifUrl: ex.gifUrl,
     }))
 }));
 
@@ -36,7 +35,8 @@ const exerciciosOptions = EXERCICIOS_POR_GRUPO.map(grupo => ({
 const flatExerciciosOptions = EXERCICIOS_POR_GRUPO.flatMap(g => g.exercicios.map(ex => ({ 
     value: ex.nomeExercicio, 
     label: ex.nomeExercicio,
-    gifUrl: ex.gifUrl,
+    imageUrl: ex.imageUrl,
+    descricao: ex.descricao,
 })));
 
 
@@ -64,13 +64,14 @@ export default function TreinosPage() {
         setExercicios(exercicios.map(ex => {
             if (ex.id !== id) return ex;
 
-            // Quando o nome do exercício muda, atualiza também a URL do GIF
+            // Quando o nome do exercício muda, atualiza também a URL da imagem e a descrição
             if (field === 'nomeExercicio' && typeof value === 'string') {
                 const selectedOption = flatExerciciosOptions.find(opt => opt.value === value);
                 return { 
                     ...ex, 
                     nomeExercicio: value,
-                    gifUrl: selectedOption?.gifUrl // Atualiza o GIF
+                    imageUrl: selectedOption?.imageUrl,
+                    descricao: selectedOption?.descricao
                 };
             }
             return { ...ex, [field]: value };
@@ -193,5 +194,3 @@ export default function TreinosPage() {
         </>
     );
 }
-
-    

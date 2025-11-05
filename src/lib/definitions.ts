@@ -43,7 +43,8 @@ export type Exercicio = {
   series: number;
   repeticoes: string;
   observacoes: string;
-  gifUrl?: string; // URL para o GIF demonstrativo
+  imageUrl?: string;
+  descricao?: string;
 };
 
 export type Treino = {

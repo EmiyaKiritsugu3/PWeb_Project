@@ -22,6 +22,7 @@ import {
   AlertDialogFooter,
   AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 
 // Componente para o Modal de Visualização do Exercício
@@ -30,24 +31,32 @@ function ExercicioViewer({ exercicio, isOpen, onOpenChange }: { exercicio: Exerc
 
     return (
         <AlertDialog open={isOpen} onOpenChange={onOpenChange}>
-            <AlertDialogContent>
+            <AlertDialogContent className="max-w-md">
                 <AlertDialogHeader>
                     <AlertDialogTitle>{exercicio.nomeExercicio}</AlertDialogTitle>
-                    <AlertDialogDescription>
-                        Visualize a execução correta do exercício.
-                    </AlertDialogDescription>
                 </AlertDialogHeader>
-                <div className="flex justify-center items-center p-4">
-                    {exercicio.gifUrl ? (
-                         <Image
-                            src={exercicio.gifUrl}
-                            alt={`Demonstração do exercício ${exercicio.nomeExercicio}`}
-                            width={400}
-                            height={400}
-                            className="rounded-lg"
-                        />
-                    ) : (
-                        <p className="text-muted-foreground">Nenhuma visualização disponível.</p>
+                <div className="grid gap-4 py-4">
+                    <div className="flex justify-center items-center rounded-md overflow-hidden border">
+                         {exercicio.imageUrl ? (
+                            <Image
+                                src={exercicio.imageUrl}
+                                alt={`Demonstração do exercício ${exercicio.nomeExercicio}`}
+                                width={300}
+                                height={300}
+                                className="object-cover"
+                                unoptimized
+                            />
+                        ) : (
+                            <div className="h-[300px] w-full flex items-center justify-center bg-muted text-muted-foreground text-sm">
+                                Nenhuma imagem disponível
+                            </div>
+                        )}
+                    </div>
+                     {exercicio.descricao && (
+                        <ScrollArea className="h-32 w-full rounded-md border p-4 text-sm">
+                           <h3 className="font-semibold mb-2">Como Executar:</h3>
+                           <p className="text-muted-foreground whitespace-pre-wrap">{exercicio.descricao}</p>
+                        </ScrollArea>
                     )}
                 </div>
                 <AlertDialogFooter>
@@ -189,7 +198,7 @@ function CardTreino({
                                     </p>
                                 )}
                             </div>
-                             {exercicio.gifUrl && (
+                             {(exercicio.imageUrl || exercicio.descricao) && (
                                 <Button variant="ghost" size="icon" onClick={() => onViewExercicio(exercicio)}>
                                     <PlayCircle className="h-6 w-6 text-muted-foreground" />
                                 </Button>
