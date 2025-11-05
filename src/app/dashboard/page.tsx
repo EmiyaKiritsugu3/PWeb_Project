@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageHeader } from "@/components/page-header";
 import { Users, UserCheck, UserX, DollarSign } from "lucide-react";
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts";
-import { DADOS_DASHBOARD, ALUNOS as mockAlunos } from "@/lib/data"; // Mantemos para faturamento e gráfico
+import { DADOS_DASHBOARD } from "@/lib/data"; // Mantemos para faturamento e gráfico
 import { useCollection, useFirestore, useMemoFirebase } from "@/firebase";
 import { collection } from "firebase/firestore";
 import type { Aluno } from "@/lib/definitions";
@@ -132,4 +132,3 @@ export default function DashboardPage() {
     </>
   );
 }
-
