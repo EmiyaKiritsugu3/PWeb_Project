@@ -36,7 +36,8 @@ service cloud.firestore {
 
     match /alunos/{alunoId} {
       // COLLECTION-LEVEL Rules: Apply to the collection as a whole
-      allow list, create: if isFuncionario();
+      allow list: if isFuncionario();
+      allow create: if isOwner(alunoId) || isFuncionario();
 
       // DOCUMENT-LEVEL Rules: Apply to specific documents
       allow get, update: if isOwner(alunoId) || isFuncionario();
