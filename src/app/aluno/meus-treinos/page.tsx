@@ -51,7 +51,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 const flatExerciciosOptions = EXERCICIOS_POR_GRUPO.flatMap(g => g.exercicios.map(ex => ({ value: ex.nomeExercicio, label: ex.nomeExercicio })));
-const exerciciosOptions = EXERCicios_POR_GRUPO.map(grupo => ({
+const exerciciosOptions = EXERCICIOS_POR_GRUPO.map(grupo => ({
     label: grupo.grupo,
     options: grupo.exercicios.map(ex => ({
         value: ex.nomeExercicio,
@@ -372,7 +372,7 @@ export default function MeusTreinosPage() {
                     series: ex.series,
                     repeticoes: ex.repeticoes,
                     observacoes: ex.observacoes,
-                    descricao: flatExerciciosOptions.find(opt => opt.nomeExercicio === ex.nomeExercicio)?.descricao || ""
+                    descricao: flatExerciciosOptions.find(opt => opt.value === ex.nomeExercicio)?.label || ""
                 }));
 
                 return {
@@ -492,3 +492,5 @@ export default function MeusTreinosPage() {
         </>
     );
 }
+
+    
