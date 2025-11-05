@@ -18,10 +18,10 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { PlusCircle, Save, Trash2, Wand2, BrainCircuit } from "lucide-react";
-import type { Aluno, Exercicio } from '@/lib/definitions';
+import type { Aluno, Exercicio, Treino } from '@/lib/definitions';
 import { useToast } from '@/hooks/use-toast';
-import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
-import { collection } from 'firebase/firestore';
+import { useCollection, useFirestore, useMemoFirebase, useUser, FirestorePermissionError, errorEmitter } from '@/firebase';
+import { addDoc, collection } from 'firebase/firestore';
 import { Combobox } from '@/components/ui/combobox';
 import {
   Form,
@@ -154,6 +154,7 @@ function WorkoutGenerator({ onGenerate, isGenerating }: { onGenerate: (data: Wor
 
 export default function TreinosPage() {
     const firestore = useFirestore();
+    const { user: FUser } = useUser();
     const alunosCollection = useMemoFirebase(() => firestore ? collection(firestore, 'alunos') : null, [firestore]);
     const { data: alunos, isLoading: isLoadingAlunos } = useCollection<Aluno>(alunosCollection);
 
@@ -190,30 +191,54 @@ export default function TreinosPage() {
         }));
     };
 
-    const handleSaveTreino = () => {
-        if (!selectedAlunoId || !objetivo || exercicios.length === 0 || exercicios.some(e => !e.nomeExercicio)) {
+    const handleSaveTreino = async () => {
+        if (!selectedAlunoId || !objetivo || exercicios.length === 0 || exercicios.some(e => !e.nomeExercicio) || !firestore || !FUser) {
             toast({
                 title: "Erro ao salvar",
-                description: "Preencha o aluno, objetivo e todos os exercícios antes de salvar.",
+                description: "Selecione o aluno, defina um objetivo e adicione exercícios.",
                 variant: "destructive"
             });
             return;
         }
-        
-        toast({
-            title: "Treino Salvo com Sucesso!",
-            description: `O treino de ${objetivo} para ${selectedAluno?.nomeCompleto} foi salvo.`,
-            className: 'bg-accent text-accent-foreground'
-        })
 
-        // Reset state
-        // setSelectedAlunoId(null); // Manter o aluno selecionado
-        setObjetivo('');
-        setExercicios([]);
+        const treinosCollectionRef = collection(firestore, 'alunos', selectedAlunoId, 'treinos');
+        const novoTreino: Omit<Treino, 'id'> = {
+            alunoId: selectedAlunoId,
+            instrutorId: FUser.uid,
+            objetivo,
+            exercicios: exercicios as Exercicio[],
+            diaSemana: null, // O aluno define o dia na sua própria página
+            dataCriacao: new Date().toISOString()
+        };
+
+        try {
+            await addDoc(treinosCollectionRef, novoTreino)
+                .catch(async (serverError) => {
+                    const permissionError = new FirestorePermissionError({
+                      path: treinosCollectionRef.path,
+                      operation: 'create',
+                      requestResourceData: novoTreino,
+                    });
+                    errorEmitter.emit('permission-error', permissionError);
+                  });
+
+            toast({
+                title: "Treino Salvo com Sucesso!",
+                description: `O treino de ${objetivo} para ${selectedAluno?.nomeCompleto} foi salvo.`,
+                className: 'bg-accent text-accent-foreground'
+            });
+
+            // Reset state
+            setObjetivo('');
+            setExercicios([]);
+        } catch (error) {
+            console.error("Erro ao salvar treino:", error);
+            toast({ title: "Erro no Firestore", description: "Não foi possível salvar o treino.", variant: "destructive" });
+        }
     }
 
     const handleGenerateWorkout = async (data: WorkoutGeneratorInput) => {
-        if (!selectedAluno) {
+        if (!selectedAluno || !firestore || !FUser) {
             toast({ title: "Selecione um aluno primeiro!", variant: "destructive" });
             return;
         }
@@ -221,32 +246,46 @@ export default function TreinosPage() {
         setIsGenerating(true);
         try {
             const result = await generateWorkoutPlan(data);
+            const treinosCollectionRef = collection(firestore, 'alunos', selectedAluno.id, 'treinos');
 
-            // A IA agora retorna múltiplos treinos. Por enquanto, vamos pegar apenas o primeiro.
-            const firstWorkout = result.workouts[0];
-            if (!firstWorkout) {
-                 toast({ title: "Erro da IA", description: "A IA não retornou nenhum treino.", variant: "destructive" });
-                 return;
-            }
-            
-            const novosExercicios = firstWorkout.exercicios.map((ex, index) => {
-                const exercicioBase = flatExerciciosOptions.find(opt => opt.nomeExercicio === ex.nomeExercicio);
-                return {
-                    id: `${Date.now()}-${index}`,
-                    nomeExercicio: ex.nomeExercicio,
-                    series: ex.series,
-                    repeticoes: ex.repeticoes,
-                    observacoes: ex.observacoes,
-                    descricao: exercicioBase?.descricao || ""
+            // Salva todos os treinos gerados no Firestore
+            for (const workout of result.workouts) {
+                 const novosExercicios = workout.exercicios.map((ex, index) => {
+                    const exercicioBase = flatExerciciosOptions.find(opt => opt.nomeExercicio === ex.nomeExercicio);
+                    return {
+                        id: `${Date.now()}-${index}`,
+                        nomeExercicio: ex.nomeExercicio,
+                        series: ex.series,
+                        repeticoes: ex.repeticoes,
+                        observacoes: ex.observacoes,
+                        descricao: exercicioBase?.descricao || ""
+                    };
+                });
+
+                const novoTreino: Omit<Treino, 'id'> = {
+                    alunoId: selectedAluno.id,
+                    instrutorId: FUser.uid, // O gerente/personal que está logado
+                    objetivo: workout.nome,
+                    exercicios: novosExercicios,
+                    diaSemana: workout.diaSugerido, // Salva o dia sugerido pela IA
+                    dataCriacao: new Date().toISOString(),
                 };
-            });
+                
+                // Adiciona o treino à subcoleção do aluno
+                await addDoc(treinosCollectionRef, novoTreino)
+                    .catch(async (serverError) => {
+                        const permissionError = new FirestorePermissionError({
+                          path: treinosCollectionRef.path,
+                          operation: 'create',
+                          requestResourceData: novoTreino,
+                        });
+                        errorEmitter.emit('permission-error', permissionError);
+                      });
+            }
 
-            setObjetivo(firstWorkout.nome);
-            setExercicios(novosExercicios);
-
-             toast({
-                title: "Plano Semanal Gerado pela IA!",
-                description: `${result.planName} foi criado. Revise e salve o primeiro treino abaixo.`,
+            toast({
+                title: "Plano Semanal Gerado e Salvo!",
+                description: `${result.planName} foi criado para ${selectedAluno.nomeCompleto} com ${result.workouts.length} treinos.`,
                 duration: 5000,
             });
 
@@ -254,7 +293,7 @@ export default function TreinosPage() {
             console.error("Erro ao gerar treino com IA:", error);
             toast({
                 title: "Erro da IA",
-                description: "Não foi possível gerar o plano. Tente novamente.",
+                description: "Não foi possível gerar e salvar o plano. Tente novamente.",
                 variant: "destructive"
             });
         } finally {
@@ -300,8 +339,8 @@ export default function TreinosPage() {
 
                     <Card>
                         <CardHeader>
-                            <CardTitle>Passo 2: Revisar e Salvar o Treino para {selectedAluno.nomeCompleto}</CardTitle>
-                            <CardDescription>Ajuste os exercícios gerados pela IA ou adicione-os manualmente. Apenas o primeiro treino da semana é mostrado aqui para revisão.</CardDescription>
+                            <CardTitle>Passo 2: Criar Treino Manual para {selectedAluno.nomeCompleto}</CardTitle>
+                            <CardDescription>Adicione exercícios manualmente. Para gerar um plano completo, use o gerador de IA acima.</CardDescription>
                         </CardHeader>
                         <CardContent className="grid gap-6">
                             <div className='grid gap-2'>
@@ -317,7 +356,7 @@ export default function TreinosPage() {
                                             {index === 0 && <Label>Nome do Exercício</Label>}
                                             <Combobox 
                                                 options={exerciciosOptions} 
-                                                flatOptions={flatExerciciosOptions}
+                                                flatOptions={flatExerciciosOptions.map(e => ({ value: e.nomeExercicio, label: e.nomeExercicio }))}
                                                 value={exercicio.nomeExercicio}
                                                 onChange={(value) => handleExercicioChange(exercicio.id!, 'nomeExercicio', value)}
                                                 placeholder='Selecione um exercício...'
@@ -356,7 +395,7 @@ export default function TreinosPage() {
                         <CardFooter>
                             <Button onClick={handleSaveTreino} className="bg-accent hover:bg-accent/90 text-accent-foreground" disabled={exercicios.length === 0}>
                                 <Save className="mr-2 h-4 w-4" />
-                                Salvar este Treino
+                                Salvar este Treino Manual
                             </Button>
                         </CardFooter>
                     </Card>
@@ -366,3 +405,5 @@ export default function TreinosPage() {
         </>
     );
 }
+
+    

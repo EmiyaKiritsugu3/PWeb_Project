@@ -76,8 +76,8 @@ export function Combobox({
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
-        <Command filter={(value, search) => {
-            const extendedValue = options.flatMap(g => g.options).find(o => o.value === value)?.keywords?.join(' ') + ' ' + value;
+        <Command filter={(value, search, keywords) => {
+            const extendedValue = keywords?.join(' ') + ' ' + value;
             if (extendedValue.toLowerCase().includes(search.toLowerCase())) return 1
             return 0
         }}>
