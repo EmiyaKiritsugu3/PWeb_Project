@@ -13,8 +13,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Dumbbell, LogOut, User as UserIcon } from "lucide-react";
+import { Dumbbell, LogOut, User as UserIcon, LayoutDashboard, FolderKanban } from "lucide-react";
 import { useAuth, useUser } from "@/firebase";
+import Link from "next/link";
 
 export default function AlunoLayout({
   children,
@@ -38,6 +39,11 @@ export default function AlunoLayout({
     router.push("/aluno/login");
   };
   
+  const navLinks = [
+    { href: '/aluno/dashboard', label: 'Meu Treino de Hoje', icon: <LayoutDashboard className="mr-2 h-4 w-4" /> },
+    { href: '/aluno/meus-treinos', label: 'Meus Treinos', icon: <FolderKanban className="mr-2 h-4 w-4" /> },
+  ]
+
   // Exibe a tela de carregamento apenas se estiver verificando o usuário E não estiver na página de login
   if (isUserLoading && pathname !== "/aluno/login") {
     return (
@@ -60,11 +66,21 @@ export default function AlunoLayout({
     return (
         <div className="flex min-h-screen w-full flex-col bg-background">
         <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-sm md:px-6">
-            <div className="flex items-center gap-2">
+            <Link href="/aluno/dashboard" className="flex items-center gap-2">
                 <Dumbbell className="h-6 w-6 text-primary" />
                 <span className="font-bold">Academia Five Star</span>
-            </div>
+            </Link>
             
+            <nav className="hidden md:flex items-center gap-2 ml-6">
+              {navLinks.map(link => (
+                <Button key={link.href} variant={pathname === link.href ? "secondary" : "ghost"} asChild>
+                  <Link href={link.href}>
+                    {link.label}
+                  </Link>
+                </Button>
+              ))}
+            </nav>
+
             <div className="flex w-full items-center justify-end gap-4 md:ml-auto">
                 <span className="hidden text-sm text-muted-foreground md:inline-block">Olá, {user.displayName || 'Aluno(a)'}!</span>
                 <DropdownMenu>
@@ -83,8 +99,21 @@ export default function AlunoLayout({
                         {user.email}
                         </p>
                     </DropdownMenuLabel>
+
+                    <div className="md:hidden">
+                      <DropdownMenuSeparator />
+                       {navLinks.map(link => (
+                        <DropdownMenuItem key={link.href} asChild>
+                           <Link href={link.href}>
+                              {link.icon}
+                              <span>{link.label}</span>
+                           </Link>
+                        </DropdownMenuItem>
+                      ))}
+                    </div>
+
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem>
+                    <DropdownMenuItem disabled>
                         <UserIcon className="mr-2 h-4 w-4" />
                         <span>Meu Perfil</span>
                     </DropdownMenuItem>

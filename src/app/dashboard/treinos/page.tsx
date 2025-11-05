@@ -1,7 +1,8 @@
+
 "use client";
 
 import { useState } from 'react';
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PageHeader } from "@/components/page-header";
 import {
@@ -11,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { EXERCICIOS_POR_GRUPO, ALUNOS } from "@/lib/data";
+import { EXERCICIOS_POR_GRUPO } from "@/lib/data";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -28,14 +29,12 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
 } from "@/components/ui/form";
 import {
   generateWorkoutPlan,
   WorkoutGeneratorInputSchema,
   type WorkoutGeneratorInput,
 } from "@/ai/flows/workout-generator-flow";
-import { Textarea } from '@/components/ui/textarea';
 
 
 // Transforma os dados agrupados para o formato que o Combobox espera
@@ -178,12 +177,13 @@ export default function TreinosPage() {
         setExercicios(exercicios.map(ex => {
             if (ex.id !== id) return ex;
 
+            // Encontre o exercício correspondente nos dados para obter a descrição
             if (field === 'nomeExercicio' && typeof value === 'string') {
                 const selectedOption = flatExerciciosOptions.find(opt => opt.nomeExercicio === value);
                 return { 
                     ...ex, 
                     nomeExercicio: value,
-                    descricao: selectedOption?.descricao
+                    descricao: selectedOption?.descricao || ""
                 };
             }
             return { ...ex, [field]: value };
@@ -293,7 +293,7 @@ export default function TreinosPage() {
 
                     <Card>
                         <CardHeader>
-                            <CardTitle>Passo 3: Revisar e Salvar o Treino para {selectedAluno.nomeCompleto}</CardTitle>
+                            <CardTitle>Passo 2: Revisar e Salvar o Treino para {selectedAluno.nomeCompleto}</CardTitle>
                             <CardDescription>Ajuste os exercícios gerados pela IA ou adicione-os manualmente.</CardDescription>
                         </CardHeader>
                         <CardContent className="grid gap-6">
