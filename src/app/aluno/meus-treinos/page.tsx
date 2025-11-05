@@ -321,23 +321,33 @@ export default function MeusTreinosPage() {
     }
 
     const handleSetAtivo = (treinoId: string) => {
-        // Regra: Não pode haver mais de um treino ativo do mesmo "tipo" (ex: "Treino A")
-        const treinoSendoAtivado = meusTreinos.find(t => t.id === treinoId);
-        if(!treinoSendoAtivado) return;
+        const treinoSendoModificado = meusTreinos.find(t => t.id === treinoId);
+        if (!treinoSendoModificado) return;
 
-        const outrosTreinosAtivosDoMesmoTipo = meusTreinos.some(t => t.ativo && t.objetivo.startsWith(treinoSendoAtivado.objetivo.split(' - ')[0]));
+        const isActivating = !treinoSendoModificado.ativo;
 
-        if(outrosTreinosAtivosDoMesmoTipo){
-             toast({ title: 'Ação não permitida', description: `Você já tem um treino "${treinoSendoAtivado.objetivo.split(' - ')[0]}" ativo. Desative o antigo primeiro.`, variant: 'destructive' });
-             return;
+        if (isActivating) {
+            const tipoTreino = treinoSendoModificado.objetivo.split(' - ')[0];
+            const outroAtivoDoMesmoTipo = meusTreinos.some(
+                t => t.id !== treinoId && t.ativo && t.objetivo.startsWith(tipoTreino)
+            );
+
+            if (outroAtivoDoMesmoTipo) {
+                toast({
+                    title: 'Ação não permitida',
+                    description: `Você já tem um treino "${tipoTreino}" ativo. Desative o antigo primeiro.`,
+                    variant: 'destructive',
+                });
+                return;
+            }
         }
 
-        setMeusTreinos(meusTreinos.map(t => ({
-            ...t,
-            ativo: t.id === treinoId ? !t.ativo : t.ativo // toggle
-        })));
-        toast({ title: 'Status do treino atualizado!', description: 'Ele agora aparecerá (ou não) no seu dashboard.' });
-    }
+        // Se for desativar, ou se for ativar e não houver conflito, prossegue
+        setMeusTreinos(meusTreinos.map(t =>
+            t.id === treinoId ? { ...t, ativo: !t.ativo } : t
+        ));
+        toast({ title: 'Status do treino atualizado!' });
+    };
     
     const openDeleteAlert = (treino: Treino) => {
         setDeletingTreino(treino);
@@ -492,5 +502,7 @@ export default function MeusTreinosPage() {
         </>
     );
 }
+
+    
 
     
