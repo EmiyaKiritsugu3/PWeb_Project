@@ -66,6 +66,15 @@ export default function FinanceiroPage() {
 
     // Update student status
     updateDoc(alunoRef, { statusMatricula: "ATIVA" })
+      .then(() => {
+          toast({
+            title: "Pagamento Registrado!",
+            description: `A matrícula de ${selectedAluno.nomeCompleto} foi reativada.`,
+            className: "bg-accent text-accent-foreground",
+          });
+           // TODO: Create a payment record in a /pagamentos subcollection
+          // TODO: Update the matricula's expiration date
+      })
       .catch(async (serverError) => {
         const permissionError = new FirestorePermissionError({
           path: alunoRef.path,
@@ -80,13 +89,6 @@ export default function FinanceiroPage() {
         })
       });
 
-    toast({
-      title: "Pagamento Registrado!",
-      description: `A matrícula de ${selectedAluno.nomeCompleto} foi reativada.`,
-      className: "bg-accent text-accent-foreground",
-    });
-    // TODO: Create a payment record in a /pagamentos subcollection
-    // TODO: Update the matricula's expiration date
     
     setIsAlertOpen(false);
     setSelectedAluno(null);

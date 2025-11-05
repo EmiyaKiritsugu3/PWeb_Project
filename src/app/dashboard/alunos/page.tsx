@@ -70,55 +70,50 @@ export default function AlunosPage() {
   const handleFormSubmit = async (data: Omit<Aluno, "id" | "dataCadastro" | "fotoUrl" | "biometriaHash">) => {
     if (!alunosCollection || !firestore) return;
 
-    try {
-        if (editingAluno) {
-            // Atualiza um aluno existente
-            const alunoRef = doc(firestore, "alunos", editingAluno.id);
-            await updateDoc(alunoRef, data)
-             .catch(async (serverError) => {
-                const permissionError = new FirestorePermissionError({
-                  path: alunoRef.path,
-                  operation: 'update',
-                  requestResourceData: data,
-                });
-                errorEmitter.emit('permission-error', permissionError);
-              });
-
+    if (editingAluno) {
+        // Atualiza um aluno existente
+        const alunoRef = doc(firestore, "alunos", editingAluno.id);
+        updateDoc(alunoRef, data)
+         .then(() => {
             toast({
                 title: "Aluno atualizado!",
                 description: `${data.nomeCompleto} foi atualizado com sucesso.`,
             });
-        } else {
-            // Cria um novo aluno.
-            const novoAlunoDoc = doc(alunosCollection); // Cria uma referência com ID gerado
-            const novoAluno: Omit<Aluno, "id"> = {
-                ...data,
-                dataCadastro: new Date().toISOString(),
-                fotoUrl: `https://picsum.photos/seed/${novoAlunoDoc.id}/100/100`,
-                statusMatricula: 'ATIVA'
-            };
-            await setDoc(novoAlunoDoc, novoAluno)
-             .catch(async (serverError) => {
-                const permissionError = new FirestorePermissionError({
-                  path: novoAlunoDoc.path,
-                  operation: 'create',
-                  requestResourceData: novoAluno,
-                });
-                errorEmitter.emit('permission-error', permissionError);
-              });
+         })
+         .catch(async (serverError) => {
+            const permissionError = new FirestorePermissionError({
+              path: alunoRef.path,
+              operation: 'update',
+              requestResourceData: data,
+            });
+            errorEmitter.emit('permission-error', permissionError);
+            toast({ title: "Erro ao atualizar", description: "Não foi possível salvar os dados.", variant: "destructive" });
+          });
+    } else {
+        // Cria um novo aluno.
+        const novoAlunoDoc = doc(alunosCollection); // Cria uma referência com ID gerado
+        const novoAluno: Omit<Aluno, "id"> = {
+            ...data,
+            dataCadastro: new Date().toISOString(),
+            fotoUrl: `https://picsum.photos/seed/${novoAlunoDoc.id}/100/100`,
+            statusMatricula: 'ATIVA'
+        };
+        setDoc(novoAlunoDoc, novoAluno)
+         .then(() => {
             toast({
                 title: "Aluno cadastrado!",
                 description: `${data.nomeCompleto} foi adicionado ao sistema.`,
             });
-        }
-    } catch (error: any) {
-        // This catch block might still catch some synchronous errors, though Firestore errors are handled above.
-        console.error("Erro ao salvar aluno: ", error);
-        toast({
-            title: "Erro ao salvar",
-            description: "Não foi possível salvar os dados do aluno.",
-            variant: "destructive"
-        });
+         })
+         .catch(async (serverError) => {
+            const permissionError = new FirestorePermissionError({
+              path: novoAlunoDoc.path,
+              operation: 'create',
+              requestResourceData: novoAluno,
+            });
+            errorEmitter.emit('permission-error', permissionError);
+            toast({ title: "Erro ao cadastrar", description: "Não foi possível criar o aluno.", variant: "destructive" });
+          });
     }
     
     setIsFormOpen(false);
@@ -129,7 +124,7 @@ export default function AlunosPage() {
     if (!deletingAluno || !firestore) return;
     
     const alunoRef = doc(firestore, "alunos", deletingAluno.id);
-    await deleteDoc(alunoRef)
+    deleteDoc(alunoRef)
      .then(() => {
         toast({
             title: "Aluno excluído!",
