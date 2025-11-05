@@ -3,6 +3,7 @@
 
 import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -67,7 +68,7 @@ export default function DashboardLayout({
         <SidebarProvider>
         <Sidebar>
             <SidebarHeader>
-            <div className="flex h-10 items-center gap-2.5 px-2">
+            <Link href="/" className="flex h-10 items-center gap-2.5 px-2">
                 <Button
                 variant="outline"
                 size="icon"
@@ -80,7 +81,7 @@ export default function DashboardLayout({
                 <h2 className="font-headline font-bold">Five Star</h2>
                 <p className="text-xs text-muted-foreground">Painel de Gestão</p>
                 </div>
-            </div>
+            </Link>
             </SidebarHeader>
             <SidebarContent>
             <DashboardNav />
