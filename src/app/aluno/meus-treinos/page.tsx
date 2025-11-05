@@ -50,7 +50,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-const flatExerciciosOptions = EXERCICIOS_POR_GRUPO.flatMap(g => g.exercicios);
+const flatExerciciosOptions = EXERCICIOS_POR_GRUPO.flatMap(g => g.exercicios.map(ex => ({ value: ex.nomeExercicio, label: ex.nomeExercicio })));
 const exerciciosOptions = EXERCICIOS_POR_GRUPO.map(grupo => ({
     label: grupo.grupo,
     options: grupo.exercicios.map(ex => ({
@@ -236,7 +236,7 @@ function WorkoutEditor({ onSave, isGenerating, onGenerate, treinoToEdit }: { onS
                                     <Combobox 
                                         options={exerciciosOptions} 
                                         flatOptions={flatExerciciosOptions}
-                                        value={exercicio.nomeExercicio}
+                                        value={exercicio.nomeExercicio || ''}
                                         onChange={(value) => handleExercicioChange(exercicio.id!, 'nomeExercicio', value)}
                                         placeholder='Selecione...'
                                         searchPlaceholder='Buscar exercício...'
