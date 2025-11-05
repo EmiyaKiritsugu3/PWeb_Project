@@ -21,15 +21,16 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
-import { PLANOS } from "@/lib/data"; // Planos ainda são estáticos por enquanto
+import { PLANOS, ALUNOS as mockAlunos } from "@/lib/data"; // Planos ainda são estáticos por enquanto
 import { useCollection, useFirestore, useMemoFirebase, FirestorePermissionError, errorEmitter } from "@/firebase";
 
 
 export default function AlunosPage() {
   const firestore = useFirestore();
 
-  const alunosCollection = useMemoFirebase(() => firestore ? collection(firestore, 'alunos') : null, [firestore]);
-  const { data: alunos, isLoading } = useCollection<Aluno>(alunosCollection);
+  // Temporariamente usando dados mockados para consistência
+  const [alunos, setAlunos] = useState<Aluno[]>(mockAlunos as Aluno[]);
+  const isLoading = false;
 
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingAluno, setEditingAluno] = useState<Aluno | null>(null);
@@ -63,68 +64,38 @@ export default function AlunosPage() {
   };
 
   const handleFormSubmit = async (data: Omit<Aluno, "id" | "dataCadastro" | "fotoUrl" | "biometriaHash">) => {
-    if (!firestore || !alunosCollection) return;
-    
+     // Lógica de simulação com o estado local
     if (editingAluno) {
-      // Lógica de Edição
-      const alunoRef = doc(firestore, "alunos", editingAluno.id);
-      updateDoc(alunoRef, data)
-        .catch(async (serverError) => {
-            const permissionError = new FirestorePermissionError({
-              path: alunoRef.path,
-              operation: 'update',
-              requestResourceData: data,
-            });
-            errorEmitter.emit('permission-error', permissionError);
-        });
-
+      setAlunos(alunos.map(a => a.id === editingAluno.id ? { ...a, ...data } : a));
       toast({
-          title: "Aluno atualizado!",
+          title: "Aluno atualizado! (Simulação)",
           description: `${data.nomeCompleto} foi atualizado com sucesso.`,
       });
-
     } else {
-      // Lógica de Adição
-      const novoAluno: Omit<Aluno, 'id' | 'biometriaHash'> = {
+      const novoAluno: Aluno = {
         ...data,
+        id: `aluno-${Date.now()}`,
         dataCadastro: new Date().toISOString(),
         fotoUrl: `https://picsum.photos/seed/${Date.now()}/100/100`,
-        statusMatricula: 'ATIVA',
       };
-      addDoc(alunosCollection, novoAluno)
-        .catch(async (serverError) => {
-          const permissionError = new FirestorePermissionError({
-            path: alunosCollection.path,
-            operation: 'create',
-            requestResourceData: novoAluno,
-          });
-          errorEmitter.emit('permission-error', permissionError);
-        });
-      
+      setAlunos([novoAluno, ...alunos]);
       toast({
-          title: "Aluno cadastrado!",
+          title: "Aluno cadastrado! (Simulação)",
           description: `${novoAluno.nomeCompleto} foi adicionado ao sistema.`,
       });
     }
+    
     setIsFormOpen(false);
     setEditingAluno(null);
   };
 
   const handleDeleteAluno = async () => {
-    if (!deletingAluno || !deletingAluno.id || !firestore) return;
+    if (!deletingAluno) return;
     
-    const alunoRef = doc(firestore, "alunos", deletingAluno.id);
-    deleteDoc(alunoRef)
-        .catch(async (serverError) => {
-            const permissionError = new FirestorePermissionError({
-                path: alunoRef.path,
-                operation: 'delete',
-            });
-            errorEmitter.emit('permission-error', permissionError);
-        });
-
+    setAlunos(alunos.filter(a => a.id !== deletingAluno.id));
+    
     toast({
-        title: "Aluno excluído!",
+        title: "Aluno excluído! (Simulação)",
         description: `${deletingAluno.nomeCompleto} foi removido do sistema.`,
     });
 
@@ -133,7 +104,6 @@ export default function AlunosPage() {
   };
 
   const handleMatriculaSubmit = (aluno: Aluno, plano: Plano) => {
-    // Lógica de matrícula (será conectada ao Firebase)
     console.log(`Matriculando ${aluno.nomeCompleto} no plano ${plano.nome}`);
 
     toast({
