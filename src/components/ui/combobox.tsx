@@ -31,9 +31,14 @@ interface GroupedOption {
     options: Option[];
 }
 
+interface FlatOption {
+    value: string;
+    label: string;
+}
+
 interface ComboboxProps {
     options: GroupedOption[];
-    flatOptions: Option[]; // Add a flat list for easy label lookup
+    flatOptions: FlatOption[]; 
     value?: string;
     onChange: (value: string) => void;
     placeholder?: string;
@@ -63,7 +68,7 @@ export function Combobox({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className={cn("w-full justify-between", !value && "text-muted-foreground", className)}
+          className={cn("w-full justify-between font-normal", !value && "text-muted-foreground", className)}
         >
           {value ? selectedLabel : placeholder}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
