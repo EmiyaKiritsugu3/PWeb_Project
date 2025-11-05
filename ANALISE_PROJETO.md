@@ -11,7 +11,7 @@ A aplicação atende a dois públicos distintos com experiências de usuário to
 
 ## 2. Arquitetura e Filosofia de Desenvolvimento
 
-O sistema foi construído sobre uma arquitetura moderna e robusta, priorizando a experiência do desenvolvedor, a performance e a escalabilidade.
+O sistema foi construído sobre uma arquitetura moderna e robusta, priorizando a experiência do desenvolvedor, a performance и a escalabilidade.
 
 -   **Aplicação Full-Stack com Next.js**: Utilizamos o Next.js, um framework React que permite a renderização tanto no servidor quanto no cliente. Isso proporciona uma inicialização rápida da página e uma navegação fluida, característica de uma SPA.
 -   **Componentização e Reutilização**: A interface foi dividida em pequenos componentes reutilizáveis, seguindo as melhores práticas do React. Isso torna o código mais limpo, fácil de manter e de expandir.
