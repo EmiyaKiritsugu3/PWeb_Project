@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -21,16 +22,19 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
-import { PLANOS, ALUNOS as mockAlunos } from "@/lib/data"; // Planos ainda são estáticos por enquanto
+import { PLANOS } from "@/lib/data"; // Planos ainda são estáticos por enquanto
 import { useCollection, useFirestore, useMemoFirebase, FirestorePermissionError, errorEmitter } from "@/firebase";
 
 
 export default function AlunosPage() {
   const firestore = useFirestore();
 
-  // Temporariamente usando dados mockados para consistência
-  const [alunos, setAlunos] = useState<Aluno[]>(mockAlunos as Aluno[]);
-  const isLoading = false;
+  const alunosCollection = useMemoFirebase(() => 
+    firestore ? collection(firestore, "alunos") : null, 
+    [firestore]
+  );
+  
+  const { data: alunos, isLoading } = useCollection<Aluno>(alunosCollection);
 
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingAluno, setEditingAluno] = useState<Aluno | null>(null);
@@ -64,25 +68,36 @@ export default function AlunosPage() {
   };
 
   const handleFormSubmit = async (data: Omit<Aluno, "id" | "dataCadastro" | "fotoUrl" | "biometriaHash">) => {
-     // Lógica de simulação com o estado local
-    if (editingAluno) {
-      setAlunos(alunos.map(a => a.id === editingAluno.id ? { ...a, ...data } : a));
-      toast({
-          title: "Aluno atualizado! (Simulação)",
-          description: `${data.nomeCompleto} foi atualizado com sucesso.`,
-      });
-    } else {
-      const novoAluno: Aluno = {
-        ...data,
-        id: `aluno-${Date.now()}`,
-        dataCadastro: new Date().toISOString(),
-        fotoUrl: `https://picsum.photos/seed/${Date.now()}/100/100`,
-      };
-      setAlunos([novoAluno, ...alunos]);
-      toast({
-          title: "Aluno cadastrado! (Simulação)",
-          description: `${novoAluno.nomeCompleto} foi adicionado ao sistema.`,
-      });
+    if (!alunosCollection) return;
+
+    try {
+        if (editingAluno) {
+            const alunoRef = doc(firestore, "alunos", editingAluno.id);
+            await updateDoc(alunoRef, data);
+            toast({
+                title: "Aluno atualizado!",
+                description: `${data.nomeCompleto} foi atualizado com sucesso.`,
+            });
+        } else {
+            const novoAluno: Omit<Aluno, "id"> = {
+                ...data,
+                dataCadastro: new Date().toISOString(),
+                fotoUrl: `https://picsum.photos/seed/${Date.now()}/100/100`,
+            };
+            // Firestore gerará o ID. Para criar conta, use a página de login do aluno.
+            await addDoc(alunosCollection, novoAluno); 
+            toast({
+                title: "Aluno cadastrado!",
+                description: `${data.nomeCompleto} foi adicionado ao sistema.`,
+            });
+        }
+    } catch (error: any) {
+        console.error("Erro ao salvar aluno: ", error);
+        toast({
+            title: "Erro ao salvar",
+            description: "Não foi possível salvar os dados do aluno. Verifique suas permissões.",
+            variant: "destructive"
+        });
     }
     
     setIsFormOpen(false);
@@ -90,14 +105,22 @@ export default function AlunosPage() {
   };
 
   const handleDeleteAluno = async () => {
-    if (!deletingAluno) return;
+    if (!deletingAluno || !firestore) return;
     
-    setAlunos(alunos.filter(a => a.id !== deletingAluno.id));
-    
-    toast({
-        title: "Aluno excluído! (Simulação)",
-        description: `${deletingAluno.nomeCompleto} foi removido do sistema.`,
-    });
+    try {
+        await deleteDoc(doc(firestore, "alunos", deletingAluno.id));
+        toast({
+            title: "Aluno excluído!",
+            description: `${deletingAluno.nomeCompleto} foi removido do sistema.`,
+        });
+    } catch (error) {
+        console.error("Erro ao excluir aluno: ", error);
+        toast({
+            title: "Erro ao excluir",
+            description: "Não foi possível excluir o aluno. Verifique suas permissões.",
+            variant: "destructive"
+        });
+    }
 
     setIsDeleteAlertOpen(false);
     setDeletingAluno(null);
@@ -105,7 +128,7 @@ export default function AlunosPage() {
 
   const handleMatriculaSubmit = (aluno: Aluno, plano: Plano) => {
     console.log(`Matriculando ${aluno.nomeCompleto} no plano ${plano.nome}`);
-
+    // TODO: Implementar lógica de criação de matrícula no Firestore
     toast({
       title: "Matrícula realizada com sucesso! (Simulação)",
       description: `${aluno.nomeCompleto} foi matriculado(a) no ${plano.nome}.`,
@@ -165,3 +188,5 @@ export default function AlunosPage() {
     </>
   );
 }
+
+    

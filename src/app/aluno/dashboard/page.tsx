@@ -1,11 +1,11 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState }s from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useUser } from "@/firebase";
-import { ALUNOS, TREINOS, DIAS_DA_SEMANA } from "@/lib/data";
+import { useUser, useCollection, useFirestore, useMemoFirebase } from "@/firebase";
+import { DIAS_DA_SEMANA } from "@/lib/data";
 import type { Treino, Aluno, Exercicio } from "@/lib/definitions";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -22,6 +22,7 @@ import {
   AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { collection, query, where } from "firebase/firestore";
 
 
 // Componente para o Modal de Visualização do Exercício
@@ -49,7 +50,7 @@ function ExercicioViewer({ exercicio, isOpen, onOpenChange }: { exercicio: Exerc
 
 // Componente para o Card de Matrícula
 function CardMatricula({ aluno }: { aluno: Aluno | undefined }) {
-    if (!aluno) return null;
+    if (!aluno) return <Skeleton className="h-40 w-full" />;
 
     const statusConfig = {
         ATIVA: {
@@ -108,10 +109,8 @@ function CardTreino({
     const [checkedExercises, setCheckedExercises] = useState<Record<string, boolean>>({});
 
     useEffect(() => {
-        // Gera uma chave única para o dia e para o treino específico
         const storageKey = `checkedExercises-${new Date().toISOString().split('T')[0]}-${treino?.id}`;
         
-        // Limpa o estado de dias anteriores
         Object.keys(localStorage).forEach(key => {
             if (key.startsWith('checkedExercises-') && !key.includes(new Date().toISOString().split('T')[0])) {
                 localStorage.removeItem(key);
@@ -123,11 +122,10 @@ function CardTreino({
         if (savedState) {
             setCheckedExercises(JSON.parse(savedState));
         } else {
-             // Se não há estado salvo para o treino de hoje, reseta os checkboxes
             setCheckedExercises({});
         }
 
-    }, [treino]); // Roda o efeito quando o treino do dia muda
+    }, [treino]);
 
     const handleCheckChange = (exerciseId: string) => {
         const storageKey = `checkedExercises-${new Date().toISOString().split('T')[0]}-${treino?.id}`;
@@ -247,13 +245,32 @@ function CardFeedback({ feedback, isLoading }: { feedback: { title: string; mess
 
 export default function AlunoDashboardPage() {
     const { user } = useUser();
+    const firestore = useFirestore();
     
-    // Simulação de busca de dados
-    const aluno = ALUNOS.find(a => a.email === user?.email);
+    // Busca os dados do aluno do Firestore
+    const alunoQuery = useMemoFirebase(
+      () =>
+        firestore && user?.uid
+          ? query(collection(firestore, "alunos"), where("id", "==", user.uid))
+          : null,
+      [firestore, user]
+    );
+    const { data: alunoData, isLoading: isLoadingAluno } = useCollection<Aluno>(alunoQuery);
+    const aluno = alunoData?.[0];
 
     // Lógica para encontrar o treino do dia
-    const [today, setToday] = useState(new Date().getDay());
-    const treinoDoDia = TREINOS.find(t => t.alunoId === aluno?.id && t.diaSemana === today);
+    const today = new Date().getDay();
+
+    const treinosQuery = useMemoFirebase(
+      () =>
+        firestore && user?.uid
+          ? query(collection(firestore, 'alunos', user.uid, 'treinos'))
+          : null,
+      [firestore, user]
+    );
+
+    const { data: meusTreinos, isLoading: isLoadingTreinos } = useCollection<Treino>(treinosQuery);
+    const treinoDoDia = meusTreinos?.find(t => t.diaSemana === today);
 
     const [feedback, setFeedback] = useState<{ title: string; message: string; } | null>(null);
     const [isFeedbackLoading, setIsFeedbackLoading] = useState(false);
@@ -309,12 +326,26 @@ export default function AlunoDashboardPage() {
             <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-3 lg:gap-8">
                     {/* Coluna principal com o treino */}
                     <div className="col-span-1 grid auto-rows-max items-start gap-6 lg:col-span-2 lg:gap-8">
-                        <CardTreino 
-                            treino={treinoDoDia} 
-                            onFinishTraining={handleFinishTraining}
-                            isFeedbackLoading={isFeedbackLoading}
-                            onViewExercicio={handleViewExercicio}
-                        />
+                        {isLoadingTreinos ? (
+                          <Card>
+                            <CardHeader>
+                              <Skeleton className="h-8 w-1/2" />
+                              <Skeleton className="h-4 w-3/4" />
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                              <Skeleton className="h-24 w-full" />
+                              <Skeleton className="h-24 w-full" />
+                              <Skeleton className="h-24 w-full" />
+                            </CardContent>
+                          </Card>
+                        ) : (
+                          <CardTreino 
+                              treino={treinoDoDia} 
+                              onFinishTraining={handleFinishTraining}
+                              isFeedbackLoading={isFeedbackLoading}
+                              onViewExercicio={handleViewExercicio}
+                          />
+                        )}
                     </div>
 
                     {/* Coluna lateral com status e feedback */}
@@ -326,3 +357,5 @@ export default function AlunoDashboardPage() {
        </>
     );
 }
+
+    

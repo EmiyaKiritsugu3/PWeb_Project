@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { EXERCICIOS_POR_GRUPO, TREINOS as mockTreinos, DIAS_DA_SEMANA } from "@/lib/data";
+import { EXERCICIOS_POR_GRUPO, DIAS_DA_SEMANA } from "@/lib/data";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -20,7 +20,7 @@ import { Button } from "@/components/ui/button";
 import { PlusCircle, Save, Trash2, Wand2, BrainCircuit, Pencil } from "lucide-react";
 import type { Exercicio, Treino } from '@/lib/definitions';
 import { useToast } from '@/hooks/use-toast';
-import { useUser } from '@/firebase';
+import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { Combobox } from '@/components/ui/combobox';
 import {
   Form,
@@ -49,6 +49,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { addDoc, collection, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 
 const flatExerciciosOptions = EXERCICIOS_POR_GRUPO.flatMap(g => g.exercicios.map(ex => ({ value: ex.nomeExercicio, label: ex.nomeExercicio })));
 const exerciciosOptions = EXERCICIOS_POR_GRUPO.map(grupo => ({
@@ -201,7 +202,7 @@ function WorkoutEditor({ onSave, treinoToEdit, onCancel }: { onSave: (treino: Om
         const novoTreino: Omit<Treino, 'id' | 'alunoId' | 'instrutorId'> = {
             objetivo,
             exercicios: exercicios as Exercicio[],
-            diaSemana: null, // Novos treinos começam desativados
+            diaSemana: treinoToEdit ? treinoToEdit.diaSemana : null, // Mantém o dia se estiver editando
             dataCriacao: new Date().toISOString()
         }
         onSave(novoTreino);
@@ -231,7 +232,7 @@ function WorkoutEditor({ onSave, treinoToEdit, onCancel }: { onSave: (treino: Om
                                     <Combobox 
                                         options={exerciciosOptions} 
                                         flatOptions={flatExerciciosOptions}
-                                        value={exercicio.nomeExercicio || ''}
+                                        value={exercicio.nomeExercicio}
                                         onChange={(value) => handleExercicioChange(exercicio.id!, 'nomeExercicio', value)}
                                         placeholder='Selecione...'
                                         searchPlaceholder='Buscar exercício...'
@@ -280,38 +281,43 @@ function WorkoutEditor({ onSave, treinoToEdit, onCancel }: { onSave: (treino: Om
 
 export default function MeusTreinosPage() {
     const { user } = useUser();
+    const firestore = useFirestore();
     const { toast } = useToast();
 
-    // Simulação de dados
-    const [meusTreinos, setMeusTreinos] = useState<Treino[]>(() => mockTreinos.filter(t => t.alunoId === '1'));
-    const [isGenerating, setIsGenerating] = useState(false);
+    const treinosCollectionRef = useMemoFirebase(
+      () => (firestore && user ? collection(firestore, 'alunos', user.uid, 'treinos') : null),
+      [firestore, user]
+    );
 
-    // Estado para o formulário
+    const { data: meusTreinos, isLoading: isLoadingTreinos } = useCollection<Treino>(treinosCollectionRef);
+    const [isGenerating, setIsGenerating] = useState(false);
     const [isFormVisible, setIsFormVisible] = useState(false);
     const [editingTreino, setEditingTreino] = useState<Treino | null>(null);
-
-    // Estado para o alerta de exclusão
     const [isAlertOpen, setIsAlertOpen] = useState(false);
     const [deletingTreino, setDeletingTreino] = useState<Treino | null>(null);
 
-    const handleSave = (treinoData: Omit<Treino, 'id' | 'alunoId' | 'instrutorId'>) => {
-        if (editingTreino) {
-            // Edita o treino existente, mantendo o dia da semana
-            setMeusTreinos(meusTreinos.map(t => t.id === editingTreino.id ? { ...editingTreino, ...treinoData } : t));
-            toast({ title: 'Treino atualizado com sucesso!', className: 'bg-accent text-accent-foreground' });
-        } else {
-            // Adiciona um novo treino
-            const newTreino: Treino = {
-                ...treinoData,
-                id: `t-${Date.now()}`,
-                alunoId: user!.uid,
-                instrutorId: user!.uid, // O próprio aluno é o "instrutor"
-            };
-            setMeusTreinos([newTreino, ...meusTreinos]);
-            toast({ title: 'Novo treino salvo com sucesso!', className: 'bg-accent text-accent-foreground' });
+    const handleSave = async (treinoData: Omit<Treino, 'id' | 'alunoId' | 'instrutorId'>) => {
+        if (!treinosCollectionRef) return;
+    
+        try {
+            if (editingTreino) {
+                const treinoRef = doc(treinosCollectionRef, editingTreino.id);
+                await updateDoc(treinoRef, treinoData);
+                toast({ title: 'Treino atualizado com sucesso!', className: 'bg-accent text-accent-foreground' });
+            } else {
+                await addDoc(treinosCollectionRef, {
+                    ...treinoData,
+                    alunoId: user!.uid,
+                    instrutorId: user!.uid, // O próprio aluno é o "instrutor"
+                });
+                toast({ title: 'Novo treino salvo com sucesso!', className: 'bg-accent text-accent-foreground' });
+            }
+            setIsFormVisible(false);
+            setEditingTreino(null);
+        } catch (error) {
+            console.error("Erro ao salvar treino:", error);
+            toast({ title: "Erro ao salvar", description: "Não foi possível salvar o treino. Tente novamente.", variant: "destructive" });
         }
-        setIsFormVisible(false);
-        setEditingTreino(null);
     };
     
     const handleEdit = (treino: Treino) => {
@@ -320,23 +326,23 @@ export default function MeusTreinosPage() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    const handleDayChange = (treinoId: string, dia: string) => {
+    const handleDayChange = async (treinoId: string, dia: string) => {
+        if (!treinosCollectionRef || !meusTreinos) return;
         const novoDia = dia === "nenhum" ? null : parseInt(dia, 10);
 
-        // Verifica se o dia já está ocupado por outro treino
         if (novoDia !== null && meusTreinos.some(t => t.diaSemana === novoDia && t.id !== treinoId)) {
-            toast({
-                title: "Dia já ocupado",
-                description: "Outro treino já está agendado para este dia. Escolha outro dia ou desative o treino existente.",
-                variant: "destructive"
-            });
+            toast({ title: "Dia já ocupado", variant: "destructive" });
             return;
         }
 
-        setMeusTreinos(meusTreinos.map(t =>
-            t.id === treinoId ? { ...t, diaSemana: novoDia } : t
-        ));
-        toast({ title: 'Agenda atualizada!' });
+        const treinoRef = doc(treinosCollectionRef, treinoId);
+        try {
+            await updateDoc(treinoRef, { diaSemana: novoDia });
+            toast({ title: 'Agenda atualizada!' });
+        } catch (error) {
+            console.error("Erro ao atualizar dia do treino:", error);
+            toast({ title: "Erro ao atualizar agenda", variant: "destructive" });
+        }
     };
     
     const openDeleteAlert = (treino: Treino) => {
@@ -344,10 +350,17 @@ export default function MeusTreinosPage() {
         setIsAlertOpen(true);
     };
 
-    const handleDelete = () => {
-        if (!deletingTreino) return;
-        setMeusTreinos(meusTreinos.filter(t => t.id !== deletingTreino.id));
-        toast({ title: 'Treino excluído!', variant: 'destructive' });
+    const handleDelete = async () => {
+        if (!deletingTreino || !treinosCollectionRef) return;
+        
+        try {
+            await deleteDoc(doc(treinosCollectionRef, deletingTreino.id));
+            toast({ title: 'Treino excluído!', variant: 'destructive' });
+        } catch (error) {
+            console.error("Erro ao excluir treino:", error);
+            toast({ title: "Erro ao excluir", variant: "destructive" });
+        }
+
         setIsAlertOpen(false);
         setDeletingTreino(null);
     };
@@ -359,15 +372,17 @@ export default function MeusTreinosPage() {
     }
 
     const handleGenerate = async (data: WorkoutGeneratorInput) => {
+        if (!treinosCollectionRef || !meusTreinos) return;
+
         setIsGenerating(true);
         setIsFormVisible(false);
         setEditingTreino(null);
         try {
             const result = await generateWorkoutPlan(data);
             
-            const novosTreinos: Treino[] = result.workouts.map((workout, workoutIndex) => {
-                 const novosExercicios = workout.exercicios.map((ex, index) => ({
-                    id: `${Date.now()}-${workoutIndex}-${index}`,
+            for (const workout of result.workouts) {
+                const novosExercicios = workout.exercicios.map((ex, index) => ({
+                    id: `${Date.now()}-${index}`,
                     nomeExercicio: ex.nomeExercicio,
                     series: ex.series,
                     repeticoes: ex.repeticoes,
@@ -375,22 +390,18 @@ export default function MeusTreinosPage() {
                     descricao: flatExerciciosOptions.find(opt => opt.value === ex.nomeExercicio)?.label || ""
                 }));
 
-                // Garante que o dia sugerido não conflita com um já existente
                 const diaSugerido = workout.diaSugerido;
                 const isDayOccupied = meusTreinos.some(t => t.diaSemana === diaSugerido);
 
-                return {
-                    id: `t-${Date.now()}-${workoutIndex}`,
+                await addDoc(treinosCollectionRef, {
                     alunoId: user!.uid,
-                    instrutorId: 'IA', // O "instrutor" é a IA
-                    objetivo: workout.nome, // Ex: "Treino A - Peito e Triceps"
-                    exercicios: novosExercicios as Exercicio[],
-                    diaSemana: isDayOccupied ? null : diaSugerido, // Começa desativado se o dia já estiver ocupado
+                    instrutorId: 'IA',
+                    objetivo: workout.nome,
+                    exercicios: novosExercicios,
+                    diaSemana: isDayOccupied ? null : diaSugerido,
                     dataCriacao: new Date().toISOString()
-                }
-            });
-
-            setMeusTreinos(prevTreinos => [...novosTreinos, ...prevTreinos]);
+                });
+            }
             
             toast({
                 title: "Plano Semanal Gerado pela IA!",
@@ -448,7 +459,8 @@ export default function MeusTreinosPage() {
                     <CardDescription>Atribua cada treino a um dia da semana para ativá-lo. O treino do dia aparecerá no seu dashboard.</CardDescription>
                 </CardHeader>
                 <CardContent className='grid gap-4'>
-                    {meusTreinos.map(treino => (
+                    {isLoadingTreinos && Array.from({length: 3}).map((_, i) => <Skeleton key={i} className='h-20 w-full' />)}
+                    {meusTreinos && meusTreinos.map(treino => (
                         <div key={treino.id} className={cn("rounded-lg border p-4 transition-all flex flex-col sm:flex-row justify-between sm:items-center gap-4", treino.diaSemana !== null && "bg-accent/10 border-accent")}>
                            <div className='flex-1'>
                                 <div className='flex items-center gap-3'>
@@ -487,7 +499,7 @@ export default function MeusTreinosPage() {
                            </div>
                         </div>
                     ))}
-                    {meusTreinos.length === 0 && (
+                    {!isLoadingTreinos && meusTreinos?.length === 0 && (
                          <div className="text-center text-sm text-muted-foreground py-10">
                             Você ainda não criou nenhum treino. Use o gerador de IA ou crie um manualmente.
                          </div>
@@ -516,6 +528,3 @@ export default function MeusTreinosPage() {
 }
 
     
-
-    
-
