@@ -247,7 +247,7 @@ export default function AlunoDashboardPage() {
     const { user } = useUser();
     const firestore = useFirestore();
     
-    // Busca os dados do aluno do Firestore
+    // Busca os dados do aluno logado do Firestore
     const alunoDocRef = useMemoFirebase(
       () =>
         firestore && user?.uid
