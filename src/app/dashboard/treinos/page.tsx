@@ -224,7 +224,7 @@ export default function TreinosPage() {
         };
 
         try {
-            await addDoc(treinosCollectionRef, novoTreino)
+            addDoc(treinosCollectionRef, novoTreino)
                 .catch(async (serverError) => {
                     const permissionError = new FirestorePermissionError({
                       path: treinosCollectionRef.path,
@@ -245,7 +245,10 @@ export default function TreinosPage() {
             setExercicios([]);
         } catch (error) {
             console.error("Erro ao salvar treino:", error);
-            toast({ title: "Erro no Firestore", description: "Não foi possível salvar o treino.", variant: "destructive" });
+            // O erro de permissão já é tratado pelo .catch() do addDoc
+            if (!(error instanceof FirestorePermissionError)) {
+               toast({ title: "Erro no Firestore", description: "Não foi possível salvar o treino.", variant: "destructive" });
+            }
         }
     }
 
@@ -284,7 +287,7 @@ export default function TreinosPage() {
                 };
                 
                 // Adiciona o treino à subcoleção do aluno
-                await addDoc(treinosCollectionRef, novoTreino)
+                addDoc(treinosCollectionRef, novoTreino)
                     .catch(async (serverError) => {
                         const permissionError = new FirestorePermissionError({
                           path: treinosCollectionRef.path,
