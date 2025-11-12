@@ -7,6 +7,7 @@
  */
 
 import { ai } from '@/ai/genkit';
+import { googleAI } from '@genkit-ai/google-genai';
 import { EXERCICIOS_POR_GRUPO } from '@/lib/data';
 import { 
     WorkoutGeneratorInputSchema, 
@@ -37,6 +38,7 @@ ${grupo.exercicios.map((ex) => `- ${ex.nomeExercicio}`).join('\n')}
 
 const workoutPrompt = ai.definePrompt({
   name: 'workoutGeneratorPrompt',
+  model: googleAI.model('gemini-1.5-flash'),
   input: { schema: WorkoutGeneratorInputSchema },
   output: { schema: WorkoutGeneratorOutputSchema },
   prompt: `

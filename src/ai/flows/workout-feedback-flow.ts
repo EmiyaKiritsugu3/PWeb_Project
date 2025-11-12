@@ -9,6 +9,7 @@
  */
 
 import { ai } from '@/ai/genkit';
+import { googleAI } from '@genkit-ai/google-genai';
 import { z } from 'zod';
 
 // Schema de Entrada
@@ -35,6 +36,7 @@ export async function generateWorkoutFeedback(input: WorkoutFeedbackInput): Prom
 // Definição do Prompt para a IA
 const feedbackPrompt = ai.definePrompt({
   name: 'workoutFeedbackPrompt',
+  model: googleAI.model('gemini-1.5-flash'),
   input: { schema: WorkoutFeedbackInputSchema },
   output: { schema: WorkoutFeedbackOutputSchema },
   prompt: `
