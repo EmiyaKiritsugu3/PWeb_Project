@@ -27,7 +27,7 @@ import { DashboardNav, DashboardNavBottom } from "@/components/dashboard-nav";
 import { Dumbbell, LogOut } from "lucide-react";
 import { useAuth, useUser, FirebaseClientProvider } from "@/firebase";
 
-function DashboardAppLayout({ children }: { children: React.ReactNode; }) {
+function DashboardLayoutContent({ children }: { children: React.ReactNode; }) {
   const { user, isUserLoading } = useUser();
   const auth = useAuth();
   const router = useRouter();
@@ -56,7 +56,8 @@ function DashboardAppLayout({ children }: { children: React.ReactNode; }) {
       </div>
     );
   }
-
+  
+  // Se não há usuário e a rota é /login, renderiza a página de login sem o layout principal
   if (!user && pathname === '/login') {
     return <main>{children}</main>;
   }
@@ -129,13 +130,18 @@ function DashboardAppLayout({ children }: { children: React.ReactNode; }) {
     );
   }
 
-  return null;
+  // Se o usuário não está logado e não está na página de login, pode-se mostrar um loader ou redirecionar
+  return (
+      <div className="flex h-screen w-full items-center justify-center bg-background">
+        <Dumbbell className="h-12 w-12 animate-pulse text-primary" />
+      </div>
+  );
 }
 
 export default function DashboardLayout({ children }: { children: React.ReactNode; }) {
     return (
         <FirebaseClientProvider>
-            <DashboardAppLayout>{children}</DashboardAppLayout>
+            <DashboardLayoutContent>{children}</DashboardLayoutContent>
         </FirebaseClientProvider>
     )
 }

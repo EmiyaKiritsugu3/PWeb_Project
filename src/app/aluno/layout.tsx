@@ -3,6 +3,7 @@
 
 import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,9 +16,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Dumbbell, LogOut, User as UserIcon, LayoutDashboard, FolderKanban } from "lucide-react";
 import { useAuth, useUser, FirebaseClientProvider } from "@/firebase";
-import Link from "next/link";
 
-function AlunoAppLayout({ children }: { children: React.ReactNode }) {
+
+function AlunoLayoutContent({ children }: { children: React.ReactNode }) {
   const { user, isUserLoading } = useUser();
   const auth = useAuth();
   const router = useRouter();
@@ -51,8 +52,9 @@ function AlunoAppLayout({ children }: { children: React.ReactNode }) {
       </div>
     );
   }
-
-  if (!user && pathname === '/aluno/login') {
+  
+  // Se o usuário não está logado e está na página de login, apenas renderize a página de login
+  if (!user && pathname.endsWith('/login')) {
     return <main>{children}</main>;
   }
 
@@ -126,13 +128,20 @@ function AlunoAppLayout({ children }: { children: React.ReactNode }) {
         </div>
     );
   }
-  return null;
+  
+  // Se o usuário não está logado e não está na página de login, pode-se mostrar um loader ou redirecionar
+  return (
+    <div className="flex h-screen w-full items-center justify-center bg-background">
+        <Dumbbell className="h-12 w-12 animate-pulse text-primary" />
+    </div>
+  );
 }
+
 
 export default function AlunoLayout({ children }: { children: React.ReactNode; }) {
     return (
         <FirebaseClientProvider>
-            <AlunoAppLayout>{children}</AlunoAppLayout>
+            <AlunoLayoutContent>{children}</AlunoLayoutContent>
         </FirebaseClientProvider>
     )
 }
