@@ -8,6 +8,8 @@ import {
   getCoreRowModel,
   getPaginationRowModel,
   useReactTable,
+  Row,
+  Cell,
 } from "@tanstack/react-table"
 
 import {
@@ -40,8 +42,10 @@ export function DataTable<TData, TValue>({
     getPaginationRowModel: getPaginationRowModel(),
   })
 
-  // Helper para encontrar a coluna de ações para o card mobile
-  const actionsColumn = columns.find(c => c.id === 'actions');
+  // Helper para encontrar a célula de ações para o card mobile
+  const getActionsCell = (row: Row<TData>): Cell<TData, TValue> | undefined => {
+    return row.getVisibleCells().find(cell => cell.column.id === 'actions');
+  }
 
   return (
     <div>
@@ -56,24 +60,27 @@ export function DataTable<TData, TValue>({
             </Card>
           ))
         ) : table.getRowModel().rows?.length ? (
-          table.getRowModel().rows.map((row) => (
-            <Card key={row.id}>
-              <CardContent className="flex items-center justify-between p-4">
-                <div className="flex items-center gap-4">
-                  {/* Avatar, Nome e Status */}
-                  {row.getVisibleCells().map((cell) => {
-                    const columnId = cell.column.id;
-                    if (columnId === 'fotoUrl' || columnId === 'nomeCompleto' || columnId === 'statusMatricula') {
-                      return flexRender(cell.column.columnDef.cell, cell.getContext());
-                    }
-                    return null;
-                  })}
-                </div>
-                 {/* Ações */}
-                {actionsColumn && flexRender(actionsColumn.cell, row.getContext())}
-              </CardContent>
-            </Card>
-          ))
+          table.getRowModel().rows.map((row) => {
+            const actionsCell = getActionsCell(row);
+            return (
+              <Card key={row.id}>
+                <CardContent className="flex items-center justify-between p-4">
+                  <div className="flex items-center gap-4">
+                    {/* Avatar, Nome e Status */}
+                    {row.getVisibleCells().map((cell) => {
+                      const columnId = cell.column.id;
+                      if (columnId === 'fotoUrl' || columnId === 'nomeCompleto' || columnId === 'statusMatricula') {
+                        return flexRender(cell.column.columnDef.cell, cell.getContext());
+                      }
+                      return null;
+                    })}
+                  </div>
+                  {/* Ações */}
+                  {actionsCell && flexRender(actionsCell.column.columnDef.cell, actionsCell.getContext())}
+                </CardContent>
+              </Card>
+            )
+          })
         ) : (
           <Card>
             <CardContent className="flex h-24 items-center justify-center p-6 text-center">
