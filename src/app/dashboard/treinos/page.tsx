@@ -164,8 +164,8 @@ export default function TreinosPage() {
     const { user: FUser } = useUser();
     
     const alunosCollection = useMemoFirebase(() => 
-        firestore && FUser ? collection(firestore, 'alunos') : null, 
-    [firestore, FUser]);
+        firestore ? collection(firestore, 'alunos') : null, 
+    [firestore]);
 
     const { data: alunos, isLoading: isLoadingAlunos } = useCollection<Aluno>(alunosCollection);
 
@@ -420,3 +420,4 @@ export default function TreinosPage() {
         </>
     );
 }
+
