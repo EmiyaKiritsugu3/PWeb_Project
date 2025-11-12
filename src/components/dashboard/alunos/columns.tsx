@@ -13,7 +13,11 @@ import { format } from 'date-fns';
 
 const getInitials = (name: string) => {
     if (!name) return '';
-    return name.split(' ').map(n => n[0]).join('').toUpperCase();
+    const nameParts = name.split(' ');
+    if (nameParts.length > 1) {
+        return `${nameParts[0][0]}${nameParts[nameParts.length - 1][0]}`.toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
 }
 
 const getStatusVariant = (status: Aluno["statusMatricula"]): "default" | "destructive" | "secondary" => {
@@ -40,7 +44,7 @@ export const columns = ({ onEdit, onDelete, onNewMatricula }: ColumnsProps): Col
     cell: ({ row }) => {
         const aluno = row.original;
         return (
-            <Avatar>
+            <Avatar className="h-12 w-12">
                 <AvatarImage src={aluno.fotoUrl} alt={aluno.nomeCompleto} />
                 <AvatarFallback>{getInitials(aluno.nomeCompleto)}</AvatarFallback>
             </Avatar>
@@ -50,10 +54,21 @@ export const columns = ({ onEdit, onDelete, onNewMatricula }: ColumnsProps): Col
   {
     accessorKey: "nomeCompleto",
     header: "Nome",
+    cell: ({ row }) => {
+        const nome = row.getValue("nomeCompleto") as string;
+        const email = row.original.email;
+        return (
+            <div className="grid gap-0.5 md:hidden">
+                <p className="font-medium">{nome}</p>
+                <p className="text-xs text-muted-foreground">{email}</p>
+            </div>
+        )
+    }
   },
   {
     accessorKey: "email",
     header: "Email",
+    cell: ({ row }) => <div className="hidden md:block">{row.original.email}</div>
   },
   {
     accessorKey: "dataCadastro",
@@ -73,7 +88,7 @@ export const columns = ({ onEdit, onDelete, onNewMatricula }: ColumnsProps): Col
     header: "Status",
     cell: ({ row }) => {
         const status = row.getValue("statusMatricula") as Aluno["statusMatricula"];
-        return <Badge variant={getStatusVariant(status)}>{status}</Badge>
+        return <Badge variant={getStatusVariant(status)} className="text-xs">{status}</Badge>
     }
   },
   {
