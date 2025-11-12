@@ -10,7 +10,8 @@ import {
   DollarSign, 
   FileText,
   Settings,
-  LogOut
+  LogOut,
+  FlaskConical
 } from "lucide-react";
 import {
   SidebarMenu,
@@ -27,11 +28,19 @@ const navItems = [
   { href: "/dashboard/planos", icon: <FileText />, label: "Planos" },
 ];
 
+if (process.env.NODE_ENV === 'development') {
+  navItems.push({ href: "/dashboard/dev", icon: <FlaskConical />, label: "Dev" });
+}
+
 export function DashboardNav() {
   const pathname = usePathname();
 
   const isActive = (href: string) => {
-    return pathname === href;
+    // Make it active for sub-paths as well, except for the main dashboard page
+     if (href === "/dashboard") {
+      return pathname === href;
+    }
+    return pathname.startsWith(href);
   };
 
   return (
