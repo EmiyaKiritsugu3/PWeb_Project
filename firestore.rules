@@ -2,76 +2,96 @@
  * @fileoverview Firestore Security Rules for Five Star Gym.
  *
  * Core Philosophy:
- * This ruleset enforces a strict ownership model for student data,
- * ensuring only the authenticated user (student) or authorized employees can
- * access specific information. Data for employees is secured based on their roles.
+ * This ruleset enforces a strict ownership model. Students can only access
+ * their own data. Employees (`funcionarios`) have broader, but still defined,
+ * access rights based on their role, which is validated by checking for their
+ * existence in the /funcionarios collection.
  *
  * Data Structure:
- * - /alunos/{alunoId}: Stores student data.
- * - /alunos/{alunoId}/matriculas/{matriculaId}: Stores enrollment data for a student.
- * - /alunos/{alunoId}/pagamentos/{pagamentoId}: Stores payment history for a student.
- * - /alunos/{alunoId}/treinos/{treinoId}: Stores workout plans for a student.
- * - /alunos/{alunoId}/treinos/{treinoId}/exercicios/{exercicioId}: Stores exercises within a workout plan.
- * - /planos/{planoId}: Stores a catalog of available plans.
- * - /funcionarios/{funcionarioId}: Stores employee data, including roles.
- *
- * Key Security Decisions:
- * - Aluno data is primarily accessible to the authenticated Aluno.
- * - Funcionario access is role-based and validated by checking for their existence in the /funcionarios collection.
- * - Listing of documents is allowed only when it's secure (e.g., listing one's own documents or employees listing all students).
- * - Plan data is assumed to be public.
+ * - /alunos/{alunoId}: Student data.
+ * - /alunos/{alunoId}/... (subcollections): Student's private data.
+ * - /planos/{planoId}: Publicly readable plan catalog.
+ * - /funcionarios/{funcionarioId}: Employee data and roles.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // --- HELPER FUNCTIONS ---
+
+    /**
+     * Checks if the requesting user is an employee.
+     * Their UID must exist as a document ID in the /funcionarios collection.
+     */
     function isFuncionario() {
-      // Allow if the user exists in the 'funcionarios' collection.
       return request.auth != null && exists(/databases/$(database)/documents/funcionarios/$(request.auth.uid));
     }
     
+    /**
+     * Checks if the requesting user is the owner of a document.
+     * Their UID must match the provided userId document ID.
+     */
     function isOwner(userId) {
       return request.auth != null && request.auth.uid == userId;
     }
 
-    match /alunos/{alunoId} {
-      // COLLECTION-LEVEL Rules: Apply to the collection as a whole
-      allow list: if isFuncionario();
-      allow create: if isOwner(alunoId) || isFuncionario();
+    // --- COLLECTION RULES ---
 
-      // DOCUMENT-LEVEL Rules: Apply to specific documents
+    match /alunos/{alunoId} {
+      // Employees can list all students.
+      allow list: if isFuncionario();
+      
+      // An employee can create a student record.
+      // A user can create their OWN student record (e.g., on first sign-up).
+      allow create: if isFuncionario() || isOwner(alunoId);
+
+      // Only the owner (student) or an employee can get or update a student's profile.
       allow get, update: if isOwner(alunoId) || isFuncionario();
+      
+      // Only employees can delete student profiles.
       allow delete: if isFuncionario();
 
+      // --- SUBCOLLECTION RULES ---
+
       match /matriculas/{matriculaId} {
+        // Owner or employee can view enrollment history.
         allow get, list: if isOwner(alunoId) || isFuncionario();
+        // Only employees can create, update, or delete enrollments.
         allow create, update, delete: if isFuncionario();
       }
 
       match /pagamentos/{pagamentoId} {
+        // Owner or employee can view payment history.
         allow get, list: if isOwner(alunoId) || isFuncionario();
+        // Only employees can manage payments.
         allow create, update, delete: if isFuncionario();
       }
 
       match /treinos/{treinoId} {
+        // Owner or employee can read workout plans.
         allow get, list: if isOwner(alunoId) || isFuncionario();
+        // Owner (creating their own plan) or an employee can create, update, or delete workouts.
         allow create, update, delete: if isOwner(alunoId) || isFuncionario();
 
         match /exercicios/{exercicioId} {
-          allow get, list: if isOwner(alunoId) || isFuncionario();
-          allow create, update, delete: if isOwner(alunoId) || isFuncionario();
+          // Same permissions as the parent workout plan.
+          allow get, list, create, update, delete: if isOwner(alunoId) || isFuncionario();
         }
       }
     }
 
     match /planos/{planoId} {
+      // All authenticated users can see the available plans.
       allow get, list: if request.auth != null;
+      // Only employees can create, update, or delete plans from the catalog.
       allow create, update, delete: if isFuncionario();
     }
 
     match /funcionarios/{funcionarioId} {
-      allow read: if request.auth != null; // Allow any authenticated user to read from funcionarios
-      allow write: if isOwner(funcionarioId); // Only owner can write to their own document
+      // Any authenticated user can read employee info (e.g., to see instructor names).
+      allow read: if request.auth != null;
+      // An employee can only write to their OWN document.
+      allow write: if isOwner(funcionarioId);
     }
   }
 }

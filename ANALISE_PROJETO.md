@@ -82,7 +82,7 @@ A organização dos arquivos foi pensada para ser intuitiva e escalável.
 
 ## 6. Roteiro de Apresentação Sugerido
 
-Este roteiro foi pensado para uma demonstração fluida, contando uma história enquanto exibe as funcionalidades. Após projetar a tela inicial do aplicativo, siga estes passos.
+Este roteiro foi pensado para uma demonstração fluida, contando uma história enquanto exibe as funcionalidades. Após iniciar a projeção da tela, siga estes passos.
 
 ### Passo 1: O Cenário (O Problema)
 
@@ -101,8 +101,8 @@ Este roteiro foi pensado para uma demonstração fluida, contando uma história 
     > *"Agora, a parte mais inteligente. Vamos para a 'Gestão de Treinos'. O personal trainer precisa criar um novo plano para a Ana Silva. Em vez de montar tudo do zero, ele pode usar o nosso **gerador de planos com Inteligência Artificial**."*
     *   Selecione "Ana Silva" na lista.
     *   No gerador de IA, preencha: Objetivo = Hipertrofia, Nível = Intermediário, Dias = 4.
-    *   Clique em **"Gerar Plano"**.
-    > *"Com base nesses parâmetros, a IA cria um plano semanal completo e otimizado, com divisão de treinos e exercícios específicos. E com um clique, esse plano é salvo e enviado diretamente para o perfil da Ana."*
+    *   Clique em **"Gerar Plano Semanal"**.
+    > *"Com base nesses parâmetros, a IA cria um plano semanal completo e otimizado, com divisão de treinos e exercícios específicos. E com um clique, cada um desses treinos é salvo e enviado diretamente para o perfil da Ana."*
 
 ### Passo 4: Demonstração - A Jornada da Aluna (Engajamento e Personalização)
 
@@ -111,7 +111,7 @@ Este roteiro foi pensado para uma demonstração fluida, contando uma história 
 3.  **Mostre a Página "Meus Treinos":**
     > *"Agora, vamos ver a mágica acontecer. No portal da Ana, em 'Meus Treinos', vemos a clara separação que criamos. Na área **'Planos do Personal'**, aqui estão os treinos que o gerente acabou de gerar. Estão prontos para ela agendar."*
 4.  **Mostre o Dashboard do Aluno:**
-    > *"Vamos para o 'Treino de Hoje'. Ana completa seus exercícios e os marca como concluídos. Ao final, ela não apenas termina, ela interage."*
+    > *"Vamos para o 'Meu Treino de Hoje'. Ana completa seus exercícios e os marca como concluídos. Ao final, ela não apenas termina, ela interage."*
     *   Marque alguns checkboxes.
     *   Clique no botão **"Finalizar Treino e Receber Feedback"**.
     > *"O sistema usa IA novamente, mas desta vez para gerar um **feedback motivacional e personalizado**, elogiando o esforço dela e dando uma dica relevante para seu objetivo de hipertrofia. Isso transforma o fim de um treino em uma experiência positiva e engajadora."*

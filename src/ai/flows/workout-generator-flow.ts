@@ -58,7 +58,7 @@ const workoutPrompt = ai.definePrompt({
     1.  **Crie um Plano Semanal:** Gere uma sequência de treinos para a semana. O número de treinos distintos deve ser apropriado para a quantidade de dias por semana.
     2.  **Estrutura da Divisão (Split):**
         - **2-3 dias/semana:** Crie um plano "Full Body" (corpo todo) ou uma divisão "A/B". Se for A/B, o aluno repetirá o A na terceira sessão. Gere 2 treinos distintos (Treino A, Treino B).
-        - **4 dias/semana:** Crie uma divisão "Superior/Inferior" (Upper/Lower). Gere 2 treinos para superiores e 2 para inferiores, ou 2 treinos distintos (Treino A - Superiores, Treino B - Inferiores).
+        - **4 dias/semana:** Crie uma divisão "Superior/Inferior" (Upper/Lower). Gere 2 treinos distintos (Treino A - Superiores, Treino B - Inferiores).
         - **5+ dias/semana:** Crie uma divisão por grupo muscular (ex: A: Peito/Tríceps, B: Costas/Bíceps, C: Pernas, D: Ombros, E: Cardio/Abdômen). Gere de 3 a 5 treinos distintos.
     3.  **Nomeie os Treinos:** Dê nomes claros para cada treino na divisão (ex: "Treino A - Peito e Tríceps", "Treino B - Costas e Bíceps").
     4.  **SUGIRA OS DIAS:** Para cada treino gerado, preencha o campo 'diaSugerido' com um número de 0 (Domingo) a 6 (Sábado). Distribua os treinos de forma lógica na semana, respeitando dias de descanso. Ex: Para uma divisão A/B de 3 dias, sugira dias 1 (Seg), 3 (Qua) e 5 (Sex). Para uma Superior/Inferior de 4 dias, sugira dias 1 (Seg), 2 (Ter), 4 (Qui), 5 (Sex).
@@ -71,7 +71,8 @@ const workoutPrompt = ai.definePrompt({
         - **Força:** 4-5 séries, 4-6 repetições (para exercícios principais).
         - **Perda de Peso:** 3-4 séries, 15-20 repetições.
     7.  **Observações:** Adicione dicas úteis e de segurança quando relevante.
-    8.  **Formato de Saída:** Sua resposta DEVE ser um objeto JSON que corresponda EXATAMENTE ao schema de saída. Preencha 'planName' com um nome descritivo para o plano geral (ex: "Plano de Hipertrofia - 4 dias/semana") e 'workouts' com o array de treinos que você criou.
+    8.  **Nome do Plano:** Preencha 'planName' com um nome descritivo para o plano geral (ex: "Plano de Hipertrofia - 4 dias/semana").
+    9.  **Formato de Saída:** Sua resposta DEVE ser um objeto JSON que corresponda EXATAMENTE ao schema de saída.
   `,
 });
 

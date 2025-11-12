@@ -10,7 +10,7 @@ export const ALUNOS: Omit<Aluno, 'biometriaHash'>[] = [
     telefone: '(11) 98765-4321',
     dataNascimento: '1995-03-15',
     dataCadastro: '2023-01-10',
-    fotoUrl: 'https://picsum.photos/seed/avatar-1/100/100',
+    fotoUrl: 'https://i.imgur.com/8b1Z9T6.jpeg',
     statusMatricula: 'ATIVA',
   },
   {
@@ -21,7 +21,7 @@ export const ALUNOS: Omit<Aluno, 'biometriaHash'>[] = [
     telefone: '(21) 91234-5678',
     dataNascimento: '1988-07-22',
     dataCadastro: '2022-11-20',
-    fotoUrl: 'https://picsum.photos/seed/avatar-2/100/100',
+    fotoUrl: 'https://i.imgur.com/nO2CSSO.jpeg',
     statusMatricula: 'INADIMPLENTE',
   },
   {
@@ -32,7 +32,7 @@ export const ALUNOS: Omit<Aluno, 'biometriaHash'>[] = [
     telefone: '(31) 95555-4444',
     dataNascimento: '2001-11-30',
     dataCadastro: '2023-05-01',
-    fotoUrl: 'https://picsum.photos/seed/avatar-3/100/100',
+    fotoUrl: 'https://i.imgur.com/A2trT4c.jpeg',
     statusMatricula: 'ATIVA',
   },
   {
@@ -43,7 +43,7 @@ export const ALUNOS: Omit<Aluno, 'biometriaHash'>[] = [
     telefone: '(41) 98888-7777',
     dataNascimento: '1999-01-05',
     dataCadastro: '2023-02-15',
-    fotoUrl: 'https://picsum.photos/seed/avatar-4/100/100',
+    fotoUrl: 'https://i.imgur.com/fAbx2c2.jpeg',
     statusMatricula: 'INATIVA',
   },
   {
@@ -54,7 +54,7 @@ export const ALUNOS: Omit<Aluno, 'biometriaHash'>[] = [
     telefone: '(51) 97777-6666',
     dataNascimento: '1992-09-12',
     dataCadastro: '2021-08-30',
-    fotoUrl: 'https://picsum.photos/seed/avatar-5/100/100',
+    fotoUrl: 'https://i.imgur.com/x8P4VdD.jpeg',
     statusMatricula: 'ATIVA',
   },
    {
@@ -65,7 +65,7 @@ export const ALUNOS: Omit<Aluno, 'biometriaHash'>[] = [
     telefone: '(61) 96666-5555',
     dataNascimento: '2003-04-25',
     dataCadastro: '2024-01-05',
-    fotoUrl: 'https://picsum.photos/seed/avatar-6/100/100',
+    fotoUrl: 'https://i.imgur.com/E8Wb23L.jpeg',
     statusMatricula: 'ATIVA',
   },
 ];
@@ -164,7 +164,7 @@ export const TREINOS: Treino[] = [
             { id: 'ex1', nomeExercicio: 'Supino Reto com Barra', series: 4, repeticoes: '8-10', observacoes: 'Controlar a descida.', descricao: 'Deite-se em um banco reto, segure a barra com as mãos um pouco mais afastadas que a largura dos ombros. Desça a barra até tocar o peito e empurre de volta à posição inicial.' },
             { id: 'ex2', nomeExercicio: 'Desenvolvimento Militar com Barra', series: 3, repeticoes: '10-12', observacoes: 'Não curvar a lombar.', descricao: 'Em pé ou sentado, segure a barra na altura dos ombros e empurre-a para cima da cabeça, estendendo completamente os cotovelos.' },
             { id: 'ex3', nomeExercicio: 'Elevação Lateral com Halteres', series: 3, repeticoes: '12-15', observacoes: 'Não usar impulso.', descricao: 'Em pé, com um halter em cada mão, eleve os braços para os lados até a altura dos ombros, com os cotovelos levemente flexionados.' },
-            { id: 'ex4', nomeExercicio: 'Tríceps Pulley com Barra', series: 3, repeticoes: '12-15', observacoes: 'Estender completamente os cotovelos.', descricao: 'Na polia alta, segure a barra e empurre-a para baixo até estender completamente os cotovelos. Mantenha os cotovelos fixos ao lado do corpo.' },
+            { id: 'ex4', nomeExercicio: 'Tríceps Pulley com Barra', series: 3, repeticoes: '12-15', observacoes: 'Estender completamente os cotovelos.', descricao: 'Na polia alta, segure a barra e empurre-a para baixo até estender completely os cotovelos. Mantenha os cotovelos fixos ao lado do corpo.' },
         ]
     },
     {

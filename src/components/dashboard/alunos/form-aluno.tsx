@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -65,7 +66,7 @@ export function FormAluno({ isOpen, onOpenChange, onSubmit, aluno }: FormAlunoPr
   });
 
   useEffect(() => {
-    if (aluno) {
+    if (isOpen && aluno) {
       // Se a data de nascimento for um timestamp, converta para o formato YYYY-MM-DD
       const dataNascimentoFormatada = aluno.dataNascimento
         ? new Date(aluno.dataNascimento).toISOString().split('T')[0]
@@ -74,7 +75,7 @@ export function FormAluno({ isOpen, onOpenChange, onSubmit, aluno }: FormAlunoPr
         ...aluno,
         dataNascimento: dataNascimentoFormatada,
       });
-    } else {
+    } else if (isOpen) {
       form.reset({
         nomeCompleto: "",
         email: "",

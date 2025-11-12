@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { addDoc, collection, doc, updateDoc, deleteDoc, setDoc } from "firebase/firestore";
+import { collection, doc, updateDoc, deleteDoc, setDoc } from "firebase/firestore";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/page-header";
 import { PlusCircle } from "lucide-react";
@@ -92,14 +92,14 @@ export default function AlunosPage() {
     } else {
         // Cria um novo aluno.
         const novoAlunoDoc = doc(alunosCollection); // Cria uma referência com ID gerado
-        const novoAluno: Omit<Aluno, "id"> = {
+        const novoAlunoData: Omit<Aluno, "id"> = {
             ...data,
             dataCadastro: new Date().toISOString(),
-            fotoUrl: `https://picsum.photos/seed/${novoAlunoDoc.id}/100/100`,
+            fotoUrl: `https://picsum.photos/seed/${novoAlunoDoc.id}/100/100`, // Foto padrão
             biometriaHash: '', // Garante que o campo exista
             statusMatricula: 'ATIVA'
         };
-        setDoc(novoAlunoDoc, novoAluno)
+        setDoc(novoAlunoDoc, novoAlunoData)
          .then(() => {
             toast({
                 title: "Aluno cadastrado!",
@@ -110,7 +110,7 @@ export default function AlunosPage() {
             const permissionError = new FirestorePermissionError({
               path: novoAlunoDoc.path,
               operation: 'create',
-              requestResourceData: novoAluno,
+              requestResourceData: novoAlunoData,
             });
             errorEmitter.emit('permission-error', permissionError);
             toast({ title: "Erro ao cadastrar", description: "Não foi possível criar o aluno.", variant: "destructive" });
@@ -151,7 +151,6 @@ export default function AlunosPage() {
   };
 
   const handleMatriculaSubmit = (aluno: Aluno, plano: Plano) => {
-    console.log(`Matriculando ${aluno.nomeCompleto} no plano ${plano.nome}`);
     // TODO: Implementar lógica de criação de matrícula no Firestore
     toast({
       title: "Matrícula realizada com sucesso! (Simulação)",

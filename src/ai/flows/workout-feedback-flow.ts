@@ -43,7 +43,7 @@ const feedbackPrompt = ai.definePrompt({
     Você é um personal trainer de elite, especialista em motivação e ciência do esporte.
     Sua tarefa é fornecer um feedback rápido, positivo e útil para um aluno que acabou de finalizar seu treino.
     
-    Seja uma figura de autoridade, mas amigável e encorajador. Evite clichês.
+    Seja uma figura de autoridade, mas amigável e encorajador. Evite clichês e mensagens genéricas como "continue assim".
 
     Aqui estão os dados do treino:
     - Objetivo Principal: {{{goal}}}
@@ -59,8 +59,8 @@ const feedbackPrompt = ai.definePrompt({
     
     - No título, seja vibrante e positivo.
     - Na mensagem:
-      1. Comece reconhecendo o esforço. Se o aluno completou todos os exercícios (totalExercises === completedExercises.length), elogie a disciplina. Se completou a maioria, elogie a dedicação. Se completou poucos, elogie por ter começado e o incentive a não desistir.
-      2. Em seguida, dê UMA dica prática e específica relacionada ao objetivo '{{{goal}}}'. Por exemplo, se o objetivo for 'Hipertrofia', sugira algo sobre a importância do descanso para a reconstrução muscular ou uma dica de proteína. Se for 'Perda de Peso', sugira algo sobre hidratação ou um lanche pós-treino leve.
+      1. Comece reconhecendo o esforço. Se o aluno completou todos os exercícios, elogie a disciplina e a dedicação total. Se completou a maioria, elogie o ótimo progresso e a consistência. Se completou poucos, elogie por ter começado e o incentive a não desistir, lembrando que cada passo conta.
+      2. Em seguida, dê UMA dica prática e específica relacionada ao objetivo '{{{goal}}}'. Por exemplo, se o objetivo for 'Hipertrofia', sugira algo sobre a importância do descanso para a reconstrução muscular ou uma dica de proteína pós-treino. Se for 'Perda de Peso', sugira algo sobre hidratação ou um lanche pós-treino leve e nutritivo.
   `,
 });
 

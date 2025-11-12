@@ -52,7 +52,7 @@ import {
 import { addDoc, collection, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { Skeleton } from "@/components/ui/skeleton";
 
-const flatExerciciosOptions = EXERCICIOS_POR_GRUPO.flatMap(g => g.exercicios.map(ex => ({ value: ex.nomeExercicio, label: ex.nomeExercicio })));
+const flatExerciciosOptions = EXERCICIOS_POR_GRUPO.flatMap(g => g.exercicios.map(ex => ({ value: ex.nomeExercicio, label: ex.nomeExercicio, description: ex.descricao })));
 const exerciciosOptions = EXERCICIOS_POR_GRUPO.map(grupo => ({
     label: grupo.grupo,
     options: grupo.exercicios.map(ex => ({
@@ -182,7 +182,7 @@ function WorkoutEditor({ onSave, treinoToEdit, onCancel }: { onSave: (treino: Om
     }, [treinoToEdit]);
 
     const handleAddExercicio = () => {
-        setExercicios([...exercicios, { id: `${Date.now()}`, nomeExercicio: '', series: 3, repeticoes: '10-12', observacoes: '' }]);
+        setExercicios([...exercicios, { id: `${Date.now()}`, nomeExercicio: '', series: 3, repeticoes: '10-12', observacoes: '', descricao: '' }]);
     };
 
     const handleRemoveExercicio = (id: string) => {
@@ -190,7 +190,20 @@ function WorkoutEditor({ onSave, treinoToEdit, onCancel }: { onSave: (treino: Om
     };
 
     const handleExercicioChange = (id: string, field: keyof Exercicio, value: string | number) => {
-        setExercicios(exercicios.map(ex => ex.id === id ? { ...ex, [field]: value } : ex));
+        setExercicios(exercicios.map(ex => {
+             if (ex.id !== id) return ex;
+
+            // Se o campo alterado for o nome do exercício, busca e preenche a descrição.
+            if (field === 'nomeExercicio' && typeof value === 'string') {
+                const selectedOption = flatExerciciosOptions.find(opt => opt.value === value);
+                return { 
+                    ...ex, 
+                    nomeExercicio: value,
+                    descricao: selectedOption?.description || "" // Preenche a descrição
+                };
+            }
+            return { ...ex, [field]: value };
+        }));
     };
 
     const handleSaveTreino = () => {
@@ -304,11 +317,12 @@ export default function MeusTreinosPage() {
     const [deletingTreino, setDeletingTreino] = useState<Treino | null>(null);
 
     const { treinosDoPersonal, treinosDoAluno } = useMemo(() => {
-        if (!meusTreinos || !user) {
+        if (!meusTreinos) {
             return { treinosDoPersonal: [], treinosDoAluno: [] };
         }
-        const treinosDoPersonal = meusTreinos.filter(t => t.instrutorId !== user.uid && t.instrutorId !== 'IA');
-        const treinosDoAluno = meusTreinos.filter(t => t.instrutorId === user.uid || t.instrutorId === 'IA');
+        // Treinos do personal são todos que não foram criados pelo próprio aluno (ID 'IA' ou ID do próprio user).
+        const treinosDoPersonal = meusTreinos.filter(t => t.instrutorId !== user?.uid && t.instrutorId !== 'IA');
+        const treinosDoAluno = meusTreinos.filter(t => t.instrutorId === user?.uid || t.instrutorId === 'IA');
         return { treinosDoPersonal, treinosDoAluno };
     }, [meusTreinos, user]);
 
@@ -324,8 +338,8 @@ export default function MeusTreinosPage() {
             } else {
                 await addDoc(treinosCollectionRef, {
                     ...treinoData,
-                    alunoId: user!.uid,
-                    instrutorId: user!.uid, // O próprio aluno é o "instrutor"
+                    alunoId: user.uid,
+                    instrutorId: user.uid, // O próprio aluno é o "instrutor"
                 });
                 toast({ title: 'Novo treino salvo com sucesso!', className: 'bg-accent text-accent-foreground' });
             }
@@ -404,7 +418,7 @@ export default function MeusTreinosPage() {
                     series: ex.series,
                     repeticoes: ex.repeticoes,
                     observacoes: ex.observacoes,
-                    descricao: flatExerciciosOptions.find(opt => opt.value === ex.nomeExercicio)?.label || ""
+                    descricao: flatExerciciosOptions.find(opt => opt.value === ex.nomeExercicio)?.description || ""
                 }));
 
                 const diaSugerido = workout.diaSugerido;

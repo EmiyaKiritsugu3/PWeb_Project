@@ -58,7 +58,7 @@ export default function AlunoLoginPage() {
   // Função para criar o aluno e seus treinos se não existirem
   const seedAlunoData = async (userCredential: UserCredential) => {
       const user = userCredential.user;
-      if (!firestore) return;
+      if (!firestore || !user.email) return;
 
       const alunoMock = ALUNOS.find(a => a.email === user.email);
       if (!alunoMock) return; // Não é um aluno de exemplo, não faz nada
@@ -70,6 +70,7 @@ export default function AlunoLoginPage() {
       };
 
       // Usar setDoc com merge:true é idempotente e mais seguro que getDoc + setDoc
+      // Não bloqueia a UI e lida com erros de permissão de forma contextual.
       setDoc(alunoRef, alunoData, { merge: true }).catch(async (serverError) => {
         const permissionError = new FirestorePermissionError({
           path: alunoRef.path,
@@ -77,7 +78,7 @@ export default function AlunoLoginPage() {
           requestResourceData: { aluno: alunoData },
         });
         errorEmitter.emit('permission-error', permissionError);
-        toast({ title: "Erro ao carregar dados de exemplo", variant: "destructive" });
+        console.error("Erro ao criar/atualizar dados do aluno de exemplo:", permissionError);
       });
 
       // Podemos fazer o restante de forma otimista
@@ -140,8 +141,15 @@ export default function AlunoLoginPage() {
     }
   };
 
-  if (!isUserLoading && user) {
-    return null; 
+  if (isUserLoading || user) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-4">
+          <Dumbbell className="h-12 w-12 animate-pulse text-primary" />
+          <p className="text-muted-foreground">Carregando...</p>
+        </div>
+      </div>
+    );
   }
 
 

@@ -48,7 +48,11 @@ const exerciciosOptions = EXERCICIOS_POR_GRUPO.map(grupo => ({
     }))
 }));
 
-const flatExerciciosOptions = EXERCICIOS_POR_GRUPO.flatMap(g => g.exercicios);
+const flatExerciciosOptions = EXERCICIOS_POR_GRUPO.flatMap(g => g.exercicios.map(ex => ({
+    value: ex.nomeExercicio,
+    label: ex.nomeExercicio,
+    description: ex.descricao
+})));
 
 // Componente do Gerador de Treino com IA
 function WorkoutGenerator({ onGenerate, isGenerating }: { onGenerate: (data: WorkoutGeneratorInput) => Promise<void>, isGenerating: boolean }) {
@@ -184,11 +188,11 @@ export default function TreinosPage() {
 
             // Se o campo alterado for o nome do exercício, busca e preenche a descrição.
             if (field === 'nomeExercicio' && typeof value === 'string') {
-                const selectedOption = flatExerciciosOptions.find(opt => opt.nomeExercicio === value);
+                const selectedOption = flatExerciciosOptions.find(opt => opt.value === value);
                 return { 
                     ...ex, 
                     nomeExercicio: value,
-                    descricao: selectedOption?.descricao || "" // Preenche a descrição
+                    descricao: selectedOption?.description || "" // Preenche a descrição
                 };
             }
             return { ...ex, [field]: value };
@@ -255,14 +259,14 @@ export default function TreinosPage() {
             // Salva todos os treinos gerados no Firestore
             for (const workout of result.workouts) {
                  const novosExercicios = workout.exercicios.map((ex, index) => {
-                    const exercicioBase = flatExerciciosOptions.find(opt => opt.nomeExercicio === ex.nomeExercicio);
+                    const exercicioBase = flatExerciciosOptions.find(opt => opt.value === ex.nomeExercicio);
                     return {
                         id: `${Date.now()}-${index}`,
                         nomeExercicio: ex.nomeExercicio,
                         series: ex.series,
                         repeticoes: ex.repeticoes,
                         observacoes: ex.observacoes,
-                        descricao: exercicioBase?.descricao || "" // Garante que a descrição seja adicionada
+                        descricao: exercicioBase?.description || "" // Garante que a descrição seja adicionada
                     };
                 });
 
@@ -360,7 +364,7 @@ export default function TreinosPage() {
                                             {index === 0 && <Label className='md:hidden'>Exercício</Label>}
                                             <Combobox 
                                                 options={exerciciosOptions} 
-                                                flatOptions={flatExerciciosOptions.map(e => ({ value: e.nomeExercicio, label: e.nomeExercicio }))}
+                                                flatOptions={flatExerciciosOptions}
                                                 value={exercicio.nomeExercicio}
                                                 onChange={(value) => handleExercicioChange(exercicio.id!, 'nomeExercicio', value)}
                                                 placeholder='Selecione um exercício...'
@@ -387,7 +391,7 @@ export default function TreinosPage() {
                                 ))}
                                 {exercicios.length === 0 && (
                                     <div className="text-center text-sm text-muted-foreground py-4">
-                                        Nenhum exercício adicionado. Use o gerador de IA ou adicione manualmente.
+                                        Nenhum exercício adicionado. Use o gerador de IA ou adicione manually.
                                     </div>
                                 )}
                                 <Button variant="outline" onClick={handleAddExercicio}>

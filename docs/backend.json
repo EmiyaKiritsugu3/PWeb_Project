@@ -1,464 +1,142 @@
-
 {
   "entities": {
     "Aluno": {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "Aluno",
       "type": "object",
-      "description": "Represents a student in the academy.",
+      "description": "Representa um aluno da academia.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the Aluno entity."
-        },
-        "nomeCompleto": {
-          "type": "string",
-          "description": "The full name of the student."
-        },
-        "cpf": {
-          "type": "string",
-          "description": "The student's CPF (Cadastro de Pessoas Físicas - Brazilian individual taxpayer registry identification)."
-        },
-        "email": {
-          "type": "string",
-          "description": "The student's email address.",
-          "format": "email"
-        },
-        "telefone": {
-          "type": "string",
-          "description": "The student's telephone number."
-        },
-        "dataNascimento": {
-          "type": "string",
-          "description": "The student's date of birth.",
-          "format": "date-time"
-        },
-        "dataCadastro": {
-          "type": "string",
-          "description": "The date and time when the student was registered.",
-          "format": "date-time"
-        },
-        "fotoUrl": {
-          "type": "string",
-          "description": "URL of the student's photo stored in Firebase Storage.",
-          "format": "uri"
-        },
-        "biometriaHash": {
-          "type": "string",
-          "description": "Hash representing the student's biometric identifier."
-        },
-        "statusMatricula": {
-          "type": "string",
-          "description": "The enrollment status of the student (e.g., ATIVA, INADIMPLENTE, INATIVA)."
-        }
+        "id": { "type": "string", "description": "ID único do aluno, geralmente o UID do Firebase Auth." },
+        "nomeCompleto": { "type": "string", "description": "Nome completo do aluno." },
+        "cpf": { "type": "string", "description": "CPF do aluno." },
+        "email": { "type": "string", "description": "Email do aluno.", "format": "email" },
+        "telefone": { "type": "string", "description": "Telefone de contato do aluno." },
+        "dataNascimento": { "type": "string", "description": "Data de nascimento do aluno.", "format": "date-time" },
+        "dataCadastro": { "type": "string", "description": "Data de cadastro do aluno.", "format": "date-time" },
+        "fotoUrl": { "type": "string", "description": "URL da foto de perfil do aluno.", "format": "uri" },
+        "biometriaHash": { "type": "string", "description": "Hash biométrico para controle de acesso." },
+        "statusMatricula": { "type": "string", "enum": ["ATIVA", "INADIMPLENTE", "INATIVA"], "description": "Status atual da matrícula do aluno." }
       },
-      "required": [
-        "id",
-        "nomeCompleto",
-        "cpf",
-        "email",
-        "telefone",
-        "dataNascimento",
-        "dataCadastro",
-        "fotoUrl",
-        "biometriaHash",
-        "statusMatricula"
-      ]
+      "required": ["id", "nomeCompleto", "cpf", "email", "dataCadastro", "statusMatricula"]
     },
     "Plano": {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "Plano",
       "type": "object",
-      "description": "Represents a plan offered by the academy.",
+      "description": "Representa um plano de matrícula oferecido pela academia.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the Plano entity."
-        },
-        "nome": {
-          "type": "string",
-          "description": "The name of the plan (e.g., Plano Mensal, Plano Anual)."
-        },
-        "preco": {
-          "type": "number",
-          "description": "The price of the plan."
-        },
-        "duracaoDias": {
-          "type": "number",
-          "description": "The duration of the plan in days (e.g., 30, 90, 365)."
-        }
+        "id": { "type": "string", "description": "ID único do plano." },
+        "nome": { "type": "string", "description": "Nome do plano (ex: Plano Mensal)." },
+        "preco": { "type": "number", "description": "Preço do plano." },
+        "duracaoDias": { "type": "number", "description": "Duração do plano em dias." }
       },
-      "required": [
-        "id",
-        "nome",
-        "preco",
-        "duracaoDias"
-      ]
+      "required": ["id", "nome", "preco", "duracaoDias"]
     },
     "Matricula": {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "Matricula",
       "type": "object",
-      "description": "Represents the enrollment of a student in a plan.",
+      "description": "Representa a matrícula de um aluno em um plano específico.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the Matricula entity."
-        },
-        "alunoId": {
-          "type": "string",
-          "description": "Reference to Aluno. (Relationship: Aluno 1:N Matricula)"
-        },
-        "planoId": {
-          "type": "string",
-          "description": "Reference to Plano. (Relationship: Plano 1:N Matricula)"
-        },
-        "dataInicio": {
-          "type": "string",
-          "description": "The start date of the enrollment.",
-          "format": "date-time"
-        },
-        "dataVencimento": {
-          "type": "string",
-          "description": "The expiration date of the enrollment.",
-          "format": "date-time"
-        },
-        "status": {
-          "type": "string",
-          "description": "The status of the enrollment (e.g., ATIVA, VENCIDA)."
-        }
+        "id": { "type": "string", "description": "ID único da matrícula." },
+        "alunoId": { "type": "string", "description": "ID do aluno matriculado." },
+        "planoId": { "type": "string", "description": "ID do plano contratado." },
+        "dataInicio": { "type": "string", "description": "Data de início da matrícula.", "format": "date-time" },
+        "dataVencimento": { "type": "string", "description": "Data de vencimento da matrícula.", "format": "date-time" },
+        "status": { "type": "string", "enum": ["ATIVA", "VENCIDA"], "description": "Status da matrícula." }
       },
-      "required": [
-        "id",
-        "alunoId",
-        "planoId",
-        "dataInicio",
-        "dataVencimento",
-        "status"
-      ]
+      "required": ["id", "alunoId", "planoId", "dataInicio", "dataVencimento", "status"]
     },
     "Pagamento": {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "Pagamento",
       "type": "object",
-      "description": "Represents a payment made by a student.",
+      "description": "Registra um pagamento realizado por um aluno.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the Pagamento entity."
-        },
-        "matriculaId": {
-          "type": "string",
-          "description": "Reference to Matricula. (Relationship: Matricula 1:N Pagamento)"
-        },
-        "alunoId": {
-          "type": "string",
-          "description": "Reference to Aluno. (Relationship: Aluno 1:N Pagamento)"
-        },
-        "valor": {
-          "type": "number",
-          "description": "The amount of the payment."
-        },
-        "dataPagamento": {
-          "type": "string",
-          "description": "The date and time when the payment was made.",
-          "format": "date-time"
-        },
-        "metodo": {
-          "type": "string",
-          "description": "The payment method used (e.g., PIX, Dinheiro, Cartão)."
-        }
+        "id": { "type": "string", "description": "ID único do pagamento." },
+        "matriculaId": { "type": "string", "description": "ID da matrícula associada ao pagamento." },
+        "alunoId": { "type": "string", "description": "ID do aluno que realizou o pagamento." },
+        "valor": { "type": "number", "description": "Valor pago." },
+        "dataPagamento": { "type": "string", "description": "Data do pagamento.", "format": "date-time" },
+        "metodo": { "type": "string", "enum": ["PIX", "Dinheiro", "Cartão"], "description": "Método de pagamento." }
       },
-      "required": [
-        "id",
-        "matriculaId",
-        "alunoId",
-        "valor",
-        "dataPagamento",
-        "metodo"
-      ]
+      "required": ["id", "matriculaId", "alunoId", "valor", "dataPagamento", "metodo"]
     },
     "Treino": {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "Treino",
       "type": "object",
-      "description": "Represents a workout plan for a student.",
+      "description": "Representa um plano de treino para um aluno.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the Treino entity."
-        },
-        "alunoId": {
-          "type": "string",
-          "description": "Reference to Aluno. (Relationship: Aluno 1:N Treino)"
-        },
-        "instrutorId": {
-          "type": "string",
-          "description": "ID of the instructor who created the workout plan. Reference to Funcionario. (Relationship: Funcionario 1:N Treino)"
-        },
-        "objetivo": {
-          "type": "string",
-          "description": "The objective of the workout plan (e.g., Hipertrofia, Perda de Peso)."
-        },
-        "dataCriacao": {
-          "type": "string",
-          "description": "The date and time when the workout plan was created.",
-          "format": "date-time"
-        },
-        "ativo": {
-          "type": "boolean",
-          "description": "Indicates whether the workout plan is active."
-        }
+        "id": { "type": "string", "description": "ID único do treino." },
+        "alunoId": { "type": "string", "description": "ID do aluno a quem o treino pertence." },
+        "instrutorId": { "type": "string", "description": "ID do instrutor que criou o treino. Pode ser o UID do aluno ou 'IA'." },
+        "objetivo": { "type": "string", "description": "Objetivo do treino (ex: Hipertrofia)." },
+        "dataCriacao": { "type": "string", "description": "Data de criação do treino.", "format": "date-time" },
+        "diaSemana": { "type": ["number", "null"], "description": "Dia da semana agendado (0-6). Null se não estiver agendado." }
       },
-      "required": [
-        "id",
-        "alunoId",
-        "instrutorId",
-        "objetivo",
-        "dataCriacao",
-        "ativo"
-      ]
+      "required": ["id", "alunoId", "instrutorId", "objetivo", "dataCriacao", "diaSemana"]
     },
     "Exercicio": {
-      "$schema": "http://json-schema.org/draft-07/schema#",- "src/firebase/client-provider.tsx:
-```tsx
-'use client';
-
-import React, { useMemo, type ReactNode } from 'react';
-import { FirebaseProvider } from '@/firebase/provider';
-import { initializeFirebase } from '@/firebase';
-
-interface FirebaseClientProviderProps {
-  children: ReactNode;
-}
-
-export function FirebaseClientProvider({ children }: FirebaseClientProviderProps) {
-  const firebaseServices = useMemo(() => {
-    // Initialize Firebase on the client side, once per component mount.
-    return initializeFirebase();
-  }, []); // Empty dependency array ensures this runs only once on mount
-
-  return (
-    <FirebaseProvider
-      firebaseApp={firebaseServices.firebaseApp}
-      auth={firebaseServices.auth}
-      firestore={firebaseServices.firestore}
-    >
-      {children}
-    </FirebaseProvider>
-  );
-}
-```
-- "title": "Exercicio",
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Exercicio",
       "type": "object",
-      "description": "Represents an exercise within a workout plan.",
+      "description": "Representa um exercício dentro de um plano de treino.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the Exercicio entity."
-        },
-        "treinoId": {
-          "type": "string",
-          "description": "Reference to Treino. (Relationship: Treino 1:N Exercicio)"
-        },
-        "nomeExercicio": {
-          "type": "string",
-          "description": "The name of the exercise."
-        },
-        "series": {
-          "type": "number",
-          "description": "The number of sets for the exercise."
-        },
-        "repeticoes": {
-          "type": "string",
-          "description": "The number of repetitions for the exercise (e.g., 10-12)."
-        },
-        "observacoes": {
-          "type": "string",
-          "description": "Additional observations or notes about the exercise."
-        }
+        "id": { "type": "string", "description": "ID único do exercício no treino." },
+        "nomeExercicio": { "type": "string", "description": "Nome do exercício." },
+        "series": { "type": "number", "description": "Número de séries." },
+        "repeticoes": { "type": "string", "description": "Número de repetições (ex: 10-12)." },
+        "observacoes": { "type": "string", "description": "Observações adicionais." },
+        "descricao": { "type": "string", "description": "Descrição detalhada do exercício." }
       },
-      "required": [
-        "id",
-        "treinoId",
-        "nomeExercicio",
-        "series",
-        "repeticoes",
-        "observacoes"
-      ]
+      "required": ["id", "nomeExercicio", "series", "repeticoes"]
     },
     "Funcionario": {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "Funcionario",
       "type": "object",
-      "description": "Represents an employee of the academy.",
+      "description": "Representa um funcionário da academia.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the Funcionario entity."
-        },
-        "nomeCompleto": {
-          "type": "string",
-          "description": "The full name of the employee."
-        },
-        "email": {
-          "type": "string",
-          "description": "The employee's email address.",
-          "format": "email"
-        },
-        "role": {
-          "type": "string",
-          "description": "The role of the employee (e.g., RECEPCIONISTA, INSTRUTOR, GERENTE)."
-        }
+        "id": { "type": "string", "description": "ID único do funcionário, geralmente o UID do Firebase Auth." },
+        "nomeCompleto": { "type": "string", "description": "Nome completo do funcionário." },
+        "email": { "type": "string", "description": "Email do funcionário.", "format": "email" },
+        "role": { "type": "string", "enum": ["RECEPCIONISTA", "INSTRUTOR", "GERENTE"], "description": "Cargo do funcionário." }
       },
-      "required": [
-        "id",
-        "nomeCompleto",
-        "email",
-        "role"
-      ]
+      "required": ["id", "nomeCompleto", "email", "role"]
     }
   },
   "auth": {
-    "providers": [
-      "password"
-    ]
+    "providers": ["password"]
   },
   "firestore": {
-    "structure": [
-      {
-        "path": "/alunos/{alunoId}",
-        "definition": {
-          "entityName": "Aluno",
-          "schema": {
-            "$ref": "#/backend/entities/Aluno"
-          },
-          "description": "Stores data for each student. Uses path-based ownership to simplify security rules.",
-          "params": [
-            {
-              "name": "alunoId",
-              "description": "The unique identifier for the Aluno document."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/planos/{planoId}",
-        "definition": {
-          "entityName": "Plano",
-          "schema": {
-            "$ref": "#/backend/entities/Plano"
-          },
-          "description": "Stores the catalog of plans offered by the academy.",
-          "params": [
-            {
-              "name": "planoId",
-              "description": "The unique identifier for the Plano document."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/alunos/{alunoId}/matriculas/{matriculaId}",
-        "definition": {
-          "entityName": "Matricula",
-          "schema": {
-            "$ref": "#/backend/entities/Matricula"
-          },
-          "description": "Stores enrollment information, linking students to plans. Uses hierarchical paths for user-owned data.",
-          "params": [
-            {
-              "name": "alunoId",
-              "description": "The unique identifier for the Aluno document."
-            },
-            {
-              "name": "matriculaId",
-              "description": "The unique identifier for the Matricula document."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/alunos/{alunoId}/pagamentos/{pagamentoId}",
-        "definition": {
-          "entityName": "Pagamento",
-          "schema": {
-            "$ref": "#/backend/entities/Pagamento"
-          },
-          "description": "Stores payment history for each student. Uses hierarchical paths for user-owned data.",
-          "params": [
-            {
-              "name": "alunoId",
-              "description": "The unique identifier for the Aluno document."
-            },
-            {
-              "name": "pagamentoId",
-              "description": "The unique identifier for the Pagamento document."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/alunos/{alunoId}/treinos/{treinoId}",
-        "definition": {
-          "entityName": "Treino",
-          "schema": {
-            "$ref": "#/backend/entities/Treino"
-          },
-          "description": "Stores workout plans for students. Uses hierarchical paths for user-owned data.",
-          "params": [
-            {
-              "name": "alunoId",
-              "description": "The unique identifier for the Aluno document."
-            },
-            {
-              "name": "treinoId",
-              "description": "The unique identifier for the Treino document."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/alunos/{alunoId}/treinos/{treinoId}/exercicios/{exercicioId}",
-        "definition": {
-          "entityName": "Exercicio",
-          "schema": {
-            "$ref": "#/backend/entities/Exercicio"
-          },
-          "description": "Stores individual exercises within a workout plan. Continues hierarchy for nested data.",
-          "params": [
-            {
-              "name": "alunoId",
-              "description": "The unique identifier for the Aluno document."
-            },
-            {
-              "name": "treinoId",
-              "description": "The unique identifier for the Treino document."
-            },
-            {
-              "name": "exercicioId",
-              "description": "The unique identifier for the Exercicio document."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/funcionarios/{funcionarioId}",
-        "definition": {
-          "entityName": "Funcionario",
-          "schema": {
-            "$ref": "#/backend/entities/Funcionario"
-          },
-          "description": "Stores data for academy employees. Roles are stored within the document.",
-          "params": [
-            {
-              "name": "funcionarioId",
-              "description": "The unique identifier for the Funcionario document."
-            }
-          ]
-        }
-      }
-    ],
-    "reasoning": "The Firestore data structure is designed to manage data for the Five Star Gym, focusing on students, plans, enrollments, payments, workouts, and employees. The structure prioritizes authorization independence and clear security rules.  It uses path-based ownership for user-specific data and denormalization to avoid complex queries and maintain data integrity.  The design also accounts for different user roles (Aluno, Funcionario), ensuring secure access control through dedicated collections and subcollections. The structure facilitates secure `list` operations by ensuring all documents in a collection share the same security requirements."
+    "/alunos/{alunoId}": {
+      "schema": { "$ref": "#/entities/Aluno" },
+      "description": "Armazena dados de cada aluno. A segurança é baseada no ID do aluno."
+    },
+    "/planos/{planoId}": {
+      "schema": { "$ref": "#/entities/Plano" },
+      "description": "Catálogo de planos oferecidos pela academia."
+    },
+    "/alunos/{alunoId}/matriculas/{matriculaId}": {
+      "schema": { "$ref": "#/entities/Matricula" },
+      "description": "Subcoleção para as matrículas de um aluno."
+    },
+    "/alunos/{alunoId}/pagamentos/{pagamentoId}": {
+      "schema": { "$ref": "#/entities/Pagamento" },
+      "description": "Subcoleção para o histórico de pagamentos de um aluno."
+    },
+    "/alunos/{alunoId}/treinos/{treinoId}": {
+      "schema": { "$ref": "#/entities/Treino" },
+      "description": "Subcoleção para os treinos de um aluno."
+    },
+    "/alunos/{alunoId}/treinos/{treinoId}/exercicios/{exercicioId}": {
+      "schema": { "$ref": "#/entities/Exercicio" },
+      "description": "Subcoleção para os exercícios dentro de um treino específico."
+    },
+    "/funcionarios/{funcionarioId}": {
+      "schema": { "$ref": "#/entities/Funcionario" },
+      "description": "Armazena dados dos funcionários. As permissões são baseadas em roles."
+    }
   }
 }
