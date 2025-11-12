@@ -7,6 +7,7 @@
  */
 
 import { ai } from '@/ai/genkit';
+import { googleAI } from '@genkit-ai/google-genai';
 import { EXERCICIOS_POR_GRUPO } from '@/lib/data';
 import { 
     WorkoutGeneratorInputSchema, 
@@ -75,7 +76,7 @@ export async function generateWorkoutPlan(input: WorkoutGeneratorInput): Promise
 
 const workoutPrompt = ai.definePrompt({
   name: 'workoutGeneratorPrompt',
-  model: 'googleai/gemini-pro',
+  model: googleAI.model('gemini-pro'),
   input: { schema: WorkoutGeneratorInputSchema },
   output: { schema: WorkoutGeneratorAIOutputSchema },
   prompt: `
