@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,7 +17,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dumbbell } from "lucide-react";
-import { useAuth, useUser, useFirestore, FirestorePermissionError, errorEmitter } from "@/firebase";
+import { useAuth, useUser, useFirestore, FirestorePermissionError, errorEmitter, FirebaseClientProvider } from "@/firebase";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, UserCredential } from "firebase/auth";
@@ -31,7 +32,7 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-export default function LoginPage() {
+function LoginPageContent() {
   const { toast } = useToast();
   const auth = useAuth();
   const firestore = useFirestore();
@@ -47,6 +48,7 @@ export default function LoginPage() {
   });
 
   useEffect(() => {
+    // Se o usuário já está logado, redireciona para o dashboard
     if (!isUserLoading && user) {
       router.push("/dashboard");
     }
@@ -125,6 +127,7 @@ export default function LoginPage() {
     }
   };
 
+  // Se estiver carregando ou se o usuário já estiver logado, mostra um loader
   if (isUserLoading || user) {
     return (
       <div className="flex h-screen w-full items-center justify-center bg-background">
@@ -136,6 +139,7 @@ export default function LoginPage() {
     );
   }
 
+  // Apenas renderiza o formulário se o usuário não estiver logado e o carregamento estiver completo
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4">
         <Card className="w-full max-w-sm">
@@ -192,4 +196,12 @@ export default function LoginPage() {
         </Card>
     </div>
   );
+}
+
+export default function LoginPage() {
+    return (
+        <FirebaseClientProvider>
+            <LoginPageContent />
+        </FirebaseClientProvider>
+    )
 }
