@@ -36,7 +36,7 @@ export async function generateWorkoutFeedback(input: WorkoutFeedbackInput): Prom
 // Definição do Prompt para a IA
 const feedbackPrompt = ai.definePrompt({
   name: 'workoutFeedbackPrompt',
-  model: googleAI.model('gemini-pro'),
+  model: googleAI.model('gemini-1.0-pro'),
   input: { schema: WorkoutFeedbackInputSchema },
   output: { schema: WorkoutFeedbackOutputSchema },
   prompt: `
