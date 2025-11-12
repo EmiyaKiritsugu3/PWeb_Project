@@ -6,7 +6,7 @@
 
 import { ai } from '@/ai/genkit';
 import { listModels } from 'genkit/plugins';
-import { googleAI }s from '@genkit-ai/google-genai';
+import { googleAI } from '@genkit-ai/google-genai';
 
 /**
  * Retorna uma lista de nomes de modelos disponíveis no plugin do Google AI.
