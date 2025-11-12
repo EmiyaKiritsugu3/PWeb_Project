@@ -120,7 +120,10 @@ function WorkoutGenerator({ onGenerate, isGenerating }: { onGenerate: (data: Wor
                                 <FormItem>
                                     <FormLabel>Dias/Semana</FormLabel>
                                     <FormControl>
-                                        <Input type="number" min={1} max={7} {...field} onChange={e => field.onChange(parseInt(e.target.value))}/>
+                                        <Input type="number" min={1} max={7} {...field} onChange={e => {
+                                            const value = parseInt(e.target.value, 10);
+                                            field.onChange(isNaN(value) ? '' : value);
+                                        }}/>
                                     </FormControl>
                                 </FormItem>
                             )}
@@ -406,5 +409,3 @@ export default function TreinosPage() {
         </>
     );
 }
-
-    
