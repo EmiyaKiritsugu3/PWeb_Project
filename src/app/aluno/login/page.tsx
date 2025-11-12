@@ -24,7 +24,7 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfi
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
 import { ALUNOS, TREINOS } from "@/lib/data";
-import { collection, doc, getDoc, setDoc, writeBatch } from "firebase/firestore";
+import { collection, doc, setDoc, writeBatch } from "firebase/firestore";
 
 const formSchema = z.object({
   email: z.string().email("Por favor, insira um email válido."),
@@ -64,48 +64,38 @@ export default function AlunoLoginPage() {
       if (!alunoMock) return; // Não é um aluno de exemplo, não faz nada
 
       const alunoRef = doc(firestore, "alunos", user.uid);
-      const docSnap = await getDoc(alunoRef);
-
-      // Só semeia os dados se o documento do aluno não existir
-      if (!docSnap.exists()) {
-        const batch = writeBatch(firestore);
-
-        // 1. Cria o documento do aluno
-        const alunoData = {
+      const alunoData = {
           ...alunoMock,
-          id: user.uid, // Garante que o ID do documento é o UID do usuário
-        };
-        batch.set(alunoRef, alunoData);
+          id: user.uid,
+      };
 
-        // 2. Adiciona os treinos do aluno na subcoleção
-        const treinosMock = TREINOS.filter(t => t.alunoId === alunoMock.id);
+      // Usar setDoc com merge:true é idempotente e mais seguro que getDoc + setDoc
+      setDoc(alunoRef, alunoData, { merge: true }).catch(async (serverError) => {
+        const permissionError = new FirestorePermissionError({
+          path: alunoRef.path,
+          operation: 'write',
+          requestResourceData: { aluno: alunoData },
+        });
+        errorEmitter.emit('permission-error', permissionError);
+        toast({ title: "Erro ao carregar dados de exemplo", variant: "destructive" });
+      });
+
+      // Podemos fazer o restante de forma otimista
+      const treinosMock = TREINOS.filter(t => t.alunoId === alunoMock.id);
+      if(treinosMock.length > 0) {
+        const batch = writeBatch(firestore);
         treinosMock.forEach(treino => {
             const treinoRef = doc(collection(firestore, "alunos", user.uid, "treinos"));
             batch.set(treinoRef, { ...treino, id: treinoRef.id, alunoId: user.uid });
         });
-        
-        // 3. Atualiza o perfil do usuário do Firebase Auth
-        await updateProfile(user, {
-            displayName: alunoMock.nomeCompleto,
-            photoURL: alunoMock.fotoUrl
-        });
-
-        // 4. Commita o batch com tratamento de erro contextual
-        batch.commit()
-          .then(() => {
-            toast({ title: "Dados de exemplo criados!", description: "Seu perfil e treinos de exemplo foram carregados." });
-          })
-          .catch(async (serverError) => {
-            console.error("Erro ao semear dados:", serverError);
-            const permissionError = new FirestorePermissionError({
-              path: `batch write to /alunos/${user.uid}`,
-              operation: 'write',
-              requestResourceData: { aluno: alunoData, treinos: treinosMock },
-            });
-            errorEmitter.emit('permission-error', permissionError);
-            toast({ title: "Erro ao carregar dados de exemplo", variant: "destructive" });
-        });
+        batch.commit().catch(err => console.error("Falha ao semear treinos", err));
       }
+      
+      // Atualiza o perfil do usuário do Firebase Auth
+      await updateProfile(user, {
+          displayName: alunoMock.nomeCompleto,
+          photoURL: alunoMock.fotoUrl
+      });
   };
 
 

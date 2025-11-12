@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useUser, useCollection, useFirestore, useMemoFirebase, useDoc } from "@/firebase";
-import { DIAS_DA_SEMANA } from "@/lib/data";
 import type { Treino, Aluno, Exercicio } from "@/lib/definitions";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -49,8 +48,20 @@ function ExercicioViewer({ exercicio, isOpen, onOpenChange }: { exercicio: Exerc
 }
 
 // Componente para o Card de Matrícula
-function CardMatricula({ aluno }: { aluno: Aluno | undefined }) {
-    if (!aluno) return <Skeleton className="h-40 w-full" />;
+function CardMatricula({ aluno, isLoading }: { aluno: Aluno | undefined, isLoading: boolean }) {
+    if (isLoading || !aluno) {
+      return (
+        <Card>
+          <CardHeader className="p-4 bg-gray-100">
+            <CardTitle className="text-lg">Minha Matrícula</CardTitle>
+          </CardHeader>
+          <CardContent className="p-4 space-y-2">
+            <Skeleton className="h-5 w-3/4" />
+            <Skeleton className="h-4 w-1/2" />
+          </CardContent>
+        </Card>
+      );
+    }
 
     const statusConfig = {
         ATIVA: {
@@ -109,8 +120,10 @@ function CardTreino({
     const [checkedExercises, setCheckedExercises] = useState<Record<string, boolean>>({});
 
     useEffect(() => {
+        if (!treino) return;
         const storageKey = `checkedExercises-${new Date().toISOString().split('T')[0]}-${treino?.id}`;
         
+        // Limpa chaves de dias anteriores
         Object.keys(localStorage).forEach(key => {
             if (key.startsWith('checkedExercises-') && !key.includes(new Date().toISOString().split('T')[0])) {
                 localStorage.removeItem(key);
@@ -128,6 +141,7 @@ function CardTreino({
     }, [treino]);
 
     const handleCheckChange = (exerciseId: string) => {
+        if (!treino) return;
         const storageKey = `checkedExercises-${new Date().toISOString().split('T')[0]}-${treino?.id}`;
         const newState = { ...checkedExercises, [exerciseId]: !checkedExercises[exerciseId] };
         setCheckedExercises(newState);
@@ -154,7 +168,7 @@ function CardTreino({
         );
     }
 
-    const allExercises = treino.exercicios;
+    const allExercises = treino.exercicios || [];
     const completedCount = Object.values(checkedExercises).filter(Boolean).length;
     
     return (
@@ -285,7 +299,7 @@ export default function AlunoDashboardPage() {
 
 
     const handleFinishTraining = async (completedExercises: string[]) => {
-        if (!treinoDoDia) return;
+        if (!treinoDoDia || !treinoDoDia.exercicios) return;
 
         setIsFeedbackLoading(true);
         setFeedback(null); // Limpa feedback anterior
@@ -349,7 +363,7 @@ export default function AlunoDashboardPage() {
 
                     {/* Coluna lateral com status e feedback */}
                     <div className="col-span-1 grid auto-rows-max items-start gap-6 lg:gap-8">
-                        <CardMatricula aluno={aluno} />
+                        <CardMatricula aluno={aluno} isLoading={isLoadingAluno} />
                         <CardFeedback feedback={feedback} isLoading={isFeedbackLoading} />
                     </div>
             </div>
