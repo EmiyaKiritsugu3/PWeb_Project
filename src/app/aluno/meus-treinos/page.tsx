@@ -320,9 +320,9 @@ export default function MeusTreinosPage() {
         if (!meusTreinos) {
             return { treinosDoPersonal: [], treinosDoAluno: [] };
         }
-        // Treinos do personal são todos que não foram criados pelo próprio aluno (ID 'IA' ou ID do próprio user).
-        const treinosDoPersonal = meusTreinos.filter(t => t.instrutorId !== user?.uid && t.instrutorId !== 'IA');
-        const treinosDoAluno = meusTreinos.filter(t => t.instrutorId === user?.uid || t.instrutorId === 'IA');
+        // Treinos do personal são todos que não foram criados pelo próprio aluno (instrutorId diferente do UID do aluno).
+        const treinosDoPersonal = meusTreinos.filter(t => t.instrutorId !== user?.uid);
+        const treinosDoAluno = meusTreinos.filter(t => t.instrutorId === user?.uid);
         return { treinosDoPersonal, treinosDoAluno };
     }, [meusTreinos, user]);
 
@@ -361,6 +361,7 @@ export default function MeusTreinosPage() {
         if (!treinosCollectionRef || !meusTreinos) return;
         const novoDia = dia === "nenhum" ? null : parseInt(dia, 10);
 
+        // Verifica se já existe um treino (de qualquer origem) agendado para o novo dia.
         if (novoDia !== null && meusTreinos.some(t => t.diaSemana === novoDia && t.id !== treinoId)) {
             toast({ title: "Dia já ocupado", description: "Já existe outro treino agendado para este dia.", variant: "destructive" });
             return;
@@ -426,7 +427,7 @@ export default function MeusTreinosPage() {
 
                 await addDoc(treinosCollectionRef, {
                     alunoId: user.uid,
-                    instrutorId: 'IA', // Marcado como IA
+                    instrutorId: user.uid, // Gerado pelo aluno, então ele é o instrutor
                     objetivo: workout.nome,
                     exercicios: novosExercicios,
                     diaSemana: isDayOccupied ? null : diaSugerido,
@@ -466,7 +467,7 @@ export default function MeusTreinosPage() {
                             <div className='flex items-center gap-3'>
                                 <h3 className="font-bold text-base">{treino.objetivo}</h3>
                                 {treino.diaSemana !== null && <Badge>{getDiaLabel(treino.diaSemana)}</Badge>}
-                                {treino.instrutorId === 'IA' && <Badge variant="secondary">Gerado por IA</Badge>}
+                                {treino.instrutorId !== user?.uid && <Badge variant="secondary">Do Personal</Badge>}
                             </div>
                             <p className="text-sm text-muted-foreground">
                                 {treino.exercicios.length} exercícios

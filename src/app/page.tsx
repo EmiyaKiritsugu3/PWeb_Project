@@ -1,33 +1,26 @@
 
 "use client";
 
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Dumbbell } from 'lucide-react';
 import Image from 'next/image';
 
 export default function LandingPage() {
-  const [imageUrl, setImageUrl] = useState("https://picsum.photos/seed/gym-hero/1920/1080");
-
-  useEffect(() => {
-    // This runs only on the client, after hydration, preventing a mismatch
-    const randomId = Math.floor(Math.random() * 1000);
-    setImageUrl(`https://picsum.photos/id/${randomId}/1920/1080`);
-  }, []);
+  // Define a static, server-rendered placeholder to prevent layout shift.
+  const initialImageUrl = "https://picsum.photos/seed/gym-hero/1920/1080";
 
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
       {/* Hero Section */}
       <section className="relative flex h-[60vh] items-center justify-center text-center text-white md:h-[70vh]">
         <Image
-            src={imageUrl}
+            src={initialImageUrl}
             alt="A modern gym with various workout equipment"
             fill
             className="object-cover"
             priority
             data-ai-hint="modern gym"
-            key={imageUrl} // Add key to force re-render on URL change
           />
         <div className="absolute inset-0 bg-black/60" />
         <div className="relative z-10 flex flex-col items-center space-y-4 px-4">

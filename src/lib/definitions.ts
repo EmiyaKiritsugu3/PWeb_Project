@@ -42,7 +42,7 @@ export type Exercicio = {
   nomeExercicio: string;
   series: number;
   repeticoes: string;
-  observacoes: string;
+  observacoes?: string;
   descricao?: string;
 };
 
