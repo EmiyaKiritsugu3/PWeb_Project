@@ -75,6 +75,7 @@ export async function generateWorkoutPlan(input: WorkoutGeneratorInput): Promise
 
 const workoutPrompt = ai.definePrompt({
   name: 'workoutGeneratorPrompt',
+  model: 'gemini-pro',
   input: { schema: WorkoutGeneratorInputSchema },
   output: { schema: WorkoutGeneratorAIOutputSchema },
   prompt: `
