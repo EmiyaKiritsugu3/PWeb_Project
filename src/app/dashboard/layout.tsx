@@ -38,6 +38,8 @@ export default function DashboardLayout({
   const pathname = usePathname();
 
   useEffect(() => {
+    // Se o usuário não está sendo carregado, e não há usuário logado,
+    // e a rota atual não é a página de login, redirecione para a página de login do gestor.
     if (!isUserLoading && !user && pathname !== '/login') {
       router.push("/login");
     }
@@ -50,7 +52,8 @@ export default function DashboardLayout({
     router.push("/login");
   };
   
-  if (isUserLoading || (!user && pathname !== '/login')) {
+  // Mostra uma tela de carregamento enquanto verifica a autenticação do usuário.
+  if (isUserLoading) {
     return (
       <div className="flex h-screen w-full items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-4">
@@ -61,10 +64,12 @@ export default function DashboardLayout({
     );
   }
 
+  // Se não há usuário e já estamos na página de login, apenas renderize a página.
   if (!user && pathname === '/login') {
     return <main>{children}</main>;
   }
-
+  
+  // Se há um usuário logado, renderize o layout completo do dashboard.
   if (user) {
     return (
         <SidebarProvider>
@@ -133,5 +138,8 @@ export default function DashboardLayout({
     );
   }
 
-  return <main>{children}</main>;
+  // Fallback: Se nenhuma das condições acima for atendida (ex: na transição),
+  // não mostre nada para evitar um flash de conteúdo incorreto.
+  return null;
 }
+

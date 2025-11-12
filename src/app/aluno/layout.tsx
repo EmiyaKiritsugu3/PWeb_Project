@@ -28,7 +28,8 @@ export default function AlunoLayout({
   const pathname = usePathname();
 
   useEffect(() => {
-    // Se não está carregando, não há usuário e a rota NÃO é a de login, redireciona.
+    // Se o usuário não está sendo carregado, e não há usuário logado,
+    // e a rota atual não é a página de login do aluno, redirecione para ela.
     if (!isUserLoading && !user && pathname !== "/aluno/login") {
       router.push("/aluno/login");
     }
@@ -46,8 +47,8 @@ export default function AlunoLayout({
     { href: '/aluno/meus-treinos', label: 'Meus Treinos', icon: <FolderKanban className="mr-2 h-4 w-4" /> },
   ]
 
-  // Exibe a tela de carregamento apenas se estiver verificando o usuário E não estiver na página de login
-  if (isUserLoading && pathname !== "/aluno/login") {
+  // Mostra uma tela de carregamento enquanto verifica a autenticação do usuário.
+  if (isUserLoading) {
     return (
       <div className="flex h-screen w-full items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-4">
@@ -58,12 +59,12 @@ export default function AlunoLayout({
     );
   }
 
-  // Se não tem usuário e está na página de login, renderiza o login.
+  // Se não há usuário e já estamos na página de login, apenas renderize a página.
   if (!user && pathname === '/aluno/login') {
     return <main>{children}</main>;
   }
 
-  // Se tem usuário, mostra o layout completo
+  // Se há um usuário logado, renderize o layout completo do portal do aluno.
   if(user) {
     return (
         <div className="flex min-h-screen w-full flex-col bg-background">
@@ -135,7 +136,6 @@ export default function AlunoLayout({
     );
   }
 
-  // Fallback para renderizar o children enquanto o useEffect decide se redireciona
-  // (por exemplo, ao acessar /aluno/login sem estar logado)
-  return <main>{children}</main>;
+  // Fallback: Se nenhuma das condições acima for atendida, não mostre nada.
+  return null;
 }
