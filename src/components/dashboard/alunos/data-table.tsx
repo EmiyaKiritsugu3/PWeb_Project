@@ -70,7 +70,9 @@ export function DataTable<TData, TValue>({
                     {row.getVisibleCells().map((cell) => {
                       const columnId = cell.column.id;
                       if (columnId === 'fotoUrl' || columnId === 'nomeCompleto' || columnId === 'statusMatricula') {
-                        return flexRender(cell.column.columnDef.cell, cell.getContext());
+                        return <React.Fragment key={cell.id}>
+                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                               </React.Fragment>;
                       }
                       return null;
                     })}
