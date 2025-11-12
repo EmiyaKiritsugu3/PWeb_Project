@@ -23,15 +23,16 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { PLANOS } from "@/lib/data"; // Planos ainda são estáticos por enquanto
-import { useCollection, useFirestore, useMemoFirebase, FirestorePermissionError, errorEmitter } from "@/firebase";
+import { useCollection, useFirestore, useMemoFirebase, FirestorePermissionError, errorEmitter, useUser } from "@/firebase";
 
 
 export default function AlunosPage() {
   const firestore = useFirestore();
+  const { user } = useUser();
 
   const alunosCollection = useMemoFirebase(() => 
-    firestore ? collection(firestore, "alunos") : null, 
-    [firestore]
+    firestore && user ? collection(firestore, "alunos") : null, 
+    [firestore, user]
   );
   
   const { data: alunos, isLoading } = useCollection<Aluno>(alunosCollection);

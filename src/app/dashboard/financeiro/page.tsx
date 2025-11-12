@@ -30,7 +30,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useCollection, useFirestore, useMemoFirebase, FirestorePermissionError, errorEmitter } from "@/firebase";
+import { useCollection, useFirestore, useMemoFirebase, FirestorePermissionError, errorEmitter, useUser } from "@/firebase";
 import { Aluno } from "@/lib/definitions";
 import { collection, query, where, doc, updateDoc } from "firebase/firestore";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -38,6 +38,7 @@ import { useToast } from "@/hooks/use-toast";
 
 export default function FinanceiroPage() {
   const firestore = useFirestore();
+  const { user } = useUser();
   const { toast } = useToast();
 
   const [isAlertOpen, setIsAlertOpen] = useState(false);
@@ -46,10 +47,10 @@ export default function FinanceiroPage() {
   // Query to fetch only delinquent students
   const inadimplentesQuery = useMemoFirebase(
     () =>
-      firestore
+      firestore && user
         ? query(collection(firestore, "alunos"), where("statusMatricula", "==", "INADIMPLENTE"))
         : null,
-    [firestore]
+    [firestore, user]
   );
 
   const { data: inadimplentes, isLoading } = useCollection<Aluno>(inadimplentesQuery);

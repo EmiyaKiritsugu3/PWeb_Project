@@ -7,23 +7,24 @@ import { PageHeader } from "@/components/page-header";
 import { Users, UserCheck, UserX, DollarSign } from "lucide-react";
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts";
 import { DADOS_DASHBOARD } from "@/lib/data"; // Mantemos para faturamento e gráfico
-import { useCollection, useFirestore, useMemoFirebase } from "@/firebase";
+import { useCollection, useFirestore, useMemoFirebase, useUser } from "@/firebase";
 import { collection } from "firebase/firestore";
 import type { Aluno } from "@/lib/definitions";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function DashboardPage() {
   const firestore = useFirestore();
+  const { user } = useUser();
 
   const alunosCollection = useMemoFirebase(() => 
-    firestore ? collection(firestore, "alunos") : null, 
-    [firestore]
+    firestore && user ? collection(firestore, "alunos") : null, 
+    [firestore, user]
   );
   
   const { data: alunos, isLoading } = useCollection<Aluno>(alunosCollection);
 
   const kpiData = useMemo(() => {
-    if (isLoading) {
+    if (isLoading || !alunos) {
       return [
         { title: "Total de Alunos" },
         { title: "Matrículas Ativas" },
@@ -79,7 +80,7 @@ export default function DashboardPage() {
               {kpi.icon}
             </CardHeader>
             <CardContent>
-              {isLoading ? (
+              {isLoading || !alunos ? (
                 <Skeleton className="h-8 w-24" />
               ) : (
                 <div
