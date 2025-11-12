@@ -52,7 +52,7 @@ export default function LandingPage() {
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-4">
                 <Button asChild size="lg" className='w-full sm:w-auto'>
-                <Link href="/dashboard">Acessar Painel de Gestão</Link>
+                <Link href="/login">Acessar Painel de Gestão</Link>
                 </Button>
                 <Button asChild size="lg" variant="secondary" className='w-full sm:w-auto'>
                 <Link href="/aluno/login">Portal do Aluno</Link>
