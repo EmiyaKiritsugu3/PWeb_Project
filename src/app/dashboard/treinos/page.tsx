@@ -162,7 +162,11 @@ function WorkoutGenerator({ onGenerate, isGenerating }: { onGenerate: (data: Wor
 export default function TreinosPage() {
     const firestore = useFirestore();
     const { user: FUser } = useUser();
-    const alunosCollection = useMemoFirebase(() => firestore ? collection(firestore, 'alunos') : null, [firestore]);
+    
+    const alunosCollection = useMemoFirebase(() => 
+        firestore && FUser ? collection(firestore, 'alunos') : null, 
+    [firestore, FUser]);
+
     const { data: alunos, isLoading: isLoadingAlunos } = useCollection<Aluno>(alunosCollection);
 
     const [selectedAlunoId, setSelectedAlunoId] = useState<string | null>(null);
