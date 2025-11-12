@@ -14,22 +14,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Dumbbell, LogOut, User as UserIcon, LayoutDashboard, FolderKanban } from "lucide-react";
-import { useAuth, useUser } from "@/firebase";
+import { useAuth, useUser, FirebaseClientProvider } from "@/firebase";
 import Link from "next/link";
 
-export default function AlunoLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+function AlunoAppLayout({ children }: { children: React.ReactNode }) {
   const { user, isUserLoading } = useUser();
   const auth = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
-    // Se o usuário não está sendo carregado, e não há usuário logado,
-    // e a rota atual não é a página de login do aluno, redirecione para ela.
     if (!isUserLoading && !user && pathname !== "/aluno/login") {
       router.push("/aluno/login");
     }
@@ -47,7 +41,6 @@ export default function AlunoLayout({
     { href: '/aluno/meus-treinos', label: 'Meus Treinos', icon: <FolderKanban className="mr-2 h-4 w-4" /> },
   ]
 
-  // Mostra uma tela de carregamento enquanto verifica a autenticação do usuário.
   if (isUserLoading) {
     return (
       <div className="flex h-screen w-full items-center justify-center bg-background">
@@ -59,12 +52,10 @@ export default function AlunoLayout({
     );
   }
 
-  // Se não há usuário e já estamos na página de login, apenas renderize a página.
   if (!user && pathname === '/aluno/login') {
     return <main>{children}</main>;
   }
 
-  // Se há um usuário logado, renderize o layout completo do portal do aluno.
   if(user) {
     return (
         <div className="flex min-h-screen w-full flex-col bg-background">
@@ -135,7 +126,13 @@ export default function AlunoLayout({
         </div>
     );
   }
-
-  // Fallback: Se nenhuma das condições acima for atendida, não mostre nada.
   return null;
+}
+
+export default function AlunoLayout({ children }: { children: React.ReactNode; }) {
+    return (
+        <FirebaseClientProvider>
+            <AlunoAppLayout>{children}</AlunoAppLayout>
+        </FirebaseClientProvider>
+    )
 }

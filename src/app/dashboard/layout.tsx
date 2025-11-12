@@ -25,21 +25,15 @@ import {
 } from "@/components/ui/sidebar";
 import { DashboardNav, DashboardNavBottom } from "@/components/dashboard-nav";
 import { Dumbbell, LogOut } from "lucide-react";
-import { useAuth, useUser } from "@/firebase";
+import { useAuth, useUser, FirebaseClientProvider } from "@/firebase";
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+function DashboardAppLayout({ children }: { children: React.ReactNode; }) {
   const { user, isUserLoading } = useUser();
   const auth = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
-    // Se o usuário não está sendo carregado, e não há usuário logado,
-    // e a rota atual não é a página de login, redirecione para a página de login do gestor.
     if (!isUserLoading && !user && pathname !== '/login') {
       router.push("/login");
     }
@@ -52,7 +46,6 @@ export default function DashboardLayout({
     router.push("/login");
   };
   
-  // Mostra uma tela de carregamento enquanto verifica a autenticação do usuário.
   if (isUserLoading) {
     return (
       <div className="flex h-screen w-full items-center justify-center bg-background">
@@ -64,12 +57,10 @@ export default function DashboardLayout({
     );
   }
 
-  // Se não há usuário e já estamos na página de login, apenas renderize a página.
   if (!user && pathname === '/login') {
     return <main>{children}</main>;
   }
   
-  // Se há um usuário logado, renderize o layout completo do dashboard.
   if (user) {
     return (
         <SidebarProvider>
@@ -138,8 +129,13 @@ export default function DashboardLayout({
     );
   }
 
-  // Fallback: Se nenhuma das condições acima for atendida (ex: na transição),
-  // não mostre nada para evitar um flash de conteúdo incorreto.
   return null;
 }
 
+export default function DashboardLayout({ children }: { children: React.ReactNode; }) {
+    return (
+        <FirebaseClientProvider>
+            <DashboardAppLayout>{children}</DashboardAppLayout>
+        </FirebaseClientProvider>
+    )
+}
