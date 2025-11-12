@@ -96,6 +96,7 @@ export default function AlunosPage() {
             ...data,
             dataCadastro: new Date().toISOString(),
             fotoUrl: `https://picsum.photos/seed/${novoAlunoDoc.id}/100/100`,
+            biometriaHash: '', // Garante que o campo exista
             statusMatricula: 'ATIVA'
         };
         setDoc(novoAlunoDoc, novoAluno)

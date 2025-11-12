@@ -168,7 +168,7 @@ export default function TreinosPage() {
     const selectedAluno = alunos?.find(a => a.id === selectedAlunoId);
 
     const handleAddExercicio = () => {
-        setExercicios([...exercicios, { id: `${Date.now()}`, nomeExercicio: '', series: 3, repeticoes: '10-12', observacoes: '' }]);
+        setExercicios([...exercicios, { id: `${Date.now()}`, nomeExercicio: '', series: 3, repeticoes: '10-12', observacoes: '', descricao: '' }]);
     };
 
     const handleRemoveExercicio = (id: string) => {
@@ -179,12 +179,13 @@ export default function TreinosPage() {
         setExercicios(exercicios.map(ex => {
             if (ex.id !== id) return ex;
 
+            // Se o campo alterado for o nome do exercício, busca e preenche a descrição.
             if (field === 'nomeExercicio' && typeof value === 'string') {
                 const selectedOption = flatExerciciosOptions.find(opt => opt.nomeExercicio === value);
                 return { 
                     ...ex, 
                     nomeExercicio: value,
-                    descricao: selectedOption?.descricao || ""
+                    descricao: selectedOption?.descricao || "" // Preenche a descrição
                 };
             }
             return { ...ex, [field]: value };
@@ -258,7 +259,7 @@ export default function TreinosPage() {
                         series: ex.series,
                         repeticoes: ex.repeticoes,
                         observacoes: ex.observacoes,
-                        descricao: exercicioBase?.descricao || ""
+                        descricao: exercicioBase?.descricao || "" // Garante que a descrição seja adicionada
                     };
                 });
 
