@@ -5,9 +5,9 @@ import { googleAI } from '@genkit-ai/google-genai';
 export const ai = genkit({
   plugins: [
     googleAI({
-      // A versão da API pode ser especificada se necessário,
-      // mas geralmente o padrão é suficiente.
-      // apiVersion: 'v1beta',
+      // Força o uso da versão v1beta da API, garantindo a compatibilidade
+      // e resolvendo erros de "modelo não encontrado".
+      apiVersion: 'v1beta',
     }),
   ],
   // Log para ajudar na depuração durante o desenvolvimento.
