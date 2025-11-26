@@ -40,7 +40,7 @@ const validExerciseNames = new Set(EXERCICIOS_POR_GRUPO.flatMap(g => g.exercicio
  */
 export async function generateWorkoutPlan(input: WorkoutGeneratorInput): Promise<WorkoutGeneratorOutput> {
   
-  const { output } = await workoutGeneratorFlow(input);
+  const output = await workoutGeneratorFlow(input);
   
   if (!output || !output.workouts) {
     throw new Error("A IA não retornou um plano de treino válido.");
