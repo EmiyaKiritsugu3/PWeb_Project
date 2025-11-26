@@ -362,18 +362,32 @@ export default function MeusTreinosPage() {
         const novoDia = dia === "nenhum" ? null : parseInt(dia, 10);
 
         // Verifica se já existe um treino (de qualquer origem) agendado para o novo dia.
-        if (novoDia !== null && meusTreinos.some(t => t.diaSemana === novoDia && t.id !== treinoId)) {
-            toast({ title: "Dia já ocupado", description: "Já existe outro treino agendado para este dia.", variant: "destructive" });
-            return;
-        }
+const treinoExistente = novoDia !== null ? meusTreinos.find(t => t.diaSemana === novoDia) : null;
 
-        const treinoRef = doc(treinosCollectionRef, treinoId);
-        try {
-            await updateDoc(treinoRef, { diaSemana: novoDia });
-            toast({ title: 'Agenda atualizada!' });
-        } catch (error) {
-            console.error("Erro ao atualizar dia do treino:", error);
-            toast({ title: "Erro ao atualizar agenda", variant: "destructive" });
+if (treinoExistente && treinoExistente.id !== treinoId) {
+    const treinoAtual = meusTreinos.find(t => t.id === treinoId);
+    const diaAtual = treinoAtual ? treinoAtual.diaSemana : null;
+
+    const treinoExistenteRef = doc(treinosCollectionRef, treinoExistente.id);
+    const treinoAtualRef = doc(treinosCollectionRef, treinoId);
+
+    try {
+        await updateDoc(treinoExistenteRef, { diaSemana: diaAtual });
+        await updateDoc(treinoAtualRef, { diaSemana: novoDia });
+        toast({ title: 'Treinos trocados com sucesso!' });
+    } catch (error) {
+        console.error("Erro ao trocar treinos:", error);
+        toast({ title: "Erro ao atualizar agenda", variant: "destructive" });
+    }
+} else {
+    const treinoRef = doc(treinosCollectionRef, treinoId);
+    try {
+        await updateDoc(treinoRef, { diaSemana: novoDia });
+        toast({ title: 'Agenda atualizada!' });
+    } catch (error) {
+        console.error("Erro ao atualizar dia do treino:", error);
+        toast({ title: "Erro ao atualizar agenda", variant: "destructive" });
+    }
         }
     };
     
@@ -484,7 +498,7 @@ export default function MeusTreinosPage() {
                                 <SelectContent>
                                     <SelectItem value="nenhum">Nenhum (Desativado)</SelectItem>
                                     {DIAS_DA_SEMANA.map(dia => (
-                                        <SelectItem key={dia.value} value={String(dia.value)}>
+        <SelectItem key={dia.value} value={String(dia.value)} data-testid={`select-day-${dia.value}`}>
                                             {dia.label}
                                         </SelectItem>
                                     ))}
