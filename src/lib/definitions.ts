@@ -57,3 +57,31 @@ export type Treino = {
   exercicios: Exercicio[];
 };
 
+// --- Tipos para o Histórico de Treinos ---
+
+/**
+ * Representa uma única série de um exercício que foi executada pelo aluno.
+ */
+export type SerieExecutada = {
+  id: string;
+  serieNumero: number; // Ex: 1, 2, 3
+  peso: number | null;
+  repeticoesFeitas: number | null;
+  concluido: boolean;
+};
+
+/**
+ * Representa um registro de um treino completo executado pelo aluno em uma data específica.
+ */
+export type HistoricoTreino = {
+  id: string;
+  alunoId: string;
+  treinoId: string; // Referência ao treino original
+  dataExecucao: string; // ISO string
+  duracaoMinutos: number;
+  exercicios: {
+    exercicioId: string;
+    nomeExercicio: string;
+    seriesExecutadas: SerieExecutada[];
+  }[];
+};
