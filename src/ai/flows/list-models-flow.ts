@@ -5,7 +5,7 @@
  */
 
 import { ai } from '@/ai/genkit';
-import { listModels } from 'genkit/plugins';
+import { listModels } from '@genkit-ai/core/plugins';
 import { googleAI } from '@genkit-ai/google-genai';
 
 /**

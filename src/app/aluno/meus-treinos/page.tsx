@@ -17,9 +17,10 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, Save, Trash2, Wand2, BrainCircuit, Pencil, FileSignature, User, Dumbbell } from "lucide-react";
-import type { Exercicio, Treino } from '@/lib/definitions';
+import { PlusCircle, Save, Trash2, Wand2, BrainCircuit, Pencil, FileSignature, User, Dumbbell, Play } from "lucide-react";
+import type { Exercicio, Treino, HistoricoTreino } from '@/lib/definitions';
 import { useToast } from '@/hooks/use-toast';
+import { WorkoutSession } from '@/components/WorkoutSession';
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { Combobox } from '@/components/ui/combobox';
 import {
@@ -315,6 +316,7 @@ export default function MeusTreinosPage() {
     const [editingTreino, setEditingTreino] = useState<Treino | null>(null);
     const [isAlertOpen, setIsAlertOpen] = useState(false);
     const [deletingTreino, setDeletingTreino] = useState<Treino | null>(null);
+    const [treinoEmSessao, setTreinoEmSessao] = useState<Treino | null>(null);
 
     const { treinosDoPersonal, treinosDoAluno } = useMemo(() => {
         if (!meusTreinos) {
@@ -490,6 +492,10 @@ export default function MeusTreinosPage() {
                                     ))}
                                 </SelectContent>
                             </Select>
+                            <Button size="sm" onClick={() => setTreinoEmSessao(treino)}>
+                                <Play className='mr-2 h-4 w-4' />
+                                Iniciar
+                            </Button>
                             {allowEditing && (
                                 <>
                                     <Button variant="secondary" size="sm" onClick={() => handleEdit(treino)}>
@@ -513,6 +519,38 @@ export default function MeusTreinosPage() {
             </CardContent>
         </Card>
     );
+
+    const handleFinishWorkout = async (historico: Omit<HistoricoTreino, 'id' | 'alunoId'>) => {
+        if (!user) return;
+
+        try {
+            const historicoCollectionRef = collection(firestore, 'alunos', user.uid, 'historico_treinos');
+            await addDoc(historicoCollectionRef, {
+                ...historico,
+                alunoId: user.uid
+            });
+            toast({
+                title: "Treino Finalizado!",
+                description: "Seu histórico foi salvo com sucesso.",
+                className: "bg-green-600 text-white",
+            });
+        } catch (error) {
+            console.error("Erro ao salvar histórico de treino:", error);
+            toast({ title: "Erro ao salvar histórico", variant: "destructive" });
+        }
+
+        setTreinoEmSessao(null);
+    };
+
+    if (treinoEmSessao) {
+        return (
+            <WorkoutSession
+                treino={treinoEmSessao}
+                onFinish={handleFinishWorkout}
+                onCancel={() => setTreinoEmSessao(null)}
+            />
+        );
+    }
 
     return (
         <>
