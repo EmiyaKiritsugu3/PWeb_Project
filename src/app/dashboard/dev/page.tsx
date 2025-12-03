@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { PageHeader } from '@/components/page-header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { listModelsFlow } from '@/ai/flows/list-models-flow';
+// import { listModelsFlow } from '@/ai/flows/list-models-flow'; // Comentado para evitar erro de build
 import { useToast } from '@/hooks/use-toast';
 import { Loader } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -19,14 +19,16 @@ export default function DevPage() {
     setIsLoading(true);
     setModels([]);
     try {
-      const availableModels = await listModelsFlow();
+      // A chamada ao flow foi desabilitada temporariamente.
+      // const availableModels = await listModelsFlow();
+      const availableModels: string[] = ["Funcionalidade desabilitada para o build"];
       setModels(availableModels);
-      toast({ title: 'Sucesso!', description: 'Modelos listados com sucesso.' });
+      toast({ title: 'Funcionalidade Desabilitada', description: 'A listagem de modelos foi desabilitada para corrigir o build.' });
     } catch (error) {
       console.error('Erro ao listar modelos:', error);
       toast({
         title: 'Erro ao listar modelos',
-        description: 'Não foi possível buscar a lista de modelos. Verifique o console.',
+        description: 'Esta funcionalidade está desabilitada.',
         variant: 'destructive',
       });
     } finally {
@@ -45,7 +47,7 @@ export default function DevPage() {
           <CardHeader>
             <CardTitle>Listagem de Modelos de IA</CardTitle>
             <CardDescription>
-              Clique no botão para consultar em tempo real os modelos de IA disponíveis através da API configurada no Genkit.
+              Clique no botão para consultar em tempo real os modelos de IA disponíveis através da API configurada no Genkit. (Funcionalidade desabilitada)
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col items-start gap-4">
