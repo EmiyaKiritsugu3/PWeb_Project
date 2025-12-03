@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Treino, Exercicio, SerieExecutada } from '@/lib/definitions';
+import { Treino, Exercicio, SerieExecutada, HistoricoTreino } from '@/lib/definitions';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
