@@ -1,19 +1,23 @@
-
-'use server';
-/**
- * @fileOverview Flow para listar os modelos de IA disponíveis.
- */
-
 import { ai } from '@/ai/genkit';
+
+// Lista estática de modelos Gemini conhecidos e suportados.
+// WORKAROUND: A função `listModels` do Genkit não está funcionando como esperado no ambiente atual.
+// Usamos uma lista estática para garantir que a funcionalidade principal não seja bloqueada.
+// Isso deve ser revisitado quando a biblioteca Genkit for atualizada ou o problema subjacente for resolvido.
+const SUPPORTED_MODELS = [
+    "gemini-1.5-pro-latest",
+    "gemini-1.5-flash-latest",
+    "gemini-1.0-pro",
+];
 import { listModels } from '@genkit-ai/core/plugins';
 import { googleAI } from '@genkit-ai/google-genai';
 
 /**
- * Retorna uma lista de nomes de modelos disponíveis no plugin do Google AI.
+ * Retorna uma lista de nomes de modelos de IA suportados.
  */
 export async function listAvailableModels(): Promise<string[]> {
-  const models = await listModels({ plugin: googleAI.name });
-  return models.map(m => m.name);
+  // Retorna a lista estática em vez de buscar dinamicamente
+  return Promise.resolve(SUPPORTED_MODELS);
 }
 
 // O flow é a função exportada diretamente neste caso simples.

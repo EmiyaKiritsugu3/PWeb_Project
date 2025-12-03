@@ -9,8 +9,5 @@ export const ai = genkit({
   plugins: [
     googleAI(),
   ],
-  // Log para ajudar na depuração durante o desenvolvimento.
-  logLevel: 'debug',
   // Habilita o rastreamento e métricas para observabilidade.
-  enableTracingAndMetrics: true,
 });
