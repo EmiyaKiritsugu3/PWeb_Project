@@ -26,10 +26,10 @@ export default function DashboardPage() {
   const kpiData = useMemo(() => {
     if (isLoading || !alunos) {
       return [
-        { title: "Total de Alunos" },
-        { title: "Matrículas Ativas" },
-        { title: "Inadimplentes" },
-        { title: "Faturamento Mensal" },
+        { title: "Total de Alunos", value: '', icon: <Users className="h-6 w-6 text-muted-foreground" />, isDestructive: false },
+        { title: "Matrículas Ativas", value: '', icon: <UserCheck className="h-6 w-6 text-muted-foreground" />, isDestructive: false },
+        { title: "Inadimplentes", value: '', icon: <UserX className="h-6 w-6 text-destructive" />, isDestructive: true },
+        { title: "Faturamento Mensal", value: '', icon: <DollarSign className="h-6 w-6 text-muted-foreground" />, isDestructive: false },
       ];
     }
 
