@@ -9,6 +9,8 @@ const SUPPORTED_MODELS = [
     "gemini-1.5-flash-latest",
     "gemini-1.0-pro",
 ];
+import { listModels } from '@genkit-ai/core/plugins';
+import { googleAI } from '@genkit-ai/google-genai';
 
 /**
  * Retorna uma lista de nomes de modelos de IA suportados.
