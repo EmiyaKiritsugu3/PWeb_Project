@@ -363,7 +363,7 @@ export default function AlunoDashboardPage() {
 
                     {/* Coluna lateral com status e feedback */}
                     <div className="col-span-1 grid auto-rows-max items-start gap-6 lg:gap-8">
-                        <CardMatricula aluno={aluno} isLoading={isLoadingAluno} />
+                        <CardMatricula aluno={aluno || undefined} isLoading={isLoadingAluno} />
                         <CardFeedback feedback={feedback} isLoading={isFeedbackLoading} />
                     </div>
             </div>
