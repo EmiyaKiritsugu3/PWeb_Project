@@ -5,7 +5,7 @@ import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageHeader } from "@/components/page-header";
 import { Users, UserCheck, UserX, DollarSign } from "lucide-react";
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts";
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import { DADOS_DASHBOARD } from "@/lib/data"; // Mantemos para faturamento e gráfico
 import { useCollection, useFirestore, useMemoFirebase, useUser } from "@/firebase";
 import { collection } from "firebase/firestore";
@@ -117,13 +117,6 @@ export default function DashboardPage() {
                   axisLine={false}
                   tickFormatter={(value) => `${value}`}
                 />
-                 <Tooltip
-                    contentStyle={{ 
-                        backgroundColor: 'hsl(var(--background))',
-                        borderColor: 'hsl(var(--border))'
-                    }}
-                    cursor={{ fill: 'hsl(var(--primary) / 0.1)' }}
-                 />
                 <Bar dataKey="alunos" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
