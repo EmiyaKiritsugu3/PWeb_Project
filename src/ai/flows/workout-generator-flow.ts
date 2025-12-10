@@ -15,6 +15,12 @@ import {
     type WorkoutGeneratorInput,
     type WorkoutGeneratorOutput
 } from '@/ai/schemas';
+import { z } from 'zod';
+
+// Infer types from Zod schemas to use internally
+type Workout = z.infer<typeof WorkoutGeneratorAIOutputSchema>['workouts'][number];
+type Exercise = z.infer<typeof WorkoutGeneratorAIOutputSchema>['workouts'][number]['exercicios'][number];
+
 
 // --- CONSTANTES E HELPERS ---
 
@@ -48,10 +54,10 @@ export async function generateWorkoutPlan(input: WorkoutGeneratorInput): Promise
 
   // Etapa de Validação e Limpeza:
   // Aqui garantimos que apenas dados válidos retornados pela IA sejam usados.
-  const validatedWorkouts = output.workouts.map(workout => {
+  const validatedWorkouts = output.workouts.map((workout: Workout) => {
     
     // Filtra apenas os exercícios que existem na nossa lista de dados (`EXERCICIOS_POR_GRUPO`)
-    const validatedExercises = workout.exercicios.filter(exercise => {
+    const validatedExercises = workout.exercicios.filter((exercise: Exercise) => {
       const isValid = validExerciseNames.has(exercise.nomeExercicio);
       if (!isValid) {
         console.warn(`[Validação IA] Exercício inválido removido do plano: "${exercise.nomeExercicio}"`);
@@ -63,7 +69,7 @@ export async function generateWorkoutPlan(input: WorkoutGeneratorInput): Promise
       ...workout,
       exercicios: validatedExercises,
     };
-  }).filter(workout => workout.exercicios.length > 0); // Garante que não haja treinos sem exercícios
+  }).filter((workout: Workout) => workout.exercicios.length > 0); // Garante que não haja treinos sem exercícios
 
   return {
     planName: output.planName,
