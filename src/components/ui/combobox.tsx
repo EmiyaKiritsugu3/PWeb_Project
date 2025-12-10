@@ -76,6 +76,8 @@ export function Combobox({
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
+        {/* Adiciona uma descrição para acessibilidade, que é visualmente oculta */}
+        <p className="sr-only">Selecione uma opção da lista.</p>
         <Command filter={(value, search, keywords) => {
             const extendedValue = keywords?.join(' ') + ' ' + value;
             if (extendedValue.toLowerCase().includes(search.toLowerCase())) return 1
