@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useUser, useCollection, useFirestore, useMemoFirebase, useDoc } from "@/firebase";
@@ -363,6 +363,38 @@ export default function AlunoDashboardPage() {
 
                     {/* Coluna lateral com status e feedback */}
                     <div className="col-span-1 grid auto-rows-max items-start gap-6 lg:gap-8">
+                        {/* Gamification Card - Progresso */}
+                        <Card className="bg-gradient-to-br from-primary/10 to-transparent border-primary/20">
+                            <CardHeader className="pb-2">
+                                <CardTitle className="text-lg flex items-center gap-2">
+                                    <Sparkles className="h-5 w-5 text-primary" />
+                                    Seu Progresso
+                                </CardTitle>
+                                <CardDescription>Continue firme!</CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <div className="space-y-2">
+                                    <div className="flex justify-between text-sm">
+                                        <span className="font-medium">Nível 3: Intermediário</span>
+                                        <span className="text-muted-foreground">75%</span>
+                                    </div>
+                                    <div className="h-2 w-full overflow-hidden rounded-full bg-secondary">
+                                        <div className="h-full bg-primary" style={{ width: '75%' }} />
+                                    </div>
+                                </div>
+                                <div className="flex items-center justify-between pt-2">
+                                    <div className="text-center">
+                                        <div className="text-2xl font-bold font-headline text-primary">12</div>
+                                        <div className="text-xs text-muted-foreground text-center">Treinos no Mês</div>
+                                    </div>
+                                    <div className="text-center">
+                                        <div className="text-2xl font-bold font-headline text-orange-500">4🔥</div>
+                                        <div className="text-xs text-muted-foreground text-center">Dias Seguidos</div>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+                        
                         <CardMatricula aluno={aluno || undefined} isLoading={isLoadingAluno} />
                         <CardFeedback feedback={feedback} isLoading={isFeedbackLoading} />
                     </div>
