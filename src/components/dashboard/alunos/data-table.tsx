@@ -49,11 +49,10 @@ export function DataTable<TData, TValue>({
 
   return (
     <div>
-      {/* Mobile View: Lista de Cards */}
       <div className="grid gap-4 md:hidden">
         {isLoading ? (
           Array.from({ length: 3 }).map((_, i) => (
-            <Card key={i}>
+            <Card key={i} className="bg-card/30 backdrop-blur-md border-primary/10">
               <CardContent className="p-4">
                 <Skeleton className="h-24 w-full" />
               </CardContent>
@@ -63,7 +62,7 @@ export function DataTable<TData, TValue>({
           table.getRowModel().rows.map((row) => {
             const actionsCell = getActionsCell(row);
             return (
-              <Card key={row.id}>
+              <Card key={row.id} className="bg-card/30 backdrop-blur-md border-primary/10 hover:border-primary/40 hover:shadow-[0_0_15px_rgba(234,88,12,0.1)] transition-all duration-300">
                 <CardContent className="flex items-center justify-between p-4">
                   <div className="flex items-center gap-4">
                     {/* Avatar, Nome e Status */}
@@ -84,8 +83,8 @@ export function DataTable<TData, TValue>({
             )
           })
         ) : (
-          <Card>
-            <CardContent className="flex h-24 items-center justify-center p-6 text-center">
+          <Card className="bg-card/30 backdrop-blur-md border-primary/10">
+            <CardContent className="flex h-24 items-center justify-center p-6 text-center text-muted-foreground">
               Nenhum aluno encontrado.
             </CardContent>
           </Card>
@@ -93,9 +92,9 @@ export function DataTable<TData, TValue>({
       </div>
 
       {/* Desktop View: Tabela */}
-      <div className="hidden rounded-md border md:block">
+      <div className="hidden rounded-xl border border-primary/10 bg-card/20 backdrop-blur-lg shadow-[0_0_20px_rgba(234,88,12,0.05)] md:block overflow-hidden">
         <Table>
-          <TableHeader>
+          <TableHeader className="bg-card/40">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
