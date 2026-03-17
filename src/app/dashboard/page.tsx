@@ -26,10 +26,10 @@ export default function DashboardPage() {
   const kpiData = useMemo(() => {
     if (isLoading || !alunos) {
       return [
-        { title: "Total de Alunos", value: '', icon: <Users className="h-6 w-6 text-muted-foreground" />, isDestructive: false },
-        { title: "Matrículas Ativas", value: '', icon: <UserCheck className="h-6 w-6 text-muted-foreground" />, isDestructive: false },
-        { title: "Inadimplentes", value: '', icon: <UserX className="h-6 w-6 text-destructive" />, isDestructive: true },
-        { title: "Faturamento Mensal", value: '', icon: <DollarSign className="h-6 w-6 text-muted-foreground" />, isDestructive: false },
+        { title: "Total de Alunos", value: '', icon: <Users className="h-6 w-6 text-primary drop-shadow-[0_0_8px_rgba(234,88,12,0.5)]" />, isDestructive: false },
+        { title: "Matrículas Ativas", value: '', icon: <UserCheck className="h-6 w-6 text-primary drop-shadow-[0_0_8px_rgba(234,88,12,0.5)]" />, isDestructive: false },
+        { title: "Inadimplentes", value: '', icon: <UserX className="h-6 w-6 text-destructive drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]" />, isDestructive: true },
+        { title: "Faturamento Mensal", value: '', icon: <DollarSign className="h-6 w-6 text-primary drop-shadow-[0_0_8px_rgba(234,88,12,0.5)]" />, isDestructive: false },
       ];
     }
 
@@ -41,17 +41,17 @@ export default function DashboardPage() {
       {
         title: "Total de Alunos",
         value: totalAlunos.toLocaleString("pt-BR"),
-        icon: <Users className="h-6 w-6 text-muted-foreground" />,
+        icon: <Users className="h-6 w-6 text-primary drop-shadow-[0_0_8px_rgba(234,88,12,0.5)]" />,
       },
       {
         title: "Matrículas Ativas",
         value: matriculasAtivas.toLocaleString("pt-BR"),
-        icon: <UserCheck className="h-6 w-6 text-muted-foreground" />,
+        icon: <UserCheck className="h-6 w-6 text-primary drop-shadow-[0_0_8px_rgba(234,88,12,0.5)]" />,
       },
       {
         title: "Inadimplentes",
         value: alunosInadimplentes.toLocaleString("pt-BR"),
-        icon: <UserX className="h-6 w-6 text-destructive" />,
+        icon: <UserX className="h-6 w-6 text-destructive drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]" />,
         isDestructive: true,
       },
       {
@@ -60,7 +60,7 @@ export default function DashboardPage() {
           style: "currency",
           currency: "BRL",
         }),
-        icon: <DollarSign className="h-6 w-6 text-muted-foreground" />,
+        icon: <DollarSign className="h-6 w-6 text-primary drop-shadow-[0_0_8px_rgba(234,88,12,0.5)]" />,
       },
     ];
   }, [alunos, isLoading]);
@@ -74,9 +74,9 @@ export default function DashboardPage() {
       />
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {kpiData.map((kpi) => (
-          <Card key={kpi.title}>
+          <Card key={kpi.title} className="bg-card/30 backdrop-blur-md border border-primary/10 hover:border-primary/40 hover:shadow-[0_0_20px_rgba(234,88,12,0.15)] transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{kpi.title}</CardTitle>
+              <CardTitle className="text-sm font-medium text-foreground/80">{kpi.title}</CardTitle>
               {kpi.icon}
             </CardHeader>
             <CardContent>
@@ -84,7 +84,7 @@ export default function DashboardPage() {
                 <Skeleton className="h-8 w-24" />
               ) : (
                 <div
-                  className={`text-2xl font-bold ${
+                  className={`text-3xl font-headline font-bold drop-shadow-sm ${
                     kpi.isDestructive ? "text-destructive" : ""
                   }`}
                 >
@@ -96,13 +96,19 @@ export default function DashboardPage() {
         ))}
       </div>
       <div className="mt-6 grid grid-cols-1">
-        <Card>
+        <Card className="bg-card/30 backdrop-blur-md border border-primary/10 hover:border-primary/20 transition-all duration-300">
           <CardHeader>
-            <CardTitle>Crescimento de Alunos (Últimos 12 meses)</CardTitle>
+            <CardTitle className="font-headline tracking-wide font-semibold text-primary/90 drop-shadow-sm">Crescimento de Alunos (Últimos 12 meses)</CardTitle>
           </CardHeader>
           <CardContent className="pl-2">
             <ResponsiveContainer width="100%" height={350}>
               <BarChart data={DADOS_DASHBOARD.crescimentoAnual}>
+                <defs>
+                  <linearGradient id="neonOrange" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={1}/>
+                    <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
+                  </linearGradient>
+                </defs>
                 <XAxis
                   dataKey="mes"
                   stroke="#888888"
@@ -119,12 +125,15 @@ export default function DashboardPage() {
                 />
                  <Tooltip
                     contentStyle={{ 
-                        backgroundColor: 'hsl(var(--background))',
-                        borderColor: 'hsl(var(--border))'
+                        backgroundColor: 'rgba(9, 9, 11, 0.95)',
+                        borderColor: 'hsl(var(--primary) / 0.3)',
+                        borderRadius: '8px',
+                        backdropFilter: 'blur(8px)',
+                        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.6)'
                     }}
                     cursor={{ fill: 'hsl(var(--primary) / 0.1)' }}
                  />
-                <Bar dataKey="alunos" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="alunos" fill="url(#neonOrange)" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>

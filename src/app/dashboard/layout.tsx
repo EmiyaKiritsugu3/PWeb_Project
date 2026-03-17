@@ -71,7 +71,7 @@ function DashboardAppLayout({ children }: { children: React.ReactNode; }) {
               <Dumbbell className="text-primary" />
               </Button>
               <div className="duration-200 group-data-[collapsible=icon]:-translate-x-2 group-data-[collapsible=icon]:opacity-0">
-              <h2 className="font-headline font-bold">Five Star</h2>
+              <h2 className="font-headline font-bold text-primary drop-shadow-[0_0_10px_rgba(234,88,12,0.8)]">Five Star</h2>
               <p className="text-xs text-muted-foreground">Painel de Gestão</p>
               </div>
           </Link>
@@ -84,7 +84,7 @@ function DashboardAppLayout({ children }: { children: React.ReactNode; }) {
           </SidebarFooter>
       </Sidebar>
       <SidebarInset>
-          <header className="flex h-14 items-center justify-between gap-4 border-b bg-background/80 px-4 backdrop-blur-sm md:px-6">
+          <header className="flex h-14 items-center justify-between gap-4 border-b border-b-primary/20 bg-background/60 px-4 backdrop-blur-md md:px-6">
           <div className="flex items-center gap-4">
             <SidebarTrigger className="md:hidden" />
             <span className="text-sm text-muted-foreground md:hidden">Olá, {user.displayName || 'Admin'}!</span>
