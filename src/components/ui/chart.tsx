@@ -67,6 +67,10 @@ const ChartContainer = React.forwardRef<
 })
 ChartContainer.displayName = "Chart"
 
+const sanitizeId = (id: string) => id.replace(/[^a-zA-Z0-9\-_:.]/g, "")
+const sanitizeKey = (key: string) => key.replace(/[^a-zA-Z0-9\-_:.]/g, "")
+const sanitizeColor = (color: string) => color.replace(/[<>;{}]/g, "")
+
 const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
   const colorConfig = Object.entries(config).filter(
     ([, config]) => config.theme || config.color
@@ -76,19 +80,23 @@ const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
     return null
   }
 
+  const safeId = sanitizeId(id)
+
   return (
     <style
       dangerouslySetInnerHTML={{
         __html: Object.entries(THEMES)
           .map(
             ([theme, prefix]) => `
-${prefix} [data-chart=${id}] {
+${prefix} [data-chart=${safeId}] {
 ${colorConfig
   .map(([key, itemConfig]) => {
     const color =
       itemConfig.theme?.[theme as keyof typeof itemConfig.theme] ||
       itemConfig.color
-    return color ? `  --color-${key}: ${color};` : null
+    const safeKey = sanitizeKey(key)
+    const safeColor = color ? sanitizeColor(color) : null
+    return color ? `  --color-${safeKey}: ${safeColor};` : null
   })
   .join("\n")}
 }
