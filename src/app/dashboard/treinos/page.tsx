@@ -376,10 +376,13 @@ export default function TreinosPage() {
         
         const treinosCollectionRef = collection(firestore, 'alunos', selectedAluno.id, 'treinos');
         
+        // Use a Map for O(1) lookups instead of O(N) searching in the loop
+        const exerciciosMap = new Map(flatExerciciosOptions.map(opt => [opt.value, opt]));
+
         try {
             for (const workout of planoEditado.workouts) {
                  const novosExercicios = workout.exercicios.map((ex: WorkoutExercise, index: number) => {
-                    const exercicioBase = flatExerciciosOptions.find(opt => opt.value === ex.nomeExercicio);
+                    const exercicioBase = exerciciosMap.get(ex.nomeExercicio);
                     return {
                         id: `${Date.now()}-${index}`,
                         nomeExercicio: ex.nomeExercicio,
