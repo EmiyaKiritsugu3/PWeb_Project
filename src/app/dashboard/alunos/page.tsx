@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { collection, doc, updateDoc, deleteDoc, setDoc } from "firebase/firestore";
+import { collection, doc, updateDoc, deleteDoc, setDoc, writeBatch } from "firebase/firestore";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/page-header";
 import { PlusCircle } from "lucide-react";
@@ -151,16 +151,62 @@ export default function AlunosPage() {
     setDeletingAluno(null);
   };
 
-  const handleMatriculaSubmit = (aluno: Aluno, plano: Plano) => {
-    // TODO: Implementar lógica de criação de matrícula no Firestore
-    toast({
-      title: "Matrícula realizada com sucesso! (Simulação)",
-      description: `${aluno.nomeCompleto} foi matriculado(a) no ${plano.nome}.`,
-      className: "bg-accent text-accent-foreground",
-    });
+  const handleMatriculaSubmit = async (aluno: Aluno, plano: Plano) => {
+    if (!firestore) return;
 
-    setIsMatriculaFormOpen(false);
-    setMatriculaAluno(null);
+    const batch = writeBatch(firestore);
+
+    try {
+      const dataInicio = new Date();
+      const dataVencimento = new Date();
+      dataVencimento.setDate(dataInicio.getDate() + plano.duracaoDias);
+
+      const matriculasRef = collection(firestore, "alunos", aluno.id, "matriculas");
+      const novaMatriculaDoc = doc(matriculasRef);
+
+      const matriculaData: Omit<Matricula, "id"> = {
+        alunoId: aluno.id,
+        planoId: plano.id,
+        dataInicio: dataInicio.toISOString(),
+        dataVencimento: dataVencimento.toISOString(),
+        status: "ATIVA",
+      };
+
+      // 1. Adicionar criação da matrícula no batch
+      batch.set(novaMatriculaDoc, matriculaData);
+
+      // 2. Adicionar atualização do status do aluno no batch
+      const alunoRef = doc(firestore, "alunos", aluno.id);
+      batch.update(alunoRef, {
+        statusMatricula: "ATIVA"
+      });
+
+      // Commit do batch
+      await batch.commit();
+
+      toast({
+        title: "Matrícula realizada!",
+        description: `${aluno.nomeCompleto} foi matriculado(a) no ${plano.nome}.`,
+        className: "bg-accent text-accent-foreground",
+      });
+
+      setIsMatriculaFormOpen(false);
+      setMatriculaAluno(null);
+    } catch (error) {
+      console.error("Erro ao realizar matrícula:", error);
+
+      const permissionError = new FirestorePermissionError({
+        path: `alunos/${aluno.id}/matriculas`,
+        operation: 'create',
+      });
+      errorEmitter.emit('permission-error', permissionError);
+
+      toast({
+        title: "Erro na matrícula",
+        description: "Não foi possível concluir a matrícula. Verifique as permissões.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
