@@ -21,7 +21,7 @@ import {
   AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { collection, query, doc } from "firebase/firestore";
+import { collection, query, doc, updateDoc } from "firebase/firestore";
 
 
 // Componente para o Modal de Visualização do Exercício
@@ -317,6 +317,50 @@ export default function AlunoDashboardPage() {
 
             setFeedback(result);
 
+            // --- INÍCIO DA LÓGICA DE GAMIFICAÇÃO FIREBASE ---
+            if (aluno && firestore && user?.uid) {
+                const hojeStr = new Date().toISOString().split('T')[0];
+                let novoStreak = aluno.streakDiasSeguidos || 0;
+                
+                if (aluno.ultimoTreinoData) {
+                    const ultimo = new Date(aluno.ultimoTreinoData);
+                    const ontem = new Date();
+                    ontem.setDate(ontem.getDate() - 1);
+                    
+                    if (ultimo.toISOString().split('T')[0] === ontem.toISOString().split('T')[0]) {
+                        novoStreak += 1;
+                    } else if (aluno.ultimoTreinoData !== hojeStr) {
+                         novoStreak = 1; // Quebrou a ofensiva se não treinou ontem
+                    }
+                } else {
+                    novoStreak = 1; // Primeiro treino completado
+                }
+
+                // Só processa XP e treinosNoMes se ele não marcou o treino de hoje ainda.
+                let novaExp = aluno.exp || 0;
+                let novoNivel = aluno.nivel || 1;
+                let treinosSoma = aluno.treinosNoMes || 0;
+
+                if (aluno.ultimoTreinoData !== hojeStr) {
+                     novaExp += 50;
+                     treinosSoma += 1;
+                     const expNecessaria = novoNivel * 100;
+                     if (novaExp >= expNecessaria) {
+                         novaExp -= expNecessaria;
+                         novoNivel += 1;
+                     }
+                }
+
+                await updateDoc(doc(firestore, "alunos", user.uid), {
+                    exp: novaExp,
+                    nivel: novoNivel,
+                    streakDiasSeguidos: novoStreak,
+                    treinosNoMes: treinosSoma,
+                    ultimoTreinoData: hojeStr
+                });
+            }
+            // --- FIM DA LÓGICA ---
+
         } catch (error) {
             console.error("Error generating feedback:", error);
             setFeedback({
@@ -375,20 +419,22 @@ export default function AlunoDashboardPage() {
                             <CardContent className="space-y-4">
                                 <div className="space-y-2">
                                     <div className="flex justify-between text-sm">
-                                        <span className="font-medium">Nível 3: Intermediário</span>
-                                        <span className="text-muted-foreground">75%</span>
+                                        <span className="font-medium">Nível {aluno?.nivel || 1}</span>
+                                        <span className="text-muted-foreground">
+                                             {Math.round(((aluno?.exp || 0) / ((aluno?.nivel || 1) * 100)) * 100)}%
+                                        </span>
                                     </div>
                                     <div className="h-2 w-full overflow-hidden rounded-full bg-secondary">
-                                        <div className="h-full bg-primary" style={{ width: '75%' }} />
+                                        <div className="h-full bg-primary transition-all duration-1000" style={{ width: `${Math.round(((aluno?.exp || 0) / ((aluno?.nivel || 1) * 100)) * 100)}%` }} />
                                     </div>
                                 </div>
                                 <div className="flex items-center justify-between pt-2">
                                     <div className="text-center">
-                                        <div className="text-2xl font-bold font-headline text-primary">12</div>
+                                        <div className="text-2xl font-bold font-headline text-primary">{aluno?.treinosNoMes || 0}</div>
                                         <div className="text-xs text-muted-foreground text-center">Treinos no Mês</div>
                                     </div>
                                     <div className="text-center">
-                                        <div className="text-2xl font-bold font-headline text-orange-500">4🔥</div>
+                                        <div className="text-2xl font-bold font-headline text-orange-500">{aluno?.streakDiasSeguidos || 0}🔥</div>
                                         <div className="text-xs text-muted-foreground text-center">Dias Seguidos</div>
                                     </div>
                                 </div>
