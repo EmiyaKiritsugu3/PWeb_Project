@@ -68,7 +68,7 @@ export default function AlunosPage() {
     setIsDeleteAlertOpen(true);
   };
 
-  const handleFormSubmit = async (data: Omit<Aluno, "id" | "dataCadastro" | "fotoUrl" | "biometriaHash">) => {
+  const handleFormSubmit = async (data: Omit<Aluno, "id" | "dataCadastro" | "fotoUrl" | "biometriaHash" | "nivel" | "exp" | "streakDiasSeguidos" | "treinosNoMes" | "ultimoTreinoData">) => {
     if (!alunosCollection || !firestore) return;
 
     if (editingAluno) {
@@ -98,7 +98,12 @@ export default function AlunosPage() {
             dataCadastro: new Date().toISOString(),
             fotoUrl: `https://picsum.photos/seed/${novoAlunoDoc.id}/100/100`, // Foto padrão
             biometriaHash: '', // Garante que o campo exista
-            statusMatricula: 'ATIVA'
+            statusMatricula: 'ATIVA',
+            nivel: 1,
+            exp: 0,
+            streakDiasSeguidos: 0,
+            treinosNoMes: 0,
+            ultimoTreinoData: null
         };
         setDoc(novoAlunoDoc, novoAlunoData)
          .then(() => {

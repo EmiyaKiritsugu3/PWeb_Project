@@ -10,6 +10,12 @@ export type Aluno = {
   fotoUrl: string;
   biometriaHash?: string;
   statusMatricula: "ATIVA" | "INADIMPLENTE" | "INATIVA";
+  // Campos de Gamificação
+  nivel: number;
+  exp: number;
+  streakDiasSeguidos: number;
+  treinosNoMes: number;
+  ultimoTreinoData: string | null;
 };
 
 export type Plano = {
