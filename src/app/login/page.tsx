@@ -1,4 +1,3 @@
-
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,13 +16,12 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dumbbell } from "lucide-react";
-import { useAuth, useUser, useFirestore, FirestorePermissionError, errorEmitter, FirebaseClientProvider } from "@/firebase";
+import { useUser } from "@/components/providers/auth-provider";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, UserCredential } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
+import { createClient } from "@/utils/supabase/client";
 
 const formSchema = z.object({
   email: z.string().email("Por favor, insira um email válido."),
@@ -32,12 +30,12 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-function LoginPageContent() {
+export default function LoginPage() {
   const { toast } = useToast();
-  const auth = useAuth();
-  const firestore = useFirestore();
   const { user, isUserLoading } = useUser();
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const supabase = createClient();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -48,86 +46,62 @@ function LoginPageContent() {
   });
 
   useEffect(() => {
-    // Se o usuário já está logado, redireciona para o dashboard
     if (!isUserLoading && user) {
       router.push("/dashboard");
     }
   }, [user, isUserLoading, router]);
 
-  // Função para criar/atualizar o documento do funcionário
-  const upsertFuncionarioDocument = (userCredential: UserCredential) => {
-    const user = userCredential.user;
-    if (!firestore) return;
-    const funcionarioRef = doc(firestore, "funcionarios", user.uid);
-    const funcionarioData = {
-      id: user.uid,
-      nomeCompleto: user.displayName || 'Gerente',
-      email: user.email,
-      role: 'GERENTE'
-    };
-    
-    // Non-blocking write with contextual error handling
-    setDoc(funcionarioRef, funcionarioData, { merge: true })
-      .catch(async (serverError) => {
-        const permissionError = new FirestorePermissionError({
-            path: funcionarioRef.path,
-            operation: 'write',
-            requestResourceData: funcionarioData,
-          });
-        errorEmitter.emit('permission-error', permissionError);
-      });
-  };
-
   const handleFormSubmit = async (data: FormValues) => {
-    if (!auth) {
+    setIsSubmitting(true);
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email: data.email,
+        password: data.password,
+      });
+
+      if (error) {
+          // Simplificação: se não encontrar, tenta criar (mesmo comportamento do mock anterior)
+          if (error.message.includes("Invalid login credentials")) {
+              const { error: signUpError } = await supabase.auth.signUp({
+                  email: data.email,
+                  password: data.password,
+                  options: {
+                      data: {
+                          role: 'GERENTE',
+                          full_name: 'Gerente Administrador'
+                      }
+                  }
+              });
+
+              if (signUpError) throw signUpError;
+
+              toast({
+                  title: "Conta administrativa criada no Supabase!",
+                  className: "bg-accent text-accent-foreground"
+              });
+              router.push('/dashboard');
+              return;
+          }
+          throw error;
+      }
+
+      toast({
+          title: "Login bem-sucedido!",
+          description: "Redirecionando para o painel...",
+          className: "bg-accent text-accent-foreground"
+      });
+      router.push('/dashboard');
+    } catch (error: any) {
         toast({
-            title: "Erro de configuração",
-            description: "O serviço de autenticação não está disponível.",
+            title: "Erro de autenticação",
+            description: error.message || "Ocorreu um erro inesperado.",
             variant: "destructive"
         });
-        return;
-    }
-    
-    try {
-        // Tenta fazer o login primeiro
-        const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
-        upsertFuncionarioDocument(userCredential); 
-        toast({
-            title: "Login bem-sucedido!",
-            description: "Redirecionando para o painel...",
-            className: "bg-accent text-accent-foreground"
-        });
-        router.push('/dashboard');
-    } catch (error: any) {
-        // Se o usuário não existe, cria a conta
-        if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
-            try {
-                const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
-                upsertFuncionarioDocument(userCredential);
-                toast({
-                    title: "Conta de gerente criada!",
-                    description: "Redirecionando para o painel...",
-                    className: "bg-accent text-accent-foreground"
-                });
-                router.push('/dashboard');
-            } catch (creationError: any) {
-                 toast({
-                    title: "Erro ao criar conta",
-                    description: creationError.message || "Não foi possível criar a conta de gerente.",
-                    variant: "destructive"
-                });
-            }
-        } else {
-             toast({
-                title: "Erro de autenticação",
-                description: error.message || "Ocorreu um erro inesperado.",
-                variant: "destructive"
-            });
-        }
+    } finally {
+        setIsSubmitting(false);
     }
   };
 
-  // Se estiver carregando ou se o usuário já estiver logado, mostra um loader
   if (isUserLoading || user) {
     return (
       <div className="flex h-screen w-full items-center justify-center bg-background">
@@ -139,7 +113,6 @@ function LoginPageContent() {
     );
   }
 
-  // Apenas renderiza o formulário se o usuário não estiver logado e o carregamento estiver completo
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4">
         <Card className="w-full max-w-sm">
@@ -147,7 +120,7 @@ function LoginPageContent() {
                 <div className="mb-4 flex justify-center">
                     <Dumbbell className="h-10 w-10 text-primary" />
                 </div>
-                <CardTitle className="text-2xl">Acesso Restrito</CardTitle>
+                <CardTitle className="text-2xl">Gestão Five Star (Supabase)</CardTitle>
                 <CardDescription>
                     Faça login para gerenciar a academia.
                 </CardDescription>
@@ -181,8 +154,8 @@ function LoginPageContent() {
                         </FormItem>
                     )}
                     />
-                    <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
-                        {form.formState.isSubmitting ? 'Entrando...' : 'Entrar'}
+                    <Button type="submit" className="w-full" disabled={isSubmitting}>
+                        {isSubmitting ? 'Entrando...' : 'Entrar'}
                     </Button>
                 </form>
                 </Form>
@@ -196,12 +169,4 @@ function LoginPageContent() {
         </Card>
     </div>
   );
-}
-
-export default function LoginPage() {
-    return (
-        <FirebaseClientProvider>
-            <LoginPageContent />
-        </FirebaseClientProvider>
-    )
 }
