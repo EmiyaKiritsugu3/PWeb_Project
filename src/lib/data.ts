@@ -42,26 +42,43 @@ export async function getTreinos(alunoId?: string) {
 }
 
 export async function getDashboardStats() {
-  const [totalAlunos, matriculasAtivas, alunosInadimplentes] = await Promise.all([
-    prisma.aluno.count(),
-    prisma.matricula.count({ where: { status: 'ATIVA' } }),
-    prisma.aluno.count({ where: { statusMatricula: 'INADIMPLENTE' } })
-  ]);
+  try {
+    const [totalAlunos, matriculasAtivas, alunosInadimplentes] = await Promise.all([
+      prisma.aluno.count(),
+      prisma.matricula.count({ where: { status: 'ATIVA' } }),
+      prisma.aluno.count({ where: { statusMatricula: 'INADIMPLENTE' } })
+    ]);
 
-  // Use the view created in academic_features.sql
-  const faturamento = await prisma.$queryRaw`SELECT "TotalRecebido" FROM "V_FaturamentoMensal" LIMIT 1`;
-  
-  return {
-    totalAlunos,
-    matriculasAtivas,
-    alunosInadimplentes,
-    faturamentoMensal: (faturamento as any)?.[0]?.TotalRecebido || 0,
-    crescimentoAnual: [
-      { mes: "Jan", alunos: Math.floor(totalAlunos * 0.8) },
-      { mes: "Fev", alunos: Math.floor(totalAlunos * 0.85) },
-      { mes: "Mar", alunos: Math.floor(totalAlunos * 0.9) },
-      { mes: "Abr", alunos: totalAlunos },
-    ]
-  };
+    // Use the view created in academic_features.sql
+    let faturamentoMensal = 0;
+    try {
+      const faturamento = await prisma.$queryRaw`SELECT "TotalRecebido" FROM "V_FaturamentoMensal" LIMIT 1`;
+      faturamentoMensal = (faturamento as any)?.[0]?.TotalRecebido || 0;
+    } catch (viewError) {
+      console.warn("Aviso: Visão V_FaturamentoMensal não encontrada. Usando valor padrão 0.");
+    }
+    
+    return {
+      totalAlunos,
+      matriculasAtivas,
+      alunosInadimplentes,
+      faturamentoMensal,
+      crescimentoAnual: [
+        { mes: "Jan", alunos: Math.floor(totalAlunos * 0.8) },
+        { mes: "Fev", alunos: Math.floor(totalAlunos * 0.85) },
+        { mes: "Mar", alunos: Math.floor(totalAlunos * 0.9) },
+        { mes: "Abr", alunos: totalAlunos },
+      ]
+    };
+  } catch (error) {
+    console.error("Erro crítico ao buscar estatísticas do Dashboard:", error);
+    return {
+      totalAlunos: 0,
+      matriculasAtivas: 0,
+      alunosInadimplentes: 0,
+      faturamentoMensal: 0,
+      crescimentoAnual: []
+    };
+  }
 }
 
