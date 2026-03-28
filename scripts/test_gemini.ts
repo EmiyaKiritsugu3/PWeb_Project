@@ -5,7 +5,7 @@ async function main() {
     try {
         console.log('Realizando chamada simples de teste...');
         const response = await ai.generate({
-            model: 'googleai/gemini-2.0-flash',
+            model: 'googleai/gemini-2.5-flash',
             prompt: 'Diga "Olá, Sistema PWeb está funcionando!" em uma palavra.'
         });
         

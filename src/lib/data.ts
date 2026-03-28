@@ -1,4 +1,3 @@
-import 'server-only';
 import { prisma } from './prisma';
 import type { Aluno, Plano, Treino, Exercicio } from './definitions';
 
