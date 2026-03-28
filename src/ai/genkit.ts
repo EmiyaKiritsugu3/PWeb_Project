@@ -7,7 +7,9 @@ dotenv.config();
 
 export const ai = genkit({
   plugins: [
-    googleAI(),
+    googleAI({
+      apiKey: process.env.GOOGLE_GENAI_API_KEY || process.env.GEMINI_API_KEY,
+    }),
   ],
   // Habilita o rastreamento e métricas para observabilidade.
 });
