@@ -16,6 +16,8 @@ export type Aluno = {
   streakDiasSeguidos: number;
   treinosNoMes: number;
   ultimoTreinoData: string | null;
+  xpToNextLevel?: number;
+  progressPerc?: number;
 };
 
 export type Plano = {

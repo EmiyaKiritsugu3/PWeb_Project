@@ -33,9 +33,17 @@ model Aluno {
   biometriaHash   String?     @unique
   statusMatricula StatusAluno @default(ATIVA)
 
-  Matriculas Matricula[]
-  Pagamentos Pagamento[]
-  Treinos    Treino[]
+  // Gamification
+  nivel              Int       @default(1)
+  exp                Int       @default(0)
+  streakDiasSeguidos Int       @default(0)
+  treinosNoMes       Int       @default(0)
+  ultimoTreinoData   DateTime?
+
+  Matriculas       Matricula[]
+  Pagamentos       Pagamento[]
+  Treinos          Treino[]
+  HistoricoTreinos HistoricoTreino[]
 }
 
 enum StatusAluno {
@@ -54,16 +62,19 @@ model Plano {
 }
 
 model Matricula {
-  id             String         @id @default(uuid())
+  id             String          @id @default(uuid())
   alunoId        String
   planoId        String
-  dataInicio     DateTime       @default(now())
+  dataInicio     DateTime        @default(now())
   dataVencimento DateTime
   status         StatusMatricula @default(ATIVA)
 
   Aluno      Aluno       @relation(fields: [alunoId], references: [id])
   Plano      Plano       @relation(fields: [planoId], references: [id])
   Pagamentos Pagamento[]
+
+  @@index([alunoId])
+  @@index([status])
 }
 
 enum StatusMatricula {
@@ -81,6 +92,9 @@ model Pagamento {
 
   Matricula Matricula @relation(fields: [matriculaId], references: [id])
   Aluno     Aluno     @relation(fields: [alunoId], references: [id])
+
+  @@index([alunoId])
+  @@index([dataPagamento])
 }
 
 enum MetodoPagamento {
@@ -97,9 +111,12 @@ model Treino {
   dataCriacao DateTime @default(now())
   diaSemana   Int?
 
-  Aluno       Aluno       @relation(fields: [alunoId], references: [id])
-  Instrutor   Funcionario? @relation(fields: [instrutorId], references: [id])
-  Exercicios  Exercicio[]
+  Aluno            Aluno            @relation(fields: [alunoId], references: [id])
+  Instrutor        Funcionario?     @relation(fields: [instrutorId], references: [id])
+  Exercicios       Exercicio[]
+  HistoricoTreinos HistoricoTreino[]
+
+  @@index([alunoId])
 }
 
 model Exercicio {
@@ -112,4 +129,35 @@ model Exercicio {
   descricao     String?
 
   Treino Treino @relation(fields: [treinoId], references: [id], onDelete: Cascade)
+}
+
+// --- Workout History (Gamification) ---
+
+model HistoricoTreino {
+  id              String   @id @default(uuid())
+  alunoId         String
+  treinoId        String
+  dataExecucao    DateTime @default(now())
+  duracaoMinutos  Int
+
+  Aluno           Aluno            @relation(fields: [alunoId], references: [id])
+  Treino          Treino           @relation(fields: [treinoId], references: [id])
+  SeriesExecutadas SerieExecutada[]
+
+  @@index([alunoId, dataExecucao])
+}
+
+model SerieExecutada {
+  id                String  @id @default(uuid())
+  historicoTreinoId String
+  exercicioId       String
+  nomeExercicio     String
+  serieNumero       Int
+  peso              Float?
+  repeticoesFeitas  Int?
+  concluido         Boolean @default(false)
+
+  HistoricoTreino HistoricoTreino @relation(fields: [historicoTreinoId], references: [id], onDelete: Cascade)
+
+  @@index([historicoTreinoId])
 }
