@@ -8,6 +8,8 @@ export const metadata: Metadata = {
 };
 
 import React from 'react';
+import { SupabaseAuthProvider } from '@/components/providers/auth-provider';
+
 
 export default function RootLayout({
   children,
@@ -22,7 +24,9 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased selection:bg-primary/20 selection:text-primary">
-        {children}
+        <SupabaseAuthProvider>
+          {children}
+        </SupabaseAuthProvider>
         <Toaster />
       </body>
     </html>

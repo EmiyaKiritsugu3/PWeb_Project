@@ -1,450 +1,86 @@
+import { createClient } from "@/utils/supabase/server";
+import { prisma } from "@/lib/prisma";
+import AlunoDashboardClient from "./dashboard-client";
+import { redirect } from "next/navigation";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { CalendarOff } from "lucide-react";
 
-"use client";
+export default async function AlunoDashboardPage() {
+    const supabase = await createClient();
+    const { data: { user }, error } = await supabase.auth.getUser();
 
-import React, { useEffect, useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import { useUser, useCollection, useFirestore, useMemoFirebase, useDoc } from "@/firebase";
-import type { Treino, Aluno, Exercicio } from "@/lib/definitions";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Sparkles, BrainCircuit, Info, CalendarOff } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
-import { generateWorkoutFeedback } from "@/ai/flows/workout-feedback-flow";
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogCancel,
-} from "@/components/ui/alert-dialog";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { collection, query, doc, updateDoc } from "firebase/firestore";
-
-
-// Componente para o Modal de Visualização do Exercício
-function ExercicioViewer({ exercicio, isOpen, onOpenChange }: { exercicio: Exercicio | null; isOpen: boolean; onOpenChange: (open: boolean) => void; }) {
-    if (!exercicio) return null;
-
-    return (
-        <AlertDialog open={isOpen} onOpenChange={onOpenChange}>
-            <AlertDialogContent className="max-w-md">
-                <AlertDialogHeader>
-                    <AlertDialogTitle>{exercicio.nomeExercicio}</AlertDialogTitle>
-                </AlertDialogHeader>
-                <ScrollArea className="max-h-80 w-full rounded-md pr-4">
-                    <div className="grid gap-4 py-4 text-sm text-muted-foreground whitespace-pre-wrap">
-                        {exercicio.descricao || "Nenhuma descrição disponível para este exercício."}
-                    </div>
-                </ScrollArea>
-                <AlertDialogFooter>
-                    <AlertDialogCancel>Fechar</AlertDialogCancel>
-                </AlertDialogFooter>
-            </AlertDialogContent>
-        </AlertDialog>
-    );
-}
-
-// Componente para o Card de Matrícula
-function CardMatricula({ aluno, isLoading }: { aluno: Aluno | undefined, isLoading: boolean }) {
-    if (isLoading || !aluno) {
-      return (
-        <Card>
-          <CardHeader className="p-4 bg-gray-100">
-            <CardTitle className="text-lg">Minha Matrícula</CardTitle>
-          </CardHeader>
-          <CardContent className="p-4 space-y-2">
-            <Skeleton className="h-5 w-3/4" />
-            <Skeleton className="h-4 w-1/2" />
-          </CardContent>
-        </Card>
-      );
+    if (error || !user) {
+        redirect("/aluno/login");
     }
 
-    const statusConfig = {
-        ATIVA: {
-            text: "Sua matrícula está ativa.",
-            color: "text-green-600",
-            bgColor: "bg-green-100",
-            borderColor: "border-green-300"
-        },
-        INADIMPLENTE: {
-            text: "Sua matrícula está vencida. Por favor, procure a recepção.",
-            color: "text-red-600",
-            bgColor: "bg-red-100",
-            borderColor: "border-red-300"
-        },
-        INATIVA: {
-            text: "Sua matrícula está inativa.",
-            color: "text-gray-600",
-            bgColor: "bg-gray-100",
-            borderColor: "border-gray-300"
-        },
-    };
-
-    const config = statusConfig[aluno.statusMatricula];
-    const dataVencimento = new Date(); // Simulação
-    dataVencimento.setDate(dataVencimento.getDate() + 30);
-
-    return (
-        <Card className={cn("w-full", config.borderColor)}>
-             <CardHeader className={cn("p-4", config.bgColor)}>
-                <CardTitle className="text-lg">Minha Matrícula</CardTitle>
-            </CardHeader>
-            <CardContent className="p-4">
-                <p className={cn("font-medium", config.color)}>{config.text}</p>
-                {aluno.statusMatricula !== 'INATIVA' && (
-                    <p className="mt-2 text-sm text-muted-foreground">
-                        Vencimento em: {dataVencimento.toLocaleDateString('pt-BR')}
-                    </p>
-                )}
-            </CardContent>
-        </Card>
-    );
-}
-
-// Componente para o Card de Treino
-function CardTreino({ 
-    treino, 
-    onFinishTraining, 
-    isFeedbackLoading,
-    onViewExercicio
-}: { 
-    treino: Treino | undefined;
-    onFinishTraining: (completedExercises: string[]) => void;
-    isFeedbackLoading: boolean;
-    onViewExercicio: (exercicio: Exercicio) => void;
-}) {
-    const [checkedExercises, setCheckedExercises] = useState<Record<string, boolean>>({});
-
-    useEffect(() => {
-        if (!treino) return;
-        const storageKey = `checkedExercises-${new Date().toISOString().split('T')[0]}-${treino?.id}`;
-        
-        // Limpa chaves de dias anteriores
-        Object.keys(localStorage).forEach(key => {
-            if (key.startsWith('checkedExercises-') && !key.includes(new Date().toISOString().split('T')[0])) {
-                localStorage.removeItem(key);
+    // 1. Buscar Aluno no PostgreSQL usando o email do Supabase Auth
+    const aluno = await prisma.aluno.findUnique({
+        where: { email: user.email },
+        select: {
+            id: true,
+            nomeCompleto: true,
+            fotoUrl: true,
+            nivel: true,
+            exp: true,
+            streakDiasSeguidos: true,
+            treinosNoMes: true,
+            ultimoTreinoData: true,
+            xpToNextLevel: true,
+            progressPerc: true,
+            Matriculas: {
+                where: { status: 'ATIVA' },
+                take: 1,
+                select: { id: true, status: true, dataVencimento: true, planoId: true }
             }
-        });
-        
-        const savedState = localStorage.getItem(storageKey);
-
-        if (savedState) {
-            setCheckedExercises(JSON.parse(savedState));
-        } else {
-            setCheckedExercises({});
         }
+    });
 
-    }, [treino]);
-
-    const handleCheckChange = (exerciseId: string) => {
-        if (!treino) return;
-        const storageKey = `checkedExercises-${new Date().toISOString().split('T')[0]}-${treino?.id}`;
-        const newState = { ...checkedExercises, [exerciseId]: !checkedExercises[exerciseId] };
-        setCheckedExercises(newState);
-        localStorage.setItem(storageKey, JSON.stringify(newState));
-    };
-    
-    const handleFinishClick = () => {
-        const completed = Object.keys(checkedExercises).filter(id => checkedExercises[id]);
-        onFinishTraining(completed);
-    }
-
-    if (!treino) {
+    if (!aluno) {
         return (
-             <Card>
-                <CardHeader>
-                    <CardTitle className="text-xl">Treino de Hoje</CardTitle>
-                </CardHeader>
-                <CardContent className="flex flex-col items-center justify-center text-center py-10 gap-4">
-                    <CalendarOff className="h-16 w-16 text-muted-foreground" />
-                    <p className="font-medium">Dia de descanso!</p>
-                    <p className="text-muted-foreground">Aproveite para se recuperar. Nenhum treino agendado para hoje.</p>
-                </CardContent>
-            </Card>
+            <div className="flex h-[80vh] items-center justify-center">
+                <Card className="max-w-md text-center">
+                    <CardHeader>
+                        <CardTitle>Sinto muito!</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-2">
+                        <p>Seu perfil de aluno não foi encontrado no novo sistema.</p>
+                        <p className="text-sm text-muted-foreground">Por favor, procure o administrador da academia para vincular seu email ({user.email}).</p>
+                    </CardContent>
+                </Card>
+            </div>
         );
     }
 
-    const allExercises = treino.exercicios || [];
-    const completedCount = Object.values(checkedExercises).filter(Boolean).length;
+    // 2. Buscar Treino do Dia
+    const today = new Date().getDay(); // 0-6 (Dom-Sab)
     
-    return (
-        <Card>
-            <CardHeader>
-                <CardTitle className="text-xl">Meu Treino de Hoje: {treino.objetivo}</CardTitle>
-                <CardDescription>Marque os exercícios conforme for completando.</CardDescription>
-            </CardHeader>
-            <CardContent className="grid gap-4">
-                {allExercises.map((exercicio) => (
-                    <div key={exercicio.id} className={cn("rounded-lg border p-4 transition-all", checkedExercises[exercicio.id] && "bg-accent/50")}>
-                        <div className="flex items-center gap-4">
-                             <Checkbox
-                                id={exercicio.id}
-                                checked={checkedExercises[exercicio.id] || false}
-                                onCheckedChange={() => handleCheckChange(exercicio.id)}
-                                className="mt-1 h-5 w-5"
-                            />
-                            <div className="grid flex-1 gap-1">
-                                <label htmlFor={exercicio.id} className="font-bold text-base cursor-pointer">{exercicio.nomeExercicio}</label>
-                                <p className="text-sm text-muted-foreground">
-                                    <span className="font-medium text-foreground">{exercicio.series} séries</span> de <span className="font-medium text-foreground">{exercicio.repeticoes} repetições</span>
-                                </p>
-                                {exercicio.observacoes && (
-                                     <p className="text-xs text-muted-foreground italic">
-                                        Obs: {exercicio.observacoes}
-                                    </p>
-                                )}
-                            </div>
-                             {exercicio.descricao && (
-                                <Button variant="ghost" size="icon" onClick={() => onViewExercicio(exercicio)}>
-                                    <Info className="h-5 w-5 text-muted-foreground" />
-                                </Button>
-                            )}
-                        </div>
-                    </div>
-                ))}
-            </CardContent>
-            <CardFooter className="flex-col items-start gap-4">
-                <p className="text-sm text-muted-foreground">
-                    {completedCount} de {allExercises.length} exercícios completados.
-                </p>
-                <Button onClick={handleFinishClick} disabled={completedCount === 0 || isFeedbackLoading}>
-                    <Sparkles className="mr-2 h-4 w-4" />
-                    {isFeedbackLoading ? 'Analisando seu treino...' : 'Finalizar Treino e Receber Feedback'}
-                </Button>
-            </CardFooter>
-        </Card>
-    );
-}
-
-// Componente para o feedback da IA
-function CardFeedback({ feedback, isLoading }: { feedback: { title: string; message: string; } | null, isLoading: boolean }) {
-    if (isLoading) {
-        return (
-             <Card className="bg-secondary border-primary/20">
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-primary">
-                        <BrainCircuit className="h-6 w-6 animate-pulse" />
-                        Analisando seu desempenho...
-                    </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                    <Skeleton className="h-4 w-3/4" />
-                    <Skeleton className="h-4 w-full" />
-                    <Skeleton className="h-4 w-5/6" />
-                </CardContent>
-            </Card>
-        )
-    }
-
-    if (!feedback) return null;
-
-    return (
-        <Card className="bg-accent/10 border-accent">
-            <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-accent">
-                    <Sparkles className="h-6 w-6 text-accent" />
-                    {feedback.title}
-                </CardTitle>
-            </CardHeader>
-            <CardContent>
-                <p className="text-accent-foreground">{feedback.message}</p>
-            </CardContent>
-        </Card>
-    )
-}
-
-export default function AlunoDashboardPage() {
-    const { user } = useUser();
-    const firestore = useFirestore();
-    
-    // Busca os dados do aluno logado do Firestore
-    const alunoDocRef = useMemoFirebase(
-      () =>
-        firestore && user?.uid
-          ? doc(firestore, "alunos", user.uid)
-          : null,
-      [firestore, user]
-    );
-    const { data: aluno, isLoading: isLoadingAluno } = useDoc<Aluno>(alunoDocRef);
-
-    // Lógica para encontrar o treino do dia
-    const today = new Date().getDay();
-
-    const treinosQuery = useMemoFirebase(
-      () =>
-        firestore && user?.uid
-          ? query(collection(firestore, 'alunos', user.uid, 'treinos'))
-          : null,
-      [firestore, user]
-    );
-
-    const { data: meusTreinos, isLoading: isLoadingTreinos } = useCollection<Treino>(treinosQuery);
-    const treinoDoDia = meusTreinos?.find(t => t.diaSemana === today);
-
-    const [feedback, setFeedback] = useState<{ title: string; message: string; } | null>(null);
-    const [isFeedbackLoading, setIsFeedbackLoading] = useState(false);
-    
-    const [isViewerOpen, setIsViewerOpen] = useState(false);
-    const [selectedExercicio, setSelectedExercicio] = useState<Exercicio | null>(null);
-
-
-    const handleViewExercicio = (exercicio: Exercicio) => {
-        setSelectedExercicio(exercicio);
-        setIsViewerOpen(true);
-    };
-
-
-    const handleFinishTraining = async (completedExercises: string[]) => {
-        if (!treinoDoDia || !treinoDoDia.exercicios) return;
-
-        setIsFeedbackLoading(true);
-        setFeedback(null); // Limpa feedback anterior
-
-        try {
-            const exerciseNames = completedExercises
-                .map(id => treinoDoDia.exercicios.find(ex => ex.id === id)?.nomeExercicio)
-                .filter((name): name is string => !!name);
-
-            const result = await generateWorkoutFeedback({
-                goal: treinoDoDia.objetivo,
-                completedExercises: exerciseNames,
-                totalExercises: treinoDoDia.exercicios.length,
-            });
-
-            setFeedback(result);
-
-            // --- INÍCIO DA LÓGICA DE GAMIFICAÇÃO FIREBASE ---
-            if (aluno && firestore && user?.uid) {
-                const hojeStr = new Date().toISOString().split('T')[0];
-                let novoStreak = aluno.streakDiasSeguidos || 0;
-                
-                if (aluno.ultimoTreinoData) {
-                    const ultimo = new Date(aluno.ultimoTreinoData);
-                    const ontem = new Date();
-                    ontem.setDate(ontem.getDate() - 1);
-                    
-                    if (ultimo.toISOString().split('T')[0] === ontem.toISOString().split('T')[0]) {
-                        novoStreak += 1;
-                    } else if (aluno.ultimoTreinoData !== hojeStr) {
-                         novoStreak = 1; // Quebrou a ofensiva se não treinou ontem
-                    }
-                } else {
-                    novoStreak = 1; // Primeiro treino completado
+    const treinoDoDia = await prisma.treino.findFirst({
+        where: {
+            alunoId: aluno.id,
+            diaSemana: today,
+        },
+        select: {
+            id: true,
+            objetivo: true,
+            diaSemana: true,
+            Exercicios: {
+                select: {
+                    id: true,
+                    nomeExercicio: true,
+                    series: true,
+                    repeticoes: true,
+                    observacoes: true,
+                    descricao: true,
                 }
-
-                // Só processa XP e treinosNoMes se ele não marcou o treino de hoje ainda.
-                let novaExp = aluno.exp || 0;
-                let novoNivel = aluno.nivel || 1;
-                let treinosSoma = aluno.treinosNoMes || 0;
-
-                if (aluno.ultimoTreinoData !== hojeStr) {
-                     novaExp += 50;
-                     treinosSoma += 1;
-                     const expNecessaria = novoNivel * 100;
-                     if (novaExp >= expNecessaria) {
-                         novaExp -= expNecessaria;
-                         novoNivel += 1;
-                     }
-                }
-
-                await updateDoc(doc(firestore, "alunos", user.uid), {
-                    exp: novaExp,
-                    nivel: novoNivel,
-                    streakDiasSeguidos: novoStreak,
-                    treinosNoMes: treinosSoma,
-                    ultimoTreinoData: hojeStr
-                });
             }
-            // --- FIM DA LÓGICA ---
-
-        } catch (error) {
-            console.error("Error generating feedback:", error);
-            setFeedback({
-                title: "Ocorreu um erro",
-                message: "Não foi possível gerar seu feedback no momento. Tente novamente mais tarde."
-            });
-        } finally {
-            setIsFeedbackLoading(false);
         }
-    };
+    });
 
-
+    // 3. Renderizar Client Component
     return (
-       <>
-            <ExercicioViewer 
-                exercicio={selectedExercicio}
-                isOpen={isViewerOpen}
-                onOpenChange={setIsViewerOpen}
-            />
-            <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-3 lg:gap-8">
-                    {/* Coluna principal com o treino */}
-                    <div className="col-span-1 grid auto-rows-max items-start gap-6 lg:col-span-2 lg:gap-8">
-                        {isLoadingTreinos ? (
-                          <Card>
-                            <CardHeader>
-                              <Skeleton className="h-8 w-1/2" />
-                              <Skeleton className="h-4 w-3/4" />
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                              <Skeleton className="h-24 w-full" />
-                              <Skeleton className="h-24 w-full" />
-                              <Skeleton className="h-24 w-full" />
-                            </CardContent>
-                          </Card>
-                        ) : (
-                          <CardTreino 
-                              treino={treinoDoDia} 
-                              onFinishTraining={handleFinishTraining}
-                              isFeedbackLoading={isFeedbackLoading}
-                              onViewExercicio={handleViewExercicio}
-                          />
-                        )}
-                    </div>
-
-                    {/* Coluna lateral com status e feedback */}
-                    <div className="col-span-1 grid auto-rows-max items-start gap-6 lg:gap-8">
-                        {/* Gamification Card - Progresso */}
-                        <Card className="bg-gradient-to-br from-primary/10 to-transparent border-primary/20">
-                            <CardHeader className="pb-2">
-                                <CardTitle className="text-lg flex items-center gap-2">
-                                    <Sparkles className="h-5 w-5 text-primary" />
-                                    Seu Progresso
-                                </CardTitle>
-                                <CardDescription>Continue firme!</CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                <div className="space-y-2">
-                                    <div className="flex justify-between text-sm">
-                                        <span className="font-medium">Nível {aluno?.nivel || 1}</span>
-                                        <span className="text-muted-foreground">
-                                             {Math.round(((aluno?.exp || 0) / ((aluno?.nivel || 1) * 100)) * 100)}%
-                                        </span>
-                                    </div>
-                                    <div className="h-2 w-full overflow-hidden rounded-full bg-secondary">
-                                        <div className="h-full bg-primary transition-all duration-1000" style={{ width: `${Math.round(((aluno?.exp || 0) / ((aluno?.nivel || 1) * 100)) * 100)}%` }} />
-                                    </div>
-                                </div>
-                                <div className="flex items-center justify-between pt-2">
-                                    <div className="text-center">
-                                        <div className="text-2xl font-bold font-headline text-primary">{aluno?.treinosNoMes || 0}</div>
-                                        <div className="text-xs text-muted-foreground text-center">Treinos no Mês</div>
-                                    </div>
-                                    <div className="text-center">
-                                        <div className="text-2xl font-bold font-headline text-orange-500">{aluno?.streakDiasSeguidos || 0}🔥</div>
-                                        <div className="text-xs text-muted-foreground text-center">Dias Seguidos</div>
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
-                        
-                        <CardMatricula aluno={aluno || undefined} isLoading={isLoadingAluno} />
-                        <CardFeedback feedback={feedback} isLoading={isFeedbackLoading} />
-                    </div>
-            </div>
-       </>
+        <AlunoDashboardClient 
+            initialAluno={aluno as any} 
+            initialTreino={treinoDoDia as any} 
+        />
     );
 }

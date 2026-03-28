@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/sidebar";
 import { DashboardNav, DashboardNavBottom } from "@/components/dashboard-nav";
 import { Dumbbell, LogOut } from "lucide-react";
-import { useAuth, useUser, FirebaseClientProvider } from "@/firebase";
+import { useAuth, useUser } from "@/components/providers/auth-provider";
 
 function DashboardAppLayout({ children }: { children: React.ReactNode; }) {
   const { user, isUserLoading } = useUser();
@@ -125,9 +125,7 @@ function DashboardAppLayout({ children }: { children: React.ReactNode; }) {
 }
 
 export default function DashboardLayout({ children }: { children: React.ReactNode; }) {
-    return (
-        <FirebaseClientProvider>
-            <DashboardAppLayout>{children}</DashboardAppLayout>
-        </FirebaseClientProvider>
-    )
+  return (
+    <DashboardAppLayout>{children}</DashboardAppLayout>
+  );
 }
