@@ -18,7 +18,7 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
 } from "@/components/ui/sidebar";
-import { useAuth } from "@/firebase";
+import { useAuth } from "@/components/providers/auth-provider";
 
 const navItems = [
   { href: "/dashboard", icon: <LayoutDashboard />, label: "Dashboard" },

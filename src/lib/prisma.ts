@@ -1,17 +1,36 @@
+import 'server-only';
 import { Pool } from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@prisma/client";
 
 const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined;
+  prisma: ReturnType<typeof createPrismaClient> | undefined;
 };
 
 function createPrismaClient() {
   const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
   });
-  const adapter = new PrismaPg(pool);
-  return new PrismaClient({ adapter });
+  const adapter = new PrismaPg(pool as any);
+  return new PrismaClient({ adapter }).$extends({
+    result: {
+      aluno: {
+        xpToNextLevel: {
+          needs: { nivel: true },
+          compute(aluno) {
+            return aluno.nivel * 1500;
+          },
+        },
+        progressPerc: {
+          needs: { exp: true, nivel: true },
+          compute(aluno) {
+            const xpReq = aluno.nivel * 1500;
+            return Math.min(Math.round((aluno.exp / xpReq) * 100), 100);
+          },
+        },
+      },
+    },
+  });
 }
 
 export const prisma = globalForPrisma.prisma ?? createPrismaClient();

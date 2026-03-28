@@ -8,7 +8,7 @@
 
 import { ai } from '@/ai/genkit';
 import { googleAI } from '@genkit-ai/google-genai';
-import { EXERCICIOS_POR_GRUPO } from '@/lib/data';
+import { EXERCICIOS_POR_GRUPO } from '@/lib/constants';
 import { 
     WorkoutGeneratorInputSchema, 
     WorkoutGeneratorAIOutputSchema,

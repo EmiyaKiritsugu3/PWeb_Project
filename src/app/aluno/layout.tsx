@@ -15,7 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Dumbbell, LogOut, User as UserIcon, LayoutDashboard, FolderKanban } from "lucide-react";
-import { useAuth, useUser, FirebaseClientProvider } from "@/firebase";
+import { useAuth, useUser } from "@/components/providers/auth-provider";
 
 
 function AlunoLayoutContent({ children }: { children: React.ReactNode }) {
@@ -140,8 +140,6 @@ function AlunoLayoutContent({ children }: { children: React.ReactNode }) {
 
 export default function AlunoLayout({ children }: { children: React.ReactNode; }) {
     return (
-        <FirebaseClientProvider>
-            <AlunoLayoutContent>{children}</AlunoLayoutContent>
-        </FirebaseClientProvider>
+        <AlunoLayoutContent>{children}</AlunoLayoutContent>
     )
 }

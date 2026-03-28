@@ -1,6 +1,3 @@
-
-"use client";
-
 import { PageHeader } from "@/components/page-header";
 import {
   Card,
@@ -8,11 +5,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { PLANOS } from "@/lib/data"; // Usando dados estáticos
+import { getPlanos } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 
-export default function PlanosPage() {
+export default async function PlanosPage() {
+  const planos = await getPlanos();
+
   return (
     <>
       <PageHeader
@@ -27,7 +26,7 @@ export default function PlanosPage() {
       />
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {PLANOS.map((plano) => (
+        {planos.map((plano) => (
           <Card key={plano.id}>
             <CardHeader>
               <CardTitle>{plano.nome}</CardTitle>
@@ -52,7 +51,7 @@ export default function PlanosPage() {
           </Card>
         ))}
 
-        {PLANOS?.length === 0 && (
+        {planos?.length === 0 && (
           <Card className="md:col-span-4">
             <CardContent className="p-6 text-center text-muted-foreground">
               Nenhum plano encontrado. Clique em "Adicionar Plano" para
