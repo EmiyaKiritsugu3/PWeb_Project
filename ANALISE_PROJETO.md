@@ -15,7 +15,8 @@ O sistema foi construído sobre uma arquitetura moderna e robusta, priorizando a
 
 -   **Aplicação Full-Stack com Next.js**: Utilizamos o Next.js, um framework React que permite a renderização tanto no servidor quanto no cliente. Isso proporciona uma inicialização rápida da página e uma navegação fluida, característica de uma SPA.
 -   **Componentização e Reutilização**: A interface foi dividida em pequenos componentes reutilizáveis, seguindo as melhores práticas do React. Isso torna o código mais limpo, fácil de manter e de expandir.
--   **Backend Serverless com Firebase**: A arquitetura utiliza o Firebase como um backend "serverless". O Firestore atua como banco de dados em tempo real e o Firebase Authentication como serviço de identidade, garantindo a sincronização de dados entre todos os clientes.
+-   **Backend com PostgreSQL e Supabase**: A arquitetura utiliza o PostgreSQL como banco de dados relacional, hospedado no Supabase. O Prisma atua como o ORM (Object-Relational Mapping), garantindo type-safety e facilidade em consultas complexas e relacionais.
+-   **Autenticação com Supabase Auth**: Utilizamos o Supabase Auth para gerenciar a identidade dos usuários, com integração nativa via SSR (Server-Side Rendering).
 -   **Inteligência Artificial com Genkit**: O sistema integra o Genkit, o framework de código aberto do Google, para orquestrar fluxos de IA generativa. Isso permite funcionalidades avançadas, como a criação inteligente de planos de treino e a geração de feedbacks motivacionais para os alunos.
 
 ## 3. Tecnologias Utilizadas
@@ -36,8 +37,9 @@ A stack tecnológica foi cuidadosamente selecionada para garantir um produto mod
 
 ### 3.3. Backend, Banco de Dados e IA
 
--   **Firebase Authentication**: Serviço utilizado para gerenciar a autenticação de usuários (login com e-mail e senha) de forma segura e escalável, tanto para funcionários quanto para alunos.
--   **Firestore**: O banco de dados NoSQL, flexível e em tempo real que armazena todos os dados da aplicação, como informações de alunos, planos e treinos.
+-   **Supabase Auth**: Serviço utilizado para gerenciar a autenticação de usuários de forma segura, com suporte a sessões no lado do servidor (SSR).
+-   **PostgreSQL (Supabase)**: O banco de dados relacional que armazena todos os dados da aplicação. A escolha pelo modelo relacional permite integridade referencial forte entre Alunos, Matrículas, Pagamentos e Treinos.
+-   **Prisma ORM**: Utilizado para modelagem do banco de dados e consultas seguras. Facilita migrações e garante que o código TypeScript esteja sempre em sincronia com o esquema do banco.
 -   **Genkit (Google AI)**: Orquestra chamadas para modelos de linguagem (como Gemini) para gerar conteúdo inteligente, como planos de treino e feedbacks.
 
 ### 3.4. Ferramentas e Bibliotecas Adicionais
@@ -71,8 +73,8 @@ A organização dos arquivos foi pensada para ser intuitiva e escalável.
 -   **Autenticação Segura e Separada**: Fluxos de login distintos para Gestão e Alunos, com proteção de rotas e criação automática de perfis no banco de dados.
 -   **Painel de Gestão Funcional**:
     -   **Dashboard**: Visualização de KPIs (indicadores chave) e gráfico de crescimento.
-    -   **Gestão de Alunos Completa**: Interface para listar, cadastrar, editar e excluir alunos diretamente no Firestore.
-    -   **Criação de Treinos (Manual e com IA)**: Funcionalidade para criar e atribuir treinos a um aluno específico, salvando-os em sua subcoleção no banco de dados.
+    -   **Gestão de Alunos Completa**: Interface para listar, cadastrar, editar e excluir alunos diretamente no banco de dados relacional.
+    -   **Criação de Treinos (Manual e com IA)**: Funcionalidade para criar e atribuir treinos a um aluno específico, com suporte a relacionamentos complexos entre exercícios e séries.
     -   **Gestão Financeira**: Página para visualizar alunos inadimplentes e reativar suas matrículas.
 -   **Portal do Aluno Interativo**:
     -   **Dashboard do Aluno**: Exibe o treino do dia de forma interativa.
