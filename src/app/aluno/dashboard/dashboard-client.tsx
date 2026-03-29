@@ -1,10 +1,30 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { 
+    Card, 
+    CardContent, 
+    CardDescription, 
+    CardHeader, 
+    CardTitle, 
+    CardFooter 
+} from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { Sparkles, BrainCircuit, Info, CalendarOff } from "lucide-react";
+import { 
+    Sparkles, 
+    BrainCircuit, 
+    Info, 
+    CalendarOff, 
+    CheckCircle2, 
+    AlertCircle, 
+    Calendar,
+    Trophy, 
+    TrendingUp, 
+    Zap, 
+    Target, 
+    Award 
+} from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { generateWorkoutFeedback } from "@/ai/flows/workout-feedback-flow";
 import {
@@ -20,6 +40,7 @@ import { cn } from "@/lib/utils";
 import type { Treino, Aluno, Exercicio } from "@/lib/definitions";
 import { finalizarTreinoAction } from "@/lib/actions/alunos";
 import { useToast } from "@/hooks/use-toast";
+import { CircularProgress } from "@/components/ui/circular-progress";
 
 // Componente para o Modal de Visualização do Exercício
 function ExercicioViewer({ exercicio, isOpen, onOpenChange }: { exercicio: Exercicio | null; isOpen: boolean; onOpenChange: (open: boolean) => void; }) {
@@ -27,17 +48,17 @@ function ExercicioViewer({ exercicio, isOpen, onOpenChange }: { exercicio: Exerc
 
     return (
         <AlertDialog open={isOpen} onOpenChange={onOpenChange}>
-            <AlertDialogContent className="max-w-md">
+            <AlertDialogContent className="glass-card max-w-md border-cyan-500/20">
                 <AlertDialogHeader>
-                    <AlertDialogTitle>{exercicio.nomeExercicio}</AlertDialogTitle>
+                    <AlertDialogTitle className="text-gradient-cyan text-2xl">{exercicio.nomeExercicio}</AlertDialogTitle>
                 </AlertDialogHeader>
                 <ScrollArea className="max-h-80 w-full rounded-md pr-4">
-                    <div className="grid gap-4 py-4 text-sm text-muted-foreground whitespace-pre-wrap">
+                    <div className="grid gap-4 py-4 text-sm text-foreground/80 leading-relaxed">
                         {exercicio.descricao || "Nenhuma descrição disponível para este exercício."}
                     </div>
                 </ScrollArea>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Fechar</AlertDialogCancel>
+                    <AlertDialogCancel className="bg-white/5 hover:bg-white/10 border-white/10">Fechar</AlertDialogCancel>
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>
@@ -50,48 +71,48 @@ function CardMatricula({ aluno }: { aluno: Aluno | null }) {
 
     const statusConfig = {
         ATIVA: {
-            text: "Sua matrícula está ativa.",
-            color: "text-green-600",
-            bgColor: "bg-green-100",
-            borderColor: "border-green-300"
+            text: "Matrícula Ativa",
+            icon: <CheckCircle2 className="h-5 w-5 text-green-400" />,
+            glow: "border-green-500/30 shadow-[0_0_15px_rgba(34,197,94,0.1)]"
         },
         INADIMPLENTE: {
-            text: "Sua matrícula está vencida. Por favor, procure a recepção.",
-            color: "text-red-600",
-            bgColor: "bg-red-100",
-            borderColor: "border-red-300"
+            text: "Pagamento Pendente",
+            icon: <AlertCircle className="h-5 w-5 text-red-400" />,
+            glow: "border-red-500/30 shadow-[0_0_15px_rgba(239,68,68,0.1)]"
         },
         INATIVA: {
-            text: "Sua matrícula está inativa.",
-            color: "text-gray-600",
-            bgColor: "bg-gray-100",
-            borderColor: "border-gray-300"
+            text: "Matrícula Inativa",
+            icon: <Info className="h-5 w-5 text-gray-400" />,
+            glow: "border-gray-500/30"
         },
     };
 
     const config = statusConfig[aluno.statusMatricula] || statusConfig.INATIVA;
-    
-    // Simplificar exibição de vencimento para exemplo
     const dataVencimento = new Date();
     dataVencimento.setDate(dataVencimento.getDate() + 15);
 
     return (
-        <Card className={cn("w-full", config.borderColor)}>
-             <CardHeader className={cn("p-4", config.bgColor)}>
-                <CardTitle className="text-lg">Minha Matrícula</CardTitle>
-            </CardHeader>
-            <CardContent className="p-4">
-                <p className={cn("font-medium", config.color)}>{config.text}</p>
-                {aluno.statusMatricula !== 'INATIVA' && (
-                    <p className="mt-2 text-sm text-muted-foreground">
-                        Vencimento estimado: {dataVencimento.toLocaleDateString('pt-BR')}
-                    </p>
-                )}
+        <Card glass className={cn("overflow-hidden", config.glow)}>
+            <CardContent className="p-6 flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                    <div className="p-3 rounded-full bg-white/5 border border-white/10">
+                        <Calendar className="h-6 w-6 text-primary" />
+                    </div>
+                    <div>
+                        <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Status do Plano</p>
+                        <h3 className="text-xl font-bold headline flex items-center gap-2">
+                           {config.text}
+                        </h3>
+                    </div>
+                </div>
+                <div className="text-right">
+                   <p className="text-xs text-muted-foreground uppercase">Vencimento</p>
+                   <p className="font-bold text-white/90">{dataVencimento.toLocaleDateString('pt-BR')}</p>
+                </div>
             </CardContent>
         </Card>
     );
 }
-
 // Componente para o Card de Treino
 function CardTreino({ 
     treino, 
@@ -130,14 +151,17 @@ function CardTreino({
 
     if (!treino) {
         return (
-             <Card>
-                <CardHeader>
-                    <CardTitle className="text-xl">Treino de Hoje</CardTitle>
-                </CardHeader>
-                <CardContent className="flex flex-col items-center justify-center text-center py-10 gap-4">
-                    <CalendarOff className="h-16 w-16 text-muted-foreground" />
-                    <p className="font-medium">Dia de descanso!</p>
-                    <p className="text-muted-foreground">Aproveite para se recuperar. Nenhum treino agendado para hoje.</p>
+             <Card glass className="border-dashed border-white/10">
+                <CardContent className="flex flex-col items-center justify-center text-center py-16 gap-6">
+                    <div className="p-6 rounded-full bg-white/5 border border-white/5 animate-float">
+                        <CalendarOff className="h-16 w-16 text-muted-foreground/50" />
+                    </div>
+                    <div>
+                        <h3 className="text-2xl font-bold headline">Dia de Descanso Ativo</h3>
+                        <p className="text-muted-foreground max-w-xs mx-auto mt-2">
+                           Aproveite para focar na mobilidade e recuperação. Sua próxima evolução começa no próximo treino!
+                        </p>
+                    </div>
                 </CardContent>
             </Card>
         );
@@ -145,45 +169,88 @@ function CardTreino({
 
     const allExercises = treino.exercicios || [];
     const completedCount = Object.values(checkedExercises).filter(Boolean).length;
+    const progressPerc = Math.round((completedCount / allExercises.length) * 100) || 0;
     
     return (
-        <Card>
-            <CardHeader>
-                <CardTitle className="text-xl">Meu Treino de Hoje: {treino.objetivo}</CardTitle>
-                <CardDescription>Marque os exercícios conforme for completando.</CardDescription>
+        <Card glass className="border-cyan-500/10 shadow-cyan-500/5">
+            <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                   <CardTitle className="text-2xl font-bold text-gradient-cyan">
+                       {treino.objetivo}
+                   </CardTitle>
+                   <CardDescription className="text-muted-foreground/80 mt-1">
+                       Desempenho atual: {progressPerc}% completo
+                   </CardDescription>
+                </div>
+                <div className="hidden sm:block">
+                    <CircularProgress value={progressPerc} size="sm" strokeWidth={6} showValue gradient="cyan" />
+                </div>
             </CardHeader>
             <CardContent className="grid gap-4">
                 {allExercises.map((exercicio) => (
-                    <div key={exercicio.id} className={cn("rounded-lg border p-4 transition-all", checkedExercises[exercicio.id] && "bg-accent/50")}>
+                    <div 
+                        key={exercicio.id} 
+                        className={cn(
+                            "group rounded-xl border border-white/5 p-4 flex items-center justify-between transition-all duration-300 hover:bg-white/5",
+                            checkedExercises[exercicio.id] && "bg-cyan-500/10 border-cyan-500/30"
+                        )}
+                    >
                         <div className="flex items-center gap-4">
                              <Checkbox
                                 id={exercicio.id}
                                 checked={checkedExercises[exercicio.id] || false}
                                 onCheckedChange={() => handleCheckChange(exercicio.id)}
-                                className="h-5 w-5"
+                                className="h-6 w-6 border-white/20 data-[state=checked]:bg-cyan-500 data-[state=checked]:border-cyan-500"
                             />
-                            <div className="grid flex-1 gap-1">
-                                <label htmlFor={exercicio.id} className="font-bold text-base cursor-pointer">{exercicio.nomeExercicio}</label>
-                                <p className="text-sm text-muted-foreground">
-                                    <span className="font-medium text-foreground">{exercicio.series} séries</span> de <span className="font-medium text-foreground">{exercicio.repeticoes} repetições</span>
+                            <div>
+                                <label 
+                                    htmlFor={exercicio.id} 
+                                    className={cn(
+                                        "font-bold text-lg cursor-pointer transition-all",
+                                        checkedExercises[exercicio.id] ? "text-cyan-400" : "text-white/90"
+                                    )}
+                                >
+                                    {exercicio.nomeExercicio}
+                                </label>
+                                <p className="text-xs text-muted-foreground uppercase tracking-widest font-semibold mt-0.5">
+                                    {exercicio.series} x {exercicio.repeticoes} • REPETIÇÕES
                                 </p>
                             </div>
+                        </div>
+                         <div className="flex items-center gap-2">
                              {exercicio.descricao && (
-                                <Button variant="ghost" size="icon" onClick={() => onViewExercicio(exercicio)}>
-                                    <Info className="h-5 w-5 text-muted-foreground" />
+                                <Button 
+                                    variant="ghost" 
+                                    size="icon" 
+                                    onClick={() => onViewExercicio(exercicio)}
+                                    className="hover:text-cyan-400"
+                                >
+                                    <Info className="h-5 w-5" />
                                 </Button>
                             )}
-                        </div>
+                         </div>
                     </div>
                 ))}
             </CardContent>
-            <CardFooter className="flex-col items-start gap-4">
-                <p className="text-sm text-muted-foreground">
-                    {completedCount} de {allExercises.length} exercícios completados.
-                </p>
-                <Button onClick={handleFinishClick} disabled={completedCount === 0 || isFeedbackLoading} className="w-full md:w-auto">
-                    <Sparkles className="mr-2 h-4 w-4" />
-                    {isFeedbackLoading ? 'Analisando seu treino...' : 'Finalizar Treino e Receber Feedback'}
+            <CardFooter className="bg-white/5 p-6 border-t border-white/5">
+                <Button 
+                    variant="premium"
+                    size="lg"
+                    onClick={handleFinishClick} 
+                    disabled={completedCount === 0 || isFeedbackLoading} 
+                    className="w-full text-lg h-14 font-bold tracking-tight rounded-xl"
+                >
+                    {isFeedbackLoading ? (
+                        <div className="flex items-center gap-2">
+                           <BrainCircuit className="animate-pulse" />
+                           Processando análise...
+                        </div>
+                    ) : (
+                        <div className="flex items-center gap-2">
+                           <Sparkles className="h-5 w-5" />
+                           Finalizar e Avaliar Treino
+                        </div>
+                    )}
                 </Button>
             </CardFooter>
         </Card>
@@ -194,16 +261,17 @@ function CardTreino({
 function CardFeedback({ feedback, isLoading }: { feedback: { title: string; message: string; } | null, isLoading: boolean }) {
     if (isLoading) {
         return (
-             <Card className="bg-secondary border-primary/20">
+             <Card glass className="border-cyan-500/20 glow-cyan">
                 <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-primary">
+                    <CardTitle className="flex items-center gap-3 text-cyan-400">
                         <BrainCircuit className="h-6 w-6 animate-pulse" />
-                        Analisando seu desempenho...
+                        <span className="headline">Pulsando Bio-Dados...</span>
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                    <Skeleton className="h-4 w-3/4" />
-                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-3/4 bg-white/5" />
+                    <Skeleton className="h-4 w-full bg-white/5" />
+                    <Skeleton className="h-4 w-2/3 bg-white/5" />
                 </CardContent>
             </Card>
         )
@@ -212,15 +280,19 @@ function CardFeedback({ feedback, isLoading }: { feedback: { title: string; mess
     if (!feedback) return null;
 
     return (
-        <Card className="bg-accent/10 border-accent animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <Card glass className="border-cyan-500/40 shadow-cyan-500/10 animate-in fade-in zoom-in duration-500">
             <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-accent">
-                    <Sparkles className="h-6 w-6 text-accent" />
-                    {feedback.title}
+                <CardTitle className="flex items-center gap-3 text-cyan-400">
+                    <Sparkles className="h-6 w-6" />
+                    <span className="headline text-2xl">{feedback.title}</span>
                 </CardTitle>
             </CardHeader>
             <CardContent>
-                <p className="text-accent-foreground text-sm leading-relaxed">{feedback.message}</p>
+                <div className="p-4 rounded-xl bg-cyan-500/5 border border-cyan-500/10">
+                    <p className="text-foreground/90 text-sm leading-relaxed italic">
+                        "{feedback.message}"
+                    </p>
+                </div>
             </CardContent>
         </Card>
     )
@@ -246,40 +318,33 @@ export default function AlunoDashboardClient({ initialAluno, initialTreino }: Al
 
     const handleFinishTraining = async (completedExercises: string[]) => {
         if (!initialTreino) return;
-
         setIsFeedbackLoading(true);
         setFeedback(null);
-
         try {
-            // 1. Gerar Feedback de IA (Client-side call for speed/stream potential)
             const exerciseNames = completedExercises
                 .map(id => initialTreino.exercicios?.find(ex => ex.id === id)?.nomeExercicio)
                 .filter((name): name is string => !!name);
-
             const aiResult = await generateWorkoutFeedback({
                 goal: initialTreino.objetivo,
                 completedExercises: exerciseNames,
                 totalExercises: initialTreino.exercicios?.length || 0,
             });
-
             setFeedback(aiResult);
-
-            // 2. Persistir no PostgreSQL e atualizar Gamificação (Server Action)
             const result = await finalizarTreinoAction(initialTreino.id);
-            
             if (result.success) {
-                toast({ title: "Treino registrado! XP ganhos.", className: "bg-accent text-accent-foreground" });
-                // Em um cenário real, você buscaria o aluno atualizado ou usaria revalidatePath
-                // Para feedback visual imediato, simulamos o incremento (ou o pai recarrega)
+                toast({ 
+                    title: "Treino Sincronizado!", 
+                    description: "+500 XP adicinados ao seu perfil.",
+                    className: "glass-card border-cyan-500/50" 
+                });
             } else {
-                toast({ title: "Erro ao salvar progresso.", variant: "destructive" });
+                toast({ title: "Erro de conexão", variant: "destructive" });
             }
-
         } catch (error) {
             console.error("Error:", error);
             setFeedback({
-                title: "Feedback Indisponível",
-                message: "Seu treino foi registrado, mas não conseguimos gerar o feedback da IA no momento."
+                title: "Erro de Processamento",
+                message: "Não conseguimos gerar do feedback da IA, mas seu treino foi salvo localmente."
             });
         } finally {
             setIsFeedbackLoading(false);
@@ -290,62 +355,112 @@ export default function AlunoDashboardClient({ initialAluno, initialTreino }: Al
     const progressPerc = aluno.progressPerc ?? Math.min(Math.round((aluno.exp / xpToNextLevel) * 100), 100);
 
     return (
-       <>
+       <div className="max-w-7xl mx-auto px-4 pb-20">
             <ExercicioViewer 
                 exercicio={selectedExercicio}
                 isOpen={isViewerOpen}
                 onOpenChange={setIsViewerOpen}
             />
-            <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-3 lg:gap-8">
-                    <div className="col-span-1 grid auto-rows-max items-start gap-6 lg:col-span-2 lg:gap-8">
+            
+            {/* Header / Hero Section */}
+            <div className="mb-10 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+                <div>
+                   <h1 className="text-4xl md:text-6xl font-black headline tracking-tighter text-white">
+                       FALA, <span className="text-gradient-cyan">{aluno.nomeCompleto.split(' ')[0].toUpperCase()}!</span>
+                   </h1>
+                   <p className="text-muted-foreground mt-2 font-medium">Bora subir de nível hoje?</p>
+                </div>
+                
+                <div className="flex gap-4">
+                    <Card glass className="px-6 py-4 flex items-center gap-4 border-cyan-500/10">
+                        <div className="text-center">
+                            <p className="text-[10px] uppercase text-muted-foreground font-bold tracking-widest">Streak</p>
+                            <p className="text-2xl font-black text-orange-500">{aluno.streakDiasSeguidos}🔥</p>
+                        </div>
+                    </Card>
+                    <Card glass className="px-6 py-4 flex items-center gap-4 border-cyan-500/10">
+                        <div className="text-center">
+                            <p className="text-[10px] uppercase text-muted-foreground font-bold tracking-widest">Treinos/Mês</p>
+                            <p className="text-2xl font-black text-cyan-400">{aluno.treinosNoMes}</p>
+                        </div>
+                    </Card>
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-12">
+                    {/* Main Content: Training */}
+                    <div className="lg:col-span-8 flex flex-col gap-8">
                         <CardTreino 
                             treino={initialTreino} 
                             onFinishTraining={handleFinishTraining}
                             isFeedbackLoading={isFeedbackLoading}
                             onViewExercicio={handleViewExercicio}
                         />
-                    </div>
-
-                    <div className="col-span-1 grid auto-rows-max items-start gap-6 lg:gap-8">
-                        {/* Gamification Card */}
-                        <Card className="bg-gradient-to-br from-primary/10 to-transparent border-primary/20">
-                            <CardHeader className="pb-2">
-                                <CardTitle className="text-lg flex items-center gap-2">
-                                    <Sparkles className="h-5 w-5 text-primary" />
-                                    Seu Progresso
-                                </CardTitle>
-                                <CardDescription>Continue firme no seu objetivo!</CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                <div className="space-y-2">
-                                    <div className="flex justify-between text-sm">
-                                        <span className="font-bold">Nível {aluno.nivel}</span>
-                                        <span className="text-muted-foreground">{aluno.exp} / {xpToNextLevel} XP</span>
-                                    </div>
-                                    <div className="h-3 w-full overflow-hidden rounded-full bg-secondary">
-                                        <div 
-                                            className="h-full bg-primary transition-all duration-1000" 
-                                            style={{ width: `${progressPerc}%` }} 
-                                        />
-                                    </div>
-                                </div>
-                                <div className="flex items-center justify-around pt-2">
-                                    <div className="text-center">
-                                        <div className="text-2xl font-black text-primary">{aluno.treinosNoMes}</div>
-                                        <div className="text-[10px] uppercase tracking-wider text-muted-foreground">No Mês</div>
-                                    </div>
-                                    <div className="text-center">
-                                        <div className="text-2xl font-black text-orange-500">{aluno.streakDiasSeguidos}🔥</div>
-                                        <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Sequência</div>
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
-                        
-                        <CardMatricula aluno={aluno} />
                         <CardFeedback feedback={feedback} isLoading={isFeedbackLoading} />
                     </div>
+
+                    {/* Sidebar: Progress & Achievements */}
+                    <div className="lg:col-span-4 flex flex-col gap-8">
+                        {/* Progress Ring Card */}
+                        <Card glass className="bg-gradient-to-br from-cyan-500/5 via-transparent to-transparent p-6 border-cyan-500/20">
+                            <div className="flex flex-col items-center text-center">
+                                <CircularProgress value={progressPerc} size="lg" strokeWidth={10} showValue gradient="cyan" label="Level Progress" />
+                                <div className="mt-6">
+                                    <h3 className="text-3xl font-black headline tracking-tight">NÍVEL {aluno.nivel}</h3>
+                                    <p className="text-sm text-muted-foreground font-bold mt-1">
+                                        {aluno.exp} / {xpToNextLevel} <span className="text-cyan-400/80">XP</span>
+                                    </p>
+                                </div>
+                                <div className="w-full h-[1px] bg-white/10 my-6" />
+                                <div className="grid grid-cols-2 gap-4 w-full">
+                                    <div className="p-4 rounded-xl bg-white/5 border border-white/5">
+                                        <TrendingUp className="h-5 w-5 text-cyan-400 mx-auto mb-2" />
+                                        <p className="text-[10px] uppercase text-muted-foreground font-bold italic">Meta Semanal</p>
+                                        <p className="text-lg font-bold">80%</p>
+                                    </div>
+                                    <div className="p-4 rounded-xl bg-white/5 border border-white/5">
+                                        <Zap className="h-5 w-5 text-yellow-400 mx-auto mb-2" />
+                                        <p className="text-[10px] uppercase text-muted-foreground font-bold italic">Power Index</p>
+                                        <p className="text-lg font-bold">752</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </Card>
+
+                        {/* Trophy Room (Gamification Step) */}
+                        <Card glass className="p-6 border-amber-500/20 shadow-amber-500/5">
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="font-bold tracking-tight headline flex items-center gap-2">
+                                    <Trophy className="h-5 w-5 text-amber-500" />
+                                    CONQUISTAS
+                                </h3>
+                                <Button variant="ghost" size="sm" className="h-8 text-[10px] uppercase font-bold text-amber-500">Ver Todas</Button>
+                            </div>
+                            <div className="flex justify-around gap-2">
+                                <div className="flex flex-col items-center gap-1 opacity-100 group cursor-pointer">
+                                    <div className="w-14 h-14 rounded-full bg-amber-500/20 border border-amber-500/50 flex items-center justify-center glow-gold text-amber-500">
+                                        <Award className="h-8 w-8" />
+                                    </div>
+                                    <span className="text-[8px] font-bold uppercase text-amber-500 text-center">Iniciante Elite</span>
+                                </div>
+                                <div className="flex flex-col items-center gap-1 opacity-40 grayscale group cursor-pointer hover:opacity-70 transition-all">
+                                    <div className="w-14 h-14 rounded-full bg-white/10 border border-white/20 flex items-center justify-center">
+                                        <Target className="h-8 w-8" />
+                                    </div>
+                                    <span className="text-[8px] font-bold uppercase text-center">Mestre da Constância</span>
+                                </div>
+                                <div className="flex flex-col items-center gap-1 opacity-40 grayscale group cursor-pointer hover:opacity-70 transition-all">
+                                    <div className="w-14 h-14 rounded-full bg-white/10 border border-white/20 flex items-center justify-center">
+                                        <Zap className="h-8 w-8" />
+                                    </div>
+                                    <span className="text-[8px] font-bold uppercase text-center">Fisioculturista</span>
+                                </div>
+                            </div>
+                        </Card>
+
+                        <CardMatricula aluno={aluno} />
+                    </div>
             </div>
-       </>
+       </div>
     );
 }
