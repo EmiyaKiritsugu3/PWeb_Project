@@ -1,0 +1,30 @@
+import { db } from '@/lib/dummyDb';
+
+export interface Aluno {
+  id: string;
+  nome: string;
+  email: string;
+  matricula: string;
+}
+
+export async function createAluno(alunoData: Omit<Aluno, 'id'>): Promise<Aluno> {
+  const id = Math.random().toString(36).substring(2, 9);
+  const newAluno: Aluno = { ...alunoData, id };
+  const result = await db.insert('alunos', newAluno);
+  return result;
+}
+
+export async function getAluno(id: string): Promise<Aluno | null> {
+  const result = await db.findById('alunos', id);
+  return result;
+}
+
+export async function updateAluno(id: string, updateData: Partial<Omit<Aluno, 'id'>>): Promise<Aluno> {
+  const result = await db.update('alunos', id, updateData);
+  return result;
+}
+
+export async function deleteAluno(id: string): Promise<boolean> {
+  const success = await db.delete('alunos', id);
+  return success;
+}
