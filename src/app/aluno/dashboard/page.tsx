@@ -76,11 +76,14 @@ export default async function AlunoDashboardPage() {
         }
     });
 
-    // 3. Renderizar Client Component
+    // 3. Serializar objetos para Passar para Client Components (Evitar erros de Symbol/Date)
+    const serializedAluno = JSON.parse(JSON.stringify(aluno));
+    const serializedTreino = JSON.parse(JSON.stringify(treinoDoDia));
+
     return (
         <AlunoDashboardClient 
-            initialAluno={aluno as any} 
-            initialTreino={treinoDoDia as any} 
+            initialAluno={serializedAluno} 
+            initialTreino={serializedTreino} 
         />
     );
 }

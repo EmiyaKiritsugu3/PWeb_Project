@@ -44,20 +44,33 @@ export function DashboardNav() {
   };
 
   return (
-    <SidebarMenu>
-      {navItems.map((item) => (
-        <SidebarMenuItem key={item.href}>
-          <Link href={item.href}>
-            <SidebarMenuButton
-              isActive={isActive(item.href)}
-              tooltip={item.label}
-            >
-              {item.icon}
-              <span>{item.label}</span>
-            </SidebarMenuButton>
-          </Link>
-        </SidebarMenuItem>
-      ))}
+    <SidebarMenu className="gap-2">
+      {navItems.map((item) => {
+        const active = isActive(item.href);
+        return (
+          <SidebarMenuItem key={item.href}>
+            <Link href={item.href} className="block w-full">
+              <SidebarMenuButton
+                isActive={active}
+                tooltip={item.label}
+                className={`w-full transition-all duration-300 h-11 px-4 rounded-xl border border-transparent
+                  ${active 
+                    ? "bg-primary/10 text-primary border-primary/20 glow-cyan shadow-primary/5 font-bold" 
+                    : "hover:bg-white/5 hover:text-foreground text-muted-foreground"
+                  }`}
+              >
+                <div className={`${active ? "text-primary scale-110" : "group-hover:text-foreground"} transition-all duration-300`}>
+                  {item.icon}
+                </div>
+                <span className="ml-2">{item.label}</span>
+                {active && (
+                  <div className="absolute left-0 w-1 h-5 bg-primary rounded-full blur-[2px] animate-pulse"></div>
+                )}
+              </SidebarMenuButton>
+            </Link>
+          </SidebarMenuItem>
+        );
+      })}
     </SidebarMenu>
   );
 }

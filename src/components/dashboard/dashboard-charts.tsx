@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts";
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 
 interface DashboardChartsProps {
   data: any[];
@@ -9,46 +9,54 @@ interface DashboardChartsProps {
 
 export function DashboardCharts({ data }: DashboardChartsProps) {
   return (
-    <Card className="bg-card/30 backdrop-blur-md border border-primary/10 hover:border-primary/20 transition-all duration-300">
-      <CardHeader>
-        <CardTitle className="font-headline tracking-wide font-semibold text-primary/90 drop-shadow-sm">
+    <Card className="glass-card overflow-hidden border-white/5 hover:border-primary/30 transition-all duration-500 glow-cyan">
+      <CardHeader className="border-b border-white/5 bg-background/20 pb-4">
+        <CardTitle className="font-headline tracking-wide font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 uppercase text-sm">
           Crescimento de Alunos (Últimos meses)
         </CardTitle>
       </CardHeader>
-      <CardContent className="pl-2">
+      <CardContent className="pt-6 pl-2 pb-2">
         <ResponsiveContainer width="100%" height={350}>
           <BarChart data={data}>
             <defs>
-              <linearGradient id="neonOrange" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={1} />
-                <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
+              <linearGradient id="neonCyan" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#22d3ee" stopOpacity={1} />
+                <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.4} />
               </linearGradient>
             </defs>
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--muted)/0.3)" />
             <XAxis
               dataKey="mes"
-              stroke="#888888"
-              fontSize={12}
+              stroke="#64748b"
+              fontSize={11}
+              fontWeight={600}
               tickLine={false}
               axisLine={false}
+              dy={10}
             />
             <YAxis
-              stroke="#888888"
-              fontSize={12}
+              stroke="#64748b"
+              fontSize={11}
+              fontWeight={600}
               tickLine={false}
               axisLine={false}
               tickFormatter={(value) => `${value}`}
+              dx={-10}
             />
             <Tooltip
               contentStyle={{
-                backgroundColor: "rgba(9, 9, 11, 0.95)",
-                borderColor: "hsl(var(--primary) / 0.3)",
-                borderRadius: "8px",
-                backdropFilter: "blur(8px)",
-                boxShadow: "0 4px 20px rgba(0, 0, 0, 0.6)",
+                backgroundColor: "rgba(15, 23, 42, 0.8)",
+                borderColor: "rgba(34, 211, 238, 0.2)",
+                borderRadius: "12px",
+                backdropFilter: "blur(12px)",
+                boxShadow: "0 0 25px rgba(34, 211, 238, 0.15)",
+                color: "#f8fafc",
+                fontWeight: 600,
               }}
-              cursor={{ fill: "hsl(var(--primary) / 0.1)" }}
+              itemStyle={{ color: "#22d3ee" }}
+              cursor={{ fill: "rgba(34, 211, 238, 0.05)" }}
             />
-            <Bar dataKey="alunos" fill="url(#neonOrange)" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="alunos" fill="url(#neonCyan)" radius={[6, 6, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </CardContent>
