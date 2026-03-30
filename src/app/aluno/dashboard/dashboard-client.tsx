@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { 
     Card, 
     CardContent, 
@@ -355,7 +356,7 @@ export default function AlunoDashboardClient({ initialAluno, initialTreino }: Al
     const progressPerc = aluno.progressPerc ?? Math.min(Math.round((aluno.exp / xpToNextLevel) * 100), 100);
 
     return (
-       <div className="max-w-7xl mx-auto px-4 pb-20">
+       <div className="max-w-7xl mx-auto px-4 pb-20 bg-black min-h-screen">
             <ExercicioViewer 
                 exercicio={selectedExercicio}
                 isOpen={isViewerOpen}
@@ -363,33 +364,59 @@ export default function AlunoDashboardClient({ initialAluno, initialTreino }: Al
             />
             
             {/* Header / Hero Section */}
-            <div className="mb-10 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+            <motion.div
+                className="mb-10 flex flex-col md:flex-row md:items-end md:justify-between gap-6"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            >
                 <div>
                    <h1 className="text-4xl md:text-6xl font-black headline tracking-tighter text-white">
-                       FALA, <span className="text-gradient-cyan">{aluno.nomeCompleto.split(' ')[0].toUpperCase()}!</span>
+                       FALA, <span className="text-cyan-400">{aluno.nomeCompleto.split(' ')[0].toUpperCase()}!</span>
                    </h1>
                    <p className="text-muted-foreground mt-2 font-medium">Bora subir de nível hoje?</p>
                 </div>
                 
                 <div className="flex gap-4">
-                    <Card glass className="px-6 py-4 flex items-center gap-4 border-cyan-500/10">
-                        <div className="text-center">
-                            <p className="text-[10px] uppercase text-muted-foreground font-bold tracking-widest">Streak</p>
-                            <p className="text-2xl font-black text-orange-500">{aluno.streakDiasSeguidos}🔥</p>
-                        </div>
-                    </Card>
-                    <Card glass className="px-6 py-4 flex items-center gap-4 border-cyan-500/10">
-                        <div className="text-center">
-                            <p className="text-[10px] uppercase text-muted-foreground font-bold tracking-widest">Treinos/Mês</p>
-                            <p className="text-2xl font-black text-cyan-400">{aluno.treinosNoMes}</p>
-                        </div>
-                    </Card>
+                    <motion.div whileHover={{ scale: 1.02 }} transition={{ type: "spring", stiffness: 300, damping: 20 }}>
+                        <Card glass className="px-6 py-4 flex items-center gap-4 bg-[#18181B] border-white/10 rounded-xl shadow-[0_0_15px_rgba(34,211,238,0.05)] hover:shadow-[0_0_15px_rgba(34,211,238,0.2)] transition-shadow">
+                            <div className="text-center">
+                                <p className="text-[10px] uppercase text-zinc-400 font-bold tracking-widest">Streak</p>
+                                <p className="text-2xl font-mono font-bold tracking-tight text-orange-500">{aluno.streakDiasSeguidos}🔥</p>
+                            </div>
+                        </Card>
+                    </motion.div>
+                    <motion.div whileHover={{ scale: 1.02 }} transition={{ type: "spring", stiffness: 300, damping: 20 }}>
+                        <Card glass className="px-6 py-4 flex items-center gap-4 bg-[#18181B] border-white/10 rounded-xl shadow-[0_0_15px_rgba(34,211,238,0.05)] hover:shadow-[0_0_15px_rgba(34,211,238,0.2)] transition-shadow">
+                            <div className="text-center">
+                                <p className="text-[10px] uppercase text-zinc-400 font-bold tracking-widest">Treinos/Mês</p>
+                                <p className="text-2xl font-mono font-bold tracking-tight text-cyan-400">{aluno.treinosNoMes}</p>
+                            </div>
+                        </Card>
+                    </motion.div>
                 </div>
-            </div>
+            </motion.div>
 
-            <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-12">
+            <motion.div
+                className="grid grid-cols-1 items-start gap-8 lg:grid-cols-12"
+                initial="initial"
+                animate="animate"
+                variants={{
+                    initial: { opacity: 0 },
+                    animate: {
+                        opacity: 1,
+                        transition: { staggerChildren: 0.15 }
+                    }
+                }}
+            >
                     {/* Main Content: Training */}
-                    <div className="lg:col-span-8 flex flex-col gap-8">
+                    <motion.div
+                        className="lg:col-span-8 flex flex-col gap-8"
+                        variants={{
+                            initial: { opacity: 0, y: 20 },
+                            animate: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 20 } }
+                        }}
+                    >
                         <CardTreino 
                             treino={initialTreino} 
                             onFinishTraining={handleFinishTraining}
@@ -397,70 +424,80 @@ export default function AlunoDashboardClient({ initialAluno, initialTreino }: Al
                             onViewExercicio={handleViewExercicio}
                         />
                         <CardFeedback feedback={feedback} isLoading={isFeedbackLoading} />
-                    </div>
+                    </motion.div>
 
                     {/* Sidebar: Progress & Achievements */}
-                    <div className="lg:col-span-4 flex flex-col gap-8">
+                    <motion.div
+                        className="lg:col-span-4 flex flex-col gap-8"
+                        variants={{
+                            initial: { opacity: 0, y: 20 },
+                            animate: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 20 } }
+                        }}
+                    >
                         {/* Progress Ring Card */}
-                        <Card glass className="bg-gradient-to-br from-cyan-500/5 via-transparent to-transparent p-6 border-cyan-500/20">
-                            <div className="flex flex-col items-center text-center">
-                                <CircularProgress value={progressPerc} size="lg" strokeWidth={10} showValue gradient="cyan" label="Level Progress" />
-                                <div className="mt-6">
-                                    <h3 className="text-3xl font-black headline tracking-tight">NÍVEL {aluno.nivel}</h3>
-                                    <p className="text-sm text-muted-foreground font-bold mt-1">
-                                        {aluno.exp} / {xpToNextLevel} <span className="text-cyan-400/80">XP</span>
-                                    </p>
-                                </div>
-                                <div className="w-full h-[1px] bg-white/10 my-6" />
-                                <div className="grid grid-cols-2 gap-4 w-full">
-                                    <div className="p-4 rounded-xl bg-white/5 border border-white/5">
-                                        <TrendingUp className="h-5 w-5 text-cyan-400 mx-auto mb-2" />
-                                        <p className="text-[10px] uppercase text-muted-foreground font-bold italic">Meta Semanal</p>
-                                        <p className="text-lg font-bold">80%</p>
+                        <motion.div whileHover={{ scale: 1.02 }} transition={{ type: "spring", stiffness: 300, damping: 20 }}>
+                            <Card glass className="bg-[#18181B] p-6 border-white/10 rounded-xl shadow-[0_0_15px_rgba(34,211,238,0.05)] hover:shadow-[0_0_15px_rgba(34,211,238,0.2)] transition-shadow">
+                                <div className="flex flex-col items-center text-center">
+                                    <CircularProgress value={progressPerc} size="lg" strokeWidth={10} showValue gradient="cyan" label="Level Progress" />
+                                    <div className="mt-6">
+                                        <h3 className="text-3xl font-mono font-bold tracking-tight text-white">NÍVEL {aluno.nivel}</h3>
+                                        <p className="text-sm text-zinc-400 font-bold mt-1">
+                                            {aluno.exp} / {xpToNextLevel} <span className="text-cyan-400">XP</span>
+                                        </p>
                                     </div>
-                                    <div className="p-4 rounded-xl bg-white/5 border border-white/5">
-                                        <Zap className="h-5 w-5 text-yellow-400 mx-auto mb-2" />
-                                        <p className="text-[10px] uppercase text-muted-foreground font-bold italic">Power Index</p>
-                                        <p className="text-lg font-bold">752</p>
+                                    <div className="w-full h-[1px] bg-white/10 my-6" />
+                                    <div className="grid grid-cols-2 gap-4 w-full">
+                                        <div className="p-4 rounded-xl bg-white/5 border border-white/10">
+                                            <TrendingUp className="h-5 w-5 text-cyan-400 mx-auto mb-2" />
+                                            <p className="text-[10px] uppercase text-zinc-400 font-bold italic">Meta Semanal</p>
+                                            <p className="text-lg font-mono font-bold tracking-tight text-cyan-400">80%</p>
+                                        </div>
+                                        <div className="p-4 rounded-xl bg-white/5 border border-white/10">
+                                            <Zap className="h-5 w-5 text-yellow-400 mx-auto mb-2" />
+                                            <p className="text-[10px] uppercase text-zinc-400 font-bold italic">Power Index</p>
+                                            <p className="text-lg font-mono font-bold tracking-tight text-cyan-400">752</p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </Card>
+                            </Card>
+                        </motion.div>
 
                         {/* Trophy Room (Gamification Step) */}
-                        <Card glass className="p-6 border-amber-500/20 shadow-amber-500/5">
-                            <div className="flex items-center justify-between mb-4">
-                                <h3 className="font-bold tracking-tight headline flex items-center gap-2">
-                                    <Trophy className="h-5 w-5 text-amber-500" />
-                                    CONQUISTAS
-                                </h3>
-                                <Button variant="ghost" size="sm" className="h-8 text-[10px] uppercase font-bold text-amber-500">Ver Todas</Button>
-                            </div>
-                            <div className="flex justify-around gap-2">
-                                <div className="flex flex-col items-center gap-1 opacity-100 group cursor-pointer">
-                                    <div className="w-14 h-14 rounded-full bg-amber-500/20 border border-amber-500/50 flex items-center justify-center glow-gold text-amber-500">
-                                        <Award className="h-8 w-8" />
-                                    </div>
-                                    <span className="text-[8px] font-bold uppercase text-amber-500 text-center">Iniciante Elite</span>
+                        <motion.div whileHover={{ scale: 1.02 }} transition={{ type: "spring", stiffness: 300, damping: 20 }}>
+                            <Card glass className="p-6 bg-[#18181B] border-white/10 rounded-xl shadow-[0_0_15px_rgba(34,211,238,0.05)] hover:shadow-[0_0_15px_rgba(34,211,238,0.2)] transition-shadow">
+                                <div className="flex items-center justify-between mb-4">
+                                    <h3 className="font-bold tracking-tight headline flex items-center gap-2 text-white">
+                                        <Trophy className="h-5 w-5 text-amber-500" />
+                                        CONQUISTAS
+                                    </h3>
+                                    <Button variant="ghost" size="sm" className="h-8 text-[10px] uppercase font-bold text-amber-500">Ver Todas</Button>
                                 </div>
-                                <div className="flex flex-col items-center gap-1 opacity-40 grayscale group cursor-pointer hover:opacity-70 transition-all">
-                                    <div className="w-14 h-14 rounded-full bg-white/10 border border-white/20 flex items-center justify-center">
-                                        <Target className="h-8 w-8" />
+                                <div className="flex justify-around gap-2">
+                                    <div className="flex flex-col items-center gap-1 opacity-100 group cursor-pointer">
+                                        <div className="w-14 h-14 rounded-full bg-amber-500/20 border border-amber-500/50 flex items-center justify-center glow-gold text-amber-500">
+                                            <Award className="h-8 w-8" />
+                                        </div>
+                                        <span className="text-[8px] font-bold uppercase text-amber-500 text-center">Iniciante Elite</span>
                                     </div>
-                                    <span className="text-[8px] font-bold uppercase text-center">Mestre da Constância</span>
-                                </div>
-                                <div className="flex flex-col items-center gap-1 opacity-40 grayscale group cursor-pointer hover:opacity-70 transition-all">
-                                    <div className="w-14 h-14 rounded-full bg-white/10 border border-white/20 flex items-center justify-center">
-                                        <Zap className="h-8 w-8" />
+                                    <div className="flex flex-col items-center gap-1 opacity-40 grayscale group cursor-pointer hover:opacity-70 transition-all">
+                                        <div className="w-14 h-14 rounded-full bg-white/10 border border-white/20 flex items-center justify-center">
+                                            <Target className="h-8 w-8" />
+                                        </div>
+                                        <span className="text-[8px] font-bold uppercase text-center text-zinc-400">Mestre da Constância</span>
                                     </div>
-                                    <span className="text-[8px] font-bold uppercase text-center">Fisioculturista</span>
+                                    <div className="flex flex-col items-center gap-1 opacity-40 grayscale group cursor-pointer hover:opacity-70 transition-all">
+                                        <div className="w-14 h-14 rounded-full bg-white/10 border border-white/20 flex items-center justify-center">
+                                            <Zap className="h-8 w-8" />
+                                        </div>
+                                        <span className="text-[8px] font-bold uppercase text-center text-zinc-400">Fisioculturista</span>
+                                    </div>
                                 </div>
-                            </div>
-                        </Card>
+                            </Card>
+                        </motion.div>
 
                         <CardMatricula aluno={aluno} />
-                    </div>
-            </div>
+                    </motion.div>
+            </motion.div>
        </div>
     );
 }
