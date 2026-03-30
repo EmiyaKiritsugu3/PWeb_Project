@@ -52,6 +52,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { upsertTreinoAction, updateTreinoDayAction, deleteTreinoAction, registrarHistoricoTreinoAction } from '@/lib/actions/treinos';
 
 const flatExerciciosOptions = EXERCICIOS_POR_GRUPO.flatMap(g => g.exercicios.map(ex => ({ value: ex.nomeExercicio, label: ex.nomeExercicio, description: ex.descricao })));
+const exercicioDescriptionsMap = new Map(flatExerciciosOptions.map(opt => [opt.value, opt.description]));
 const exerciciosOptions = EXERCICIOS_POR_GRUPO.map(grupo => ({
     label: grupo.grupo,
     options: grupo.exercicios.map(ex => ({
@@ -183,11 +184,10 @@ function WorkoutEditor({ onSave, treinoToEdit, onCancel }: { onSave: (treino: Om
 
             // Se o campo alterado for o nome do exercício, busca e preenche a descrição.
             if (field === 'nomeExercicio' && typeof value === 'string') {
-                const selectedOption = flatExerciciosOptions.find(opt => opt.value === value);
                 return { 
                     ...ex, 
                     nomeExercicio: value,
-                    descricao: selectedOption?.description || "" // Preenche a descrição
+                    descricao: exercicioDescriptionsMap.get(value) || "" // Preenche a descrição
                 };
             }
             return { ...ex, [field]: value };
@@ -380,7 +380,7 @@ export default function MeusTreinosClient({ initialTreinos, userId }: { initialT
                     series: ex.series,
                     repeticoes: ex.repeticoes,
                     observacoes: ex.observacoes,
-                    descricao: flatExerciciosOptions.find(opt => opt.value === ex.nomeExercicio)?.description || ""
+                    descricao: exercicioDescriptionsMap.get(ex.nomeExercicio) || ""
                 }));
 
                 const diaSugerido = workout.diaSugerido;
