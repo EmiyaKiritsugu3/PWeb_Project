@@ -115,12 +115,14 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4">
-        <Card className="w-full max-w-sm">
+        <Card className="w-full max-w-sm glass-card">
             <CardHeader className="text-center">
                 <div className="mb-4 flex justify-center">
                     <Dumbbell className="h-10 w-10 text-primary" />
                 </div>
-                <CardTitle className="text-2xl">Gestão Five Star (Supabase)</CardTitle>
+                <div className="text-2xl font-semibold leading-none tracking-tight text-center">
+                    <h1 className="text-2xl font-bold">Gestão Five Star</h1>
+                </div>
                 <CardDescription>
                     Faça login para gerenciar a academia.
                 </CardDescription>

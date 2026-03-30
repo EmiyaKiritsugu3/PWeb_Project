@@ -72,7 +72,8 @@ export default async function DashboardPage() {
               >
                 {kpi.value}
               </div>
-              <div className="mt-2 flex items-center text-[10px] font-bold text-emerald-500 uppercase tracking-tighter bg-emerald-500/10 w-fit px-1.5 py-0.5 rounded">
+              <div className="mt-2 flex items-center text-xs font-bold text-emerald-400 uppercase tracking-tighter bg-emerald-500/10 w-fit px-1.5 py-0.5 rounded">
+                <span className="sr-only">Aumento de </span>
                 ↑ 12% vs mês anterior
               </div>
             </CardContent>
