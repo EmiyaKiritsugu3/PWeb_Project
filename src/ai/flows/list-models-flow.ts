@@ -5,7 +5,6 @@
  */
 
 import { ai } from '@/ai/genkit';
-// import { listModels } from '@genkit-ai/core/plugins'; // Removido devido a erro de exportação na versão atual.
 
 /**
  * Retorna uma lista de nomes de modelos disponíveis no registro do Genkit.
