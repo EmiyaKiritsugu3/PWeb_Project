@@ -3,6 +3,8 @@
 
 import { useState, useMemo } from 'react';
 import { useForm } from "react-hook-form";
+import { streamFlow } from "@genkit-ai/next/client";
+import { motion } from "framer-motion";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PageHeader } from "@/components/page-header";
 import {
@@ -30,7 +32,7 @@ import {
   FormLabel,
 } from "@/components/ui/form";
 import {
-  generateWorkoutPlan
+  streamWorkoutPlan
 } from "@/ai/flows/workout-generator-flow";
 import {
   WorkoutGeneratorInputSchema,
@@ -372,10 +374,18 @@ export default function MeusTreinosClient({ initialTreinos, userId }: { initialT
     const handleGenerate = async (data: WorkoutGeneratorInput) => {
         setIsGenerating(true);
         try {
-            const result = await generateWorkoutPlan(data);
+            const { stream } = streamWorkoutPlan(data) as any;
+            let result: any = null;
+            for await (const chunk of stream) {
+                if (chunk) {
+                    // Update UI progressively if needed
+                    result = chunk;
+                }
+            }
             
+            if (result && result.workouts) {
             for (const workout of result.workouts) {
-                const novosExercicios = workout.exercicios.map((ex, index) => ({
+                const novosExercicios = workout.exercicios.map((ex: any, index: number) => ({
                     nomeExercicio: ex.nomeExercicio,
                     series: ex.series,
                     repeticoes: ex.repeticoes,
@@ -401,6 +411,7 @@ export default function MeusTreinosClient({ initialTreinos, userId }: { initialT
                 duration: 5000,
             });
             window.location.reload();
+            }
         } catch (error) {
             toast({ title: "Erro da IA", variant: "destructive" });
         } finally {
