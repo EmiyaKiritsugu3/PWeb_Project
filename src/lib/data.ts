@@ -4,40 +4,55 @@ import type { Aluno, Plano, Treino, Exercicio } from './definitions';
 // --- Real Data Fetchers (Prisma) ---
 
 export async function getAlunos() {
-  return await prisma.aluno.findMany({
-    orderBy: { nomeCompleto: 'asc' }
-  });
+  try {
+    return await prisma.aluno.findMany({
+      orderBy: { nomeCompleto: 'asc' }
+    });
+  } catch (error) {
+    console.error("Erro ao buscar alunos:", error);
+    return [];
+  }
 }
 
 export async function getPlanos() {
-  return await prisma.plano.findMany({
-    orderBy: { preco: 'asc' }
-  });
+  try {
+    return await prisma.plano.findMany({
+      orderBy: { preco: 'asc' }
+    });
+  } catch (error) {
+    console.error("Erro ao buscar planos:", error);
+    return [];
+  }
 }
 
 export async function getTreinos(alunoId?: string) {
-  return await prisma.treino.findMany({
-    where: alunoId ? { alunoId } : undefined,
-    select: {
-      id: true,
-      alunoId: true,
-      instrutorId: true,
-      objetivo: true,
-      dataCriacao: true,
-      diaSemana: true,
-      Exercicios: {
-        select: {
-          id: true,
-          nomeExercicio: true,
-          series: true,
-          repeticoes: true,
-          observacoes: true,
-          descricao: true,
+  try {
+    return await prisma.treino.findMany({
+      where: alunoId ? { alunoId } : undefined,
+      select: {
+        id: true,
+        alunoId: true,
+        instrutorId: true,
+        objetivo: true,
+        dataCriacao: true,
+        diaSemana: true,
+        Exercicios: {
+          select: {
+            id: true,
+            nomeExercicio: true,
+            series: true,
+            repeticoes: true,
+            observacoes: true,
+            descricao: true,
+          }
         }
-      }
-    },
-    orderBy: { dataCriacao: 'desc' }
-  });
+      },
+      orderBy: { dataCriacao: 'desc' }
+    });
+  } catch (error) {
+    console.error("Erro ao buscar treinos:", error);
+    return [];
+  }
 }
 
 export async function getDashboardStats() {
