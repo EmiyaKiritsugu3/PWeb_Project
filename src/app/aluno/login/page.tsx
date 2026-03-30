@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { logger } from "@/lib/logger";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dumbbell } from "lucide-react";
 import { useAuth, useUser, useFirestore, FirestorePermissionError, errorEmitter } from "@/firebase";
@@ -78,7 +79,7 @@ export default function AlunoLoginPage() {
           requestResourceData: { aluno: alunoData },
         });
         errorEmitter.emit('permission-error', permissionError);
-        console.error("Erro ao criar/atualizar dados do aluno de exemplo:", permissionError);
+        logger.error("Erro ao criar/atualizar dados do aluno de exemplo:", permissionError);
       });
 
       // Podemos fazer o restante de forma otimista
@@ -89,7 +90,7 @@ export default function AlunoLoginPage() {
             const treinoRef = doc(collection(firestore, "alunos", user.uid, "treinos"));
             batch.set(treinoRef, { ...treino, id: treinoRef.id, alunoId: user.uid });
         });
-        batch.commit().catch(err => console.error("Falha ao semear treinos", err));
+        batch.commit().catch(err => logger.error("Falha ao semear treinos", err));
       }
       
       // Atualiza o perfil do usuário do Firebase Auth

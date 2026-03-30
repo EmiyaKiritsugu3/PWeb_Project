@@ -3,6 +3,7 @@
 
 import { useState } from 'react';
 import { PageHeader } from '@/components/page-header';
+import { logger } from "@/lib/logger";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 // import { listModelsFlow } from '@/ai/flows/list-models-flow'; // Comentado para evitar erro de build
@@ -25,7 +26,7 @@ export default function DevPage() {
       setModels(availableModels);
       toast({ title: 'Funcionalidade Desabilitada', description: 'A listagem de modelos foi desabilitada para corrigir o build.' });
     } catch (error) {
-      console.error('Erro ao listar modelos:', error);
+      logger.error('Erro ao listar modelos:', error);
       toast({
         title: 'Erro ao listar modelos',
         description: 'Esta funcionalidade está desabilitada.',

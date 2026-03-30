@@ -8,6 +8,7 @@
 
 import { ai } from '@/ai/genkit';
 import { googleAI } from '@genkit-ai/google-genai';
+import { logger } from "@/lib/logger";
 import { EXERCICIOS_POR_GRUPO } from '@/lib/data';
 import { 
     WorkoutGeneratorInputSchema, 
@@ -54,7 +55,7 @@ export async function generateWorkoutPlan(input: WorkoutGeneratorInput): Promise
     const validatedExercises = workout.exercicios.filter(exercise => {
       const isValid = validExerciseNames.has(exercise.nomeExercicio);
       if (!isValid) {
-        console.warn(`[Validação IA] Exercício inválido removido do plano: "${exercise.nomeExercicio}"`);
+        logger.warn(`[Validação IA] Exercício inválido removido do plano: "${exercise.nomeExercicio}"`);
       }
       return isValid;
     });

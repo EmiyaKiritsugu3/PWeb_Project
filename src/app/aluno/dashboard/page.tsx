@@ -7,6 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useUser, useCollection, useFirestore, useMemoFirebase, useDoc } from "@/firebase";
 import type { Treino, Aluno, Exercicio } from "@/lib/definitions";
 import { cn } from "@/lib/utils";
+import { logger } from "@/lib/logger";
 import { Button } from "@/components/ui/button";
 import { Sparkles, BrainCircuit, Info, CalendarOff } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -318,7 +319,7 @@ export default function AlunoDashboardPage() {
             setFeedback(result);
 
         } catch (error) {
-            console.error("Error generating feedback:", error);
+            logger.error("Error generating feedback:", error);
             setFeedback({
                 title: "Ocorreu um erro",
                 message: "Não foi possível gerar seu feedback no momento. Tente novamente mais tarde."

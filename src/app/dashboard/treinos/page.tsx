@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { EXERCICIOS_POR_GRUPO } from "@/lib/data";
+import { logger } from "@/lib/logger";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -335,7 +336,7 @@ export default function TreinosPage() {
             setObjetivo('');
             setExercicios([]);
         } catch (error: unknown) {
-            console.error("Erro ao salvar treino:", error);
+            logger.error("Erro ao salvar treino:", error);
             if (error instanceof FirestorePermissionError) {
                  errorEmitter.emit('permission-error', error);
             } else {
@@ -360,7 +361,7 @@ export default function TreinosPage() {
                 description: "Revise e edite o plano abaixo antes de salvar.",
             });
         } catch (error) {
-            console.error("Erro ao gerar treino com IA:", error);
+            logger.error("Erro ao gerar treino com IA:", error);
             toast({
                 title: "Erro da IA",
                 description: "Não foi possível gerar o plano. Tente novamente.",
@@ -411,7 +412,7 @@ export default function TreinosPage() {
             setPlanoGerado(null);
 
         } catch (error) {
-            console.error("Erro ao salvar plano gerado:", error);
+            logger.error("Erro ao salvar plano gerado:", error);
             toast({ title: "Erro ao Salvar", description: "Não foi possível salvar o plano.", variant: "destructive" });
         }
     };

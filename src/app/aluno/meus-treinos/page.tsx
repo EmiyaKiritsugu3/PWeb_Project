@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { EXERCICIOS_POR_GRUPO, DIAS_DA_SEMANA } from "@/lib/data";
+import { logger } from "@/lib/logger";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -348,7 +349,7 @@ export default function MeusTreinosPage() {
             setIsFormVisible(false);
             setEditingTreino(null);
         } catch (error) {
-            console.error("Erro ao salvar treino:", error);
+            logger.error("Erro ao salvar treino:", error);
             toast({ title: "Erro ao salvar", description: "Não foi possível salvar o treino. Tente novamente.", variant: "destructive" });
         }
     };
@@ -374,7 +375,7 @@ export default function MeusTreinosPage() {
             await updateDoc(treinoRef, { diaSemana: novoDia });
             toast({ title: 'Agenda atualizada!' });
         } catch (error) {
-            console.error("Erro ao atualizar dia do treino:", error);
+            logger.error("Erro ao atualizar dia do treino:", error);
             toast({ title: "Erro ao atualizar agenda", variant: "destructive" });
         }
     };
@@ -391,7 +392,7 @@ export default function MeusTreinosPage() {
             await deleteDoc(doc(treinosCollectionRef, deletingTreino.id));
             toast({ title: 'Treino excluído!', variant: 'destructive' });
         } catch (error) {
-            console.error("Erro ao excluir treino:", error);
+            logger.error("Erro ao excluir treino:", error);
             toast({ title: "Erro ao excluir", variant: "destructive" });
         }
 
@@ -443,7 +444,7 @@ export default function MeusTreinosPage() {
                 duration: 5000,
             });
         } catch (error) {
-            console.error("Erro ao gerar treino com IA:", error);
+            logger.error("Erro ao gerar treino com IA:", error);
             toast({ title: "Erro da IA", description: "Não foi possível gerar o plano. Tente novamente.", variant: "destructive" });
         } finally {
             setIsGenerating(false);
@@ -535,7 +536,7 @@ export default function MeusTreinosPage() {
                 className: "bg-green-600 text-white",
             });
         } catch (error) {
-            console.error("Erro ao salvar histórico de treino:", error);
+            logger.error("Erro ao salvar histórico de treino:", error);
             toast({ title: "Erro ao salvar histórico", variant: "destructive" });
         }
 
