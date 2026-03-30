@@ -1,4 +1,5 @@
 import { db } from '@/lib/dummyDb';
+import { randomUUID } from 'crypto';
 
 export interface Aluno {
   id: string;
@@ -8,7 +9,7 @@ export interface Aluno {
 }
 
 export async function createAluno(alunoData: Omit<Aluno, 'id'>): Promise<Aluno> {
-  const id = Math.random().toString(36).substring(2, 9);
+  const id = randomUUID();
   const newAluno: Aluno = { ...alunoData, id };
   const result = await db.insert('alunos', newAluno);
   return result;
