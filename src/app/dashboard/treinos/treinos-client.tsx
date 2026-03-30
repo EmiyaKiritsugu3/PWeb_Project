@@ -3,6 +3,8 @@
 
 import { useState } from 'react';
 import { useForm } from "react-hook-form";
+import { streamFlow } from "@genkit-ai/next/client";
+import { motion } from "framer-motion";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PageHeader } from "@/components/page-header";
 import {
@@ -29,7 +31,7 @@ import {
   FormLabel,
 } from "@/components/ui/form";
 import {
-  generateWorkoutPlan
+  streamWorkoutPlan
 } from "@/ai/flows/workout-generator-flow";
 import {
   WorkoutGeneratorInputSchema,
@@ -315,10 +317,15 @@ export default function TreinosManagementClient({ initialAlunos, instrutorId }: 
         }
         setIsGenerating(true);
         try {
-            const result = await generateWorkoutPlan(data);
-            setPlanoGerado(result);
+            const { stream } = streamWorkoutPlan(data) as any;
+            for await (const chunk of stream) {
+                if (chunk) {
+                    setPlanoGerado(chunk as any);
+                }
+            }
             toast({ title: "Plano Gerado!" });
         } catch (error) {
+            console.error(error);
             toast({ title: "Erro da IA", variant: "destructive" });
         } finally {
             setIsGenerating(false);
