@@ -21,11 +21,16 @@ For UI layout, responsive tokens, coloring, and animations, consult:
 ### Backend & Database
 For server actions, Zod schemas, error handling, and data hydration, consult:
 ▶️ @.agents/skills/prisma-backend/SKILL.md
+▶️ @docs/tech_stack/Prisma ORM Advanced Architecture Deep Dive.md
+▶️ @docs/tech_stack/Zod Architecture_ Parse, Don't Validate.md
 
-### Core Architecture & Ralph Loop Context
-To understand what exists and what is being built right now, ALWAYS review:
-▶️ @docs/PRD.md
-▶️ @docs/prompt.md
+### Deep Tech Knowledge (Lore & Advanced Blueprints)
+When standard rules are insufficient for complex architecture, consult:
+▶️ @docs/tech_stack/Advanced TypeScript Architecture Research.md
+▶️ @docs/tech_stack/Tailwind CSS v4 Deep Dive.md
+▶️ @docs/tech_stack/Framer Motion_ Next.js Performance Mastery.md
+▶️ @docs/tech_stack/Genkit Next.js 15 AI Architecture Manual.md
+▶️ @docs/tech_stack/Zustand State Management Deep Dive.md
 
 ## 3. Strict Prohibitions
 - NEVER use generic or vague commit messages.
