@@ -3,7 +3,6 @@
 
 import { useState } from 'react';
 import { useForm } from "react-hook-form";
-import { streamFlow } from "@genkit-ai/next/client";
 import { motion } from "framer-motion";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PageHeader } from "@/components/page-header";
@@ -317,12 +316,14 @@ export default function TreinosManagementClient({ initialAlunos, instrutorId }: 
         }
         setIsGenerating(true);
         try {
-            const { stream } = streamWorkoutPlan(data) as any;
+            const { stream, output } = streamWorkoutPlan.stream(data) as any;
             for await (const chunk of stream) {
                 if (chunk) {
                     setPlanoGerado(chunk as any);
                 }
             }
+            const finalResult = await output;
+            setPlanoGerado(finalResult);
             toast({ title: "Plano Gerado!" });
         } catch (error) {
             console.error(error);
