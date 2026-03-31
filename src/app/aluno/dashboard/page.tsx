@@ -25,8 +25,6 @@ export default async function AlunoDashboardPage() {
             streakDiasSeguidos: true,
             treinosNoMes: true,
             ultimoTreinoData: true,
-            xpToNextLevel: true,
-            progressPerc: true,
             Matriculas: {
                 where: { status: 'ATIVA' },
                 take: 1,
@@ -76,8 +74,12 @@ export default async function AlunoDashboardPage() {
         }
     });
 
-    // 3. Serializar objetos para Passar para Client Components (Evitar erros de Symbol/Date)
+    // 3. Serializar objetos e injetar DTOs Calculados (Evitar erros de Symbol/Date)
     const serializedAluno = JSON.parse(JSON.stringify(aluno));
+    const xpToNextLevel = serializedAluno.nivel * 1500;
+    serializedAluno.xpToNextLevel = xpToNextLevel;
+    serializedAluno.progressPerc = Math.min(Math.round((serializedAluno.exp / xpToNextLevel) * 100), 100);
+
     const serializedTreino = JSON.parse(JSON.stringify(treinoDoDia));
 
     return (

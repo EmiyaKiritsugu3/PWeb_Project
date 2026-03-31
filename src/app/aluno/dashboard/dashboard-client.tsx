@@ -43,261 +43,10 @@ import { finalizarTreinoAction } from "@/lib/actions/alunos";
 import { useToast } from "@/hooks/use-toast";
 import { CircularProgress } from "@/components/ui/circular-progress";
 
-// Componente para o Modal de Visualização do Exercício
-function ExercicioViewer({ exercicio, isOpen, onOpenChange }: { exercicio: Exercicio | null; isOpen: boolean; onOpenChange: (open: boolean) => void; }) {
-    if (!exercicio) return null;
-
-    return (
-        <AlertDialog open={isOpen} onOpenChange={onOpenChange}>
-            <AlertDialogContent className="glass-card max-w-md border-cyan-500/20">
-                <AlertDialogHeader>
-                    <AlertDialogTitle className="text-gradient-cyan text-2xl">{exercicio.nomeExercicio}</AlertDialogTitle>
-                </AlertDialogHeader>
-                <ScrollArea className="max-h-80 w-full rounded-md pr-4">
-                    <div className="grid gap-4 py-4 text-sm text-foreground/80 leading-relaxed">
-                        {exercicio.descricao || "Nenhuma descrição disponível para este exercício."}
-                    </div>
-                </ScrollArea>
-                <AlertDialogFooter>
-                    <AlertDialogCancel className="bg-white/5 hover:bg-white/10 border-white/10">Fechar</AlertDialogCancel>
-                </AlertDialogFooter>
-            </AlertDialogContent>
-        </AlertDialog>
-    );
-}
-
-// Componente para o Card de Matrícula
-function CardMatricula({ aluno }: { aluno: Aluno | null }) {
-    if (!aluno) return null;
-
-    const statusConfig = {
-        ATIVA: {
-            text: "Matrícula Ativa",
-            icon: <CheckCircle2 className="h-5 w-5 text-green-400" />,
-            glow: "border-green-500/30 shadow-[0_0_15px_rgba(34,197,94,0.1)]"
-        },
-        INADIMPLENTE: {
-            text: "Pagamento Pendente",
-            icon: <AlertCircle className="h-5 w-5 text-red-400" />,
-            glow: "border-red-500/30 shadow-[0_0_15px_rgba(239,68,68,0.1)]"
-        },
-        INATIVA: {
-            text: "Matrícula Inativa",
-            icon: <Info className="h-5 w-5 text-gray-400" />,
-            glow: "border-gray-500/30"
-        },
-    };
-
-    const config = statusConfig[aluno.statusMatricula] || statusConfig.INATIVA;
-    const dataVencimento = new Date();
-    dataVencimento.setDate(dataVencimento.getDate() + 15);
-
-    return (
-        <Card glass className={cn("overflow-hidden", config.glow)}>
-            <CardContent className="p-6 flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                    <div className="p-3 rounded-full bg-white/5 border border-white/10">
-                        <Calendar className="h-6 w-6 text-primary" />
-                    </div>
-                    <div>
-                        <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Status do Plano</p>
-                        <h3 className="text-xl font-bold headline flex items-center gap-2">
-                           {config.text}
-                        </h3>
-                    </div>
-                </div>
-                <div className="text-right">
-                   <p className="text-xs text-muted-foreground uppercase">Vencimento</p>
-                   <p className="font-bold text-white/90">{dataVencimento.toLocaleDateString('pt-BR')}</p>
-                </div>
-            </CardContent>
-        </Card>
-    );
-}
-// Componente para o Card de Treino
-function CardTreino({ 
-    treino, 
-    onFinishTraining, 
-    isFeedbackLoading,
-    onViewExercicio
-}: { 
-    treino: Treino | null;
-    onFinishTraining: (completedExercises: string[]) => void;
-    isFeedbackLoading: boolean;
-    onViewExercicio: (exercicio: Exercicio) => void;
-}) {
-    const [checkedExercises, setCheckedExercises] = useState<Record<string, boolean>>({});
-
-    useEffect(() => {
-        if (!treino) return;
-        const storageKey = `checkedExercises-${new Date().toISOString().split('T')[0]}-${treino?.id}`;
-        const savedState = localStorage.getItem(storageKey);
-        if (savedState) {
-            setCheckedExercises(JSON.parse(savedState));
-        }
-    }, [treino]);
-
-    const handleCheckChange = (exerciseId: string) => {
-        if (!treino) return;
-        const storageKey = `checkedExercises-${new Date().toISOString().split('T')[0]}-${treino?.id}`;
-        const newState = { ...checkedExercises, [exerciseId]: !checkedExercises[exerciseId] };
-        setCheckedExercises(newState);
-        localStorage.setItem(storageKey, JSON.stringify(newState));
-    };
-    
-    const handleFinishClick = () => {
-        const completed = Object.keys(checkedExercises).filter(id => checkedExercises[id]);
-        onFinishTraining(completed);
-    }
-
-    if (!treino) {
-        return (
-             <Card glass className="border-dashed border-white/10">
-                <CardContent className="flex flex-col items-center justify-center text-center py-16 gap-6">
-                    <div className="p-6 rounded-full bg-white/5 border border-white/5 animate-float">
-                        <CalendarOff className="h-16 w-16 text-muted-foreground/50" />
-                    </div>
-                    <div>
-                        <h3 className="text-2xl font-bold headline">Dia de Descanso Ativo</h3>
-                        <p className="text-muted-foreground max-w-xs mx-auto mt-2">
-                           Aproveite para focar na mobilidade e recuperação. Sua próxima evolução começa no próximo treino!
-                        </p>
-                    </div>
-                </CardContent>
-            </Card>
-        );
-    }
-
-    const allExercises = treino.exercicios || [];
-    const completedCount = Object.values(checkedExercises).filter(Boolean).length;
-    const progressPerc = Math.round((completedCount / allExercises.length) * 100) || 0;
-    
-    return (
-        <Card glass className="border-cyan-500/10 shadow-cyan-500/5">
-            <CardHeader className="flex flex-row items-center justify-between">
-                <div>
-                   <CardTitle className="text-2xl font-bold text-gradient-cyan">
-                       {treino.objetivo}
-                   </CardTitle>
-                   <CardDescription className="text-muted-foreground/80 mt-1">
-                       Desempenho atual: {progressPerc}% completo
-                   </CardDescription>
-                </div>
-                <div className="hidden sm:block">
-                    <CircularProgress value={progressPerc} size="sm" strokeWidth={6} showValue gradient="cyan" />
-                </div>
-            </CardHeader>
-            <CardContent className="grid gap-4">
-                {allExercises.map((exercicio) => (
-                    <div 
-                        key={exercicio.id} 
-                        className={cn(
-                            "group rounded-xl border border-white/5 p-4 flex items-center justify-between transition-all duration-300 hover:bg-white/5",
-                            checkedExercises[exercicio.id] && "bg-cyan-500/10 border-cyan-500/30"
-                        )}
-                    >
-                        <div className="flex items-center gap-4">
-                             <Checkbox
-                                id={exercicio.id}
-                                checked={checkedExercises[exercicio.id] || false}
-                                onCheckedChange={() => handleCheckChange(exercicio.id)}
-                                className="h-6 w-6 border-white/20 data-[state=checked]:bg-cyan-500 data-[state=checked]:border-cyan-500"
-                            />
-                            <div>
-                                <label 
-                                    htmlFor={exercicio.id} 
-                                    className={cn(
-                                        "font-bold text-lg cursor-pointer transition-all",
-                                        checkedExercises[exercicio.id] ? "text-cyan-400" : "text-white/90"
-                                    )}
-                                >
-                                    {exercicio.nomeExercicio}
-                                </label>
-                                <p className="text-xs text-muted-foreground uppercase tracking-widest font-semibold mt-0.5">
-                                    {exercicio.series} x {exercicio.repeticoes} • REPETIÇÕES
-                                </p>
-                            </div>
-                        </div>
-                         <div className="flex items-center gap-2">
-                             {exercicio.descricao && (
-                                <Button 
-                                    variant="ghost" 
-                                    size="icon" 
-                                    onClick={() => onViewExercicio(exercicio)}
-                                    className="hover:text-cyan-400"
-                                >
-                                    <Info className="h-5 w-5" />
-                                </Button>
-                            )}
-                         </div>
-                    </div>
-                ))}
-            </CardContent>
-            <CardFooter className="bg-white/5 p-6 border-t border-white/5">
-                <Button 
-                    variant="premium"
-                    size="lg"
-                    onClick={handleFinishClick} 
-                    disabled={completedCount === 0 || isFeedbackLoading} 
-                    className="w-full text-lg h-14 font-bold tracking-tight rounded-xl"
-                >
-                    {isFeedbackLoading ? (
-                        <div className="flex items-center gap-2">
-                           <BrainCircuit className="animate-pulse" />
-                           Processando análise...
-                        </div>
-                    ) : (
-                        <div className="flex items-center gap-2">
-                           <Sparkles className="h-5 w-5" />
-                           Finalizar e Avaliar Treino
-                        </div>
-                    )}
-                </Button>
-            </CardFooter>
-        </Card>
-    );
-}
-
-// Componente para o feedback da IA
-function CardFeedback({ feedback, isLoading }: { feedback: { title: string; message: string; } | null, isLoading: boolean }) {
-    if (isLoading) {
-        return (
-             <Card glass className="border-cyan-500/20 glow-cyan">
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-3 text-cyan-400">
-                        <BrainCircuit className="h-6 w-6 animate-pulse" />
-                        <span className="headline">Pulsando Bio-Dados...</span>
-                    </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                    <Skeleton className="h-4 w-3/4 bg-white/5" />
-                    <Skeleton className="h-4 w-full bg-white/5" />
-                    <Skeleton className="h-4 w-2/3 bg-white/5" />
-                </CardContent>
-            </Card>
-        )
-    }
-
-    if (!feedback) return null;
-
-    return (
-        <Card glass className="border-cyan-500/40 shadow-cyan-500/10 animate-in fade-in zoom-in duration-500">
-            <CardHeader>
-                <CardTitle className="flex items-center gap-3 text-cyan-400">
-                    <Sparkles className="h-6 w-6" />
-                    <span className="headline text-2xl">{feedback.title}</span>
-                </CardTitle>
-            </CardHeader>
-            <CardContent>
-                <div className="p-4 rounded-xl bg-cyan-500/5 border border-cyan-500/10">
-                    <p className="text-foreground/90 text-sm leading-relaxed italic">
-                        "{feedback.message}"
-                    </p>
-                </div>
-            </CardContent>
-        </Card>
-    )
-}
+import { ExercicioViewer } from "@/components/dashboard/aluno/exercicio-viewer";
+import { CardMatricula } from "@/components/dashboard/aluno/card-matricula";
+import { CardTreino } from "@/components/dashboard/aluno/card-treino";
+import { CardFeedback } from "@/components/dashboard/aluno/card-feedback";
 
 interface AlunoDashboardClientProps {
     initialAluno: Aluno;
@@ -307,6 +56,12 @@ interface AlunoDashboardClientProps {
 export default function AlunoDashboardClient({ initialAluno, initialTreino }: AlunoDashboardClientProps) {
     const { toast } = useToast();
     const [aluno, setAluno] = useState<Aluno>(initialAluno);
+    
+    // Sync local state when server props update from revalidatePath
+    useEffect(() => {
+        setAluno(initialAluno);
+    }, [initialAluno]);
+
     const [feedback, setFeedback] = useState<{ title: string; message: string; } | null>(null);
     const [isFeedbackLoading, setIsFeedbackLoading] = useState(false);
     const [isViewerOpen, setIsViewerOpen] = useState(false);
@@ -352,8 +107,8 @@ export default function AlunoDashboardClient({ initialAluno, initialTreino }: Al
         }
     };
 
-    const xpToNextLevel = aluno.xpToNextLevel ?? (aluno.nivel * 1500);
-    const progressPerc = aluno.progressPerc ?? Math.min(Math.round((aluno.exp / xpToNextLevel) * 100), 100);
+    const xpToNextLevel = aluno.xpToNextLevel as number;
+    const progressPerc = aluno.progressPerc as number;
 
     return (
        <div className="max-w-7xl mx-auto px-4 pb-20 bg-black min-h-screen">

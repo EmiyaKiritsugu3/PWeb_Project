@@ -64,7 +64,7 @@ export default async function MeusTreinosPage() {
     return (
         <MeusTreinosClient 
             initialTreinos={treinosData} 
-            userId={user.id}
+            userId={aluno.id}
         />
     );
 }
