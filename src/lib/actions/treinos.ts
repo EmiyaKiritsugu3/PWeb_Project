@@ -4,6 +4,7 @@ import { Prisma } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { TreinoSchema, HistoricoTreinoSchema } from "@/lib/definitions";
 import { createClient } from "@/utils/supabase/server";
 
 export async function upsertTreinoAction(treinoData: any) {
@@ -12,7 +13,9 @@ export async function upsertTreinoAction(treinoData: any) {
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     if (authError || !user) throw new Error("Usuário não autenticado");
 
-    const { id, alunoId, instrutorId, objetivo, exercicios, diaSemana } = treinoData;
+    // Validação Zod
+    const validatedData = TreinoSchema.parse(treinoData);
+    const { id, alunoId, instrutorId, objetivo, exercicios, diaSemana } = validatedData;
 
     if (id && id.length > 20) { // Check if it's a UUID/ID from Prisma, or if it's a new one
         // Update
@@ -38,7 +41,7 @@ export async function upsertTreinoAction(treinoData: any) {
         await prisma.treino.create({
             data: {
                 alunoId,
-                instrutorId,
+                instrutorId: instrutorId || null,
                 objetivo,
                 diaSemana,
                 Exercicios: {
@@ -57,9 +60,12 @@ export async function upsertTreinoAction(treinoData: any) {
     revalidatePath("/aluno/meus-treinos");
     revalidatePath("/dashboard/treinos");
     return { success: true };
-  } catch (error) {
+  } catch (error: any) {
     console.error("Erro ao salvar treino:", error);
-    return { success: false, error: (error as Error).message };
+    if (error.name === "ZodError") {
+      return { success: false, error: "Dados do treino inválidos", details: error.flatten().fieldErrors };
+    }
+    return { success: false, error: error.message };
   }
 }
 
@@ -109,6 +115,9 @@ export async function registrarHistoricoTreinoAction(historicoData: any) {
             throw new Error("Usuário não autenticado");
         }
 
+        // Validação Zod
+        const validatedData = HistoricoTreinoSchema.parse(historicoData);
+
         // Buscar aluno pelo email
         const aluno = await prisma.aluno.findUnique({
             where: { email: user.email! },
@@ -127,11 +136,11 @@ export async function registrarHistoricoTreinoAction(historicoData: any) {
             const historico = await tx.historicoTreino.create({
                 data: {
                     alunoId: aluno.id,
-                    treinoId: historicoData.treinoId,
-                    duracaoMinutos: historicoData.duracaoMinutos,
-                    dataExecucao: new Date(historicoData.dataExecucao),
+                    treinoId: validatedData.treinoId,
+                    duracaoMinutos: validatedData.duracaoMinutos,
+                    dataExecucao: new Date(validatedData.dataExecucao),
                     SeriesExecutadas: {
-                        create: historicoData.exercicios.flatMap((ex: any) => 
+                        create: validatedData.exercicios.flatMap((ex: any) => 
                             ex.seriesExecutadas.map((serie: any) => ({
                                 exercicioId: ex.exercicioId,
                                 nomeExercicio: ex.nomeExercicio,
@@ -169,7 +178,7 @@ export async function registrarHistoricoTreinoAction(historicoData: any) {
                 novaExp += 100; // 100 XP base por treino completo
 
                 // Bônus por volume de séries concluídas
-                const totalSeriesConcluidas = historicoData.exercicios.reduce((acc: number, ex: any) => 
+                const totalSeriesConcluidas = validatedData.exercicios.reduce((acc: number, ex: any) => 
                     acc + ex.seriesExecutadas.filter((s: any) => s.concluido).length, 0
                 );
                 novaExp += totalSeriesConcluidas * 10; // 10 XP por série
@@ -218,6 +227,9 @@ export async function registrarHistoricoTreinoAction(historicoData: any) {
         return { success: true, data: result };
     } catch (error: any) {
         console.error("Erro ao registrar histórico de treino:", error);
+        if (error.name === "ZodError") {
+            return { success: false, error: "Dados do histórico inválidos", details: error.flatten().fieldErrors };
+        }
         return { success: false, error: error.message };
     }
 }
