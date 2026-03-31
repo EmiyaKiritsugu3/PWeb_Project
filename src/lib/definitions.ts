@@ -80,30 +80,66 @@ export const HistoricoTreinoSchema = z.object({
 
 export type HistoricoTreino = z.infer<typeof HistoricoTreinoSchema>;
 
-// --- Outros Tipos Financeiros ---
+// --- Schemas & Tipos: Financeiro ---
 
-export type Plano = {
-  id: string;
-  nome: string;
-  preco: number;
-  duracaoDias: number;
-};
+export const PlanoSchema = z.object({
+  id: z.string().optional(),
+  nome: z.string(),
+  preco: z.coerce.number(),
+  duracaoDias: z.coerce.number().int(),
+});
 
-export type Matricula = {
-  id: string;
-  alunoId: string;
-  planoId: string;
-  dataInicio: string;
-  dataVencimento: string;
-  status: "ATIVA" | "VENCIDA";
-};
+export type Plano = z.infer<typeof PlanoSchema>;
 
-export type Pagamento = {
-  id: string;
-  matriculaId: string;
-  alunoId: string;
-  valor: number;
-  dataPagamento: string;
-  metodo: "PIX" | "Dinheiro" | "Cartão";
-};
+export const MatriculaSchema = z.object({
+  id: z.string().optional(),
+  alunoId: z.string(),
+  planoId: z.string(),
+  dataInicio: z.string().or(z.date()),
+  dataVencimento: z.string().or(z.date()),
+  status: z.enum(["ATIVA", "VENCIDA"]).default("ATIVA"),
+});
+
+export type Matricula = z.infer<typeof MatriculaSchema>;
+
+export const PagamentoSchema = z.object({
+  id: z.string().optional(),
+  matriculaId: z.string(),
+  alunoId: z.string(),
+  valor: z.coerce.number(),
+  dataPagamento: z.string().or(z.date()),
+  metodo: z.enum(["PIX", "Dinheiro", "Cartão"]),
+});
+
+export type Pagamento = z.infer<typeof PagamentoSchema>;
+
+// --- Schemas & Tipos: Dashboard & Views ---
+
+export const GrowthDataSchema = z.object({
+  mes: z.string(),
+  alunos: z.number().int(),
+});
+
+export type GrowthData = z.infer<typeof GrowthDataSchema>;
+
+export const DashboardStatsSchema = z.object({
+  totalAlunos: z.number().int().default(0),
+  matriculasAtivas: z.number().int().default(0),
+  alunosInadimplentes: z.number().int().default(0),
+  faturamentoMensal: z.number().default(0),
+  crescimentoAnual: z.array(GrowthDataSchema).default([]),
+});
+
+export type DashboardStats = z.infer<typeof DashboardStatsSchema>;
+
+export const V_FaturamentoMensalSchema = z.object({
+  Mes: z.string(),
+  TotalRecebido: z.number(),
+  QtdPagamentos: z.coerce.number().int(),
+});
+
+export const V_FrequenciaAlunosSchema = z.object({
+  nomeCompleto: z.string(),
+  TotalTreinos: z.coerce.number().int(),
+});
 
