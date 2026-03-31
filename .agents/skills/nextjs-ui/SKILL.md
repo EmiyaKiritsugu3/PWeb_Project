@@ -24,3 +24,8 @@ This skill defines the architectural rules for writing components, pages, and la
 - For input states and validations, use standard React-hook-form bindings gracefully tied to Zod validation states.
 - Always display explicit error messages below the input fields in a subtle `text-red-400`.
 - Icons should utilize `lucide-react`. Ensure appropriate strokewidth and sizing matching the font scaling.
+
+## 4. Deep Context Technical Manuals
+When architecting complex UI layouts or performance-intensive animations, consult:
+▶️ @docs/tech_stack/Tailwind CSS v4 Deep Dive.md
+▶️ @docs/tech_stack/Framer Motion_ Next.js Performance Mastery.md

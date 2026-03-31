@@ -1,53 +1,59 @@
 import { prisma } from './prisma';
-import type { Aluno, Plano, Treino, Exercicio } from './definitions';
+import { 
+  AlunoSchema, 
+  PlanoSchema, 
+  TreinoSchema, 
+  DashboardStatsSchema,
+  V_FaturamentoMensalSchema,
+  type Aluno,
+  type Plano,
+  type Treino
+} from './definitions';
 
 // --- Real Data Fetchers (Prisma) ---
 
-export async function getAlunos() {
+export async function getAlunos(): Promise<Aluno[]> {
   try {
-    return await prisma.aluno.findMany({
+    const alunos = await prisma.aluno.findMany({
       orderBy: { nomeCompleto: 'asc' }
     });
+    // AlunoSchema agora exige ID obrigatório, o que o Prisma retorna
+    return alunos.map((aluno: any) => AlunoSchema.parse(aluno));
   } catch (error) {
     console.error("Erro ao buscar alunos:", error);
     return [];
   }
 }
 
-export async function getPlanos() {
+export async function getPlanos(): Promise<Plano[]> {
   try {
-    return await prisma.plano.findMany({
+    const planos = await prisma.plano.findMany({
       orderBy: { preco: 'asc' }
     });
+    return planos.map((plano: any) => PlanoSchema.parse(plano));
   } catch (error) {
     console.error("Erro ao buscar planos:", error);
     return [];
   }
 }
 
-export async function getTreinos(alunoId?: string) {
+export async function getTreinos(alunoId?: string): Promise<any[]> {
   try {
-    return await prisma.treino.findMany({
+    const treinos = await prisma.treino.findMany({
       where: alunoId ? { alunoId } : undefined,
-      select: {
-        id: true,
-        alunoId: true,
-        instrutorId: true,
-        objetivo: true,
-        dataCriacao: true,
-        diaSemana: true,
-        Exercicios: {
-          select: {
-            id: true,
-            nomeExercicio: true,
-            series: true,
-            repeticoes: true,
-            observacoes: true,
-            descricao: true,
-          }
-        }
+      include: {
+        Exercicios: true
       },
       orderBy: { dataCriacao: 'desc' }
+    });
+    
+    // Validamos a estrutura, embora o tipo many-to-many precise de mapeamento
+    return treinos.map((t: any) => {
+      const { Exercicios, ...rest } = t;
+      return TreinoSchema.parse({
+        ...rest,
+        exercicios: Exercicios
+      });
     });
   } catch (error) {
     console.error("Erro ao buscar treinos:", error);
@@ -63,35 +69,35 @@ export async function getDashboardStats() {
       prisma.aluno.count({ where: { statusMatricula: 'INADIMPLENTE' } })
     ]);
 
-    // Use the view created in academic_features.sql
+    // Busca faturamento via View SQL
     let faturamentoMensal = 0;
     try {
-      const faturamento = await prisma.$queryRaw`SELECT "TotalRecebido" FROM "V_FaturamentoMensal" LIMIT 1`;
-      faturamentoMensal = (faturamento as any)?.[0]?.TotalRecebido || 0;
+      const rawFaturamento = await prisma.$queryRaw`SELECT * FROM "V_FaturamentoMensal" LIMIT 1`;
+      const faturamentoValidado = V_FaturamentoMensalSchema.safeParse((rawFaturamento as any)?.[0]);
+      
+      if (faturamentoValidado.success) {
+        faturamentoMensal = faturamentoValidado.data.TotalRecebido;
+      }
     } catch (viewError) {
-      console.warn("Aviso: Visão V_FaturamentoMensal não encontrada. Usando valor padrão 0.");
+      console.warn("Aviso: Falha ao ler V_FaturamentoMensal. O banco pode estar vazio ou a view ausente.");
     }
+
+    // Projeção de Crescimento Validada
+    const meses = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun"];
+    const crescimentoAnual = meses.map((mes, idx) => ({
+      mes,
+      alunos: Math.floor(totalAlunos * (0.7 + (idx * 0.05))) // Simula crescimento gradual baseado no total atual
+    }));
     
-    return {
+    return DashboardStatsSchema.parse({
       totalAlunos,
       matriculasAtivas,
       alunosInadimplentes,
       faturamentoMensal,
-      crescimentoAnual: [
-        { mes: "Jan", alunos: Math.floor(totalAlunos * 0.8) },
-        { mes: "Fev", alunos: Math.floor(totalAlunos * 0.85) },
-        { mes: "Mar", alunos: Math.floor(totalAlunos * 0.9) },
-        { mes: "Abr", alunos: totalAlunos },
-      ]
-    };
+      crescimentoAnual,
+    });
   } catch (error) {
     console.error("Erro crítico ao buscar estatísticas do Dashboard:", error);
-    return {
-      totalAlunos: 0,
-      matriculasAtivas: 0,
-      alunosInadimplentes: 0,
-      faturamentoMensal: 0,
-      crescimentoAnual: []
-    };
+    return DashboardStatsSchema.parse({}); // Retorna valores padrão seguros do schema
   }
 }
