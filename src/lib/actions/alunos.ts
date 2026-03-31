@@ -3,6 +3,7 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { AlunoSchema } from "@/lib/definitions";
 import type { Aluno } from "@/lib/definitions";
 import { createClient } from "@/utils/supabase/server";
 
@@ -115,14 +116,17 @@ export async function createAlunoAction(data: any) {
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     if (authError || !user) throw new Error("Usuário não autenticado");
 
+    // Validação Zod
+    const validatedData = AlunoSchema.parse(data);
+
     const aluno = await prisma.aluno.create({
       data: {
-        nomeCompleto: data.nomeCompleto,
-        cpf: data.cpf,
-        email: data.email,
-        telefone: data.telefone,
-        dataNascimento: data.dataNascimento ? new Date(data.dataNascimento) : null,
-        statusMatricula: data.statusMatricula || 'ATIVA',
+        nomeCompleto: validatedData.nomeCompleto,
+        cpf: validatedData.cpf,
+        email: validatedData.email,
+        telefone: validatedData.telefone,
+        dataNascimento: validatedData.dataNascimento ? new Date(validatedData.dataNascimento) : null,
+        statusMatricula: validatedData.statusMatricula,
         fotoUrl: `https://picsum.photos/seed/${Math.random().toString()}/100/100`,
       },
     });
@@ -131,6 +135,9 @@ export async function createAlunoAction(data: any) {
     return { success: true, data: aluno };
   } catch (error: any) {
     console.error("Prisma create error:", error);
+    if (error.name === "ZodError") {
+      return { success: false, error: "Dados inválidos", details: error.flatten().fieldErrors };
+    }
     return { success: false, error: error.message };
   }
 }
@@ -141,15 +148,18 @@ export async function updateAlunoAction(id: string, data: any) {
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     if (authError || !user) throw new Error("Usuário não autenticado");
 
+    // Validação Zod (permite campos opcionais já que é um update)
+    const validatedData = AlunoSchema.partial().parse(data);
+
     const updated = await prisma.aluno.update({
       where: { id },
       data: {
-        nomeCompleto: data.nomeCompleto,
-        cpf: data.cpf,
-        email: data.email,
-        telefone: data.telefone,
-        dataNascimento: data.dataNascimento ? new Date(data.dataNascimento) : null,
-        statusMatricula: data.statusMatricula,
+        nomeCompleto: validatedData.nomeCompleto,
+        cpf: validatedData.cpf,
+        email: validatedData.email,
+        telefone: validatedData.telefone,
+        dataNascimento: validatedData.dataNascimento ? new Date(validatedData.dataNascimento) : null,
+        statusMatricula: validatedData.statusMatricula,
       },
     });
 
@@ -157,6 +167,9 @@ export async function updateAlunoAction(id: string, data: any) {
     return { success: true, data: updated };
   } catch (error: any) {
     console.error("Prisma update error:", error);
+    if (error.name === "ZodError") {
+      return { success: false, error: "Dados inválidos", details: error.flatten().fieldErrors };
+    }
     return { success: false, error: error.message };
   }
 }
