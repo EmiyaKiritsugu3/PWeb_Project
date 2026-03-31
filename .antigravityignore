@@ -1,0 +1,9 @@
+# .antigravityignore
+# Exclude build output, massive dependencies, and binaries from the AI Context Engine
+node_modules/
+.next/
+dist/
+public/media/
+.env*
+coverage/
+*.lock
