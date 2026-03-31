@@ -4,7 +4,7 @@ import { Prisma } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-import { TreinoSchema, HistoricoTreinoSchema } from "@/lib/definitions";
+import { TreinoSchema, TreinoBaseSchema, HistoricoTreinoSchema, HistoricoTreinoBaseSchema } from "@/lib/definitions";
 import { createClient } from "@/utils/supabase/server";
 
 export async function upsertTreinoAction(treinoData: any) {
@@ -13,11 +13,19 @@ export async function upsertTreinoAction(treinoData: any) {
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     if (authError || !user) throw new Error("Usuário não autenticado");
 
-    // Validação Zod
-    const validatedData = TreinoSchema.parse(treinoData);
-    const { id, alunoId, instrutorId, objetivo, exercicios, diaSemana } = validatedData;
+    // Validação flexível: se tiver ID, valida como Entity; se não, como Base.
+    let validatedData;
+    if (treinoData.id) {
+        validatedData = TreinoSchema.parse(treinoData);
+    } else {
+        validatedData = TreinoBaseSchema.parse(treinoData);
+    }
+    
+    // Extraímos os dados validados. 'id' será undefined se for Base.
+    const { alunoId, instrutorId, objetivo, exercicios, diaSemana } = validatedData;
+    const id = (validatedData as any).id;
 
-    if (id && id.length > 20) { // Check if it's a UUID/ID from Prisma, or if it's a new one
+    if (id) {
         // Update
         await prisma.treino.update({
             where: { id },
@@ -115,8 +123,8 @@ export async function registrarHistoricoTreinoAction(historicoData: any) {
             throw new Error("Usuário não autenticado");
         }
 
-        // Validação Zod
-        const validatedData = HistoricoTreinoSchema.parse(historicoData);
+        // Validação Zod: Para registro de histórico vindo do app, usamos o BaseSchema (o ID será gerado no DB)
+        const validatedData = HistoricoTreinoBaseSchema.parse(historicoData);
 
         // Buscar aluno pelo email
         const aluno = await prisma.aluno.findUnique({

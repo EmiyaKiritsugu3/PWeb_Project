@@ -37,7 +37,7 @@ export function WorkoutSession({ treino, onFinish, onCancel }: WorkoutSessionPro
     const exerciciosParaSessao = treino.exercicios.map((ex) => ({
       exercicioOriginal: ex,
       seriesExecutadas: Array.from({ length: ex.series }, (_, i) => ({
-        id: `${ex.id}-serie-${i}`,
+        id: crypto.randomUUID(), // Usando UUID real para evitar conflitos de tipo e ID
         serieNumero: i + 1,
         peso: null,
         repeticoesFeitas: null,

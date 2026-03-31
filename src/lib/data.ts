@@ -17,6 +17,7 @@ export async function getAlunos(): Promise<Aluno[]> {
     const alunos = await prisma.aluno.findMany({
       orderBy: { nomeCompleto: 'asc' }
     });
+    // AlunoSchema agora exige ID obrigatório, o que o Prisma retorna
     return alunos.map((aluno: any) => AlunoSchema.parse(aluno));
   } catch (error) {
     console.error("Erro ao buscar alunos:", error);

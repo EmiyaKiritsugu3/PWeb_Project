@@ -25,7 +25,7 @@ async function runTest() {
       genero: 'M'
     });
     
-    if (!alunoResult.success || !alunoResult.data) {
+    if (!alunoResult.success || !alunoResult.data || !alunoResult.data.id) {
       throw new Error(`Failed to create Aluno: ${alunoResult.error}`);
     }
     const alunoId = alunoResult.data.id;
@@ -35,9 +35,10 @@ async function runTest() {
     const initialAluno = await prisma.aluno.findUnique({ where: { id: alunoId } });
     console.log(`   XP Inicial: ${initialAluno?.exp}, Nível: ${initialAluno?.nivel}`);
 
-    // 3. Matricular Aluno
-    console.log(`2. Matriculando Aluno no plano: ${plano.nome}`);
-    const matriculaResult = await createMatriculaAction(alunoId, plano.id);
+    const planoId = plano.id;
+    if (!planoId) throw new Error("Plano ID not found");
+
+    const matriculaResult = await createMatriculaAction(alunoId, planoId);
     if (!matriculaResult.success) {
       throw new Error(`Failed to create matricula: ${matriculaResult.error}`);
     }
