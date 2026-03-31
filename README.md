@@ -94,7 +94,19 @@ Acesse `http://localhost:3000` para ver a aplicação em execução.
 
 ---
 
+## 📘 Projeto 02 - Iteração 1
+
+Documentação técnica e requisitos da primeira iteração do Projeto 02:
+
+- [Arquitetura do Projeto](./docs/arquitetura.md)
+- [Documento de Visão](./docs/doc-visao.md)
+- [Documento de User Stories](./docs/doc-userstories.md)
+- [AcademicDevFlow (Repositório Principal)](#)
+
+---
+
 ## 📋 Licença e Repositório
+
 
 Este projeto está versionado publicamente em:
 **[https://github.com/EmiyaKiritsugu3/PWeb_Project](https://github.com/EmiyaKiritsugu3/PWeb_Project)**
