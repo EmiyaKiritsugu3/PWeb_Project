@@ -97,8 +97,8 @@ describe("FormMatricula", () => {
 
     expect(screen.getByText("Nova Matrícula")).toBeTruthy();
     expect(screen.getByText("João Silva")).toBeTruthy();
-    expect(screen.getByText("Mensal - R$\u00a0100,00")).toBeTruthy();
-    expect(screen.getByText("Anual - R$\u00a01.000,00")).toBeTruthy();
+    expect(screen.getByText(/Mensal - R\$.*100,00/)).toBeTruthy();
+    expect(screen.getByText(/Anual - R\$.*1.000,00/)).toBeTruthy();
   });
 
   it("should have confirm button disabled initially", () => {
