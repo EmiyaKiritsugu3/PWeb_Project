@@ -89,5 +89,10 @@
     "tsx": "^4.20.6",
     "typescript": "^5",
     "vitest": "^4.1.2"
+  },
+  "overrides": {
+    "http-proxy-agent": "^7.0.2",
+    "teeny-request": "^9.0.0",
+    "retry-request": "^8.0.0"
   }
 }
