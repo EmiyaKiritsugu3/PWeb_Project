@@ -4,9 +4,14 @@ import { Prisma } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { createClient } from "@/utils/supabase/server";
 
 export async function upsertTreinoAction(treinoData: any) {
   try {
+    const supabase = await createClient();
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) throw new Error("Usuário não autenticado");
+
     const { id, alunoId, instrutorId, objetivo, exercicios, diaSemana } = treinoData;
 
     if (id && id.length > 20) { // Check if it's a UUID/ID from Prisma, or if it's a new one
@@ -60,6 +65,10 @@ export async function upsertTreinoAction(treinoData: any) {
 
 export async function updateTreinoDayAction(treinoId: string, diaSemana: number | null) {
     try {
+        const supabase = await createClient();
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+        if (authError || !user) throw new Error("Usuário não autenticado");
+
         await prisma.treino.update({
             where: { id: treinoId },
             data: { diaSemana }
@@ -74,6 +83,10 @@ export async function updateTreinoDayAction(treinoId: string, diaSemana: number 
 
 export async function deleteTreinoAction(treinoId: string) {
   try {
+    const supabase = await createClient();
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) throw new Error("Usuário não autenticado");
+
     await prisma.treino.delete({
       where: { id: treinoId }
     });
@@ -106,7 +119,8 @@ export async function registrarHistoricoTreinoAction(historicoData: any) {
         }
 
         const hoje = new Date();
-        const hojeStr = hoje.toISOString().split("T")[0];
+        const hojeStr = new Intl.DateTimeFormat('fr-CA', { timeZone: 'America/Sao_Paulo' }).format(hoje); // yyyy-mm-dd
+
 
         // 1. Criar Histórico de Treino e Séries em uma transação
         const result = await prisma.$transaction(async (tx) => {
@@ -138,12 +152,20 @@ export async function registrarHistoricoTreinoAction(historicoData: any) {
             let treinosNoMes = aluno.treinosNoMes;
 
             const dataUltimoTreino = aluno.ultimoTreinoData 
-                ? new Date(aluno.ultimoTreinoData).toISOString().split("T")[0] 
+                ? new Intl.DateTimeFormat('fr-CA', { timeZone: 'America/Sao_Paulo' }).format(new Date(aluno.ultimoTreinoData))
                 : null;
 
             if (dataUltimoTreino !== hojeStr) {
                 // É um novo dia de treino!
-                treinosNoMes += 1;
+                const mesAtualStr = hojeStr.split("-")[1];
+                const mesUltimoTreinoStr = dataUltimoTreino ? dataUltimoTreino.split("-")[1] : null;
+
+                if (mesAtualStr !== mesUltimoTreinoStr) {
+                    treinosNoMes = 1; // It's a new month, reset
+                } else {
+                    treinosNoMes += 1;
+                }
+
                 novaExp += 100; // 100 XP base por treino completo
 
                 // Bônus por volume de séries concluídas
@@ -155,7 +177,7 @@ export async function registrarHistoricoTreinoAction(historicoData: any) {
                 // Lógica de Streak (Ofensiva)
                 const ontem = new Date();
                 ontem.setDate(ontem.getDate() - 1);
-                const ontemStr = ontem.toISOString().split("T")[0];
+                const ontemStr = new Intl.DateTimeFormat('fr-CA', { timeZone: 'America/Sao_Paulo' }).format(ontem);
 
                 if (dataUltimoTreino === ontemStr) {
                     novoStreak += 1;
