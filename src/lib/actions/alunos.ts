@@ -16,7 +16,7 @@ export async function finalizarTreinoAction(treinoId: string, durationMinutes: n
     }
 
     const hoje = new Date();
-    const hojeStr = hoje.toISOString().split("T")[0];
+    const hojeStr = new Intl.DateTimeFormat('fr-CA', { timeZone: 'America/Sao_Paulo' }).format(hoje); // yyyy-mm-dd
     
     // Executa a operação gamificada numa Transação Serializável e Atômica
     const historico = await prisma.$transaction(async (tx) => {
@@ -46,18 +46,26 @@ export async function finalizarTreinoAction(treinoId: string, durationMinutes: n
       let treinosNoMes = aluno.treinosNoMes;
 
       const dataUltimoTreino = aluno.ultimoTreinoData 
-        ? new Date(aluno.ultimoTreinoData).toISOString().split("T")[0] 
+        ? new Intl.DateTimeFormat('fr-CA', { timeZone: 'America/Sao_Paulo' }).format(new Date(aluno.ultimoTreinoData))
         : null;
 
       if (dataUltimoTreino !== hojeStr) {
         // É um novo dia de treino!
-        treinosNoMes += 1;
+        const mesAtualStr = hojeStr.split("-")[1];
+        const mesUltimoTreinoStr = dataUltimoTreino ? dataUltimoTreino.split("-")[1] : null;
+
+        if (mesAtualStr !== mesUltimoTreinoStr) {
+            treinosNoMes = 1; // It's a new month, reset
+        } else {
+            treinosNoMes += 1;
+        }
+
         novaExp += 100; // 100 XP base por treino completo
 
         // Lógica de Streak (Ofensiva)
         const ontem = new Date();
         ontem.setDate(ontem.getDate() - 1);
-        const ontemStr = ontem.toISOString().split("T")[0];
+        const ontemStr = new Intl.DateTimeFormat('fr-CA', { timeZone: 'America/Sao_Paulo' }).format(ontem);
 
         if (dataUltimoTreino === ontemStr) {
           novoStreak += 1;
@@ -103,6 +111,10 @@ export async function finalizarTreinoAction(treinoId: string, durationMinutes: n
 
 export async function createAlunoAction(data: any) {
   try {
+    const supabase = await createClient();
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) throw new Error("Usuário não autenticado");
+
     const aluno = await prisma.aluno.create({
       data: {
         nomeCompleto: data.nomeCompleto,
@@ -125,6 +137,10 @@ export async function createAlunoAction(data: any) {
 
 export async function updateAlunoAction(id: string, data: any) {
   try {
+    const supabase = await createClient();
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) throw new Error("Usuário não autenticado");
+
     const updated = await prisma.aluno.update({
       where: { id },
       data: {
@@ -147,6 +163,10 @@ export async function updateAlunoAction(id: string, data: any) {
 
 export async function deleteAlunoAction(id: string) {
   try {
+    const supabase = await createClient();
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) throw new Error("Usuário não autenticado");
+
     await prisma.aluno.delete({
       where: { id },
     });
@@ -161,6 +181,10 @@ export async function deleteAlunoAction(id: string) {
 
 export async function createMatriculaAction(alunoId: string, planoId: string) {
   try {
+    const supabase = await createClient();
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) throw new Error("Usuário não autenticado");
+
     const plano = await prisma.plano.findUnique({
       where: { id: planoId },
     });
