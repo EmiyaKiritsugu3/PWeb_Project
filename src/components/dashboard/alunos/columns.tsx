@@ -45,7 +45,7 @@ export const columns = ({ onEdit, onDelete, onNewMatricula }: ColumnsProps): Col
         const aluno = row.original;
         return (
             <Avatar className="h-12 w-12">
-                <AvatarImage src={aluno.fotoUrl} alt={aluno.nomeCompleto} />
+                <AvatarImage src={aluno.fotoUrl ?? undefined} alt={aluno.nomeCompleto} />
                 <AvatarFallback>{getInitials(aluno.nomeCompleto)}</AvatarFallback>
             </Avatar>
         )

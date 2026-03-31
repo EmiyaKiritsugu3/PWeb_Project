@@ -3,8 +3,8 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-import { AlunoSchema } from "@/lib/definitions";
-import type { Aluno } from "@/lib/definitions";
+import { AlunoSchema, AlunoBaseSchema } from "@/lib/definitions";
+import type { Aluno, AlunoBase } from "@/lib/definitions";
 import { createClient } from "@/utils/supabase/server";
 
 export async function finalizarTreinoAction(treinoId: string, durationMinutes: number = 60) {
@@ -116,8 +116,8 @@ export async function createAlunoAction(data: any) {
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     if (authError || !user) throw new Error("Usuário não autenticado");
 
-    // Validação Zod
-    const validatedData = AlunoSchema.parse(data);
+    // Validação Zod usando o BaseSchema (formulário não tem ID)
+    const validatedData = AlunoBaseSchema.parse(data);
 
     const aluno = await prisma.aluno.create({
       data: {
@@ -132,7 +132,8 @@ export async function createAlunoAction(data: any) {
     });
 
     revalidatePath("/dashboard/alunos");
-    return { success: true, data: aluno };
+    // O retorno do Prisma inclui o ID, validado pelo AlunoSchema (Entity)
+    return { success: true, data: AlunoSchema.parse(aluno) };
   } catch (error: any) {
     console.error("Prisma create error:", error);
     if (error.name === "ZodError") {
@@ -148,8 +149,8 @@ export async function updateAlunoAction(id: string, data: any) {
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     if (authError || !user) throw new Error("Usuário não autenticado");
 
-    // Validação Zod (permite campos opcionais já que é um update)
-    const validatedData = AlunoSchema.partial().parse(data);
+    // Validação Zod parcial baseada no BaseSchema
+    const validatedData = AlunoBaseSchema.partial().parse(data);
 
     const updated = await prisma.aluno.update({
       where: { id },
@@ -164,7 +165,7 @@ export async function updateAlunoAction(id: string, data: any) {
     });
 
     revalidatePath("/dashboard/alunos");
-    return { success: true, data: updated };
+    return { success: true, data: AlunoSchema.parse(updated) };
   } catch (error: any) {
     console.error("Prisma update error:", error);
     if (error.name === "ZodError") {
