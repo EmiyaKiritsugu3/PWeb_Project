@@ -63,7 +63,6 @@ A organização dos arquivos foi pensada para ser intuitiva e escalável.
 -   **/src/lib/**: Lógica de negócio, definições de tipos e dados de exemplo.
     -   `definitions.ts`: Definições TypeScript para as principais entidades do sistema (Aluno, Plano, etc.).
     -   `data.ts`: Arquivo com os dados estáticos (mock data) usados para "semear" o banco de dados para novos usuários de exemplo.
--   **/src/firebase/**: Centraliza toda a configuração e inicialização dos serviços do Firebase.
 -   **/src/ai/**: Centraliza os fluxos de Inteligência Artificial, utilizando Genkit.
 -   **/docs/**: Documentação do projeto.
     -   `backend.json`: Um "plano" detalhado da estrutura de coleções e dos dados que serão armazenados no Firestore.
@@ -120,6 +119,6 @@ Este roteiro foi pensado para uma demonstração fluida, contando uma história 
 
 ### Passo 5: Conclusão e Arquitetura
 
-> *"O que vocês viram não são apenas duas interfaces, mas um sistema coeso. Por trás disso, temos uma arquitetura moderna com **Next.js** para a interface, **Firebase** como nosso banco de dados em tempo real e, o mais importante, a integração com **Genkit**, o framework de IA do Google, que potencializa a criação de treinos e os feedbacks inteligentes."*
+> *"O que vocês viram não são apenas duas interfaces, mas um sistema coeso. Por trás disso, temos uma arquitetura moderna com **Next.js** para a interface, **Supabase PostgreSQL** como nosso banco de dados relacional e seguro, e o mais importante, a integração com **Genkit**, o framework de IA do Google, que potencializa a criação de treinos e os feedbacks inteligentes."*
 >
 > *"Este projeto mostra como a tecnologia, especialmente a IA, pode otimizar a gestão de uma academia e, ao mesmo tempo, criar uma experiência muito mais rica e motivadora para o aluno. Obrigado."*
