@@ -1,0 +1,6 @@
+# Aegis OS Friction Log
+
+## Document any systemic or repeated failures to ensure future agents do not hallucinate fixes.
+
+- **Vercel Build Edge functions:** Previously, Next.js Server Actions on Edge runtimes encountered failures attempting to use heavy Node drivers (like standard `pg`). Strict enforcement is required to use Prisma's edge compatibility or switch environments if encountering `unsupported driver` exceptions in CI.
+- **Tailwind v4 vs v3 Configurations:** Custom arbitrary spacing logic is stricter under v4. Double-check utility class names before committing UI code relying heavily on arbitrary bracket assignments.
