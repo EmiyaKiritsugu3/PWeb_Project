@@ -3,7 +3,6 @@
 
 import { useState, useMemo } from 'react';
 import { useForm } from "react-hook-form";
-import { streamFlow } from "@genkit-ai/next/client";
 import { motion } from "framer-motion";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PageHeader } from "@/components/page-header";
@@ -374,7 +373,7 @@ export default function MeusTreinosClient({ initialTreinos, userId }: { initialT
     const handleGenerate = async (data: WorkoutGeneratorInput) => {
         setIsGenerating(true);
         try {
-            const { stream } = streamWorkoutPlan(data) as any;
+            const { stream, output } = streamWorkoutPlan.stream(data) as any;
             let result: any = null;
             for await (const chunk of stream) {
                 if (chunk) {
