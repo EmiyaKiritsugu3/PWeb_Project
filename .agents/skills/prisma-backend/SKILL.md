@@ -20,3 +20,8 @@ This skill outlines the standard rules for writing Server Actions, API routes, d
 
 ## 4. MCP Rule
 - Rely on the `Prisma MCP` to write complicated migrations rather than attempting to hand-write SQL. The MCP connection provides absolute confidence in production-grade queries.
+
+## 5. Deep Context Technical Manuals
+When architecting complex database migrations or high-performance relations, consult:
+▶️ @docs/tech_stack/Prisma ORM Advanced Architecture Deep Dive.md
+▶️ @docs/tech_stack/Zod Architecture_ Parse, Don't Validate.md
