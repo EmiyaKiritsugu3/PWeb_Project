@@ -21,10 +21,10 @@ Implementar a camada visual de engajamento para os alunos. Isso inclui micro-ani
 ---
 
 ## 🚀 Conquistas Recentes
-- ✅ **Refatoração Zod Engine:** Implementação do padrão `Base vs Entity` para consistência de tipos entre formulários e banco.
-- ✅ **Segurança Zero-Risk:** Resolução de 100% das vulnerabilidades de dependências via `npm overrides`.
-- ✅ **Build de Produção:** Correção de erros de tipagem que bloqueavam o deploy na Vercel.
-- ✅ **Limpeza de Ambiente:** Histórico de Git consolidado e branches obsoletas removidas.
+- ✅ **Refatoração Zod Engine:** Padrão `Base vs Entity` para consistência de tipos.
+- ✅ **Segurança Zero-Risk:** 100% de vulnerabilidades resolvidas via `npm overrides`.
+- ✅ **Antigravity Workflow:** Implementação de `friction-log.md`, `rules/` e `workflows/` com **Turbo Mode** e **Pre-Flight Checks**.
+- ✅ **Build de Produção:** Projeto 100% íntegro e verificado via `npm run build`.
 
 ---
 
