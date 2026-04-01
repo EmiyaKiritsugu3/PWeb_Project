@@ -115,9 +115,13 @@ Para garantir a qualidade e a segurança do projeto, seguimos os seguintes guias
 
 ---
 
+---
+
 ## 📋 Licença e Repositório
 
-Este projeto está versionado em:
+Este projeto está sob a licença **MIT**. Veja o arquivo [LICENSE](./LICENSE) para mais detalhes.
+
+Repositório principal:
 **[https://github.com/EmiyaKiritsugu3/PWeb_Project](https://github.com/EmiyaKiritsugu3/PWeb_Project)**
 
 Desenvolvido para fins acadêmicos e profissionais na área de Engenharia de Software.
