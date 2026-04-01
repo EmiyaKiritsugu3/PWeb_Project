@@ -7,3 +7,5 @@ public/media/
 .env*
 coverage/
 *.lock
+.vscode/
+.git/
