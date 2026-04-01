@@ -21,26 +21,29 @@ next-env.d.ts
 
 # Misc
 .DS_Store
+Thumbs.db
+desktop.ini
+.directory
 *.pem
 *.log
 typecheck_details.txt
 .modified
+.history
+.eslintcache
+.prettiercache
+.stylelintcache
+.turbo/
 
-# Vercel
+# Vercel & Firebase
 .vercel
-
-# Firebase
 .firebase
 firebase-debug.log
 database-debug.log
 
 # Environment variables
 .env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-.env.example
+*.local
+!.env.example
 
 # Editor directories and files
 .vscode/
@@ -51,6 +54,11 @@ database-debug.log
 *.njsproj
 *.sln
 *.sw?
-.vscode/
 .git/
 .genkit/
+.supabase/
+
+# Databases
+*.db
+*.sqlite
+*.sqlite-journal
