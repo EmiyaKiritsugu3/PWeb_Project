@@ -2,6 +2,7 @@
 description: Procedure for identifying, fixing, and properly documenting bugs.
 ---
 
+// turbo-all
 # Workflow: Bug Triage a.k.a Friction Minimization
 
 When investigating an error or a bug, follow these methodical steps:
