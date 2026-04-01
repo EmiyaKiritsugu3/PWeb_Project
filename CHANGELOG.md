@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.2.0] - 2026-03-31
 
 ### Added
+- **Project Status Dashboard**: Created `PROJECT_STATUS.md` as the single source of truth for project tracking and health.
 - **Base vs Entity Pattern**: Introduced strict Zod schemas for splitting input validation (`BaseSchema`) from database records (`EntitySchema`).
 - **Strict Typing**: Enforced mandatory `id` field for all entities (Aluno, Treino, Plano, Matricula, Pagamento).
 - **Security Policy**: Initial `SECURITY.md` for vulnerability reporting.

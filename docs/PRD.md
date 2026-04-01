@@ -16,7 +16,7 @@ The execution is structured into explicit phases:
 - Create `/manager` layout and protected routes.
 - Implement sidebar and main view topology matching `DESIGN.md`.
 
-### Phase 2: Core Data Engine (Students & Workouts) [IN PROGRESS]
+### Phase 2: Core Data Engine (Students & Workouts) [DONE]
 - Prisma Schema integration (Alunos, Treinos).
 - Standardized CRUD API boundaries (Server Actions).
 - Dashboard data hydration for total enrollments and revenue.
