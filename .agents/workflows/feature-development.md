@@ -2,6 +2,7 @@
 description: Blueprint for creating new features following the expected PRD definitions.
 ---
 
+// turbo-all
 # Workflow: Feature Development
 
 When instructed to build a new feature or component, follow this sequential blueprint layout:

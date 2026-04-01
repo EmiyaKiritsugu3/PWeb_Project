@@ -2,6 +2,7 @@
 description: Standard process for E2E and Unit test generation
 ---
 
+// turbo-all
 # Workflow: Test Generation
 
 When requested to generate tests (e.g., E2E with Playwright or Unit tests with Jest/Vitest), follow these standard procedures to ensure consistency and prevent regressions.
