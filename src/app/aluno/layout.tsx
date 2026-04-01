@@ -15,12 +15,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Dumbbell, LogOut, User as UserIcon, LayoutDashboard, FolderKanban } from "lucide-react";
-import { useAuth, useUser } from "@/components/providers/auth-provider";
-
+import { useAuth } from "@/components/providers/auth-provider";
 
 function AlunoLayoutContent({ children }: { children: React.ReactNode }) {
-  const { user, isUserLoading } = useUser();
-  const auth = useAuth();
+  const { user, isUserLoading, signOut } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -30,10 +28,8 @@ function AlunoLayoutContent({ children }: { children: React.ReactNode }) {
     }
   }, [user, isUserLoading, router, pathname]);
 
-  const handleLogout = () => {
-    if (auth) {
-      auth.signOut();
-    }
+  const handleLogout = async () => {
+    await signOut();
     router.push("/aluno/login");
   };
   
@@ -59,6 +55,9 @@ function AlunoLayoutContent({ children }: { children: React.ReactNode }) {
   }
 
   if(user) {
+    const displayName = user.user_metadata?.full_name || user.user_metadata?.nomeCompleto || 'Aluno(a)';
+    const photoURL = user.user_metadata?.avatar_url || user.user_metadata?.fotoUrl || "https://picsum.photos/seed/student/100/100";
+
     return (
         <div className="flex min-h-screen w-full flex-col bg-background">
         <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-sm md:px-6">
@@ -78,19 +77,19 @@ function AlunoLayoutContent({ children }: { children: React.ReactNode }) {
             </nav>
 
             <div className="flex w-full items-center justify-end gap-4 md:ml-auto">
-                <span className="hidden text-sm text-muted-foreground md:inline-block">Olá, {user.displayName || 'Aluno(a)'}!</span>
+                <span className="hidden text-sm text-muted-foreground md:inline-block">Olá, {displayName}!</span>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="relative h-9 w-9 rounded-full">
                         <Avatar>
-                        <AvatarImage src={user.photoURL || "https://picsum.photos/seed/student/100/100"} alt="Aluno" data-ai-hint="person portrait"/>
+                        <AvatarImage src={photoURL} alt="Aluno" data-ai-hint="person portrait"/>
                         <AvatarFallback>{user.email?.[0].toUpperCase()}</AvatarFallback>
                         </Avatar>
                     </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="w-56" align="end">
                     <DropdownMenuLabel>
-                        <p>{user.displayName || 'Aluno(a)'}</p>
+                        <p>{displayName}</p>
                         <p className="text-xs font-normal text-muted-foreground">
                         {user.email}
                         </p>

@@ -25,11 +25,10 @@ import {
 } from "@/components/ui/sidebar";
 import { DashboardNav, DashboardNavBottom } from "@/components/dashboard-nav";
 import { Dumbbell, LogOut } from "lucide-react";
-import { useAuth, useUser } from "@/components/providers/auth-provider";
+import { useAuth } from "@/components/providers/auth-provider";
 
 function DashboardAppLayout({ children }: { children: React.ReactNode; }) {
-  const { user, isUserLoading } = useUser();
-  const auth = useAuth();
+  const { user, isUserLoading, signOut } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -39,10 +38,8 @@ function DashboardAppLayout({ children }: { children: React.ReactNode; }) {
     }
   }, [user, isUserLoading, router]);
 
-  const handleLogout = () => {
-    if (auth) {
-      auth.signOut();
-    }
+  const handleLogout = async () => {
+    await signOut();
     router.push("/login");
   };
   
@@ -56,6 +53,9 @@ function DashboardAppLayout({ children }: { children: React.ReactNode; }) {
       </div>
     );
   }
+
+  const displayName = user.user_metadata?.full_name || user.user_metadata?.nomeCompleto || 'Administrador';
+  const photoURL = user.user_metadata?.avatar_url || user.user_metadata?.fotoUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`;
   
   return (
       <SidebarProvider>
@@ -86,7 +86,7 @@ function DashboardAppLayout({ children }: { children: React.ReactNode; }) {
             <SidebarTrigger className="text-primary" />
             <div className="hidden md:flex flex-col">
               <span className="text-xs font-medium text-muted-foreground">Bem-vindo de volta,</span>
-              <span className="text-sm font-bold text-foreground">{user.displayName || 'Administrador'}</span>
+              <span className="text-sm font-bold text-foreground">{displayName}</span>
             </div>
           </div>
           <div className="flex items-center gap-4">
@@ -95,7 +95,7 @@ function DashboardAppLayout({ children }: { children: React.ReactNode; }) {
                 <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-10 w-10 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 transition-all duration-300">
                     <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarImage src={user.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`} alt="Admin" />
+                    <AvatarImage src={photoURL} alt="Admin" />
                     <AvatarFallback className="bg-primary/20 text-primary">{user.email?.[0].toUpperCase()}</AvatarFallback>
                     </Avatar>
                 </Button>
@@ -103,7 +103,7 @@ function DashboardAppLayout({ children }: { children: React.ReactNode; }) {
                 <DropdownMenuContent className="w-56 glass-card mt-2" align="end">
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-bold leading-none">{user.displayName || 'Admin'}</p>
+                    <p className="text-sm font-bold leading-none">{displayName}</p>
                     <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
                   </div>
                 </DropdownMenuLabel>
