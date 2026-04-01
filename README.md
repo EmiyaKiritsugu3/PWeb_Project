@@ -105,10 +105,19 @@ Documentação técnica e requisitos da primeira iteração do Projeto 02:
 
 ---
 
+## 📖 Governança e Segurança
+
+Para garantir a qualidade e a segurança do projeto, seguimos os seguintes guias:
+
+- [Política de Segurança](./SECURITY.md) - Como reportar vulnerabilidades e boas práticas.
+- [Changelog](./CHANGELOG.md) - Histórico detalhado de mudanças e versões.
+- **Estratégia de Versionamento:** Utilizamos [SemVer](https://semver.org/spec/v2.0.0.html).
+
+---
+
 ## 📋 Licença e Repositório
 
-
-Este projeto está versionado publicamente em:
+Este projeto está versionado em:
 **[https://github.com/EmiyaKiritsugu3/PWeb_Project](https://github.com/EmiyaKiritsugu3/PWeb_Project)**
 
 Desenvolvido para fins acadêmicos e profissionais na área de Engenharia de Software.
