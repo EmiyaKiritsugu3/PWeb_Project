@@ -84,21 +84,3 @@ export const useAuth = () => {
   return context;
 };
 
-// Compatibility hook to return user with Firebase-like properties (uid)
-export const useUser = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useUser must be used within a SupabaseAuthProvider.');
-  }
-  return {
-    user: context.user ? {
-        ...context.user,
-        uid: context.user.id,
-        displayName: context.user.user_metadata?.full_name || context.user.user_metadata?.nomeCompleto || 'Usuário',
-        photoURL: context.user.user_metadata?.avatar_url || context.user.user_metadata?.fotoUrl,
-    } : null,
-    isUserLoading: context.isUserLoading,
-    userError: context.userError,
-  };
-};
-
