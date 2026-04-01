@@ -1,0 +1,32 @@
+scripts/test-e2e.ts(40,66): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/app/aluno/dashboard/dashboard-client.tsx(89,56): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/app/aluno/meus-treinos/meus-treinos-client.tsx(138,50): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/app/aluno/meus-treinos/meus-treinos-client.tsx(230,75): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/app/dashboard/treinos/treinos-client.tsx(377,60): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/components/WorkoutSession.tsx(113,7): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/components/WorkoutSession.tsx(116,7): error TS2322: Type '{ exercicioId: string | undefined; nomeExercicio: string; seriesExecutadas: { serieNumero: number; peso: number | null; repeticoesFeitas: number | null; concluido: boolean; id?: string | undefined; }[]; }[]' is not assignable to type '{ nomeExercicio: string; exercicioId: string; seriesExecutadas: { serieNumero: number; peso: number | null; repeticoesFeitas: number | null; concluido: boolean; id?: string | undefined; }[]; }[]'.
+  Type '{ exercicioId: string | undefined; nomeExercicio: string; seriesExecutadas: { serieNumero: number; peso: number | null; repeticoesFeitas: number | null; concluido: boolean; id?: string | undefined; }[]; }' is not assignable to type '{ nomeExercicio: string; exercicioId: string; seriesExecutadas: { serieNumero: number; peso: number | null; repeticoesFeitas: number | null; concluido: boolean; id?: string | undefined; }[]; }'.
+    Types of property 'exercicioId' are incompatible.
+      Type 'string | undefined' is not assignable to type 'string'.
+        Type 'undefined' is not assignable to type 'string'.
+src/components/WorkoutSession.tsx(151,52): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/components/WorkoutSession.tsx(156,52): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/components/WorkoutSession.tsx(161,50): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/components/dashboard/aluno/card-treino.tsx(74,46): error TS2538: Type 'undefined' cannot be used as an index type.
+src/components/dashboard/aluno/card-treino.tsx(80,59): error TS2538: Type 'undefined' cannot be used as an index type.
+src/components/dashboard/aluno/card-treino.tsx(81,74): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/components/dashboard/aluno/card-treino.tsx(89,58): error TS2538: Type 'undefined' cannot be used as an index type.
+src/components/dashboard/alunos/columns.tsx(48,30): error TS2322: Type 'string | null | undefined' is not assignable to type 'string | undefined'.
+  Type 'null' is not assignable to type 'string | undefined'.
+src/components/dashboard/alunos/form-matricula.tsx(78,46): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
