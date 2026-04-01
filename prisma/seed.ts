@@ -21,10 +21,15 @@ async function main() {
   await prisma.plano.deleteMany();
   await prisma.funcionario.deleteMany();
 
+  // IDs para consistência relacional
+  const instrutorId = crypto.randomUUID();
+  const planoIds = [crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID()];
+  const alunoIds = [crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID()];
+
   // 2. Funcionários (Instrutores)
-  const func1 = await prisma.funcionario.create({
+  await prisma.funcionario.create({
     data: {
-      id: "func1",
+      id: instrutorId,
       nomeCompleto: "João Instrutor",
       email: "joao.instrutor@academia.com",
       role: "INSTRUTOR",
@@ -33,10 +38,10 @@ async function main() {
 
   // 3. Planos
   const planos = [
-    { id: "1", nome: "Plano Mensal", preco: 120, duracaoDias: 30 },
-    { id: "2", nome: "Plano Trimestral", preco: 330, duracaoDias: 90 },
-    { id: "3", nome: "Plano Semestral", preco: 600, duracaoDias: 180 },
-    { id: "4", nome: "Plano Anual", preco: 1080, duracaoDias: 365 },
+    { id: planoIds[0], nome: "Plano Mensal", preco: 120, duracaoDias: 30 },
+    { id: planoIds[1], nome: "Plano Trimestral", preco: 330, duracaoDias: 90 },
+    { id: planoIds[2], nome: "Plano Semestral", preco: 600, duracaoDias: 180 },
+    { id: planoIds[3], nome: "Plano Anual", preco: 1080, duracaoDias: 365 },
   ];
 
   for (const plano of planos) {
@@ -46,7 +51,7 @@ async function main() {
   // 4. Alunos
   const alunos = [
     {
-      id: "1",
+      id: alunoIds[0],
       nomeCompleto: "Ana Silva",
       cpf: "111.222.333-44",
       email: "ana.silva@example.com",
@@ -57,7 +62,7 @@ async function main() {
       statusMatricula: "ATIVA" as const,
     },
     {
-      id: "2",
+      id: alunoIds[1],
       nomeCompleto: "Bruno Costa",
       cpf: "222.333.444-55",
       email: "bruno.costa@example.com",
@@ -68,7 +73,7 @@ async function main() {
       statusMatricula: "INADIMPLENTE" as const,
     },
     {
-      id: "3",
+      id: alunoIds[2],
       nomeCompleto: "Carla Dias",
       cpf: "333.444.555-66",
       email: "carla.dias@example.com",
@@ -87,16 +92,16 @@ async function main() {
   // 5. Treinos
   await prisma.treino.create({
     data: {
-      id: "t1",
-      alunoId: "1",
-      instrutorId: "func1",
+      id: crypto.randomUUID(),
+      alunoId: alunoIds[0],
+      instrutorId: instrutorId,
       objetivo: "Treino A - Superiores (Ênfase Peito/Ombro)",
       diaSemana: 1,
       dataCriacao: new Date("2024-01-15"),
       Exercicios: {
         create: [
           {
-            id: "ex1",
+            id: crypto.randomUUID(),
             nomeExercicio: "Supino Reto com Barra",
             series: 4,
             repeticoes: "8-10",
@@ -104,7 +109,7 @@ async function main() {
             descricao: "Deite-se em um banco reto...",
           },
           {
-            id: "ex2",
+            id: crypto.randomUUID(),
             nomeExercicio: "Desenvolvimento Militar com Barra",
             series: 3,
             repeticoes: "10-12",
