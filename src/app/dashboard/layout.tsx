@@ -58,8 +58,15 @@ function DashboardAppLayout({ children }: { children: React.ReactNode; }) {
   const photoURL = user.user_metadata?.avatar_url || user.user_metadata?.fotoUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`;
   
   return (
-      <SidebarProvider>
-      <Sidebar className="glass-sidebar border-r border-primary/10">
+    <SidebarProvider>
+      <div className="relative flex min-h-screen w-full overflow-hidden bg-background">
+        {/* Animated Background Blobs - Subtle (5% opacity) */}
+        <div className="absolute inset-0 z-0 pointer-events-none">
+          <div className="absolute top-[-10%] left-[-10%] h-[50%] w-[50%] rounded-full bg-primary/5 blur-[120px] animate-glow-pulse" />
+          <div className="absolute bottom-[-10%] right-[-10%] h-[50%] w-[50%] rounded-full bg-blue-500/5 blur-[120px] animate-glow-pulse" style={{ animationDelay: '2s' }} />
+        </div>
+
+        <Sidebar className="z-10 glass-sidebar border-r border-primary/10">
           <SidebarHeader className="border-b border-primary/5 pb-4">
           <Link href="/" className="flex h-12 items-center gap-3 px-4 mt-2">
               <div
@@ -82,48 +89,49 @@ function DashboardAppLayout({ children }: { children: React.ReactNode; }) {
       </Sidebar>
       <SidebarInset className="bg-background/95">
           <header className="flex h-16 items-center justify-between gap-4 border-b border-white/5 bg-background/40 px-6 backdrop-blur-xl sticky top-0 z-10">
-          <div className="flex items-center gap-4">
-            <SidebarTrigger className="text-primary" />
-            <div className="hidden md:flex flex-col">
-              <span className="text-xs font-medium text-muted-foreground">Bem-vindo de volta,</span>
-              <span className="text-sm font-bold text-foreground">{displayName}</span>
+            <div className="flex items-center gap-4">
+              <SidebarTrigger className="text-primary" />
+              <div className="hidden md:flex flex-col">
+                <span className="text-xs font-medium text-muted-foreground">Bem-vindo de volta,</span>
+                <span className="text-sm font-bold text-foreground">{displayName}</span>
+              </div>
             </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="h-8 w-[1px] bg-white/10 mx-2 hidden sm:block"></div>
-            <DropdownMenu>
+            <div className="flex items-center gap-4">
+              <div className="h-8 w-[1px] bg-white/10 mx-2 hidden sm:block"></div>
+              <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-10 w-10 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 transition-all duration-300">
+                  <Button variant="ghost" className="relative h-10 w-10 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 transition-all duration-300">
                     <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarImage src={photoURL} alt="Admin" />
-                    <AvatarFallback className="bg-primary/20 text-primary">{user.email?.[0].toUpperCase()}</AvatarFallback>
+                      <AvatarImage src={photoURL} alt="Admin" />
+                      <AvatarFallback className="bg-primary/20 text-primary">{user.email?.[0].toUpperCase()}</AvatarFallback>
                     </Avatar>
-                </Button>
+                  </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56 glass-card mt-2" align="end">
-                <DropdownMenuLabel className="font-normal">
-                  <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-bold leading-none">{displayName}</p>
-                    <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator className="bg-white/10" />
-                <DropdownMenuItem className="focus:bg-primary/20 focus:text-primary cursor-pointer">Perfil</DropdownMenuItem>
-                <DropdownMenuItem className="focus:bg-primary/20 focus:text-primary cursor-pointer">Configurações</DropdownMenuItem>
-                <DropdownMenuSeparator className="bg-white/10" />
-                <DropdownMenuItem onClick={handleLogout} className="text-destructive focus:bg-destructive/10 cursor-pointer">
+                  <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-bold leading-none">{displayName}</p>
+                      <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator className="bg-white/10" />
+                  <DropdownMenuItem className="focus:bg-primary/20 focus:text-primary cursor-pointer">Perfil</DropdownMenuItem>
+                  <DropdownMenuItem className="focus:bg-primary/20 focus:text-primary cursor-pointer">Configurações</DropdownMenuItem>
+                  <DropdownMenuSeparator className="bg-white/10" />
+                  <DropdownMenuItem onClick={handleLogout} className="text-destructive focus:bg-destructive/10 cursor-pointer">
                     <LogOut className="mr-2 h-4 w-4" />
                     <span>Sair da conta</span>
-                </DropdownMenuItem>
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+              </DropdownMenu>
+            </div>
           </header>
           <main className="flex-1 p-6 md:p-8 max-w-[1600px] mx-auto w-full">
             {children}
           </main>
-      </SidebarInset>
-      </SidebarProvider>
+        </SidebarInset>
+      </div>
+    </SidebarProvider>
   );
 }
 

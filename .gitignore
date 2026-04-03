@@ -36,6 +36,7 @@ typecheck_details.txt
 
 # Antigravity & Agents
 .antigravityignore
+.claudeignore
 
 # Vercel
 .vercel
@@ -62,3 +63,24 @@ typecheck_details.txt
 *.db
 *.sqlite
 *.sqlite-journal
+
+# Environment & Secrets (AIOX)
+.env.local
+.env.*.local
+*.key
+
+# Dependencies (AIOX)
+node_modules/
+
+# Build & Logs (AIOX)
+dist/
+build/
+logs/
+
+# IDE & OS (AIOX)
+*.swp
+
+# AIOX Local (AIOX)
+.aiox-core/local/
+.claude/settings.local.json
+.aiox/install-log.txt
