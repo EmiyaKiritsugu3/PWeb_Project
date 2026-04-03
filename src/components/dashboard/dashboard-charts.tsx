@@ -20,43 +20,45 @@ export function DashboardCharts({ data }: DashboardChartsProps) {
           <BarChart data={data}>
             <defs>
               <linearGradient id="neonCyan" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#22d3ee" stopOpacity={1} />
-                <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.4} />
+                <stop offset="0%" stopColor="oklch(0.7 0.25 190)" stopOpacity={0.9} />
+                <stop offset="100%" stopColor="oklch(0.7 0.25 190)" stopOpacity={0.1} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--muted)/0.3)" />
+            <CartesianGrid strokeDasharray="4 4" vertical={false} stroke="oklch(0.7 0.25 190 / 0.08)" />
             <XAxis
               dataKey="mes"
-              stroke="#64748b"
+              stroke="oklch(0.7 0.1 230 / 0.5)"
               fontSize={11}
-              fontWeight={600}
+              fontWeight={700}
               tickLine={false}
               axisLine={false}
-              dy={10}
+              dy={12}
             />
             <YAxis
-              stroke="#64748b"
+              stroke="oklch(0.7 0.1 230 / 0.5)"
               fontSize={11}
-              fontWeight={600}
+              fontWeight={700}
               tickLine={false}
               axisLine={false}
               tickFormatter={(value) => `${value}`}
-              dx={-10}
+              dx={-12}
             />
             <Tooltip
               contentStyle={{
-                backgroundColor: "rgba(15, 23, 42, 0.8)",
-                borderColor: "rgba(34, 211, 238, 0.2)",
-                borderRadius: "12px",
-                backdropFilter: "blur(12px)",
-                boxShadow: "0 0 25px rgba(34, 211, 238, 0.15)",
-                color: "#f8fafc",
-                fontWeight: 600,
+                backgroundColor: "oklch(0.18 0.05 230 / 0.7)",
+                borderColor: "oklch(0.7 0.25 190 / 0.3)",
+                borderRadius: "14px",
+                backdropFilter: "blur(24px)",
+                boxShadow: "0 20px 40px -15px oklch(0.15 0.05 230 / 0.5), 0 0 15px oklch(0.7 0.25 190 / 0.1)",
+                color: "oklch(0.95 0.01 230)",
+                fontWeight: 700,
+                border: "1px solid oklch(1 0 0 / 0.1)",
+                padding: "12px 16px",
               }}
-              itemStyle={{ color: "#22d3ee" }}
-              cursor={{ fill: "rgba(34, 211, 238, 0.05)" }}
+              itemStyle={{ color: "oklch(0.7 0.25 190)", fontSize: "14px" }}
+              cursor={{ fill: "oklch(0.7 0.25 190 / 0.03)" }}
             />
-            <Bar dataKey="alunos" fill="url(#neonCyan)" radius={[6, 6, 0, 0]} />
+            <Bar dataKey="alunos" fill="url(#neonCyan)" radius={[8, 8, 0, 0]} barSize={40} />
           </BarChart>
         </ResponsiveContainer>
       </CardContent>

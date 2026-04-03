@@ -12,26 +12,26 @@ export default async function DashboardPage() {
       title: "Total de Alunos",
       value: stats.totalAlunos.toLocaleString("pt-BR"),
       icon: <Users className="h-5 w-5" />,
-      color: "from-cyan-500/20 to-blue-500/20",
-      iconColor: "text-cyan-400",
-      glow: "shadow-cyan-500/10",
+      color: "from-primary/30 to-blue-600/10",
+      iconColor: "text-primary",
+      glow: "glow-cyan",
     },
     {
       title: "Matrículas Ativas",
       value: stats.matriculasAtivas.toLocaleString("pt-BR"),
       icon: <UserCheck className="h-5 w-5" />,
-      color: "from-emerald-500/20 to-teal-500/20",
-      iconColor: "text-emerald-400",
-      glow: "shadow-emerald-500/10",
+      color: "from-cyan-400/30 to-blue-400/10",
+      iconColor: "text-cyan-300",
+      glow: "glow-cyan",
     },
     {
       title: "Inadimplentes",
       value: stats.alunosInadimplentes.toLocaleString("pt-BR"),
       icon: <UserX className="h-5 w-5" />,
-      color: "from-red-500/20 to-rose-500/20",
-      iconColor: "text-rose-400",
-      glow: "shadow-rose-500/10",
-      isDestructive: true,
+      color: "from-destructive/30 to-background/10",
+      iconColor: "text-destructive",
+      glow: "shadow-destructive/10",
+      isWeighted: true,
     },
     {
       title: "Faturamento Mensal",
@@ -40,9 +40,9 @@ export default async function DashboardPage() {
         currency: "BRL",
       }),
       icon: <DollarSign className="h-5 w-5" />,
-      color: "from-amber-500/20 to-orange-500/20",
-      iconColor: "text-amber-400",
-      glow: "shadow-amber-500/10",
+      color: "from-primary/40 to-cyan-300/10",
+      iconColor: "text-primary",
+      glow: "glow-cyan",
     },
   ];
 
@@ -67,12 +67,12 @@ export default async function DashboardPage() {
             <CardContent>
               <div
                 className={`text-3xl font-headline font-black tracking-tight drop-shadow-sm ${
-                  kpi.isDestructive ? "text-rose-500" : "text-foreground"
+                  kpi.isWeighted ? "text-destructive-foreground/90" : "text-foreground"
                 }`}
               >
                 {kpi.value}
               </div>
-              <div className="mt-2 flex items-center text-xs font-bold text-emerald-400 uppercase tracking-tighter bg-emerald-500/10 w-fit px-1.5 py-0.5 rounded">
+              <div className="mt-2 flex items-center text-xs font-bold text-primary uppercase tracking-tighter bg-primary/10 w-fit px-1.5 py-0.5 rounded border border-primary/20">
                 <span className="sr-only">Aumento de </span>
                 ↑ 12% vs mês anterior
               </div>
