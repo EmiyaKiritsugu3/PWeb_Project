@@ -102,12 +102,14 @@ export default function LoginPage() {
     }
   };
 
-  if (isUserLoading || user) {
+  // Se houver um usuário, o useEffect cuidará do redirecionamento.
+  // Removendo o bloqueio de renderização 'if (user)' para evitar deadlocks visuais no dev.
+  if (isUserLoading) {
     return (
       <div className="flex h-screen w-full items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-4">
           <Dumbbell className="h-12 w-12 animate-pulse text-primary" />
-          <p className="text-muted-foreground">Carregando...</p>
+          <p className="text-muted-foreground font-medium tracking-widest uppercase text-xs">Sincronizando...</p>
         </div>
       </div>
     );
