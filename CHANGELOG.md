@@ -43,6 +43,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `react/no-unescaped-entities` in `src/app/dashboard/planos/page.tsx` — escaped `"` to `&ldquo;`/`&rdquo;`
 - `react/no-unescaped-entities` in `src/components/dashboard/aluno/card-feedback.tsx` — escaped `"` to `&ldquo;`/`&rdquo;`
 
+### Added (It2 — Core Admin)
+
+- `src/app/dashboard/alunos/[id]/page.tsx` — Student detail page (profile card, gamification stats, enrollment history, last 10 payments, active workouts list)
+- `src/lib/data.ts#getAlunoDetalhes` — Prisma query with full Aluno graph (Matriculas+Plano, Pagamentos, Treinos+Exercicios, HistoricoTreinos)
+- `src/app/dashboard/planos/planos-client.tsx` — Plans CRUD client: card grid with edit/delete per card, AlertDialog confirmation, router.refresh() sync
+- `src/components/dashboard/planos/form-plano.tsx` — Plans form (React Hook Form + Zod): nome, preco, duracaoDias
+- `src/lib/actions/planos.ts` — Server Actions: createPlanoAction, updatePlanoAction, deletePlanoAction with auth guard + Zod
+- `src/app/dashboard/_components/user-menu.tsx` — User header dropdown (avatar, display name, logout via Server Action)
+- `logout()` Server Action in `auth.ts` — server-side signOut + redirect to /login
+- `'Ver Detalhes'` action in student table dropdown — navigates to /dashboard/alunos/[id]
+
 ### Changed (US01 — Student Management)
 
 - `src/utils/supabase/middleware.ts` — added `getUser()` call, unauthenticated redirect to `/login`, role-based routing: funcionário on `/aluno/**` → `/dashboard`, aluno on `/dashboard/**` → `/aluno`
