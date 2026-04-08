@@ -3,6 +3,7 @@ paths:
   - .aiox-core/data/tool-registry.yaml
   - .mcp.json
 ---
+
 # Tool Response Filtering — Dynamic Token Reduction
 
 When processing responses from MCP tools or large web fetches, apply the filter
@@ -13,6 +14,7 @@ task-relevant information.
 ## Filter Types
 
 ### content
+
 Extract the main informational content and discard noise (navigation, ads,
 boilerplate, repetitive headers/footers). Limit the extracted output to
 approximately `max_tokens` tokens, truncating at a natural paragraph or
@@ -22,6 +24,7 @@ fields from the response object.
 **Apply to:** WebFetch HTML responses, EXA search results, Context7 docs.
 
 ### schema
+
 From a JSON object or array of objects, select ONLY the fields listed in
 `fields`. Discard all other keys. If `max_tokens` is set, truncate the
 serialized result at that token limit.
@@ -29,6 +32,7 @@ serialized result at that token limit.
 **Apply to:** Playwright page data, API responses with known schemas.
 
 ### field
+
 From an array of objects (tabular data), project ONLY the columns listed
 in `fields` and limit the result to `max_rows` rows. This is analogous to
 `SELECT field1, field2 FROM data LIMIT max_rows`.

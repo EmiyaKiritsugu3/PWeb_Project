@@ -32,10 +32,15 @@ function readStdin() {
     let data = '';
     process.stdin.setEncoding('utf8');
     process.stdin.on('error', (e) => reject(e));
-    process.stdin.on('data', (chunk) => { data += chunk; });
+    process.stdin.on('data', (chunk) => {
+      data += chunk;
+    });
     process.stdin.on('end', () => {
-      try { resolve(JSON.parse(data)); }
-      catch (e) { reject(e); }
+      try {
+        resolve(JSON.parse(data));
+      } catch (e) {
+        reject(e);
+      }
     });
   });
 }
@@ -61,7 +66,7 @@ async function main() {
 
   // Load hook-runtime (lazy — only when we actually need it)
   const { resolveCodeIntel, formatAsXml } = require(
-    path.join(__dirname, '..', '..', '.aios-core', 'core', 'code-intel', 'hook-runtime.js'),
+    path.join(__dirname, '..', '..', '.aios-core', 'core', 'code-intel', 'hook-runtime.js')
   );
 
   const intel = await resolveCodeIntel(filePath, cwd);

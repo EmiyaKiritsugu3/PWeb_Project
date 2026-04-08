@@ -1,16 +1,13 @@
+'use client';
 
-"use client"
-
-import * as React from "react"
+import * as React from 'react';
+import type { ColumnDef, Row, Cell } from '@tanstack/react-table';
 import {
-  ColumnDef,
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
   useReactTable,
-  Row,
-  Cell,
-} from "@tanstack/react-table"
+} from '@tanstack/react-table';
 
 import {
   Table,
@@ -19,15 +16,15 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import { Button } from "@/components/ui/button"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Card, CardContent } from "@/components/ui/card"
+} from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Card, CardContent } from '@/components/ui/card';
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[]
-  isLoading?: boolean
+  columns: ColumnDef<TData, TValue>[];
+  data: TData[];
+  isLoading?: boolean;
 }
 
 export function DataTable<TData, TValue>({
@@ -40,12 +37,12 @@ export function DataTable<TData, TValue>({
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-  })
+  });
 
   // Helper para encontrar a célula de ações para o card mobile
   const getActionsCell = (row: Row<TData>): Cell<TData, TValue> | undefined => {
-    return row.getVisibleCells().find(cell => cell.column.id === 'actions');
-  }
+    return row.getVisibleCells().find((cell) => cell.column.id === 'actions');
+  };
 
   return (
     <div>
@@ -62,25 +59,35 @@ export function DataTable<TData, TValue>({
           table.getRowModel().rows.map((row) => {
             const actionsCell = getActionsCell(row);
             return (
-              <Card key={row.id} className="bg-card/30 backdrop-blur-md border-primary/10 hover:border-primary/40 hover:shadow-[0_0_15px_rgba(234,88,12,0.1)] transition-all duration-300">
+              <Card
+                key={row.id}
+                className="bg-card/30 backdrop-blur-md border-primary/10 hover:border-primary/40 hover:shadow-[0_0_15px_rgba(234,88,12,0.1)] transition-all duration-300"
+              >
                 <CardContent className="flex items-center justify-between p-4">
                   <div className="flex items-center gap-4">
                     {/* Avatar, Nome e Status */}
                     {row.getVisibleCells().map((cell) => {
                       const columnId = cell.column.id;
-                      if (columnId === 'fotoUrl' || columnId === 'nomeCompleto' || columnId === 'statusMatricula') {
-                        return <React.Fragment key={cell.id}>
-                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                               </React.Fragment>;
+                      if (
+                        columnId === 'fotoUrl' ||
+                        columnId === 'nomeCompleto' ||
+                        columnId === 'statusMatricula'
+                      ) {
+                        return (
+                          <React.Fragment key={cell.id}>
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          </React.Fragment>
+                        );
                       }
                       return null;
                     })}
                   </div>
                   {/* Ações */}
-                  {actionsCell && flexRender(actionsCell.column.columnDef.cell, actionsCell.getContext())}
+                  {actionsCell &&
+                    flexRender(actionsCell.column.columnDef.cell, actionsCell.getContext())}
                 </CardContent>
               </Card>
-            )
+            );
           })
         ) : (
           <Card className="bg-card/30 backdrop-blur-md border-primary/10">
@@ -102,12 +109,9 @@ export function DataTable<TData, TValue>({
                     <TableHead key={header.id}>
                       {header.isPlaceholder
                         ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                        : flexRender(header.column.columnDef.header, header.getContext())}
                     </TableHead>
-                  )
+                  );
                 })}
               </TableRow>
             ))}
@@ -125,10 +129,7 @@ export function DataTable<TData, TValue>({
               ))
             ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
+                <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -167,5 +168,5 @@ export function DataTable<TData, TValue>({
         </Button>
       </div>
     </div>
-  )
+  );
 }

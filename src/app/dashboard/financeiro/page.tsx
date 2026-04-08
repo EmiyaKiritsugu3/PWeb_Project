@@ -1,32 +1,26 @@
-import { Suspense } from "react";
-import { PageHeader } from "@/components/page-header";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
-import { prisma } from "@/lib/prisma";
-import FinanceiroClient from "./financeiro-client";
-import { PremiumSkeleton } from "@/components/ui/premium-skeleton";
+import { Suspense } from 'react';
+import { PageHeader } from '@/components/page-header';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { prisma } from '@/lib/prisma';
+import FinanceiroClient from './financeiro-client';
+import { PremiumSkeleton } from '@/components/ui/premium-skeleton';
 
 export const dynamic = 'force-dynamic';
 
 async function FinanceiroDataWrapper() {
   const inadimplentes = await prisma.aluno.findMany({
     where: {
-      statusMatricula: 'INADIMPLENTE'
+      statusMatricula: 'INADIMPLENTE',
     },
     select: {
       id: true,
       nomeCompleto: true,
       email: true,
-      statusMatricula: true
+      statusMatricula: true,
     },
     orderBy: {
-      nomeCompleto: 'asc'
-    }
+      nomeCompleto: 'asc',
+    },
   });
 
   return <FinanceiroClient initialInadimplentes={inadimplentes as any} />;
@@ -41,10 +35,12 @@ export default function FinanceiroPage() {
       />
       <Card className="bg-[#18181B] border-white/10 rounded-xl shadow-[0_0_15px_rgba(34,211,238,0.05)] hover:shadow-[0_0_15px_rgba(34,211,238,0.2)] transition-shadow">
         <CardHeader>
-          <CardTitle className="text-white font-extrabold tracking-tight">Alunos Inadimplentes</CardTitle>
+          <CardTitle className="text-white font-extrabold tracking-tight">
+            Alunos Inadimplentes
+          </CardTitle>
           <CardDescription className="text-zinc-400 font-medium">
-            Lista de alunos com pagamentos pendentes. Registre um pagamento
-            para reativar a matrícula e estender o vencimento em 30 dias.
+            Lista de alunos com pagamentos pendentes. Registre um pagamento para reativar a
+            matrícula e estender o vencimento em 30 dias.
           </CardDescription>
         </CardHeader>
         <CardContent>

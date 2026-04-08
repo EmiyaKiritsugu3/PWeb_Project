@@ -1,4 +1,3 @@
-
 'use server';
 /**
  * @fileOverview Flow de IA para gerar feedback sobre treinos.
@@ -14,22 +13,37 @@ import { z } from 'zod';
 
 // Schema de Entrada
 const WorkoutFeedbackInputSchema = z.object({
-  goal: z.string().describe('O objetivo principal do treino do aluno (ex: Hipertrofia, Perda de Peso).'),
-  completedExercises: z.array(z.string()).describe('Uma lista dos nomes dos exercícios que o aluno completou.'),
-  totalExercises: z.number().describe('O número total de exercícios que estavam no plano de treino.'),
+  goal: z
+    .string()
+    .describe('O objetivo principal do treino do aluno (ex: Hipertrofia, Perda de Peso).'),
+  completedExercises: z
+    .array(z.string())
+    .describe('Uma lista dos nomes dos exercícios que o aluno completou.'),
+  totalExercises: z
+    .number()
+    .describe('O número total de exercícios que estavam no plano de treino.'),
 });
 export type WorkoutFeedbackInput = z.infer<typeof WorkoutFeedbackInputSchema>;
 
 // Schema de Saída
 const WorkoutFeedbackOutputSchema = z.object({
-  title: z.string().describe('Um título curto e motivacional para o feedback (ex: "Mandou bem!", "Impressionante!").'),
-  message: z.string().describe('Uma mensagem de feedback (2-3 frases). Comece com um reforço positivo sobre o esforço. Depois, forneça uma dica prática e acionável relacionada ao objetivo do aluno para a próxima sessão ou para o dia a dia. Seja criativo e evite mensagens genéricas.'),
+  title: z
+    .string()
+    .describe(
+      'Um título curto e motivacional para o feedback (ex: "Mandou bem!", "Impressionante!").'
+    ),
+  message: z
+    .string()
+    .describe(
+      'Uma mensagem de feedback (2-3 frases). Comece com um reforço positivo sobre o esforço. Depois, forneça uma dica prática e acionável relacionada ao objetivo do aluno para a próxima sessão ou para o dia a dia. Seja criativo e evite mensagens genéricas.'
+    ),
 });
 export type WorkoutFeedbackOutput = z.infer<typeof WorkoutFeedbackOutputSchema>;
 
-
 // Função exportada que o frontend irá chamar
-export async function generateWorkoutFeedback(input: WorkoutFeedbackInput): Promise<WorkoutFeedbackOutput> {
+export async function generateWorkoutFeedback(
+  input: WorkoutFeedbackInput
+): Promise<WorkoutFeedbackOutput> {
   return workoutFeedbackFlow(input);
 }
 
@@ -74,12 +88,13 @@ const workoutFeedbackFlow = ai.defineFlow(
   async (input) => {
     // Se nenhum exercício foi feito, podemos retornar uma mensagem padrão sem chamar a IA.
     if (input.completedExercises.length === 0) {
-        return {
-            title: "O primeiro passo é o mais importante!",
-            message: "Notamos que você não marcou nenhum exercício hoje. Lembre-se que consistência é a chave! Que tal tentar fazer pelo menos um ou dois amanhã? Estamos aqui para te apoiar!"
-        }
+      return {
+        title: 'O primeiro passo é o mais importante!',
+        message:
+          'Notamos que você não marcou nenhum exercício hoje. Lembre-se que consistência é a chave! Que tal tentar fazer pelo menos um ou dois amanhã? Estamos aqui para te apoiar!',
+      };
     }
-    
+
     const { output } = await feedbackPrompt(input);
     return output!;
   }

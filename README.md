@@ -15,34 +15,39 @@ Um sistema de gestão **full-stack** moderno para academias, combinando ferramen
 A aplicação oferece duas jornadas totalmente separadas e seguras:
 
 ### 🏠 Painel de Gestão (`/dashboard`)
-*   **Gestão de Alunos:** CRM completo para cadastro, edição e controle de matrículas.
-*   **Controle Financeiro:** Monitoramento de inadimplência e status de pagamentos.
-*   **Gerador de Treinos IA:** Criação automatizada de planos semanais personalizados usando **Google Gemini** via Genkit.
-*   **Análise de Dados:** Dashboards com indicadores de crescimento e retenção.
+
+- **Gestão de Alunos:** CRM completo para cadastro, edição e controle de matrículas.
+- **Controle Financeiro:** Monitoramento de inadimplência e status de pagamentos.
+- **Gerador de Treinos IA:** Criação automatizada de planos semanais personalizados usando **Google Gemini** via Genkit.
+- **Análise de Dados:** Dashboards com indicadores de crescimento e retenção.
 
 ### 🛡️ Portal do Aluno (`/aluno`)
-*   **Gamificação (Player Experience):** Sistema de **Nível, XP e Streaks (Ofensivas)** para incentivar a consistência.
-*   **Treino do Dia:** Interface interativa para execução e conclusão de exercícios.
-*   **Feedback Motivacional:** Mensagens customizadas geradas por IA após cada treino finalizado.
-*   **Meus Treinos:** Separação entre planos profissionais (do personal) e treinos pessoais criados pelo aluno.
+
+- **Gamificação (Player Experience):** Sistema de **Nível, XP e Streaks (Ofensivas)** para incentivar a consistência.
+- **Treino do Dia:** Interface interativa para execução e conclusão de exercícios.
+- **Feedback Motivacional:** Mensagens customizadas geradas por IA após cada treino finalizado.
+- **Meus Treinos:** Separação entre planos profissionais (do personal) e treinos pessoais criados pelo aluno.
 
 ---
 
 ## 🛠️ Stack Tecnológica
 
 ### Frontend & UI
+
 - **Framework:** [Next.js 15+](https://nextjs.org/) (App Router)
 - **Estilização:** [Tailwind CSS](https://tailwindcss.com/)
 - **Componentes:** [Shadcn/UI](https://ui.shadcn.com/) & [Framer Motion](https://www.framer.com/motion/)
 - **Icons:** [Lucide React](https://lucide.dev/)
 
 ### Backend & Database
+
 - **Auth:** [Supabase Auth](https://supabase.com/auth) (com suporte a SSR)
 - **Database:** [PostgreSQL](https://www.postgresql.org/) (hospedado no Supabase)
 - **ORM:** [Prisma](https://www.prisma.io/)
 - **Validação:** [Zod](https://zod.dev/) & [React Hook Form](https://react-hook-form.com/)
 
 ### Inteligência Artificial
+
 - **Engine:** [Google Genkit](https://firebase.google.com/docs/genkit)
 - **Modelos:** Gemini (Google AI)
 
@@ -51,11 +56,13 @@ A aplicação oferece duas jornadas totalmente separadas e seguras:
 ## 🚀 Como Executar o Projeto
 
 ### Pré-requisitos
+
 - Node.js 18.x ou superior
 - Instância do PostgreSQL (ou projeto Supabase)
 - Chave de API do Google AI (Gemini)
 
 ### 1. Configurar Variáveis de Ambiente
+
 Crie um arquivo `.env` na raiz do projeto com as seguintes chaves:
 
 ```env
@@ -72,6 +79,7 @@ GOOGLE_GENAI_API_KEY="sua-google-ai-key"
 ```
 
 ### 2. Instalação e Setup
+
 ```bash
 # Instalar dependências
 npm install
@@ -87,9 +95,11 @@ npm run prisma:seed
 ```
 
 ### 3. Rodar o Desenvolvimento
+
 ```bash
 npm run dev
 ```
+
 Acesse `http://localhost:3000` para ver a aplicação em execução.
 
 ---

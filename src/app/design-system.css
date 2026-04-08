@@ -7,14 +7,14 @@
   /* Glow Tokens */
   --shadow-glow-cyan: 0 0 20px oklch(0.7 0.25 190 / 0.15);
   --shadow-glow-cyan-hover: 0 0 25px oklch(0.7 0.25 190 / 0.25);
-  
+
   --shadow-glow-gold: 0 0 20px oklch(0.8 0.15 70 / 0.15);
   --shadow-glow-gold-hover: 0 0 25px oklch(0.8 0.15 70 / 0.25);
 }
 
 @layer components {
   /* Componentes semânticos seguindo Clean Code */
-  
+
   .glass-card {
     background-color: var(--background-glass);
     backdrop-filter: blur(var(--backdrop-blur-glass));
@@ -25,7 +25,7 @@
   .glow-cyan {
     box-shadow: var(--shadow-glow-cyan);
     transition: box-shadow 0.3s ease-in-out;
-    
+
     &:hover {
       box-shadow: var(--shadow-glow-cyan-hover);
     }
@@ -34,7 +34,7 @@
   .glow-gold {
     box-shadow: var(--shadow-glow-gold);
     transition: box-shadow 0.3s ease-in-out;
-    
+
     &:hover {
       box-shadow: var(--shadow-glow-gold-hover);
     }

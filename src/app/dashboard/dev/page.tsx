@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -21,9 +20,12 @@ export default function DevPage() {
     try {
       // A chamada ao flow foi desabilitada temporariamente.
       // const availableModels = await listModelsFlow();
-      const availableModels: string[] = ["Funcionalidade desabilitada para o build"];
+      const availableModels: string[] = ['Funcionalidade desabilitada para o build'];
       setModels(availableModels);
-      toast({ title: 'Funcionalidade Desabilitada', description: 'A listagem de modelos foi desabilitada para corrigir o build.' });
+      toast({
+        title: 'Funcionalidade Desabilitada',
+        description: 'A listagem de modelos foi desabilitada para corrigir o build.',
+      });
     } catch (error) {
       console.error('Erro ao listar modelos:', error);
       toast({
@@ -47,7 +49,8 @@ export default function DevPage() {
           <CardHeader>
             <CardTitle>Listagem de Modelos de IA</CardTitle>
             <CardDescription>
-              Clique no botão para consultar em tempo real os modelos de IA disponíveis através da API configurada no Genkit. (Funcionalidade desabilitada)
+              Clique no botão para consultar em tempo real os modelos de IA disponíveis através da
+              API configurada no Genkit. (Funcionalidade desabilitada)
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col items-start gap-4">
@@ -64,11 +67,9 @@ export default function DevPage() {
             {models.length > 0 && (
               <div className="w-full pt-4">
                 <h3 className="font-semibold mb-2">Modelos Encontrados:</h3>
-                 <ScrollArea className="h-72 w-full rounded-md border">
-                    <pre className="p-4 text-sm">
-                    {models.join('\n')}
-                    </pre>
-                 </ScrollArea>
+                <ScrollArea className="h-72 w-full rounded-md border">
+                  <pre className="p-4 text-sm">{models.join('\n')}</pre>
+                </ScrollArea>
               </div>
             )}
           </CardContent>

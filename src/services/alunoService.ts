@@ -20,7 +20,10 @@ export async function getAluno(id: string): Promise<Aluno | null> {
   return result;
 }
 
-export async function updateAluno(id: string, updateData: Partial<Omit<Aluno, 'id'>>): Promise<Aluno> {
+export async function updateAluno(
+  id: string,
+  updateData: Partial<Omit<Aluno, 'id'>>
+): Promise<Aluno> {
   const result = await db.update('alunos', id, updateData);
   return result;
 }

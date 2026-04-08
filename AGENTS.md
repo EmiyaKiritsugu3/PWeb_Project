@@ -1,65 +1,67 @@
-# AGENTS.md - Synkra AIOX (Codex CLI)
+# AGENTS.md — Five Star Academy (PWeb_Project)
 
-Este arquivo define as instrucoes do projeto para o Codex CLI.
+Agent instructions for AI assistants working on this codebase.
 
-<!-- AIOX-MANAGED-START: core -->
-## Core Rules
+## Development Workflow
 
-1. Siga a Constitution em `.aiox-core/constitution.md`
-2. Priorize `CLI First -> Observability Second -> UI Third`
-3. Trabalhe por stories em `docs/stories/`
-4. Nao invente requisitos fora dos artefatos existentes
-<!-- AIOX-MANAGED-END: core -->
+Every piece of work follows this sequence — no exceptions:
 
-<!-- AIOX-MANAGED-START: quality -->
+```
+PDR → Design Spec → Implementation → Tests → ADR → Report → CHANGELOG
+```
+
 ## Quality Gates
 
-- Rode `npm run lint`
-- Rode `npm run typecheck`
-- Rode `npm test`
-- Atualize checklist e file list da story antes de concluir
-<!-- AIOX-MANAGED-END: quality -->
+Before marking any task done, all of the following must pass:
 
-<!-- AIOX-MANAGED-START: codebase -->
+```bash
+npm run typecheck      # Zero TypeScript errors
+npm run lint           # Zero ESLint errors
+npm run format:check   # No Prettier violations
+npm run test:coverage  # All tests pass
+```
+
 ## Project Map
 
-- Core framework: `.aiox-core/`
-- CLI entrypoints: `bin/`
-- Shared packages: `packages/`
-- Tests: `tests/`
-- Docs: `docs/`
-<!-- AIOX-MANAGED-END: codebase -->
+| Path                  | Purpose                                  |
+| --------------------- | ---------------------------------------- |
+| `src/app/`            | Next.js App Router pages and layouts     |
+| `src/components/`     | React components (UI, dashboard, aluno)  |
+| `src/lib/`            | Server actions, Prisma client, utilities |
+| `src/services/`       | Business logic layer                     |
+| `src/hooks/`          | Custom React hooks                       |
+| `src/ai/`             | Google Genkit AI flows                   |
+| `src/utils/supabase/` | Supabase SSR client helpers              |
+| `prisma/`             | Prisma schema, migrations, seed          |
+| `docs/`               | Documentation (ADRs, specs, stories)     |
 
-<!-- AIOX-MANAGED-START: commands -->
-## Common Commands
+## Commit Conventions
 
-- `npm run sync:ide`
-- `npm run sync:ide:check`
-- `npm run sync:skills:codex`
-- `npm run sync:skills:codex:global` (opcional; neste repo o padrao e local-first)
-- `npm run validate:structure`
-- `npm run validate:agents`
-<!-- AIOX-MANAGED-END: commands -->
+This project uses [Conventional Commits](https://www.conventionalcommits.org/):
 
-<!-- AIOX-MANAGED-START: shortcuts -->
-## Agent Shortcuts
+```
+feat(aluno): add streak reset logic
+fix(auth): handle session expiry
+chore(deps): upgrade prisma
+```
 
-Preferencia de ativacao no Codex CLI:
-1. Use `/skills` e selecione `aiox-<agent-id>` vindo de `.codex/skills` (ex.: `aiox-architect`)
-2. Se preferir, use os atalhos abaixo (`@architect`, `/architect`, etc.)
+Valid types: `feat`, `fix`, `docs`, `refactor`, `test`, `chore`, `perf`, `ci`, `revert`
 
-Interprete os atalhos abaixo carregando o arquivo correspondente em `.aiox-core/development/agents/` (fallback: `.codex/agents/`), renderize o greeting via `generate-greeting.js` e assuma a persona ate `*exit`:
+## Architecture Constraints
 
-- `@architect`, `/architect`, `/architect.md` -> `.aiox-core/development/agents/architect.md`
-- `@dev`, `/dev`, `/dev.md` -> `.aiox-core/development/agents/dev.md`
-- `@qa`, `/qa`, `/qa.md` -> `.aiox-core/development/agents/qa.md`
-- `@pm`, `/pm`, `/pm.md` -> `.aiox-core/development/agents/pm.md`
-- `@po`, `/po`, `/po.md` -> `.aiox-core/development/agents/po.md`
-- `@sm`, `/sm`, `/sm.md` -> `.aiox-core/development/agents/sm.md`
-- `@analyst`, `/analyst`, `/analyst.md` -> `.aiox-core/development/agents/analyst.md`
-- `@devops`, `/devops`, `/devops.md` -> `.aiox-core/development/agents/devops.md`
-- `@data-engineer`, `/data-engineer`, `/data-engineer.md` -> `.aiox-core/development/agents/data-engineer.md`
-- `@ux-design-expert`, `/ux-design-expert`, `/ux-design-expert.md` -> `.aiox-core/development/agents/ux-design-expert.md`
-- `@squad-creator`, `/squad-creator`, `/squad-creator.md` -> `.aiox-core/development/agents/squad-creator.md`
-- `@aiox-master`, `/aiox-master`, `/aiox-master.md` -> `.aiox-core/development/agents/aiox-master.md`
-<!-- AIOX-MANAGED-END: shortcuts -->
+- **Auth:** Supabase Auth via SSR — never use client-side auth for protected routes
+- **Database:** All DB access via Prisma Server Actions — never expose Prisma to the client
+- **AI:** Google Genkit flows only — do not call Gemini API directly
+- **Forms:** React Hook Form + Zod — never use uncontrolled forms
+- **Styling:** Tailwind CSS + Shadcn/UI — do not add new CSS frameworks
+
+## Database Changes
+
+Any schema change requires:
+
+1. `npx prisma migrate dev --name <description>`
+2. Updated seed data in `prisma/seed.ts` if needed
+
+## Environment Variables
+
+Never commit secrets. All new env vars must be added to `.env.example` with a placeholder value.

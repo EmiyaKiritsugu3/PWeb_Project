@@ -1,14 +1,13 @@
-
 'use server';
 
 import { ai } from '@/ai/genkit';
 import { googleAI } from '@genkit-ai/google-genai';
 import { EXERCICIOS_POR_GRUPO } from '@/lib/constants';
-import { 
-    WorkoutGeneratorInputSchema, 
-    WorkoutGeneratorAIOutputSchema,
-    type WorkoutGeneratorInput,
-    type WorkoutGeneratorOutput
+import {
+  WorkoutGeneratorInputSchema,
+  WorkoutGeneratorAIOutputSchema,
+  type WorkoutGeneratorInput,
+  type WorkoutGeneratorOutput,
 } from '@/ai/schemas';
 
 // Transforma a lista de exercícios disponíveis em uma string formatada para o prompt.
@@ -21,7 +20,9 @@ ${grupo.exercicios.map((ex) => `- ${ex.nomeExercicio}`).join('\n')}
 ).join('');
 
 // Cria um Set com todos os nomes de exercícios válidos para uma validação rápida.
-const validExerciseNames = new Set(EXERCICIOS_POR_GRUPO.flatMap(g => g.exercicios.map(ex => ex.nomeExercicio)));
+const validExerciseNames = new Set(
+  EXERCICIOS_POR_GRUPO.flatMap((g) => g.exercicios.map((ex) => ex.nomeExercicio))
+);
 
 export const streamWorkoutPlan = ai.defineFlow(
   {
@@ -54,31 +55,33 @@ export const streamWorkoutPlan = ai.defineFlow(
     `;
 
     const responseStream = await ai.generateStream({
-        model: googleAI.model('gemini-2.5-flash'),
-        prompt: promptText,
-        output: { schema: WorkoutGeneratorAIOutputSchema },
+      model: googleAI.model('gemini-2.5-flash'),
+      prompt: promptText,
+      output: { schema: WorkoutGeneratorAIOutputSchema },
     });
 
     for await (const chunk of responseStream.stream) {
-        if (chunk && chunk.output) {
-            sendChunk(chunk.output as WorkoutGeneratorOutput);
-        }
+      if (chunk && chunk.output) {
+        sendChunk(chunk.output as WorkoutGeneratorOutput);
+      }
     }
 
     const finalOutput = await responseStream.response;
     if (!finalOutput || !finalOutput.output) {
-        throw new Error("A IA não retornou um plano de treino válido.");
+      throw new Error('A IA não retornou um plano de treino válido.');
     }
     return finalOutput.output as WorkoutGeneratorOutput;
   }
 );
 
 // Manter a função anterior caso o front-end precise do modo normal
-export async function generateWorkoutPlan(input: WorkoutGeneratorInput): Promise<WorkoutGeneratorOutput> {
+export async function generateWorkoutPlan(
+  input: WorkoutGeneratorInput
+): Promise<WorkoutGeneratorOutput> {
   const { output } = await ai.generate({
-      model: googleAI.model('gemini-2.5-flash'),
-      prompt: `Você é um personal trainer de elite... (usando versão não-streaming para ${input.objetivo})`,
-      output: { schema: WorkoutGeneratorAIOutputSchema },
+    model: googleAI.model('gemini-2.5-flash'),
+    prompt: `Você é um personal trainer de elite... (usando versão não-streaming para ${input.objetivo})`,
+    output: { schema: WorkoutGeneratorAIOutputSchema },
   });
   return output as WorkoutGeneratorOutput;
 }
