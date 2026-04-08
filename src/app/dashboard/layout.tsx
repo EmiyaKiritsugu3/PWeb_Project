@@ -1,18 +1,5 @@
-'use client';
-
-import { useEffect } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import {
   Sidebar,
   SidebarContent,
@@ -23,35 +10,17 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { DashboardNav, DashboardNavBottom } from '@/components/dashboard-nav';
-import { Dumbbell, LogOut } from 'lucide-react';
-import { useAuth } from '@/components/providers/auth-provider';
+import { UserMenu } from '@/app/dashboard/_components/user-menu';
+import { createClient } from '@/utils/supabase/server';
+import { Dumbbell } from 'lucide-react';
 
-function DashboardAppLayout({ children }: { children: React.ReactNode }) {
-  const { user, isUserLoading, signOut } = useAuth();
-  const router = useRouter();
+export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  useEffect(() => {
-    // Se não está carregando e não há usuário, redireciona para a página de login principal
-    if (!isUserLoading && !user) {
-      router.push('/login');
-    }
-  }, [user, isUserLoading, router]);
-
-  const handleLogout = async () => {
-    await signOut();
-    router.push('/login');
-  };
-
-  if (isUserLoading || !user) {
-    return (
-      <div className="flex h-screen w-full items-center justify-center bg-background">
-        <div className="flex flex-col items-center gap-4">
-          <Dumbbell className="h-12 w-12 animate-pulse text-primary" />
-          <p className="text-muted-foreground">Carregando painel...</p>
-        </div>
-      </div>
-    );
-  }
+  if (!user) redirect('/login');
 
   const displayName =
     user.user_metadata?.full_name || user.user_metadata?.nomeCompleto || 'Administrador';
@@ -63,7 +32,6 @@ function DashboardAppLayout({ children }: { children: React.ReactNode }) {
   return (
     <SidebarProvider>
       <div className="relative flex min-h-screen w-full overflow-hidden bg-background">
-        {/* Animated Background Blobs - Subtle (5% opacity) */}
         <div className="absolute inset-0 z-0 pointer-events-none">
           <div className="absolute top-[-10%] left-[-10%] h-[50%] w-[50%] rounded-full bg-primary/5 blur-[120px] animate-glow-pulse" />
           <div
@@ -95,6 +63,7 @@ function DashboardAppLayout({ children }: { children: React.ReactNode }) {
             <DashboardNavBottom />
           </SidebarFooter>
         </Sidebar>
+
         <SidebarInset className="bg-background/95">
           <header className="flex h-16 items-center justify-between gap-4 border-b border-white/5 bg-background/40 px-6 backdrop-blur-xl sticky top-0 z-10">
             <div className="flex items-center gap-4">
@@ -108,44 +77,7 @@ function DashboardAppLayout({ children }: { children: React.ReactNode }) {
             </div>
             <div className="flex items-center gap-4">
               <div className="h-8 w-[1px] bg-white/10 mx-2 hidden sm:block"></div>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    className="relative h-10 w-10 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 transition-all duration-300"
-                  >
-                    <Avatar className="h-8 w-8 rounded-lg">
-                      <AvatarImage src={photoURL} alt="Admin" />
-                      <AvatarFallback className="bg-primary/20 text-primary">
-                        {user.email?.[0].toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56 glass-card mt-2" align="end">
-                  <DropdownMenuLabel className="font-normal">
-                    <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-bold leading-none">{displayName}</p>
-                      <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
-                    </div>
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator className="bg-white/10" />
-                  <DropdownMenuItem className="focus:bg-primary/20 focus:text-primary cursor-pointer">
-                    Perfil
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="focus:bg-primary/20 focus:text-primary cursor-pointer">
-                    Configurações
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator className="bg-white/10" />
-                  <DropdownMenuItem
-                    onClick={handleLogout}
-                    className="text-destructive focus:bg-destructive/10 cursor-pointer"
-                  >
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>Sair da conta</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <UserMenu displayName={displayName} email={user.email!} photoURL={photoURL} />
             </div>
           </header>
           <main className="flex-1 p-6 md:p-8 max-w-[1600px] mx-auto w-full">{children}</main>
@@ -153,8 +85,4 @@ function DashboardAppLayout({ children }: { children: React.ReactNode }) {
       </div>
     </SidebarProvider>
   );
-}
-
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  return <DashboardAppLayout>{children}</DashboardAppLayout>;
 }
