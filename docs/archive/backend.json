@@ -6,16 +6,38 @@
       "type": "object",
       "description": "Representa um aluno da academia.",
       "properties": {
-        "id": { "type": "string", "description": "ID único do aluno, geralmente o UID do Firebase Auth." },
+        "id": {
+          "type": "string",
+          "description": "ID único do aluno, geralmente o UID do Firebase Auth."
+        },
         "nomeCompleto": { "type": "string", "description": "Nome completo do aluno." },
         "cpf": { "type": "string", "description": "CPF do aluno." },
         "email": { "type": "string", "description": "Email do aluno.", "format": "email" },
         "telefone": { "type": "string", "description": "Telefone de contato do aluno." },
-        "dataNascimento": { "type": "string", "description": "Data de nascimento do aluno.", "format": "date-time" },
-        "dataCadastro": { "type": "string", "description": "Data de cadastro do aluno.", "format": "date-time" },
-        "fotoUrl": { "type": "string", "description": "URL da foto de perfil do aluno.", "format": "uri" },
-        "biometriaHash": { "type": "string", "description": "Hash biométrico para controle de acesso." },
-        "statusMatricula": { "type": "string", "enum": ["ATIVA", "INADIMPLENTE", "INATIVA"], "description": "Status atual da matrícula do aluno." }
+        "dataNascimento": {
+          "type": "string",
+          "description": "Data de nascimento do aluno.",
+          "format": "date-time"
+        },
+        "dataCadastro": {
+          "type": "string",
+          "description": "Data de cadastro do aluno.",
+          "format": "date-time"
+        },
+        "fotoUrl": {
+          "type": "string",
+          "description": "URL da foto de perfil do aluno.",
+          "format": "uri"
+        },
+        "biometriaHash": {
+          "type": "string",
+          "description": "Hash biométrico para controle de acesso."
+        },
+        "statusMatricula": {
+          "type": "string",
+          "enum": ["ATIVA", "INADIMPLENTE", "INATIVA"],
+          "description": "Status atual da matrícula do aluno."
+        }
       },
       "required": ["id", "nomeCompleto", "cpf", "email", "dataCadastro", "statusMatricula"]
     },
@@ -41,9 +63,21 @@
         "id": { "type": "string", "description": "ID único da matrícula." },
         "alunoId": { "type": "string", "description": "ID do aluno matriculado." },
         "planoId": { "type": "string", "description": "ID do plano contratado." },
-        "dataInicio": { "type": "string", "description": "Data de início da matrícula.", "format": "date-time" },
-        "dataVencimento": { "type": "string", "description": "Data de vencimento da matrícula.", "format": "date-time" },
-        "status": { "type": "string", "enum": ["ATIVA", "VENCIDA"], "description": "Status da matrícula." }
+        "dataInicio": {
+          "type": "string",
+          "description": "Data de início da matrícula.",
+          "format": "date-time"
+        },
+        "dataVencimento": {
+          "type": "string",
+          "description": "Data de vencimento da matrícula.",
+          "format": "date-time"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["ATIVA", "VENCIDA"],
+          "description": "Status da matrícula."
+        }
       },
       "required": ["id", "alunoId", "planoId", "dataInicio", "dataVencimento", "status"]
     },
@@ -54,11 +88,22 @@
       "description": "Registra um pagamento realizado por um aluno.",
       "properties": {
         "id": { "type": "string", "description": "ID único do pagamento." },
-        "matriculaId": { "type": "string", "description": "ID da matrícula associada ao pagamento." },
+        "matriculaId": {
+          "type": "string",
+          "description": "ID da matrícula associada ao pagamento."
+        },
         "alunoId": { "type": "string", "description": "ID do aluno que realizou o pagamento." },
         "valor": { "type": "number", "description": "Valor pago." },
-        "dataPagamento": { "type": "string", "description": "Data do pagamento.", "format": "date-time" },
-        "metodo": { "type": "string", "enum": ["PIX", "Dinheiro", "Cartão"], "description": "Método de pagamento." }
+        "dataPagamento": {
+          "type": "string",
+          "description": "Data do pagamento.",
+          "format": "date-time"
+        },
+        "metodo": {
+          "type": "string",
+          "enum": ["PIX", "Dinheiro", "Cartão"],
+          "description": "Método de pagamento."
+        }
       },
       "required": ["id", "matriculaId", "alunoId", "valor", "dataPagamento", "metodo"]
     },
@@ -70,10 +115,20 @@
       "properties": {
         "id": { "type": "string", "description": "ID único do treino." },
         "alunoId": { "type": "string", "description": "ID do aluno a quem o treino pertence." },
-        "instrutorId": { "type": "string", "description": "ID do instrutor que criou o treino. Pode ser o UID do aluno ou 'IA'." },
+        "instrutorId": {
+          "type": "string",
+          "description": "ID do instrutor que criou o treino. Pode ser o UID do aluno ou 'IA'."
+        },
         "objetivo": { "type": "string", "description": "Objetivo do treino (ex: Hipertrofia)." },
-        "dataCriacao": { "type": "string", "description": "Data de criação do treino.", "format": "date-time" },
-        "diaSemana": { "type": ["number", "null"], "description": "Dia da semana agendado (0-6). Null se não estiver agendado." }
+        "dataCriacao": {
+          "type": "string",
+          "description": "Data de criação do treino.",
+          "format": "date-time"
+        },
+        "diaSemana": {
+          "type": ["number", "null"],
+          "description": "Dia da semana agendado (0-6). Null se não estiver agendado."
+        }
       },
       "required": ["id", "alunoId", "instrutorId", "objetivo", "dataCriacao", "diaSemana"]
     },
@@ -98,10 +153,17 @@
       "type": "object",
       "description": "Representa um funcionário da academia.",
       "properties": {
-        "id": { "type": "string", "description": "ID único do funcionário, geralmente o UID do Firebase Auth." },
+        "id": {
+          "type": "string",
+          "description": "ID único do funcionário, geralmente o UID do Firebase Auth."
+        },
         "nomeCompleto": { "type": "string", "description": "Nome completo do funcionário." },
         "email": { "type": "string", "description": "Email do funcionário.", "format": "email" },
-        "role": { "type": "string", "enum": ["RECEPCIONISTA", "INSTRUTOR", "GERENTE"], "description": "Cargo do funcionário." }
+        "role": {
+          "type": "string",
+          "enum": ["RECEPCIONISTA", "INSTRUTOR", "GERENTE"],
+          "description": "Cargo do funcionário."
+        }
       },
       "required": ["id", "nomeCompleto", "email", "role"]
     }

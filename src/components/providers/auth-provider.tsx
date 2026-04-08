@@ -1,9 +1,9 @@
-
 'use client';
 
-import React, { createContext, useContext, ReactNode, useMemo, useState, useEffect } from 'react';
+import type { ReactNode } from 'react';
+import React, { createContext, useContext, useMemo, useState, useEffect } from 'react';
 import { createClient } from '@/utils/supabase/client';
-import { User } from '@supabase/supabase-js';
+import type { User } from '@supabase/supabase-js';
 
 // Internal state for user authentication
 interface UserAuthState {
@@ -37,21 +37,26 @@ export const SupabaseAuthProvider: React.FC<{ children: ReactNode }> = ({ childr
 
   useEffect(() => {
     const syncUser = async () => {
-      const { data: { user: sbUser }, error } = await supabase.auth.getUser();
+      const {
+        data: { user: sbUser },
+        error,
+      } = await supabase.auth.getUser();
       setUserAuthState({
         user: sbUser,
         isUserLoading: false,
-        userError: error as Error | null
+        userError: error as Error | null,
       });
     };
 
     syncUser();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       setUserAuthState({
         user: session?.user || null,
         isUserLoading: false,
-        userError: null
+        userError: null,
       });
     });
 
@@ -69,11 +74,7 @@ export const SupabaseAuthProvider: React.FC<{ children: ReactNode }> = ({ childr
     };
   }, [userAuthState, supabase]);
 
-  return (
-    <AuthContext.Provider value={contextValue}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {
@@ -83,4 +84,3 @@ export const useAuth = () => {
   }
   return context;
 };
-

@@ -55,7 +55,9 @@ async function beforeAgent() {
     if (fs.existsSync(claudeMdPath)) {
       const content = fs.readFileSync(claudeMdPath, 'utf8');
       // Extract key sections
-      const importConventions = content.match(/## (?:Code Standards|Conventions)([\s\S]*?)(?=##|$)/i);
+      const importConventions = content.match(
+        /## (?:Code Standards|Conventions)([\s\S]*?)(?=##|$)/i
+      );
       if (importConventions) {
         result.contextInjection.projectConventions = importConventions[1].trim().slice(0, 500);
       }

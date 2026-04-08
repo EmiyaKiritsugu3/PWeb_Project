@@ -1,243 +1,280 @@
 'use server';
 
-import { Prisma } from "@prisma/client";
+import { Prisma } from '@prisma/client';
 
-import { prisma } from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
-import { TreinoSchema, TreinoBaseSchema, HistoricoTreinoSchema, HistoricoTreinoBaseSchema } from "@/lib/definitions";
-import { createClient } from "@/utils/supabase/server";
+import { prisma } from '@/lib/prisma';
+import { revalidatePath } from 'next/cache';
+import {
+  TreinoSchema,
+  TreinoBaseSchema,
+  HistoricoTreinoSchema,
+  HistoricoTreinoBaseSchema,
+} from '@/lib/definitions';
+import { createClient } from '@/utils/supabase/server';
 
 export async function upsertTreinoAction(treinoData: any) {
   try {
     const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    if (authError || !user) throw new Error("Usuário não autenticado");
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+    if (authError || !user) throw new Error('Usuário não autenticado');
 
     // Validação flexível: se tiver ID, valida como Entity; se não, como Base.
     let validatedData;
     if (treinoData.id) {
-        validatedData = TreinoSchema.parse(treinoData);
+      validatedData = TreinoSchema.parse(treinoData);
     } else {
-        validatedData = TreinoBaseSchema.parse(treinoData);
+      validatedData = TreinoBaseSchema.parse(treinoData);
     }
-    
+
     // Extraímos os dados validados. 'id' será undefined se for Base.
     const { alunoId, instrutorId, objetivo, exercicios, diaSemana } = validatedData;
     const id = (validatedData as any).id;
 
     if (id) {
-        // Update
-        await prisma.treino.update({
-            where: { id },
-            data: {
-                objetivo,
-                diaSemana,
-                Exercicios: {
-                    deleteMany: {},
-                    create: exercicios.map((ex: any) => ({
-                        nomeExercicio: ex.nomeExercicio,
-                        series: parseInt(ex.series) || 0,
-                        repeticoes: String(ex.repeticoes),
-                        observacoes: ex.observacoes || "",
-                        descricao: ex.descricao || "",
-                    }))
-                }
-            }
-        });
+      // Update
+      await prisma.treino.update({
+        where: { id },
+        data: {
+          objetivo,
+          diaSemana,
+          Exercicios: {
+            deleteMany: {},
+            create: exercicios.map((ex: any) => ({
+              nomeExercicio: ex.nomeExercicio,
+              series: parseInt(ex.series) || 0,
+              repeticoes: String(ex.repeticoes),
+              observacoes: ex.observacoes || '',
+              descricao: ex.descricao || '',
+            })),
+          },
+        },
+      });
     } else {
-        // Create
-        await prisma.treino.create({
-            data: {
-                alunoId,
-                instrutorId: instrutorId || null,
-                objetivo,
-                diaSemana,
-                Exercicios: {
-                    create: exercicios.map((ex: any) => ({
-                        nomeExercicio: ex.nomeExercicio,
-                        series: parseInt(ex.series) || 0,
-                        repeticoes: String(ex.repeticoes),
-                        observacoes: ex.observacoes || "",
-                        descricao: ex.descricao || "",
-                    }))
-                }
-            }
-        });
+      // Create
+      await prisma.treino.create({
+        data: {
+          alunoId,
+          instrutorId: instrutorId || null,
+          objetivo,
+          diaSemana,
+          Exercicios: {
+            create: exercicios.map((ex: any) => ({
+              nomeExercicio: ex.nomeExercicio,
+              series: parseInt(ex.series) || 0,
+              repeticoes: String(ex.repeticoes),
+              observacoes: ex.observacoes || '',
+              descricao: ex.descricao || '',
+            })),
+          },
+        },
+      });
     }
 
-    revalidatePath("/aluno/meus-treinos");
-    revalidatePath("/dashboard/treinos");
+    revalidatePath('/aluno/meus-treinos');
+    revalidatePath('/dashboard/treinos');
     return { success: true };
   } catch (error: any) {
-    console.error("Erro ao salvar treino:", error);
-    if (error.name === "ZodError") {
-      return { success: false, error: "Dados do treino inválidos", details: error.flatten().fieldErrors };
+    console.error('Erro ao salvar treino:', error);
+    if (error.name === 'ZodError') {
+      return {
+        success: false,
+        error: 'Dados do treino inválidos',
+        details: error.flatten().fieldErrors,
+      };
     }
     return { success: false, error: error.message };
   }
 }
 
 export async function updateTreinoDayAction(treinoId: string, diaSemana: number | null) {
-    try {
-        const supabase = await createClient();
-        const { data: { user }, error: authError } = await supabase.auth.getUser();
-        if (authError || !user) throw new Error("Usuário não autenticado");
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+    if (authError || !user) throw new Error('Usuário não autenticado');
 
-        await prisma.treino.update({
-            where: { id: treinoId },
-            data: { diaSemana }
-        });
-        revalidatePath("/aluno/meus-treinos");
-        return { success: true };
-    } catch (error) {
-        console.error("Erro ao atualizar dia do treino:", error);
-        return { success: false, error: (error as Error).message };
-    }
+    await prisma.treino.update({
+      where: { id: treinoId },
+      data: { diaSemana },
+    });
+    revalidatePath('/aluno/meus-treinos');
+    return { success: true };
+  } catch (error) {
+    console.error('Erro ao atualizar dia do treino:', error);
+    return { success: false, error: (error as Error).message };
+  }
 }
 
 export async function deleteTreinoAction(treinoId: string) {
   try {
     const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    if (authError || !user) throw new Error("Usuário não autenticado");
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+    if (authError || !user) throw new Error('Usuário não autenticado');
 
     await prisma.treino.delete({
-      where: { id: treinoId }
+      where: { id: treinoId },
     });
-    revalidatePath("/aluno/meus-treinos");
-    revalidatePath("/dashboard/treinos");
+    revalidatePath('/aluno/meus-treinos');
+    revalidatePath('/dashboard/treinos');
     return { success: true };
   } catch (error) {
-    console.error("Erro ao excluir treino:", error);
+    console.error('Erro ao excluir treino:', error);
     return { success: false, error: (error as Error).message };
   }
 }
 
 export async function registrarHistoricoTreinoAction(historicoData: any) {
-    try {
-        const { createClient: createSupabaseClient } = await import("@/utils/supabase/server");
-        const supabase = await createSupabaseClient();
-        const { data: { user }, error: authError } = await supabase.auth.getUser();
+  try {
+    const { createClient: createSupabaseClient } = await import('@/utils/supabase/server');
+    const supabase = await createSupabaseClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
-        if (authError || !user) {
-            throw new Error("Usuário não autenticado");
-        }
-
-        // Validação Zod: Para registro de histórico vindo do app, usamos o BaseSchema (o ID será gerado no DB)
-        const validatedData = HistoricoTreinoBaseSchema.parse(historicoData);
-
-        // Buscar aluno pelo email
-        const aluno = await prisma.aluno.findUnique({
-            where: { email: user.email! },
-        });
-
-        if (!aluno) {
-            throw new Error("Perfil de aluno não encontrado");
-        }
-
-        const hoje = new Date();
-        const hojeStr = new Intl.DateTimeFormat('fr-CA', { timeZone: 'America/Sao_Paulo' }).format(hoje); // yyyy-mm-dd
-
-
-        // 1. Criar Histórico de Treino e Séries em uma transação
-        const result = await prisma.$transaction(async (tx) => {
-            const historico = await tx.historicoTreino.create({
-                data: {
-                    alunoId: aluno.id,
-                    treinoId: validatedData.treinoId,
-                    duracaoMinutos: validatedData.duracaoMinutos,
-                    dataExecucao: new Date(validatedData.dataExecucao),
-                    SeriesExecutadas: {
-                        create: validatedData.exercicios.flatMap((ex: any) => 
-                            ex.seriesExecutadas.map((serie: any) => ({
-                                exercicioId: ex.exercicioId,
-                                nomeExercicio: ex.nomeExercicio,
-                                serieNumero: serie.serieNumero,
-                                peso: serie.peso ? parseFloat(serie.peso) : null,
-                                repeticoesFeitas: serie.repeticoesFeitas ? parseInt(serie.repeticoesFeitas) : null,
-                                concluido: serie.concluido
-                            }))
-                        )
-                    }
-                }
-            });
-
-            // 2. Lógica de Gamificação
-            let novoStreak = aluno.streakDiasSeguidos;
-            let novoNivel = aluno.nivel;
-            let novaExp = aluno.exp;
-            let treinosNoMes = aluno.treinosNoMes;
-
-            const dataUltimoTreino = aluno.ultimoTreinoData 
-                ? new Intl.DateTimeFormat('fr-CA', { timeZone: 'America/Sao_Paulo' }).format(new Date(aluno.ultimoTreinoData))
-                : null;
-
-            if (dataUltimoTreino !== hojeStr) {
-                // É um novo dia de treino!
-                const mesAtualStr = hojeStr.split("-")[1];
-                const mesUltimoTreinoStr = dataUltimoTreino ? dataUltimoTreino.split("-")[1] : null;
-
-                if (mesAtualStr !== mesUltimoTreinoStr) {
-                    treinosNoMes = 1; // It's a new month, reset
-                } else {
-                    treinosNoMes += 1;
-                }
-
-                novaExp += 100; // 100 XP base por treino completo
-
-                // Bônus por volume de séries concluídas
-                const totalSeriesConcluidas = validatedData.exercicios.reduce((acc: number, ex: any) => 
-                    acc + ex.seriesExecutadas.filter((s: any) => s.concluido).length, 0
-                );
-                novaExp += totalSeriesConcluidas * 10; // 10 XP por série
-
-                // Lógica de Streak (Ofensiva)
-                const ontem = new Date();
-                ontem.setDate(ontem.getDate() - 1);
-                const ontemStr = new Intl.DateTimeFormat('fr-CA', { timeZone: 'America/Sao_Paulo' }).format(ontem);
-
-                if (dataUltimoTreino === ontemStr) {
-                    novoStreak += 1;
-                    novaExp += 50; // Bônus de 50 XP por manter a sequência
-                } else if (dataUltimoTreino !== hojeStr) {
-                    novoStreak = 1;
-                }
-
-                // Lógica de Level Up (Nível * 1500 XP - ajustado para o novo sistema)
-                const expNecessaria = novoNivel * 1500;
-                if (novaExp >= expNecessaria) {
-                    novaExp -= expNecessaria;
-                    novoNivel += 1;
-                }
-
-                // 3. Atualizar Aluno
-                await tx.aluno.update({
-                    where: { id: aluno.id },
-                    data: {
-                        exp: novaExp,
-                        nivel: novoNivel,
-                        streakDiasSeguidos: novoStreak,
-                        treinosNoMes: treinosNoMes,
-                        ultimoTreinoData: hoje,
-                    },
-                });
-            }
-
-            return historico;
-        }, {
-            isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
-            maxWait: 5000,
-            timeout: 10000 
-        });
-
-        revalidatePath("/aluno/dashboard");
-        revalidatePath("/aluno/meus-treinos");
-        return { success: true, data: result };
-    } catch (error: any) {
-        console.error("Erro ao registrar histórico de treino:", error);
-        if (error.name === "ZodError") {
-            return { success: false, error: "Dados do histórico inválidos", details: error.flatten().fieldErrors };
-        }
-        return { success: false, error: error.message };
+    if (authError || !user) {
+      throw new Error('Usuário não autenticado');
     }
+
+    // Validação Zod: Para registro de histórico vindo do app, usamos o BaseSchema (o ID será gerado no DB)
+    const validatedData = HistoricoTreinoBaseSchema.parse(historicoData);
+
+    // Buscar aluno pelo email
+    const aluno = await prisma.aluno.findUnique({
+      where: { email: user.email! },
+    });
+
+    if (!aluno) {
+      throw new Error('Perfil de aluno não encontrado');
+    }
+
+    const hoje = new Date();
+    const hojeStr = new Intl.DateTimeFormat('fr-CA', { timeZone: 'America/Sao_Paulo' }).format(
+      hoje
+    ); // yyyy-mm-dd
+
+    // 1. Criar Histórico de Treino e Séries em uma transação
+    const result = await prisma.$transaction(
+      async (tx) => {
+        const historico = await tx.historicoTreino.create({
+          data: {
+            alunoId: aluno.id,
+            treinoId: validatedData.treinoId,
+            duracaoMinutos: validatedData.duracaoMinutos,
+            dataExecucao: new Date(validatedData.dataExecucao),
+            SeriesExecutadas: {
+              create: validatedData.exercicios.flatMap((ex: any) =>
+                ex.seriesExecutadas.map((serie: any) => ({
+                  exercicioId: ex.exercicioId,
+                  nomeExercicio: ex.nomeExercicio,
+                  serieNumero: serie.serieNumero,
+                  peso: serie.peso ? parseFloat(serie.peso) : null,
+                  repeticoesFeitas: serie.repeticoesFeitas
+                    ? parseInt(serie.repeticoesFeitas)
+                    : null,
+                  concluido: serie.concluido,
+                }))
+              ),
+            },
+          },
+        });
+
+        // 2. Lógica de Gamificação
+        let novoStreak = aluno.streakDiasSeguidos;
+        let novoNivel = aluno.nivel;
+        let novaExp = aluno.exp;
+        let treinosNoMes = aluno.treinosNoMes;
+
+        const dataUltimoTreino = aluno.ultimoTreinoData
+          ? new Intl.DateTimeFormat('fr-CA', { timeZone: 'America/Sao_Paulo' }).format(
+              new Date(aluno.ultimoTreinoData)
+            )
+          : null;
+
+        if (dataUltimoTreino !== hojeStr) {
+          // É um novo dia de treino!
+          const mesAtualStr = hojeStr.split('-')[1];
+          const mesUltimoTreinoStr = dataUltimoTreino ? dataUltimoTreino.split('-')[1] : null;
+
+          if (mesAtualStr !== mesUltimoTreinoStr) {
+            treinosNoMes = 1; // It's a new month, reset
+          } else {
+            treinosNoMes += 1;
+          }
+
+          novaExp += 100; // 100 XP base por treino completo
+
+          // Bônus por volume de séries concluídas
+          const totalSeriesConcluidas = validatedData.exercicios.reduce(
+            (acc: number, ex: any) =>
+              acc + ex.seriesExecutadas.filter((s: any) => s.concluido).length,
+            0
+          );
+          novaExp += totalSeriesConcluidas * 10; // 10 XP por série
+
+          // Lógica de Streak (Ofensiva)
+          const ontem = new Date();
+          ontem.setDate(ontem.getDate() - 1);
+          const ontemStr = new Intl.DateTimeFormat('fr-CA', {
+            timeZone: 'America/Sao_Paulo',
+          }).format(ontem);
+
+          if (dataUltimoTreino === ontemStr) {
+            novoStreak += 1;
+            novaExp += 50; // Bônus de 50 XP por manter a sequência
+          } else if (dataUltimoTreino !== hojeStr) {
+            novoStreak = 1;
+          }
+
+          // Lógica de Level Up (Nível * 1500 XP - ajustado para o novo sistema)
+          const expNecessaria = novoNivel * 1500;
+          if (novaExp >= expNecessaria) {
+            novaExp -= expNecessaria;
+            novoNivel += 1;
+          }
+
+          // 3. Atualizar Aluno
+          await tx.aluno.update({
+            where: { id: aluno.id },
+            data: {
+              exp: novaExp,
+              nivel: novoNivel,
+              streakDiasSeguidos: novoStreak,
+              treinosNoMes: treinosNoMes,
+              ultimoTreinoData: hoje,
+            },
+          });
+        }
+
+        return historico;
+      },
+      {
+        isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+        maxWait: 5000,
+        timeout: 10000,
+      }
+    );
+
+    revalidatePath('/aluno/dashboard');
+    revalidatePath('/aluno/meus-treinos');
+    return { success: true, data: result };
+  } catch (error: any) {
+    console.error('Erro ao registrar histórico de treino:', error);
+    if (error.name === 'ZodError') {
+      return {
+        success: false,
+        error: 'Dados do histórico inválidos',
+        details: error.flatten().fieldErrors,
+      };
+    }
+    return { success: false, error: error.message };
+  }
 }

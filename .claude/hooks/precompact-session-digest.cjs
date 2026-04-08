@@ -41,10 +41,15 @@ function readStdin() {
     let data = '';
     process.stdin.setEncoding('utf8');
     process.stdin.on('error', (e) => reject(e));
-    process.stdin.on('data', (chunk) => { data += chunk; });
+    process.stdin.on('data', (chunk) => {
+      data += chunk;
+    });
     process.stdin.on('end', () => {
-      try { resolve(JSON.parse(data)); }
-      catch (e) { reject(e); }
+      try {
+        resolve(JSON.parse(data));
+      } catch (e) {
+        reject(e);
+      }
     });
   });
 }
@@ -61,7 +66,7 @@ async function main() {
     'hooks',
     'unified',
     'runners',
-    'precompact-runner.js',
+    'precompact-runner.js'
   );
 
   // Build context object expected by onPreCompact

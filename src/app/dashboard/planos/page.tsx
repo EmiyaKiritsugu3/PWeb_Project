@@ -1,13 +1,8 @@
-import { PageHeader } from "@/components/page-header";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { getPlanos } from "@/lib/data";
-import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
+import { PageHeader } from '@/components/page-header';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { getPlanos } from '@/lib/data';
+import { Button } from '@/components/ui/button';
+import { PlusCircle } from 'lucide-react';
 
 export default async function PlanosPage() {
   const planos = await getPlanos();
@@ -33,20 +28,16 @@ export default async function PlanosPage() {
             </CardHeader>
             <CardContent className="grid gap-2">
               <p className="text-3xl font-bold">
-                {plano.preco.toLocaleString("pt-BR", {
-                  style: "currency",
-                  currency: "BRL",
+                {plano.preco.toLocaleString('pt-BR', {
+                  style: 'currency',
+                  currency: 'BRL',
                 })}
                 <span className="text-sm font-normal text-muted-foreground">
-                  /{" "}
-                  {plano.duracaoDias === 30
-                    ? "mês"
-                    : `${Math.round(plano.duracaoDias / 30)} meses`}
+                  /{' '}
+                  {plano.duracaoDias === 30 ? 'mês' : `${Math.round(plano.duracaoDias / 30)} meses`}
                 </span>
               </p>
-              <p className="text-sm text-muted-foreground">
-                Duração de {plano.duracaoDias} dias.
-              </p>
+              <p className="text-sm text-muted-foreground">Duração de {plano.duracaoDias} dias.</p>
             </CardContent>
           </Card>
         ))}
@@ -54,8 +45,7 @@ export default async function PlanosPage() {
         {planos?.length === 0 && (
           <Card className="md:col-span-4">
             <CardContent className="p-6 text-center text-muted-foreground">
-              Nenhum plano encontrado. Clique em "Adicionar Plano" para
-              começar.
+              Nenhum plano encontrado. Clique em &ldquo;Adicionar Plano&rdquo; para começar.
             </CardContent>
           </Card>
         )}
