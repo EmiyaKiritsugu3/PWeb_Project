@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard,
   Users,
@@ -13,7 +13,7 @@ import {
   FlaskConical,
 } from 'lucide-react';
 import { SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
-import { useAuth } from '@/components/providers/auth-provider';
+import { logout } from '@/app/actions/auth';
 
 const navItems = [
   { href: '/dashboard', icon: <LayoutDashboard />, label: 'Dashboard' },
@@ -74,29 +74,22 @@ export function DashboardNav() {
 }
 
 export function DashboardNavBottom() {
-  const auth = useAuth();
-  const router = useRouter();
-
-  const handleLogout = () => {
-    auth?.signOut();
-    router.push('/login');
-  };
-
-  const bottomNavItems = [
-    { href: '#', icon: <Settings />, label: 'Configurações', action: () => {} },
-    { href: '#', icon: <LogOut />, label: 'Sair', action: handleLogout },
-  ];
-
   return (
     <SidebarMenu>
-      {bottomNavItems.map((item) => (
-        <SidebarMenuItem key={item.label}>
-          <SidebarMenuButton tooltip={item.label} onClick={item.action}>
-            {item.icon}
-            <span>{item.label}</span>
+      <SidebarMenuItem>
+        <SidebarMenuButton tooltip="Configurações">
+          <Settings />
+          <span>Configurações</span>
+        </SidebarMenuButton>
+      </SidebarMenuItem>
+      <SidebarMenuItem>
+        <form action={logout} className="w-full">
+          <SidebarMenuButton tooltip="Sair" type="submit" className="w-full">
+            <LogOut />
+            <span>Sair</span>
           </SidebarMenuButton>
-        </SidebarMenuItem>
-      ))}
+        </form>
+      </SidebarMenuItem>
     </SidebarMenu>
   );
 }
