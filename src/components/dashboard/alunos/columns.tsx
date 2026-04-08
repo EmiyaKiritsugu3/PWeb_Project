@@ -13,8 +13,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal } from 'lucide-react';
+import { MoreHorizontal, Eye } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
 
 interface ActionsCellProps {
@@ -26,6 +27,7 @@ interface ActionsCellProps {
 
 function AlunoActionsCell({ aluno, onEdit, onDelete, onNewMatricula }: ActionsCellProps) {
   const { toast } = useToast();
+  const router = useRouter();
 
   return (
     <div className="text-right">
@@ -38,6 +40,11 @@ function AlunoActionsCell({ aluno, onEdit, onDelete, onNewMatricula }: ActionsCe
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Ações</DropdownMenuLabel>
+          <DropdownMenuItem onClick={() => router.push(`/dashboard/alunos/${aluno.id}`)}>
+            <Eye className="mr-2 h-4 w-4" />
+            Ver Detalhes
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => onNewMatricula(aluno)}>Nova Matrícula</DropdownMenuItem>
           <DropdownMenuItem onClick={() => onEdit(aluno)}>Editar Aluno</DropdownMenuItem>
           <DropdownMenuSeparator />

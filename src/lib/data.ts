@@ -10,6 +10,8 @@ import {
   type Treino,
 } from './definitions';
 
+export type AlunoDetalhes = NonNullable<Awaited<ReturnType<typeof getAlunoDetalhes>>>;
+
 // --- Real Data Fetchers (Prisma) ---
 
 export async function getAlunos(): Promise<Aluno[]> {
@@ -58,6 +60,35 @@ export async function getTreinos(alunoId?: string): Promise<any[]> {
   } catch (error) {
     console.error('Erro ao buscar treinos:', error);
     return [];
+  }
+}
+
+export async function getAlunoDetalhes(id: string) {
+  try {
+    return await prisma.aluno.findUnique({
+      where: { id },
+      include: {
+        Matriculas: {
+          include: { Plano: true },
+          orderBy: { dataInicio: 'desc' },
+        },
+        Pagamentos: {
+          orderBy: { dataPagamento: 'desc' },
+          take: 10,
+        },
+        Treinos: {
+          include: { Exercicios: true },
+          orderBy: { dataCriacao: 'desc' },
+        },
+        HistoricoTreinos: {
+          orderBy: { dataExecucao: 'desc' },
+          take: 5,
+        },
+      },
+    });
+  } catch (error) {
+    console.error('Erro ao buscar detalhes do aluno:', error);
+    return null;
   }
 }
 
