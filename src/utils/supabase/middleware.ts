@@ -4,7 +4,7 @@ import { type NextRequest, NextResponse } from 'next/server';
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY;
 
-export const updateSession = (request: NextRequest) => {
+export const updateSession = async (request: NextRequest) => {
   let supabaseResponse = NextResponse.next({
     request: {
       headers: request.headers,
@@ -27,6 +27,43 @@ export const updateSession = (request: NextRequest) => {
       },
     },
   });
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const pathname = request.nextUrl.pathname;
+  const isDashboardRoute = pathname.startsWith('/dashboard');
+  const isAlunoRoute = pathname.startsWith('/aluno');
+  const isProtectedRoute = isDashboardRoute || isAlunoRoute;
+
+  if (!user && isProtectedRoute) {
+    const loginUrl = request.nextUrl.clone();
+    loginUrl.pathname = '/login';
+    return NextResponse.redirect(loginUrl);
+  }
+
+  if (user && isProtectedRoute) {
+    const { data: funcionarioProfile } = await supabase
+      .from('funcionarios')
+      .select('id')
+      .eq('id', user.id)
+      .maybeSingle();
+
+    const isFuncionario = !!funcionarioProfile;
+
+    if (isFuncionario && isAlunoRoute) {
+      const dashboardUrl = request.nextUrl.clone();
+      dashboardUrl.pathname = '/dashboard';
+      return NextResponse.redirect(dashboardUrl);
+    }
+
+    if (!isFuncionario && isDashboardRoute) {
+      const alunoUrl = request.nextUrl.clone();
+      alunoUrl.pathname = '/aluno';
+      return NextResponse.redirect(alunoUrl);
+    }
+  }
 
   return supabaseResponse;
 };

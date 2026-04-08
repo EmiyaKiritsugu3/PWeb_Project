@@ -1,11 +1,15 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
 import { columns } from '@/components/dashboard/alunos/columns';
 import { DataTable } from '@/components/dashboard/alunos/data-table';
-import { FormAluno } from '@/components/dashboard/alunos/form-aluno';
+import {
+  FormAluno,
+  type FormValues as AlunoFormValues,
+} from '@/components/dashboard/alunos/form-aluno';
 import { FormMatricula } from '@/components/dashboard/alunos/form-matricula';
 import type { Aluno, Plano } from '@/lib/definitions';
 import {
@@ -27,19 +31,20 @@ import {
 } from '@/lib/actions/alunos';
 
 interface AlunosClientProps {
-  initialAlunos: any[];
-  planos: any[];
+  initialAlunos: Aluno[];
+  planos: Plano[];
 }
 
 export function AlunosClient({ initialAlunos, planos }: AlunosClientProps) {
+  const router = useRouter();
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [editingAluno, setEditingAluno] = useState<any | null>(null);
+  const [editingAluno, setEditingAluno] = useState<Aluno | null>(null);
 
   const [isMatriculaFormOpen, setIsMatriculaFormOpen] = useState(false);
-  const [matriculaAluno, setMatriculaAluno] = useState<any | null>(null);
+  const [matriculaAluno, setMatriculaAluno] = useState<Aluno | null>(null);
 
   const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false);
-  const [deletingAluno, setDeletingAluno] = useState<any | null>(null);
+  const [deletingAluno, setDeletingAluno] = useState<Aluno | null>(null);
 
   const { toast } = useToast();
 
@@ -48,22 +53,22 @@ export function AlunosClient({ initialAlunos, planos }: AlunosClientProps) {
     setIsFormOpen(true);
   };
 
-  const openFormForEdit = (aluno: any) => {
+  const openFormForEdit = (aluno: Aluno) => {
     setEditingAluno(aluno);
     setIsFormOpen(true);
   };
 
-  const openMatriculaForm = (aluno: any) => {
+  const openMatriculaForm = (aluno: Aluno) => {
     setMatriculaAluno(aluno);
     setIsMatriculaFormOpen(true);
   };
 
-  const openDeleteAlert = (aluno: any) => {
+  const openDeleteAlert = (aluno: Aluno) => {
     setDeletingAluno(aluno);
     setIsDeleteAlertOpen(true);
   };
 
-  const handleFormSubmit = async (data: any) => {
+  const handleFormSubmit = async (data: AlunoFormValues) => {
     let result;
     if (editingAluno) {
       result = await updateAlunoAction(editingAluno.id, data);
@@ -78,6 +83,7 @@ export function AlunosClient({ initialAlunos, planos }: AlunosClientProps) {
       });
       setIsFormOpen(false);
       setEditingAluno(null);
+      router.refresh();
     } else {
       toast({
         title: 'Erro ao salvar',
@@ -97,6 +103,7 @@ export function AlunosClient({ initialAlunos, planos }: AlunosClientProps) {
         description: `${deletingAluno.nomeCompleto} foi removido do sistema.`,
         variant: 'destructive',
       });
+      router.refresh();
     } else {
       toast({
         title: 'Erro ao excluir',
@@ -109,7 +116,7 @@ export function AlunosClient({ initialAlunos, planos }: AlunosClientProps) {
     setDeletingAluno(null);
   };
 
-  const handleMatriculaSubmit = async (aluno: any, plano: any) => {
+  const handleMatriculaSubmit = async (aluno: Aluno, plano: Plano) => {
     const result = await createMatriculaAction(aluno.id, plano.id);
     if (result.success) {
       toast({
@@ -118,6 +125,7 @@ export function AlunosClient({ initialAlunos, planos }: AlunosClientProps) {
       });
       setIsMatriculaFormOpen(false);
       setMatriculaAluno(null);
+      router.refresh();
     } else {
       toast({
         title: 'Erro na matrícula',

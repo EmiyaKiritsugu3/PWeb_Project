@@ -17,6 +17,56 @@ import { MoreHorizontal } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 
+interface ActionsCellProps {
+  aluno: Aluno;
+  onEdit: (aluno: Aluno) => void;
+  onDelete: (aluno: Aluno) => void;
+  onNewMatricula: (aluno: Aluno) => void;
+}
+
+function AlunoActionsCell({ aluno, onEdit, onDelete, onNewMatricula }: ActionsCellProps) {
+  const { toast } = useToast();
+
+  return (
+    <div className="text-right">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="h-8 w-8 p-0">
+            <span className="sr-only">Abrir menu</span>
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuLabel>Ações</DropdownMenuLabel>
+          <DropdownMenuItem onClick={() => onNewMatricula(aluno)}>Nova Matrícula</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => onEdit(aluno)}>Editar Aluno</DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            onClick={() => {
+              if (aluno.id) {
+                navigator.clipboard.writeText(aluno.id);
+                toast({
+                  title: 'ID copiado!',
+                  description: 'O ID do aluno foi copiado para a área de transferência.',
+                });
+              }
+            }}
+          >
+            Copiar ID do aluno
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            className="text-destructive focus:bg-destructive/10 focus:text-destructive"
+            onClick={() => onDelete(aluno)}
+          >
+            Excluir
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
+  );
+}
+
 const getInitials = (name: string) => {
   if (!name) return '';
   const nameParts = name.split(' ');
@@ -62,6 +112,7 @@ export const columns = ({ onEdit, onDelete, onNewMatricula }: ColumnsProps): Col
   {
     accessorKey: 'nomeCompleto',
     header: 'Nome',
+    enableSorting: true,
     cell: ({ row }) => {
       const nome = row.getValue('nomeCompleto') as string;
       const email = row.original.email;
@@ -81,6 +132,7 @@ export const columns = ({ onEdit, onDelete, onNewMatricula }: ColumnsProps): Col
   {
     accessorKey: 'dataCadastro',
     header: 'Data de Cadastro',
+    enableSorting: true,
     cell: ({ row }) => {
       const date = row.getValue('dataCadastro') as string;
       if (!date) return null;
@@ -94,6 +146,7 @@ export const columns = ({ onEdit, onDelete, onNewMatricula }: ColumnsProps): Col
   {
     accessorKey: 'statusMatricula',
     header: 'Status',
+    enableSorting: true,
     cell: ({ row }) => {
       const status = row.getValue('statusMatricula') as Aluno['statusMatricula'];
       return (
@@ -105,50 +158,13 @@ export const columns = ({ onEdit, onDelete, onNewMatricula }: ColumnsProps): Col
   },
   {
     id: 'actions',
-    cell: ({ row }) => {
-      const aluno = row.original;
-      const { toast } = useToast();
-
-      return (
-        <div className="text-right">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Abrir menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Ações</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => onNewMatricula(aluno)}>
-                Nova Matrícula
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onEdit(aluno)}>Editar Aluno</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => {
-                  if (aluno.id) {
-                    navigator.clipboard.writeText(aluno.id);
-                    toast({
-                      title: 'ID copiado!',
-                      description: 'O ID do aluno foi copiado para a área de transferência.',
-                    });
-                  }
-                }}
-              >
-                Copiar ID do aluno
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                className="text-destructive focus:bg-destructive/10 focus:text-destructive"
-                onClick={() => onDelete(aluno)}
-              >
-                Excluir
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      );
-    },
+    cell: ({ row }) => (
+      <AlunoActionsCell
+        aluno={row.original}
+        onEdit={onEdit}
+        onDelete={onDelete}
+        onNewMatricula={onNewMatricula}
+      />
+    ),
   },
 ];
