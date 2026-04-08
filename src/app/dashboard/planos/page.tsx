@@ -1,55 +1,37 @@
-import { PageHeader } from '@/components/page-header';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Suspense } from 'react';
 import { getPlanos } from '@/lib/data';
-import { Button } from '@/components/ui/button';
-import { PlusCircle } from 'lucide-react';
+import { PlanosClient } from './planos-client';
+import { Skeleton } from '@/components/ui/skeleton';
 
-export default async function PlanosPage() {
+async function PlanosDataWrapper() {
   const planos = await getPlanos();
+  const serialized = JSON.parse(JSON.stringify(planos));
+  return <PlanosClient initialPlanos={serialized} />;
+}
 
+function PlanosSkeleton() {
   return (
-    <>
-      <PageHeader
-        title="Planos da Academia"
-        description="Visualize e gerencie os planos oferecidos."
-        actions={
-          <Button>
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Adicionar Plano
-          </Button>
-        }
-      />
-
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {planos.map((plano) => (
-          <Card key={plano.id}>
-            <CardHeader>
-              <CardTitle>{plano.nome}</CardTitle>
-            </CardHeader>
-            <CardContent className="grid gap-2">
-              <p className="text-3xl font-bold">
-                {plano.preco.toLocaleString('pt-BR', {
-                  style: 'currency',
-                  currency: 'BRL',
-                })}
-                <span className="text-sm font-normal text-muted-foreground">
-                  /{' '}
-                  {plano.duracaoDias === 30 ? 'mês' : `${Math.round(plano.duracaoDias / 30)} meses`}
-                </span>
-              </p>
-              <p className="text-sm text-muted-foreground">Duração de {plano.duracaoDias} dias.</p>
-            </CardContent>
-          </Card>
-        ))}
-
-        {planos?.length === 0 && (
-          <Card className="md:col-span-4">
-            <CardContent className="p-6 text-center text-muted-foreground">
-              Nenhum plano encontrado. Clique em &ldquo;Adicionar Plano&rdquo; para começar.
-            </CardContent>
-          </Card>
-        )}
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div className="space-y-2">
+          <Skeleton className="h-8 w-48" />
+          <Skeleton className="h-4 w-64" />
+        </div>
+        <Skeleton className="h-10 w-36" />
       </div>
-    </>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <Skeleton key={i} className="h-44 rounded-xl" />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default function PlanosPage() {
+  return (
+    <Suspense fallback={<PlanosSkeleton />}>
+      <PlanosDataWrapper />
+    </Suspense>
   );
 }
