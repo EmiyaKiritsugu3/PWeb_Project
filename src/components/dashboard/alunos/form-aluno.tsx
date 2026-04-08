@@ -44,7 +44,7 @@ const formSchema = z.object({
   statusMatricula: z.enum(['ATIVA', 'INADIMPLENTE', 'INATIVA']),
 });
 
-type FormValues = z.infer<typeof formSchema>;
+export type FormValues = z.infer<typeof formSchema>;
 
 interface FormAlunoProps {
   isOpen: boolean;
