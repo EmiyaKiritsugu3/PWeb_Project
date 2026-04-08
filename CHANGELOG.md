@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `src/app/actions/auth.ts` — Server Action for authentication: Zod validation, Supabase SSR `signInWithPassword`, role-based redirect (`/dashboard` for staff, `/aluno` for students)
+- `docs/pdr/PDR-001-core-system.md` — Consolidated product requirements (RF01–RF09, US00–US07, NFRs, Risks) translated from legacy Portuguese documents
+- `docs/specs/SPEC-001-data-models.md` — ERD (Mermaid) and full data dictionary translated to professional standards
+- `docs/specs/SPEC-002-auth-implementation.md` — Technical implementation plan for US00 (Authentication)
+- `docs/pdr/MILESTONES.md` — Iteration plan (It0–It5) and release schedule (v0.1.0, v0.5.0, v1.0.0 MVP)
+- `docs/decisions/ADR-001-professional-workflow-tooling.md` — Architecture Decision Record for all tooling choices
+- `docs/archive/` — archived legacy documents (tech_stack, workflows, architecture, project, stories); gitignored and excluded from AI context
+- `AGENTS.md` — rewritten from scratch with real project context (workflow, project map, architecture constraints, commit conventions)
+- `CONTRIBUTING.md` — canonical contributor guide with workflow, commit conventions, and tech stack reference
 - Prettier with opinionated config (single quotes, 100-char width, ES5 trailing commas)
 - Enhanced ESLint config (Prettier integration + `no-explicit-any`, `no-unused-vars`, `no-console` rules)
 - Husky v9 pre-commit hooks (lint-staged) and commit-msg validation (commitlint)

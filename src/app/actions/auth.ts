@@ -5,8 +5,8 @@ import { redirect } from 'next/navigation';
 import { z } from 'zod';
 
 const loginSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(6),
+  email: z.string().email('Por favor, insira um e-mail válido.'),
+  password: z.string().min(6, 'A senha deve ter no mínimo 6 caracteres.'),
 });
 
 export async function login(prevState: any, formData: FormData) {

@@ -7,12 +7,123 @@ datasource db {
 }
 
 model Funcionario {
-  id           String   @id @default(uuid())
+  id           String   @id @default(dbgenerated("gen_random_uuid()"))
   nomeCompleto String
   email        String   @unique
   role         Role     @default(RECEPCIONISTA)
-  
   Treinos      Treino[]
+}
+
+model Aluno {
+  id                 String            @id @default(dbgenerated("gen_random_uuid()"))
+  nomeCompleto       String
+  cpf                String            @unique
+  email              String            @unique
+  telefone           String?
+  dataNascimento     DateTime?
+  dataCadastro       DateTime          @default(now())
+  fotoUrl            String?
+  biometriaHash      String?           @unique
+  statusMatricula    StatusAluno       @default(ATIVA)
+  nivel              Int               @default(1)
+  exp                Int               @default(0)
+  streakDiasSeguidos Int               @default(0)
+  treinosNoMes       Int               @default(0)
+  ultimoTreinoData   DateTime?
+  HistoricoTreinos   HistoricoTreino[]
+  Matriculas         Matricula[]
+  Pagamentos         Pagamento[]
+  Treinos            Treino[]
+}
+
+model Plano {
+  id          String      @id @default(dbgenerated("gen_random_uuid()"))
+  nome        String
+  preco       Float
+  duracaoDias Int
+  Matriculas  Matricula[]
+}
+
+model Matricula {
+  id             String          @id @default(dbgenerated("gen_random_uuid()"))
+  alunoId        String
+  planoId        String
+  dataInicio     DateTime        @default(now())
+  dataVencimento DateTime
+  status         StatusMatricula @default(ATIVA)
+  Aluno          Aluno           @relation(fields: [alunoId], references: [id])
+  Plano          Plano           @relation(fields: [planoId], references: [id])
+  Pagamentos     Pagamento[]
+
+  @@index([alunoId])
+  @@index([status])
+}
+
+model Pagamento {
+  id            String          @id @default(dbgenerated("gen_random_uuid()"))
+  matriculaId   String
+  alunoId       String
+  valor         Float
+  dataPagamento DateTime        @default(now())
+  metodo        MetodoPagamento
+  Aluno         Aluno           @relation(fields: [alunoId], references: [id])
+  Matricula     Matricula       @relation(fields: [matriculaId], references: [id])
+
+  @@index([alunoId])
+  @@index([dataPagamento])
+}
+
+model Treino {
+  id               String            @id @default(dbgenerated("gen_random_uuid()"))
+  alunoId          String
+  instrutorId      String?
+  objetivo         String
+  dataCriacao      DateTime          @default(now())
+  diaSemana        Int?
+  Exercicios       Exercicio[]
+  HistoricoTreinos HistoricoTreino[]
+  Aluno            Aluno             @relation(fields: [alunoId], references: [id])
+  Instrutor        Funcionario?      @relation(fields: [instrutorId], references: [id])
+
+  @@index([alunoId])
+}
+
+model Exercicio {
+  id            String  @id @default(dbgenerated("gen_random_uuid()"))
+  treinoId      String
+  nomeExercicio String
+  series        Int
+  repeticoes    String
+  observacoes   String?
+  descricao     String?
+  Treino        Treino  @relation(fields: [treinoId], references: [id], onDelete: Cascade)
+}
+
+model HistoricoTreino {
+  id               String           @id @default(dbgenerated("gen_random_uuid()"))
+  alunoId          String
+  treinoId         String
+  dataExecucao     DateTime         @default(now())
+  duracaoMinutos   Int
+  Aluno            Aluno            @relation(fields: [alunoId], references: [id])
+  Treino           Treino           @relation(fields: [treinoId], references: [id])
+  SeriesExecutadas SerieExecutada[]
+
+  @@index([alunoId, dataExecucao])
+}
+
+model SerieExecutada {
+  id                String          @id @default(dbgenerated("gen_random_uuid()"))
+  historicoTreinoId String
+  exercicioId       String
+  nomeExercicio     String
+  serieNumero       Int
+  peso              Float?
+  repeticoesFeitas  Int?
+  concluido         Boolean         @default(false)
+  HistoricoTreino   HistoricoTreino @relation(fields: [historicoTreinoId], references: [id], onDelete: Cascade)
+
+  @@index([historicoTreinoId])
 }
 
 enum Role {
@@ -21,60 +132,10 @@ enum Role {
   INSTRUTOR
 }
 
-model Aluno {
-  id              String      @id @default(uuid())
-  nomeCompleto    String
-  cpf             String      @unique
-  email           String      @unique
-  telefone        String?
-  dataNascimento  DateTime?
-  dataCadastro    DateTime    @default(now())
-  fotoUrl         String?
-  biometriaHash   String?     @unique
-  statusMatricula StatusAluno @default(ATIVA)
-
-  // Gamification
-  nivel              Int       @default(1)
-  exp                Int       @default(0)
-  streakDiasSeguidos Int       @default(0)
-  treinosNoMes       Int       @default(0)
-  ultimoTreinoData   DateTime?
-
-  Matriculas       Matricula[]
-  Pagamentos       Pagamento[]
-  Treinos          Treino[]
-  HistoricoTreinos HistoricoTreino[]
-}
-
 enum StatusAluno {
   ATIVA
   INADIMPLENTE
   INATIVA
-}
-
-model Plano {
-  id          String      @id @default(uuid())
-  nome        String
-  preco       Float
-  duracaoDias Int
-  
-  Matriculas  Matricula[]
-}
-
-model Matricula {
-  id             String          @id @default(uuid())
-  alunoId        String
-  planoId        String
-  dataInicio     DateTime        @default(now())
-  dataVencimento DateTime
-  status         StatusMatricula @default(ATIVA)
-
-  Aluno      Aluno       @relation(fields: [alunoId], references: [id])
-  Plano      Plano       @relation(fields: [planoId], references: [id])
-  Pagamentos Pagamento[]
-
-  @@index([alunoId])
-  @@index([status])
 }
 
 enum StatusMatricula {
@@ -82,82 +143,8 @@ enum StatusMatricula {
   VENCIDA
 }
 
-model Pagamento {
-  id            String          @id @default(uuid())
-  matriculaId   String
-  alunoId       String
-  valor         Float
-  dataPagamento DateTime        @default(now())
-  metodo        MetodoPagamento
-
-  Matricula Matricula @relation(fields: [matriculaId], references: [id])
-  Aluno     Aluno     @relation(fields: [alunoId], references: [id])
-
-  @@index([alunoId])
-  @@index([dataPagamento])
-}
-
 enum MetodoPagamento {
   PIX
   DINHEIRO
   CARTAO
-}
-
-model Treino {
-  id          String   @id @default(uuid())
-  alunoId     String
-  instrutorId String?
-  objetivo    String
-  dataCriacao DateTime @default(now())
-  diaSemana   Int?
-
-  Aluno            Aluno            @relation(fields: [alunoId], references: [id])
-  Instrutor        Funcionario?     @relation(fields: [instrutorId], references: [id])
-  Exercicios       Exercicio[]
-  HistoricoTreinos HistoricoTreino[]
-
-  @@index([alunoId])
-}
-
-model Exercicio {
-  id            String  @id @default(uuid())
-  treinoId      String
-  nomeExercicio String
-  series        Int
-  repeticoes    String
-  observacoes   String?
-  descricao     String?
-
-  Treino Treino @relation(fields: [treinoId], references: [id], onDelete: Cascade)
-}
-
-// --- Workout History (Gamification) ---
-
-model HistoricoTreino {
-  id              String   @id @default(uuid())
-  alunoId         String
-  treinoId        String
-  dataExecucao    DateTime @default(now())
-  duracaoMinutos  Int
-
-  Aluno           Aluno            @relation(fields: [alunoId], references: [id])
-  Treino          Treino           @relation(fields: [treinoId], references: [id])
-  SeriesExecutadas SerieExecutada[]
-
-  @@index([alunoId, dataExecucao])
-}
-
-model SerieExecutada {
-  id                String  @id @default(uuid())
-  historicoTreinoId String
-  exercicioId       String
-  nomeExercicio     String
-  serieNumero       Int
-  peso              Float?
-  repeticoesFeitas  Int?
-  concluido         Boolean @default(false)
-
-  HistoricoTreino HistoricoTreino @relation(fields: [historicoTreinoId], references: [id], onDelete: Cascade)
-
-  @@index([historicoTreinoId])
 }
