@@ -43,12 +43,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `react/no-unescaped-entities` in `src/app/dashboard/planos/page.tsx` — escaped `"` to `&ldquo;`/`&rdquo;`
 - `react/no-unescaped-entities` in `src/components/dashboard/aluno/card-feedback.tsx` — escaped `"` to `&ldquo;`/`&rdquo;`
 
+### Changed (US01 — Student Management)
+
+- `src/utils/supabase/middleware.ts` — added `getUser()` call, unauthenticated redirect to `/login`, role-based routing: funcionário on `/aluno/**` → `/dashboard`, aluno on `/dashboard/**` → `/aluno`
+- `src/components/dashboard/alunos/data-table.tsx` — added search/filter input (column filter) and sortable column headers using TanStack Table `getFilteredRowModel` + `getSortedRowModel`
+- `src/components/dashboard/alunos/columns.tsx` — extracted `AlunoActionsCell` component to fix `useToast()` Rules of Hooks violation; enabled sorting on `nomeCompleto`, `dataCadastro`, `statusMatricula`
+- `src/app/dashboard/alunos/alunos-client.tsx` — added `router.refresh()` after each successful mutation (create/update/delete/matricula) to sync server revalidation with client state; replaced `any` types with `Aluno`, `Plano`, `AlunoFormValues`
+- `src/components/dashboard/alunos/form-aluno.tsx` — exported `FormValues` type for shared use in `alunos-client.tsx`
+
+### Fixed (US01)
+
+- Table not updating after CRUD: `revalidatePath` was server-only; client now calls `router.refresh()` on success
+- `useToast()` called inside TanStack Table `cell` render function (Rules of Hooks violation) — moved to `AlunoActionsCell` React component
+- `props typed as `any[]`in`alunos-client.tsx`— now`Aluno[]`and`Plano[]` with full type safety
+
 ### Known Technical Debt (surfaced by enabling linting)
 
 - ~100 `@typescript-eslint/no-explicit-any` warnings across multiple files (set to `warn` pending type-cleanup sprint)
 - 70 `@typescript-eslint/no-unused-vars` warnings (dead imports, set to `warn` pending cleanup sprint)
 - 3 `react-hooks/set-state-in-effect` instances in hooks/components (real performance bugs)
-- 1 `react-hooks/rules-of-hooks` violation in `columns.tsx` (hook called inside table cell render function)
 
 ## [1.0.0] - 2026-04-08
 
