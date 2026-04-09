@@ -73,7 +73,7 @@
     "embla-carousel-react": "^8.1.5",
     "framer-motion": "^12.38.0",
     "genkit": "^1.31.0",
-    "inquirer": "^13.3.2",
+    "inquirer": "^13.4.1",
     "lodash": "^4.18.1",
     "lucide-react": "^0.475.0",
     "next": "^15.5.14",
