@@ -1,8 +1,7 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Treino, Exercicio, SerieExecutada, HistoricoTreino } from '@/lib/definitions';
+import type { Treino, Exercicio, SerieExecutada, HistoricoTreino } from '@/lib/definitions';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -55,39 +54,47 @@ export function WorkoutSession({ treino, onFinish, onCancel }: WorkoutSessionPro
 
   // --- Funções de Manipulação de Estado ---
 
-  const handleSerieChange = (serieId: string, campo: 'peso' | 'repeticoesFeitas', valor: string) => {
+  const handleSerieChange = (
+    serieId: string,
+    campo: 'peso' | 'repeticoesFeitas',
+    valor: string
+  ) => {
     const valorNumerico = valor === '' ? null : parseInt(valor, 10);
 
-    setExerciciosEmSessao(exerciciosEmSessao.map((ex, index) => {
-      if (index !== exercicioAtualIndex) return ex;
+    setExerciciosEmSessao(
+      exerciciosEmSessao.map((ex, index) => {
+        if (index !== exercicioAtualIndex) return ex;
 
-      const seriesAtualizadas = ex.seriesExecutadas.map(serie =>
-        serie.id === serieId ? { ...serie, [campo]: valorNumerico } : serie
-      );
+        const seriesAtualizadas = ex.seriesExecutadas.map((serie) =>
+          serie.id === serieId ? { ...serie, [campo]: valorNumerico } : serie
+        );
 
-      return { ...ex, seriesExecutadas: seriesAtualizadas };
-    }));
+        return { ...ex, seriesExecutadas: seriesAtualizadas };
+      })
+    );
   };
 
   const handleSerieToggle = (serieId: string) => {
     let serieConcluida = false;
-    setExerciciosEmSessao(exerciciosEmSessao.map((ex, index) => {
+    setExerciciosEmSessao(
+      exerciciosEmSessao.map((ex, index) => {
         if (index !== exercicioAtualIndex) return ex;
 
-        const seriesAtualizadas = ex.seriesExecutadas.map(serie => {
-            if (serie.id === serieId) {
-                serieConcluida = !serie.concluido;
-                return { ...serie, concluido: serieConcluida };
-            }
-            return serie;
+        const seriesAtualizadas = ex.seriesExecutadas.map((serie) => {
+          if (serie.id === serieId) {
+            serieConcluida = !serie.concluido;
+            return { ...serie, concluido: serieConcluida };
+          }
+          return serie;
         });
         return { ...ex, seriesExecutadas: seriesAtualizadas };
-    }));
+      })
+    );
 
     if (serieConcluida) {
-        const time = new Date();
-        time.setSeconds(time.getSeconds() + 90); // Descanso de 90 segundos
-        restart(time);
+      const time = new Date();
+      time.setSeconds(time.getSeconds() + 90); // Descanso de 90 segundos
+      restart(time);
     }
   };
 
@@ -113,7 +120,7 @@ export function WorkoutSession({ treino, onFinish, onCancel }: WorkoutSessionPro
       treinoId: treino.id,
       dataExecucao: startTime.toISOString(),
       duracaoMinutos,
-      exercicios: exerciciosEmSessao.map(ex => ({
+      exercicios: exerciciosEmSessao.map((ex) => ({
         exercicioId: ex.exercicioOriginal.id,
         nomeExercicio: ex.exercicioOriginal.nomeExercicio,
         seriesExecutadas: ex.seriesExecutadas,
@@ -126,7 +133,9 @@ export function WorkoutSession({ treino, onFinish, onCancel }: WorkoutSessionPro
   return (
     <Card className="w-full max-w-2xl mx-auto">
       <CardHeader>
-        <CardTitle className="text-2xl text-center">{exercicioAtual.exercicioOriginal.nomeExercicio}</CardTitle>
+        <CardTitle className="text-2xl text-center">
+          {exercicioAtual.exercicioOriginal.nomeExercicio}
+        </CardTitle>
         <div className="text-center text-muted-foreground">
           Exercício {exercicioAtualIndex + 1} de {exerciciosEmSessao.length}
         </div>
@@ -134,7 +143,10 @@ export function WorkoutSession({ treino, onFinish, onCancel }: WorkoutSessionPro
       <CardContent className="space-y-6">
         {/* Descrição do Exercício Planejado */}
         <div className="text-center bg-secondary text-secondary-foreground rounded-lg p-3">
-          <p className="font-bold">Planejado: {exercicioAtual.exercicioOriginal.series} séries x {exercicioAtual.exercicioOriginal.repeticoes} reps</p>
+          <p className="font-bold">
+            Planejado: {exercicioAtual.exercicioOriginal.series} séries x{' '}
+            {exercicioAtual.exercicioOriginal.repeticoes} reps
+          </p>
           {exercicioAtual.exercicioOriginal.observacoes && (
             <p className="text-sm">Obs: {exercicioAtual.exercicioOriginal.observacoes}</p>
           )}
@@ -168,15 +180,21 @@ export function WorkoutSession({ treino, onFinish, onCancel }: WorkoutSessionPro
 
         {/* Cronômetro de Descanso */}
         {isRunning && (
-            <div className="flex items-center justify-center gap-2 text-2xl font-bold text-primary">
-                <Timer />
-                <span>{minutes.toString().padStart(2, '0')}:{seconds.toString().padStart(2, '0')}</span>
-            </div>
+          <div className="flex items-center justify-center gap-2 text-2xl font-bold text-primary">
+            <Timer />
+            <span>
+              {minutes.toString().padStart(2, '0')}:{seconds.toString().padStart(2, '0')}
+            </span>
+          </div>
         )}
       </CardContent>
 
       <CardFooter className="flex justify-between">
-        <Button variant="outline" onClick={handleExercicioAnterior} disabled={exercicioAtualIndex === 0}>
+        <Button
+          variant="outline"
+          onClick={handleExercicioAnterior}
+          disabled={exercicioAtualIndex === 0}
+        >
           <ArrowLeft className="mr-2 h-4 w-4" /> Anterior
         </Button>
 

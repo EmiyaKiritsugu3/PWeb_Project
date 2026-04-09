@@ -15,5 +15,5 @@ export const db = {
 
   async delete(table: string, id: string): Promise<boolean> {
     return Promise.resolve(true);
-  }
+  },
 };

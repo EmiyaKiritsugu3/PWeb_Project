@@ -8,7 +8,9 @@
 # Testing
 /coverage
 
-# Next.js
+# Archive
+docs/archive/
+
 /.next/
 /out/
 
@@ -33,10 +35,6 @@ typecheck_details.txt
 .prettiercache
 .stylelintcache
 .turbo/
-
-# Antigravity & Agents
-.antigravityignore
-.claudeignore
 
 # Vercel
 .vercel
@@ -64,23 +62,21 @@ typecheck_details.txt
 *.sqlite
 *.sqlite-journal
 
-# Environment & Secrets (AIOX)
+# Environment variables
 .env.local
 .env.*.local
 *.key
 
-# Dependencies (AIOX)
+# Additional dependencies
 node_modules/
 
-# Build & Logs (AIOX)
+# Build & Logs
 dist/
 build/
 logs/
 
-# IDE & OS (AIOX)
+# IDE & OS
 *.swp
 
-# AIOX Local (AIOX)
-.aiox-core/local/
+# Local settings
 .claude/settings.local.json
-.aiox/install-log.txt

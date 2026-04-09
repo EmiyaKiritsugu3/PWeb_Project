@@ -1,7 +1,6 @@
+'use client';
 
-"use client";
-
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -9,17 +8,17 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import type { Aluno, Plano } from "@/lib/definitions";
+} from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import type { Aluno, Plano } from '@/lib/definitions';
 
 interface FormMatriculaProps {
   isOpen: boolean;
@@ -36,12 +35,12 @@ export function FormMatricula({
   planos,
   onSubmit,
 }: FormMatriculaProps) {
-  const [selectedPlanoId, setSelectedPlanoId] = useState<string>("");
+  const [selectedPlanoId, setSelectedPlanoId] = useState<string>('');
 
   useEffect(() => {
     // Resetar o plano selecionado quando o modal for aberto para um novo aluno
     if (isOpen) {
-      setSelectedPlanoId("");
+      setSelectedPlanoId('');
     }
   }, [isOpen]);
 
@@ -62,7 +61,7 @@ export function FormMatricula({
         <DialogHeader>
           <DialogTitle>Nova Matrícula</DialogTitle>
           <DialogDescription>
-            Selecione um plano para matricular o aluno{" "}
+            Selecione um plano para matricular o aluno{' '}
             <span className="font-bold">{aluno.nomeCompleto}</span>.
           </DialogDescription>
         </DialogHeader>
@@ -76,10 +75,10 @@ export function FormMatricula({
               <SelectContent>
                 {planos.map((plano) => (
                   <SelectItem key={plano.id} value={plano.id}>
-                    {plano.nome} -{" "}
-                    {plano.preco.toLocaleString("pt-BR", {
-                      style: "currency",
-                      currency: "BRL",
+                    {plano.nome} -{' '}
+                    {plano.preco.toLocaleString('pt-BR', {
+                      style: 'currency',
+                      currency: 'BRL',
                     })}
                   </SelectItem>
                 ))}

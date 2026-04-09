@@ -1,17 +1,17 @@
-name: "CodeQL Analysis"
+name: 'CodeQL Analysis'
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ['main']
   pull_request:
-    branches: [ "main" ]
+    branches: ['main']
   schedule:
     - cron: '30 1 * * 5' # Toda sexta-feira à 1:30 AM
 
 jobs:
   analyze:
     name: Analyze
-    runs-on: "ubuntu-latest"
+    runs-on: 'ubuntu-latest'
     permissions:
       actions: read
       contents: read
@@ -20,25 +20,25 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'javascript-typescript' ] # Analisa tanto JS quanto TS
+        language: ['javascript-typescript'] # Analisa tanto JS quanto TS
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    # Inicializa o CodeQL com as linguagens corretas
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v3
-      with:
-        languages: ${{ matrix.language }}
-        # Adicione queries personalizadas aqui se necessário
-        # queries: security-extended,security-and-quality
+      # Inicializa o CodeQL com as linguagens corretas
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          # Adicione queries personalizadas aqui se necessário
+          # queries: security-extended,security-and-quality
 
-    # Como o Next.js não precisa de build complexo para análise, usamos o autobuild
-    - name: Autobuild
-      uses: github/codeql-action/autobuild@v3
+      # Como o Next.js não precisa de build complexo para análise, usamos o autobuild
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
 
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v3
-      with:
-        category: "/language:${{matrix.language}}"
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: '/language:${{matrix.language}}'

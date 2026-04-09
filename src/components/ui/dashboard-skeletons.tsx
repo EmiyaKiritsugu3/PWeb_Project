@@ -1,4 +1,4 @@
-import { PremiumSkeleton } from "@/components/ui/premium-skeleton"
+import { PremiumSkeleton } from '@/components/ui/premium-skeleton';
 
 export function TableSkeleton() {
   return (
@@ -27,7 +27,7 @@ export function TableSkeleton() {
         ))}
       </div>
     </div>
-  )
+  );
 }
 
 export function FinanceiroSkeleton() {
@@ -39,5 +39,5 @@ export function FinanceiroSkeleton() {
       </div>
       <PremiumSkeleton className="h-[400px] w-full rounded-xl" />
     </div>
-  )
+  );
 }
