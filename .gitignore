@@ -80,3 +80,7 @@ logs/
 
 # Local settings
 .claude/settings.local.json
+
+# AI session state (ephemeral, per-developer)
+.remember/
+.specify/feature.json
