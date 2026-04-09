@@ -35,7 +35,7 @@ export const updateSession = async (request: NextRequest) => {
 
   const pathname = request.nextUrl.pathname;
   const isDashboardRoute = pathname.startsWith('/dashboard');
-  const isAlunoRoute = pathname.startsWith('/aluno');
+  const isAlunoRoute = pathname.startsWith('/aluno') && !pathname.startsWith('/aluno/login');
   const isProtectedRoute = isDashboardRoute || isAlunoRoute;
 
   if (!user && isProtectedRoute) {

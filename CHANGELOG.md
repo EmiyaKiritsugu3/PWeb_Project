@@ -74,7 +74,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 70 `@typescript-eslint/no-unused-vars` warnings (dead imports, set to `warn` pending cleanup sprint)
 - 3 `react-hooks/set-state-in-effect` instances in hooks/components (real performance bugs)
 
-## [Unreleased] - 2026-04-09
+## [Unreleased] - 2026-04-09 (Session 3)
+
+### Added
+
+- `src/lib/auth.ts` — `requireRole(allowedRole: Role)` server helper: fetches `funcionarios.role` from Supabase, redirects to `/login` if unauthenticated, redirects to `/dashboard` on role mismatch (fail-closed)
+- `src/lib/auth.test.ts` — 5 unit tests for `requireRole`: correct role passes, wrong role redirects, unauthenticated redirects, DB error fails closed, null role fails closed
+- `src/lib/constants.ts` — `FINANCIAL_ROUTES` constant (`['/dashboard/financeiro', '/dashboard/planos']`) as single source of truth for role-gated routes
+
+### Changed (US00 — Financial Role Access)
+
+- `src/utils/supabase/middleware.ts` — added GERENTE-only gate for `FINANCIAL_ROUTES`: non-GERENTE funcionários are redirected to `/dashboard` on financial route access; also fixed `isAlunoRoute` to exclude `/aluno/login` so unauthenticated users can reach the student login page
+- `src/components/dashboard-nav.tsx` — accepts `role: string` prop; hides financial nav links for non-GERENTE users
+- `src/app/dashboard/layout.tsx` — fetches `funcionarioPerfil.role` after auth, defaults to `'RECEPCIONISTA'` (fail-closed), passes `role` to `<DashboardNav>`
+- `src/app/dashboard/financeiro/page.tsx` — added `await requireRole(Role.GERENTE)` guard
+- `src/app/dashboard/planos/page.tsx` — added `await requireRole(Role.GERENTE)` guard
+- `prisma/seed.ts` — added Maria Gerente and Carlos Recepcionista to seed data alongside João Instrutor
+
+### Fixed
+
+- Portal do Aluno inaccessible: middleware treated `/aluno/login` as a protected route, causing a silent redirect loop back to `/login` for unauthenticated users (`src/utils/supabase/middleware.ts`)
+- `src/app/actions/auth.ts` — `redirect('/aluno')` changed to `redirect('/aluno/dashboard')`; `/aluno` has no page, causing a 404 after successful aluno login
+
+### Fixed (deps)
+
+- Resolved HIGH severity vulnerabilities: defu prototype pollution (`GHSA-737v-mqg7-c878`) and Vite path traversal (`GHSA-4w7w-66w2-5vf9`) via `npm audit fix`
+
+## [Unreleased] - 2026-04-09 (Session 2)
 
 ### Fixed
 
