@@ -407,10 +407,11 @@ export default function TreinosManagementClient({
     }
     setIsGenerating(true);
     try {
-      const { stream, output } = streamWorkoutPlan.stream(data) as any;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Genkit streaming API types incomplete; SDK v1.31 does not export StreamingCallable<T>
+      const { stream, output } = (streamWorkoutPlan as any).stream(data);
       for await (const chunk of stream) {
         if (chunk) {
-          setPlanoGerado(chunk as any);
+          setPlanoGerado(chunk as WorkoutGeneratorOutput);
         }
       }
       const finalResult = await output;
