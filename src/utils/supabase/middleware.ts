@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr';
 import { type NextRequest, NextResponse } from 'next/server';
+import { FINANCIAL_ROUTES } from '@/lib/constants';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY;
@@ -62,6 +63,22 @@ export const updateSession = async (request: NextRequest) => {
       const alunoUrl = request.nextUrl.clone();
       alunoUrl.pathname = '/aluno';
       return NextResponse.redirect(alunoUrl);
+    }
+
+    const isFinancialRoute = FINANCIAL_ROUTES.some((r) => pathname.startsWith(r));
+
+    if (isFuncionario && isFinancialRoute) {
+      const { data: roleData, error } = await supabase
+        .from('funcionarios')
+        .select('role')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      if (error || roleData?.role !== 'GERENTE') {
+        const dashboardUrl = request.nextUrl.clone();
+        dashboardUrl.pathname = '/dashboard';
+        return NextResponse.redirect(dashboardUrl);
+      }
     }
   }
 

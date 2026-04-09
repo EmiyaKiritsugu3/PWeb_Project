@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { motion } from 'framer-motion';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -74,12 +75,8 @@ export default function MeusTreinosClient({
   userId: string;
 }) {
   const { toast } = useToast();
+  const router = useRouter();
   const [meusTreinos, setMeusTreinos] = useState<Treino[]>(initialTreinos);
-
-  // Sync local state when server props update from revalidatePath
-  React.useEffect(() => {
-    setMeusTreinos(initialTreinos);
-  }, [initialTreinos]);
 
   const [isGenerating, setIsGenerating] = useState(false);
   const [isFormVisible, setIsFormVisible] = useState(false);
@@ -110,6 +107,13 @@ export default function MeusTreinosClient({
           title: editingTreino ? 'Treino atualizado!' : 'Novo treino salvo!',
           className: 'bg-accent text-accent-foreground',
         });
+        if (editingTreino) {
+          setMeusTreinos((prev) =>
+            prev.map((t) => (t.id === editingTreino.id ? { ...t, ...treinoData } : t))
+          );
+        } else {
+          router.refresh();
+        }
         setIsFormVisible(false);
         setEditingTreino(null);
       } else {
@@ -199,7 +203,7 @@ export default function MeusTreinosClient({
 
           const res = await upsertTreinoAction({
             alunoId: userId,
-            instrutorId: null,
+            instrutorId: undefined,
             objetivo: workout.nome,
             exercicios: novosExercicios,
             diaSemana: isDayOccupied ? null : diaSugerido,

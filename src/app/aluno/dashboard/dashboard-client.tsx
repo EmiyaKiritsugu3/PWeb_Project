@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   Card,
@@ -49,21 +49,12 @@ import { CardTreino } from '@/components/dashboard/aluno/card-treino';
 import { CardFeedback } from '@/components/dashboard/aluno/card-feedback';
 
 interface AlunoDashboardClientProps {
-  initialAluno: Aluno;
+  aluno: Aluno;
   initialTreino: Treino | null;
 }
 
-export default function AlunoDashboardClient({
-  initialAluno,
-  initialTreino,
-}: AlunoDashboardClientProps) {
+export default function AlunoDashboardClient({ aluno, initialTreino }: AlunoDashboardClientProps) {
   const { toast } = useToast();
-  const [aluno, setAluno] = useState<Aluno>(initialAluno);
-
-  // Sync local state when server props update from revalidatePath
-  useEffect(() => {
-    setAluno(initialAluno);
-  }, [initialAluno]);
 
   const [feedback, setFeedback] = useState<{ title: string; message: string } | null>(null);
   const [isFeedbackLoading, setIsFeedbackLoading] = useState(false);
