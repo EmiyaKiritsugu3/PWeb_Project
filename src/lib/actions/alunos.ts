@@ -4,7 +4,7 @@ import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { AlunoSchema, AlunoBaseSchema } from '@/lib/definitions';
-import type { Aluno, AlunoBase } from '@/lib/definitions';
+import type { AlunoBase } from '@/lib/definitions';
 import { createClient } from '@/utils/supabase/server';
 
 export async function finalizarTreinoAction(treinoId: string, durationMinutes: number = 60) {
@@ -116,13 +116,16 @@ export async function finalizarTreinoAction(treinoId: string, durationMinutes: n
 
     revalidatePath('/aluno/dashboard');
     return { success: true, data: historico };
-  } catch (error: any) {
+  } catch (error) {
     console.error('Erro ao finalizar treino:', error);
-    return { success: false, error: error.message };
+    return { success: false, error: error instanceof Error ? error.message : 'Erro desconhecido' };
   }
 }
 
-export async function createAlunoAction(data: any) {
+export async function createAlunoAction(
+  data: Partial<AlunoBase> &
+    Pick<AlunoBase, 'nomeCompleto' | 'cpf' | 'email' | 'telefone' | 'statusMatricula'>
+) {
   try {
     const supabase = await createClient();
     const {
@@ -151,16 +154,16 @@ export async function createAlunoAction(data: any) {
     revalidatePath('/dashboard/alunos');
     // O retorno do Prisma inclui o ID, validado pelo AlunoSchema (Entity)
     return { success: true, data: AlunoSchema.parse(aluno) };
-  } catch (error: any) {
+  } catch (error) {
     console.error('Prisma create error:', error);
-    if (error.name === 'ZodError') {
-      return { success: false, error: 'Dados inválidos', details: error.flatten().fieldErrors };
+    if (error instanceof Error && error.name === 'ZodError') {
+      return { success: false, error: 'Dados inválidos' };
     }
-    return { success: false, error: error.message };
+    return { success: false, error: error instanceof Error ? error.message : 'Erro desconhecido' };
   }
 }
 
-export async function updateAlunoAction(id: string, data: any) {
+export async function updateAlunoAction(id: string, data: Partial<AlunoBase>) {
   try {
     const supabase = await createClient();
     const {
@@ -188,12 +191,12 @@ export async function updateAlunoAction(id: string, data: any) {
 
     revalidatePath('/dashboard/alunos');
     return { success: true, data: AlunoSchema.parse(updated) };
-  } catch (error: any) {
+  } catch (error) {
     console.error('Prisma update error:', error);
-    if (error.name === 'ZodError') {
-      return { success: false, error: 'Dados inválidos', details: error.flatten().fieldErrors };
+    if (error instanceof Error && error.name === 'ZodError') {
+      return { success: false, error: 'Dados inválidos' };
     }
-    return { success: false, error: error.message };
+    return { success: false, error: error instanceof Error ? error.message : 'Erro desconhecido' };
   }
 }
 
@@ -212,9 +215,9 @@ export async function deleteAlunoAction(id: string) {
 
     revalidatePath('/dashboard/alunos');
     return { success: true };
-  } catch (error: any) {
+  } catch (error) {
     console.error('Prisma delete error:', error);
-    return { success: false, error: error.message };
+    return { success: false, error: error instanceof Error ? error.message : 'Erro desconhecido' };
   }
 }
 
@@ -261,8 +264,8 @@ export async function createMatriculaAction(alunoId: string, planoId: string) {
 
     revalidatePath('/dashboard/alunos');
     return { success: true, data: matricula };
-  } catch (error: any) {
+  } catch (error) {
     console.error('Prisma matricula error:', error);
-    return { success: false, error: error.message };
+    return { success: false, error: error instanceof Error ? error.message : 'Erro desconhecido' };
   }
 }
