@@ -23,10 +23,11 @@ async function runTest() {
     console.log(`1. Criando Aluno com email: ${email}`);
     const alunoResult = await createAlunoAction({
       nomeCompleto: 'Aluno Teste E2E',
+      cpf: '00000000000',
       email: email,
       dataNascimento: '1990-01-01',
       telefone: '11999999999',
-      genero: 'M',
+      statusMatricula: 'ATIVA',
     });
 
     if (!alunoResult.success || !alunoResult.data || !alunoResult.data.id) {
