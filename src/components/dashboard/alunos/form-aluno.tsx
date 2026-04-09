@@ -1,9 +1,8 @@
+'use client';
 
-"use client";
-
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 import {
   Dialog,
   DialogContent,
@@ -11,7 +10,7 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 import {
   Form,
   FormControl,
@@ -19,31 +18,33 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
+} from '@/components/ui/form';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import type { Aluno } from "@/lib/definitions";
-import React, { useEffect } from "react";
+} from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import type { Aluno } from '@/lib/definitions';
+import React, { useEffect } from 'react';
 
 const formSchema = z.object({
-  nomeCompleto: z.string().min(3, "O nome deve ter no mínimo 3 caracteres."),
-  email: z.string().email("Email inválido."),
-  cpf: z.string().regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, "CPF inválido. Use o formato xxx.xxx.xxx-xx."),
-  telefone: z.string().min(10, "Telefone inválido."),
+  nomeCompleto: z.string().min(3, 'O nome deve ter no mínimo 3 caracteres.'),
+  email: z.string().email('Email inválido.'),
+  cpf: z
+    .string()
+    .regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, 'CPF inválido. Use o formato xxx.xxx.xxx-xx.'),
+  telefone: z.string().min(10, 'Telefone inválido.'),
   dataNascimento: z.string().refine((val) => !isNaN(Date.parse(val)), {
-    message: "Data de nascimento inválida.",
+    message: 'Data de nascimento inválida.',
   }),
-  statusMatricula: z.enum(["ATIVA", "INADIMPLENTE", "INATIVA"]),
+  statusMatricula: z.enum(['ATIVA', 'INADIMPLENTE', 'INATIVA']),
 });
 
-type FormValues = z.infer<typeof formSchema>;
+export type FormValues = z.infer<typeof formSchema>;
 
 interface FormAlunoProps {
   isOpen: boolean;
@@ -56,12 +57,12 @@ export function FormAluno({ isOpen, onOpenChange, onSubmit, aluno }: FormAlunoPr
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      nomeCompleto: "",
-      email: "",
-      cpf: "",
-      telefone: "",
-      dataNascimento: "",
-      statusMatricula: "ATIVA",
+      nomeCompleto: '',
+      email: '',
+      cpf: '',
+      telefone: '',
+      dataNascimento: '',
+      statusMatricula: 'ATIVA',
     },
   });
 
@@ -77,12 +78,12 @@ export function FormAluno({ isOpen, onOpenChange, onSubmit, aluno }: FormAlunoPr
       });
     } else if (isOpen) {
       form.reset({
-        nomeCompleto: "",
-        email: "",
-        cpf: "",
-        telefone: "",
-        dataNascimento: "",
-        statusMatricula: "ATIVA",
+        nomeCompleto: '',
+        email: '',
+        cpf: '',
+        telefone: '',
+        dataNascimento: '',
+        statusMatricula: 'ATIVA',
       });
     }
   }, [aluno, isOpen, form]);
@@ -104,9 +105,10 @@ export function FormAluno({ isOpen, onOpenChange, onSubmit, aluno }: FormAlunoPr
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{aluno ? "Editar Aluno" : "Cadastrar Novo Aluno"}</DialogTitle>
+          <DialogTitle>{aluno ? 'Editar Aluno' : 'Cadastrar Novo Aluno'}</DialogTitle>
           <DialogDescription>
-            Preencha as informações abaixo para {aluno ? "editar os dados do" : "cadastrar um novo"} aluno.
+            Preencha as informações abaixo para {aluno ? 'editar os dados do' : 'cadastrar um novo'}{' '}
+            aluno.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -144,9 +146,9 @@ export function FormAluno({ isOpen, onOpenChange, onSubmit, aluno }: FormAlunoPr
                 <FormItem>
                   <FormLabel>CPF</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="xxx.xxx.xxx-xx" 
-                      {...field} 
+                    <Input
+                      placeholder="xxx.xxx.xxx-xx"
+                      {...field}
                       onChange={(e) => field.onChange(formatCPF(e.target.value))}
                     />
                   </FormControl>
@@ -167,7 +169,7 @@ export function FormAluno({ isOpen, onOpenChange, onSubmit, aluno }: FormAlunoPr
                 </FormItem>
               )}
             />
-             <FormField
+            <FormField
               control={form.control}
               name="dataNascimento"
               render={({ field }) => (
@@ -205,7 +207,7 @@ export function FormAluno({ isOpen, onOpenChange, onSubmit, aluno }: FormAlunoPr
                 )}
               />
             )}
-            
+
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                 Cancelar

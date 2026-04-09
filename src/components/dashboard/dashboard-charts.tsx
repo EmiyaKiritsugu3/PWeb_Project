@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 
 interface DashboardChartsProps {
   data: any[];
@@ -24,7 +24,11 @@ export function DashboardCharts({ data }: DashboardChartsProps) {
                 <stop offset="100%" stopColor="oklch(0.7 0.25 190)" stopOpacity={0.1} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="4 4" vertical={false} stroke="oklch(0.7 0.25 190 / 0.08)" />
+            <CartesianGrid
+              strokeDasharray="4 4"
+              vertical={false}
+              stroke="oklch(0.7 0.25 190 / 0.08)"
+            />
             <XAxis
               dataKey="mes"
               stroke="oklch(0.7 0.1 230 / 0.5)"
@@ -45,18 +49,19 @@ export function DashboardCharts({ data }: DashboardChartsProps) {
             />
             <Tooltip
               contentStyle={{
-                backgroundColor: "oklch(0.18 0.05 230 / 0.7)",
-                borderColor: "oklch(0.7 0.25 190 / 0.3)",
-                borderRadius: "14px",
-                backdropFilter: "blur(24px)",
-                boxShadow: "0 20px 40px -15px oklch(0.15 0.05 230 / 0.5), 0 0 15px oklch(0.7 0.25 190 / 0.1)",
-                color: "oklch(0.95 0.01 230)",
+                backgroundColor: 'oklch(0.18 0.05 230 / 0.7)',
+                borderColor: 'oklch(0.7 0.25 190 / 0.3)',
+                borderRadius: '14px',
+                backdropFilter: 'blur(24px)',
+                boxShadow:
+                  '0 20px 40px -15px oklch(0.15 0.05 230 / 0.5), 0 0 15px oklch(0.7 0.25 190 / 0.1)',
+                color: 'oklch(0.95 0.01 230)',
                 fontWeight: 700,
-                border: "1px solid oklch(1 0 0 / 0.1)",
-                padding: "12px 16px",
+                border: '1px solid oklch(1 0 0 / 0.1)',
+                padding: '12px 16px',
               }}
-              itemStyle={{ color: "oklch(0.7 0.25 190)", fontSize: "14px" }}
-              cursor={{ fill: "oklch(0.7 0.25 190 / 0.03)" }}
+              itemStyle={{ color: 'oklch(0.7 0.25 190)', fontSize: '14px' }}
+              cursor={{ fill: 'oklch(0.7 0.25 190 / 0.03)' }}
             />
             <Bar dataKey="alunos" fill="url(#neonCyan)" radius={[8, 8, 0, 0]} barSize={40} />
           </BarChart>

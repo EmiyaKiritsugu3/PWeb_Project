@@ -1,16 +1,15 @@
+'use client';
 
-"use client"
-
-import * as React from "react"
+import * as React from 'react';
+import type { ColumnDef, Row, Cell, SortingState, ColumnFiltersState } from '@tanstack/react-table';
 import {
-  ColumnDef,
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
+  getSortedRowModel,
+  getFilteredRowModel,
   useReactTable,
-  Row,
-  Cell,
-} from "@tanstack/react-table"
+} from '@tanstack/react-table';
 
 import {
   Table,
@@ -19,36 +18,63 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import { Button } from "@/components/ui/button"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Card, CardContent } from "@/components/ui/card"
+} from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Card, CardContent } from '@/components/ui/card';
+import { ArrowUpDown } from 'lucide-react';
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[]
-  isLoading?: boolean
+  columns: ColumnDef<TData, TValue>[];
+  data: TData[];
+  isLoading?: boolean;
+  searchColumn?: string;
+  searchPlaceholder?: string;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   isLoading,
+  searchColumn = 'nomeCompleto',
+  searchPlaceholder = 'Buscar por nome...',
 }: DataTableProps<TData, TValue>) {
+  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-  })
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    state: {
+      sorting,
+      columnFilters,
+    },
+  });
 
-  // Helper para encontrar a célula de ações para o card mobile
   const getActionsCell = (row: Row<TData>): Cell<TData, TValue> | undefined => {
-    return row.getVisibleCells().find(cell => cell.column.id === 'actions');
-  }
+    return row.getVisibleCells().find((cell) => cell.column.id === 'actions');
+  };
+
+  const searchValue = (table.getColumn(searchColumn)?.getFilterValue() as string) ?? '';
 
   return (
     <div>
+      <div className="flex items-center pb-4">
+        <Input
+          placeholder={searchPlaceholder}
+          value={searchValue}
+          onChange={(e) => table.getColumn(searchColumn)?.setFilterValue(e.target.value)}
+          className="max-w-sm bg-card/30 border-primary/20 focus:border-primary/60"
+        />
+      </div>
+
       <div className="grid gap-4 md:hidden">
         {isLoading ? (
           Array.from({ length: 3 }).map((_, i) => (
@@ -62,25 +88,33 @@ export function DataTable<TData, TValue>({
           table.getRowModel().rows.map((row) => {
             const actionsCell = getActionsCell(row);
             return (
-              <Card key={row.id} className="bg-card/30 backdrop-blur-md border-primary/10 hover:border-primary/40 hover:shadow-[0_0_15px_rgba(234,88,12,0.1)] transition-all duration-300">
+              <Card
+                key={row.id}
+                className="bg-card/30 backdrop-blur-md border-primary/10 hover:border-primary/40 hover:shadow-[0_0_15px_rgba(234,88,12,0.1)] transition-all duration-300"
+              >
                 <CardContent className="flex items-center justify-between p-4">
                   <div className="flex items-center gap-4">
-                    {/* Avatar, Nome e Status */}
                     {row.getVisibleCells().map((cell) => {
                       const columnId = cell.column.id;
-                      if (columnId === 'fotoUrl' || columnId === 'nomeCompleto' || columnId === 'statusMatricula') {
-                        return <React.Fragment key={cell.id}>
-                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                               </React.Fragment>;
+                      if (
+                        columnId === 'fotoUrl' ||
+                        columnId === 'nomeCompleto' ||
+                        columnId === 'statusMatricula'
+                      ) {
+                        return (
+                          <React.Fragment key={cell.id}>
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          </React.Fragment>
+                        );
                       }
                       return null;
                     })}
                   </div>
-                  {/* Ações */}
-                  {actionsCell && flexRender(actionsCell.column.columnDef.cell, actionsCell.getContext())}
+                  {actionsCell &&
+                    flexRender(actionsCell.column.columnDef.cell, actionsCell.getContext())}
                 </CardContent>
               </Card>
-            )
+            );
           })
         ) : (
           <Card className="bg-card/30 backdrop-blur-md border-primary/10">
@@ -91,23 +125,30 @@ export function DataTable<TData, TValue>({
         )}
       </div>
 
-      {/* Desktop View: Tabela */}
       <div className="hidden rounded-xl border border-primary/10 bg-card/20 backdrop-blur-lg shadow-[0_0_20px_rgba(234,88,12,0.05)] md:block overflow-hidden">
         <Table>
           <TableHeader className="bg-card/40">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
+                  const canSort = header.column.getCanSort();
                   return (
                     <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                      {header.isPlaceholder ? null : canSort ? (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="-ml-3 h-8 data-[state=open]:bg-accent"
+                          onClick={header.column.getToggleSortingHandler()}
+                        >
+                          {flexRender(header.column.columnDef.header, header.getContext())}
+                          <ArrowUpDown className="ml-2 h-4 w-4" />
+                        </Button>
+                      ) : (
+                        flexRender(header.column.columnDef.header, header.getContext())
+                      )}
                     </TableHead>
-                  )
+                  );
                 })}
               </TableRow>
             ))}
@@ -125,10 +166,7 @@ export function DataTable<TData, TValue>({
               ))
             ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
+                <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -147,7 +185,6 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
 
-      {/* Paginação */}
       <div className="flex items-center justify-end space-x-2 py-4">
         <Button
           variant="outline"
@@ -167,5 +204,5 @@ export function DataTable<TData, TValue>({
         </Button>
       </div>
     </div>
-  )
+  );
 }

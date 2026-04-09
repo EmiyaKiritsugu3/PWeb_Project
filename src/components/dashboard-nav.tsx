@@ -1,35 +1,30 @@
+'use client';
 
-"use client";
-
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { 
-  LayoutDashboard, 
-  Users, 
-  Dumbbell, 
-  DollarSign, 
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import {
+  LayoutDashboard,
+  Users,
+  Dumbbell,
+  DollarSign,
   FileText,
   Settings,
   LogOut,
-  FlaskConical
-} from "lucide-react";
-import {
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
-} from "@/components/ui/sidebar";
-import { useAuth } from "@/components/providers/auth-provider";
+  FlaskConical,
+} from 'lucide-react';
+import { SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
+import { logout } from '@/app/actions/auth';
 
 const navItems = [
-  { href: "/dashboard", icon: <LayoutDashboard />, label: "Dashboard" },
-  { href: "/dashboard/alunos", icon: <Users />, label: "Alunos" },
-  { href: "/dashboard/treinos", icon: <Dumbbell />, label: "Treinos" },
-  { href: "/dashboard/financeiro", icon: <DollarSign />, label: "Financeiro" },
-  { href: "/dashboard/planos", icon: <FileText />, label: "Planos" },
+  { href: '/dashboard', icon: <LayoutDashboard />, label: 'Dashboard' },
+  { href: '/dashboard/alunos', icon: <Users />, label: 'Alunos' },
+  { href: '/dashboard/treinos', icon: <Dumbbell />, label: 'Treinos' },
+  { href: '/dashboard/financeiro', icon: <DollarSign />, label: 'Financeiro' },
+  { href: '/dashboard/planos', icon: <FileText />, label: 'Planos' },
 ];
 
 if (process.env.NODE_ENV === 'development') {
-  navItems.push({ href: "/dashboard/dev", icon: <FlaskConical />, label: "Dev" });
+  navItems.push({ href: '/dashboard/dev', icon: <FlaskConical />, label: 'Dev' });
 }
 
 export function DashboardNav() {
@@ -37,7 +32,7 @@ export function DashboardNav() {
 
   const isActive = (href: string) => {
     // Make it active for sub-paths as well, except for the main dashboard page
-     if (href === "/dashboard") {
+    if (href === '/dashboard') {
       return pathname === href;
     }
     return pathname.startsWith(href);
@@ -54,12 +49,15 @@ export function DashboardNav() {
                 isActive={active}
                 tooltip={item.label}
                 className={`w-full transition-all duration-300 h-11 px-4 rounded-xl border border-transparent
-                  ${active 
-                    ? "bg-primary/10 text-primary border-primary/20 glow-cyan shadow-primary/5 font-bold" 
-                    : "hover:bg-white/5 hover:text-foreground text-muted-foreground"
+                  ${
+                    active
+                      ? 'bg-primary/10 text-primary border-primary/20 glow-cyan shadow-primary/5 font-bold'
+                      : 'hover:bg-white/5 hover:text-foreground text-muted-foreground'
                   }`}
               >
-                <div className={`${active ? "text-primary scale-110" : "group-hover:text-foreground"} transition-all duration-300`}>
+                <div
+                  className={`${active ? 'text-primary scale-110' : 'group-hover:text-foreground'} transition-all duration-300`}
+                >
                   {item.icon}
                 </div>
                 <span className="ml-2">{item.label}</span>
@@ -76,29 +74,22 @@ export function DashboardNav() {
 }
 
 export function DashboardNavBottom() {
-    const auth = useAuth();
-    const router = useRouter();
-
-    const handleLogout = () => {
-        auth?.signOut();
-        router.push('/login');
-    };
-
-    const bottomNavItems = [
-        { href: "#", icon: <Settings />, label: "Configurações", action: () => {} },
-        { href: "#", icon: <LogOut />, label: "Sair", action: handleLogout },
-    ];
-
-    return (
-        <SidebarMenu>
-        {bottomNavItems.map((item) => (
-            <SidebarMenuItem key={item.label}>
-                <SidebarMenuButton tooltip={item.label} onClick={item.action}>
-                    {item.icon}
-                    <span>{item.label}</span>
-                </SidebarMenuButton>
-            </SidebarMenuItem>
-        ))}
-        </SidebarMenu>
-    )
+  return (
+    <SidebarMenu>
+      <SidebarMenuItem>
+        <SidebarMenuButton tooltip="Configurações">
+          <Settings />
+          <span>Configurações</span>
+        </SidebarMenuButton>
+      </SidebarMenuItem>
+      <SidebarMenuItem>
+        <form action={logout} className="w-full">
+          <SidebarMenuButton tooltip="Sair" type="submit" className="w-full">
+            <LogOut />
+            <span>Sair</span>
+          </SidebarMenuButton>
+        </form>
+      </SidebarMenuItem>
+    </SidebarMenu>
+  );
 }

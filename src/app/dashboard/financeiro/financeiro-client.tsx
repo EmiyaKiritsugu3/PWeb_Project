@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from "react";
+import { useState } from 'react';
 import {
   Table,
   TableBody,
@@ -8,7 +8,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from '@/components/ui/table';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,11 +18,11 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
-import { registrarPagamentoAction } from "@/lib/actions/financeiro";
+} from '@/components/ui/alert-dialog';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
+import { registrarPagamentoAction } from '@/lib/actions/financeiro';
 
 interface AlunoFinanceiro {
   id: string;
@@ -31,7 +31,11 @@ interface AlunoFinanceiro {
   statusMatricula: string;
 }
 
-export default function FinanceiroClient({ initialInadimplentes }: { initialInadimplentes: AlunoFinanceiro[] }) {
+export default function FinanceiroClient({
+  initialInadimplentes,
+}: {
+  initialInadimplentes: AlunoFinanceiro[];
+}) {
   const { toast } = useToast();
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [selectedAluno, setSelectedAluno] = useState<AlunoFinanceiro | null>(null);
@@ -51,15 +55,15 @@ export default function FinanceiroClient({ initialInadimplentes }: { initialInad
 
     if (result.success) {
       toast({
-        title: "Pagamento Registrado!",
+        title: 'Pagamento Registrado!',
         description: `A matrícula de ${selectedAluno.nomeCompleto} foi reativada.`,
-        className: "bg-accent text-accent-foreground",
+        className: 'bg-accent text-accent-foreground',
       });
     } else {
       toast({
-        title: "Erro ao registrar pagamento",
-        description: result.error || "Ocorreu um erro inesperado.",
-        variant: "destructive"
+        title: 'Erro ao registrar pagamento',
+        description: result.error || 'Ocorreu um erro inesperado.',
+        variant: 'destructive',
       });
     }
 
@@ -81,9 +85,7 @@ export default function FinanceiroClient({ initialInadimplentes }: { initialInad
         <TableBody>
           {initialInadimplentes.map((aluno) => (
             <TableRow key={aluno.id}>
-              <TableCell className="font-medium">
-                {aluno.nomeCompleto}
-              </TableCell>
+              <TableCell className="font-medium">{aluno.nomeCompleto}</TableCell>
               <TableCell>{aluno.email}</TableCell>
               <TableCell>
                 <Badge variant="destructive">{aluno.statusMatricula}</Badge>
@@ -115,20 +117,22 @@ export default function FinanceiroClient({ initialInadimplentes }: { initialInad
           <AlertDialogHeader>
             <AlertDialogTitle>Confirmar Pagamento?</AlertDialogTitle>
             <AlertDialogDescription>
-              Você confirma o recebimento do pagamento da matrícula de <span className="font-bold">{selectedAluno?.nomeCompleto}</span>? Esta ação irá reativar a matrícula do aluno e estender o vencimento por 30 dias.
+              Você confirma o recebimento do pagamento da matrícula de{' '}
+              <span className="font-bold">{selectedAluno?.nomeCompleto}</span>? Esta ação irá
+              reativar a matrícula do aluno e estender o vencimento por 30 dias.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={isPending}>Cancelar</AlertDialogCancel>
-            <AlertDialogAction 
+            <AlertDialogAction
               onClick={(e) => {
                 e.preventDefault();
                 handleRegisterPayment();
-              }} 
+              }}
               className="bg-accent hover:bg-accent/90"
               disabled={isPending}
             >
-              {isPending ? "Processando..." : "Confirmar e Reativar"}
+              {isPending ? 'Processando...' : 'Confirmar e Reativar'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
