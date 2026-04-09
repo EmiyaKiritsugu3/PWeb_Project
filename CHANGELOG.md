@@ -74,6 +74,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 70 `@typescript-eslint/no-unused-vars` warnings (dead imports, set to `warn` pending cleanup sprint)
 - 3 `react-hooks/set-state-in-effect` instances in hooks/components (real performance bugs)
 
+## [Unreleased] - 2026-04-09
+
+### Fixed
+
+- Eliminated redundant re-render loops in Dashboard and Workout components by removing synchronous `setState` in `useEffect`.
+- Implemented typed casts for Genkit streaming results, removing unsafe `any` usage.
+- Enforced strict type safety in server actions (`alunos.ts`, `treinos.ts`) and data fetchers (`data.ts`).
+- Fixed E2E test script payloads to match the updated `Aluno` schema.
+
 ## [1.0.0] - 2026-04-08
 
 ### Added
