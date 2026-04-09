@@ -31,14 +31,31 @@ async function main() {
   ];
   const alunoIds = [crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID()];
 
-  // 2. Funcionários (Instrutores)
-  await prisma.funcionario.create({
-    data: {
-      id: instrutorId,
-      nomeCompleto: 'João Instrutor',
-      email: 'joao.instrutor@academia.com',
-      role: 'INSTRUTOR',
-    },
+  const gerenteId = crypto.randomUUID();
+  const recepcionistaId = crypto.randomUUID();
+
+  // 2. Funcionários
+  await prisma.funcionario.createMany({
+    data: [
+      {
+        id: instrutorId,
+        nomeCompleto: 'João Instrutor',
+        email: 'joao.instrutor@academia.com',
+        role: 'INSTRUTOR',
+      },
+      {
+        id: gerenteId,
+        nomeCompleto: 'Maria Gerente',
+        email: 'maria.gerente@academia.com',
+        role: 'GERENTE',
+      },
+      {
+        id: recepcionistaId,
+        nomeCompleto: 'Carlos Recepcionista',
+        email: 'carlos.recepcionista@academia.com',
+        role: 'RECEPCIONISTA',
+      },
+    ],
   });
 
   // 3. Planos
