@@ -22,6 +22,14 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   if (!user) redirect('/login');
 
+  const { data: funcionarioPerfil } = await supabase
+    .from('funcionarios')
+    .select('role')
+    .eq('id', user.id)
+    .maybeSingle();
+
+  const role = funcionarioPerfil?.role ?? 'RECEPCIONISTA';
+
   const displayName =
     user.user_metadata?.full_name || user.user_metadata?.nomeCompleto || 'Administrador';
   const photoURL =
@@ -57,7 +65,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
             </Link>
           </SidebarHeader>
           <SidebarContent className="px-2 py-4">
-            <DashboardNav />
+            <DashboardNav role={role} />
           </SidebarContent>
           <SidebarFooter className="border-t border-primary/5 p-4">
             <DashboardNavBottom />

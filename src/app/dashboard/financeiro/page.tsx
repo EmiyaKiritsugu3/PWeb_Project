@@ -4,6 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { prisma } from '@/lib/prisma';
 import FinanceiroClient from './financeiro-client';
 import { PremiumSkeleton } from '@/components/ui/premium-skeleton';
+import { requireRole } from '@/lib/auth';
+import { Role } from '@prisma/client';
 
 export const dynamic = 'force-dynamic';
 
@@ -26,7 +28,9 @@ async function FinanceiroDataWrapper() {
   return <FinanceiroClient initialInadimplentes={inadimplentes as any} />;
 }
 
-export default function FinanceiroPage() {
+export default async function FinanceiroPage() {
+  await requireRole(Role.GERENTE);
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 bg-black min-h-screen">
       <PageHeader

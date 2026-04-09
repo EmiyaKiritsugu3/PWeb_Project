@@ -14,8 +14,9 @@ import {
 } from 'lucide-react';
 import { SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
 import { logout } from '@/app/actions/auth';
+import { FINANCIAL_ROUTES } from '@/lib/constants';
 
-const navItems = [
+const allNavItems = [
   { href: '/dashboard', icon: <LayoutDashboard />, label: 'Dashboard' },
   { href: '/dashboard/alunos', icon: <Users />, label: 'Alunos' },
   { href: '/dashboard/treinos', icon: <Dumbbell />, label: 'Treinos' },
@@ -24,11 +25,20 @@ const navItems = [
 ];
 
 if (process.env.NODE_ENV === 'development') {
-  navItems.push({ href: '/dashboard/dev', icon: <FlaskConical />, label: 'Dev' });
+  allNavItems.push({ href: '/dashboard/dev', icon: <FlaskConical />, label: 'Dev' });
 }
 
-export function DashboardNav() {
+interface DashboardNavProps {
+  role: string;
+}
+
+export function DashboardNav({ role }: DashboardNavProps) {
   const pathname = usePathname();
+
+  const navItems =
+    role === 'GERENTE'
+      ? allNavItems
+      : allNavItems.filter((item) => !FINANCIAL_ROUTES.some((r) => item.href.startsWith(r)));
 
   const isActive = (href: string) => {
     // Make it active for sub-paths as well, except for the main dashboard page
