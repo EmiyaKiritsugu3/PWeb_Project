@@ -20,7 +20,7 @@ export async function getAlunos(): Promise<Aluno[]> {
       orderBy: { nomeCompleto: 'asc' },
     });
     // AlunoSchema agora exige ID obrigatório, o que o Prisma retorna
-    return alunos.map((aluno: any) => AlunoSchema.parse(aluno));
+    return alunos.map((aluno) => AlunoSchema.parse(aluno));
   } catch (error) {
     console.error('Erro ao buscar alunos:', error);
     return [];
@@ -32,14 +32,14 @@ export async function getPlanos(): Promise<Plano[]> {
     const planos = await prisma.plano.findMany({
       orderBy: { preco: 'asc' },
     });
-    return planos.map((plano: any) => PlanoSchema.parse(plano));
+    return planos.map((plano) => PlanoSchema.parse(plano));
   } catch (error) {
     console.error('Erro ao buscar planos:', error);
     return [];
   }
 }
 
-export async function getTreinos(alunoId?: string): Promise<any[]> {
+export async function getTreinos(alunoId?: string): Promise<Treino[]> {
   try {
     const treinos = await prisma.treino.findMany({
       where: alunoId ? { alunoId } : undefined,
@@ -50,7 +50,7 @@ export async function getTreinos(alunoId?: string): Promise<any[]> {
     });
 
     // Validamos a estrutura, embora o tipo many-to-many precise de mapeamento
-    return treinos.map((t: any) => {
+    return treinos.map((t) => {
       const { Exercicios, ...rest } = t;
       return TreinoSchema.parse({
         ...rest,
@@ -92,6 +92,8 @@ export async function getAlunoDetalhes(id: string) {
   }
 }
 
+type RawFaturamento = { TotalRecebido: number; Mes: string; QtdPagamentos: number };
+
 export async function getDashboardStats() {
   try {
     const [totalAlunos, matriculasAtivas, alunosInadimplentes] = await Promise.all([
@@ -104,7 +106,9 @@ export async function getDashboardStats() {
     let faturamentoMensal = 0;
     try {
       const rawFaturamento = await prisma.$queryRaw`SELECT * FROM "V_FaturamentoMensal" LIMIT 1`;
-      const faturamentoValidado = V_FaturamentoMensalSchema.safeParse((rawFaturamento as any)?.[0]);
+      const faturamentoValidado = V_FaturamentoMensalSchema.safeParse(
+        (rawFaturamento as RawFaturamento[])?.[0]
+      );
 
       if (faturamentoValidado.success) {
         faturamentoMensal = faturamentoValidado.data.TotalRecebido;

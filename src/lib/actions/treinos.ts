@@ -7,12 +7,13 @@ import { revalidatePath } from 'next/cache';
 import {
   TreinoSchema,
   TreinoBaseSchema,
-  HistoricoTreinoSchema,
   HistoricoTreinoBaseSchema,
+  type TreinoBase,
+  type HistoricoTreinoBase,
 } from '@/lib/definitions';
 import { createClient } from '@/utils/supabase/server';
 
-export async function upsertTreinoAction(treinoData: any) {
+export async function upsertTreinoAction(treinoData: TreinoBase | (TreinoBase & { id: string })) {
   try {
     const supabase = await createClient();
     const {
@@ -23,7 +24,7 @@ export async function upsertTreinoAction(treinoData: any) {
 
     // Validação flexível: se tiver ID, valida como Entity; se não, como Base.
     let validatedData;
-    if (treinoData.id) {
+    if ('id' in treinoData && treinoData.id) {
       validatedData = TreinoSchema.parse(treinoData);
     } else {
       validatedData = TreinoBaseSchema.parse(treinoData);
@@ -31,7 +32,8 @@ export async function upsertTreinoAction(treinoData: any) {
 
     // Extraímos os dados validados. 'id' será undefined se for Base.
     const { alunoId, instrutorId, objetivo, exercicios, diaSemana } = validatedData;
-    const id = (validatedData as any).id;
+    const id =
+      'id' in validatedData ? (validatedData as TreinoBase & { id: string }).id : undefined;
 
     if (id) {
       // Update
@@ -42,10 +44,10 @@ export async function upsertTreinoAction(treinoData: any) {
           diaSemana,
           Exercicios: {
             deleteMany: {},
-            create: exercicios.map((ex: any) => ({
+            create: exercicios.map((ex) => ({
               nomeExercicio: ex.nomeExercicio,
-              series: parseInt(ex.series) || 0,
-              repeticoes: String(ex.repeticoes),
+              series: ex.series,
+              repeticoes: ex.repeticoes,
               observacoes: ex.observacoes || '',
               descricao: ex.descricao || '',
             })),
@@ -61,10 +63,10 @@ export async function upsertTreinoAction(treinoData: any) {
           objetivo,
           diaSemana,
           Exercicios: {
-            create: exercicios.map((ex: any) => ({
+            create: exercicios.map((ex) => ({
               nomeExercicio: ex.nomeExercicio,
-              series: parseInt(ex.series) || 0,
-              repeticoes: String(ex.repeticoes),
+              series: ex.series,
+              repeticoes: ex.repeticoes,
               observacoes: ex.observacoes || '',
               descricao: ex.descricao || '',
             })),
@@ -76,16 +78,12 @@ export async function upsertTreinoAction(treinoData: any) {
     revalidatePath('/aluno/meus-treinos');
     revalidatePath('/dashboard/treinos');
     return { success: true };
-  } catch (error: any) {
+  } catch (error) {
     console.error('Erro ao salvar treino:', error);
-    if (error.name === 'ZodError') {
-      return {
-        success: false,
-        error: 'Dados do treino inválidos',
-        details: error.flatten().fieldErrors,
-      };
+    if (error instanceof Error && error.name === 'ZodError') {
+      return { success: false, error: 'Dados do treino inválidos' };
     }
-    return { success: false, error: error.message };
+    return { success: false, error: error instanceof Error ? error.message : 'Erro desconhecido' };
   }
 }
 
@@ -131,7 +129,9 @@ export async function deleteTreinoAction(treinoId: string) {
   }
 }
 
-export async function registrarHistoricoTreinoAction(historicoData: any) {
+export async function registrarHistoricoTreinoAction(
+  historicoData: Omit<HistoricoTreinoBase, 'alunoId'>
+) {
   try {
     const { createClient: createSupabaseClient } = await import('@/utils/supabase/server');
     const supabase = await createSupabaseClient();
@@ -171,15 +171,13 @@ export async function registrarHistoricoTreinoAction(historicoData: any) {
             duracaoMinutos: validatedData.duracaoMinutos,
             dataExecucao: new Date(validatedData.dataExecucao),
             SeriesExecutadas: {
-              create: validatedData.exercicios.flatMap((ex: any) =>
-                ex.seriesExecutadas.map((serie: any) => ({
+              create: validatedData.exercicios.flatMap((ex) =>
+                ex.seriesExecutadas.map((serie) => ({
                   exercicioId: ex.exercicioId,
                   nomeExercicio: ex.nomeExercicio,
                   serieNumero: serie.serieNumero,
-                  peso: serie.peso ? parseFloat(serie.peso) : null,
-                  repeticoesFeitas: serie.repeticoesFeitas
-                    ? parseInt(serie.repeticoesFeitas)
-                    : null,
+                  peso: serie.peso,
+                  repeticoesFeitas: serie.repeticoesFeitas,
                   concluido: serie.concluido,
                 }))
               ),
@@ -214,8 +212,7 @@ export async function registrarHistoricoTreinoAction(historicoData: any) {
 
           // Bônus por volume de séries concluídas
           const totalSeriesConcluidas = validatedData.exercicios.reduce(
-            (acc: number, ex: any) =>
-              acc + ex.seriesExecutadas.filter((s: any) => s.concluido).length,
+            (acc, ex) => acc + ex.seriesExecutadas.filter((s) => s.concluido).length,
             0
           );
           novaExp += totalSeriesConcluidas * 10; // 10 XP por série
@@ -266,15 +263,11 @@ export async function registrarHistoricoTreinoAction(historicoData: any) {
     revalidatePath('/aluno/dashboard');
     revalidatePath('/aluno/meus-treinos');
     return { success: true, data: result };
-  } catch (error: any) {
+  } catch (error) {
     console.error('Erro ao registrar histórico de treino:', error);
-    if (error.name === 'ZodError') {
-      return {
-        success: false,
-        error: 'Dados do histórico inválidos',
-        details: error.flatten().fieldErrors,
-      };
+    if (error instanceof Error && error.name === 'ZodError') {
+      return { success: false, error: 'Dados do histórico inválidos' };
     }
-    return { success: false, error: error.message };
+    return { success: false, error: error instanceof Error ? error.message : 'Erro desconhecido' };
   }
 }
