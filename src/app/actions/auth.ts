@@ -39,7 +39,7 @@ export async function login(prevState: any, formData: FormData) {
   if (profile) {
     redirect('/dashboard');
   } else {
-    redirect('/aluno');
+    redirect('/aluno/dashboard');
   }
 }
 
