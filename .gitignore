@@ -36,10 +36,6 @@ typecheck_details.txt
 .stylelintcache
 .turbo/
 
-# Antigravity & Agents
-.antigravityignore
-.claudeignore
-
 # Vercel
 .vercel
 
