@@ -2,6 +2,8 @@ import { Suspense } from 'react';
 import { getPlanos } from '@/lib/data';
 import { PlanosClient } from './planos-client';
 import { Skeleton } from '@/components/ui/skeleton';
+import { requireRole } from '@/lib/auth';
+import { Role } from '@prisma/client';
 
 async function PlanosDataWrapper() {
   const planos = await getPlanos();
@@ -28,7 +30,8 @@ function PlanosSkeleton() {
   );
 }
 
-export default function PlanosPage() {
+export default async function PlanosPage() {
+  await requireRole(Role.GERENTE);
   return (
     <Suspense fallback={<PlanosSkeleton />}>
       <PlanosDataWrapper />

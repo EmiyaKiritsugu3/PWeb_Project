@@ -90,5 +90,5 @@ export default async function AlunoDashboardPage() {
 
   const serializedTreino = JSON.parse(JSON.stringify(treinoDoDia));
 
-  return <AlunoDashboardClient initialAluno={serializedAluno} initialTreino={serializedTreino} />;
+  return <AlunoDashboardClient aluno={serializedAluno} initialTreino={serializedTreino} />;
 }

@@ -1,3 +1,10 @@
+/**
+ * Routes restricted to GERENTE role only.
+ * Referenced by middleware and DashboardNav — single source of truth.
+ * Add new financial routes here; enforcement is automatic in both layers.
+ */
+export const FINANCIAL_ROUTES = ['/dashboard/financeiro', '/dashboard/planos'] as const;
+
 export const DIAS_DA_SEMANA = [
   { value: 1, label: 'Segunda-feira' },
   { value: 2, label: 'Terça-feira' },
