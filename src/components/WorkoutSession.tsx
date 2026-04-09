@@ -22,29 +22,33 @@ type ExercicioEmSessao = {
   seriesExecutadas: SerieExecutada[];
 };
 
+function initExercicios(treino: Treino): ExercicioEmSessao[] {
+  return treino.exercicios.map((ex) => ({
+    exercicioOriginal: ex,
+    seriesExecutadas: Array.from({ length: ex.series }, (_, i) => ({
+      id: crypto.randomUUID(),
+      serieNumero: i + 1,
+      peso: null,
+      repeticoesFeitas: null,
+      concluido: false,
+    })),
+  }));
+}
+
 export function WorkoutSession({ treino, onFinish, onCancel }: WorkoutSessionProps) {
-  const [exerciciosEmSessao, setExerciciosEmSessao] = useState<ExercicioEmSessao[]>([]);
+  const [exerciciosEmSessao, setExerciciosEmSessao] = useState<ExercicioEmSessao[]>(() =>
+    initExercicios(treino)
+  );
   const [exercicioAtualIndex, setExercicioAtualIndex] = useState(0);
-  const [startTime, setStartTime] = useState<Date | null>(null);
+  const [startTime] = useState<Date>(() => new Date());
 
   // Hook para o cronômetro de descanso
   const { seconds, minutes, isRunning, start, restart } = useTimer({ expiryTimestamp: new Date() });
 
-  // Inicializa o estado da sessão quando o treino é carregado
+  // Re-initialize only when treino ID changes (user switches to a different workout)
   useEffect(() => {
-    setStartTime(new Date());
-    const exerciciosParaSessao = treino.exercicios.map((ex) => ({
-      exercicioOriginal: ex,
-      seriesExecutadas: Array.from({ length: ex.series }, (_, i) => ({
-        id: crypto.randomUUID(), // Usando UUID real para evitar conflitos de tipo e ID
-        serieNumero: i + 1,
-        peso: null,
-        repeticoesFeitas: null,
-        concluido: false,
-      })),
-    }));
-    setExerciciosEmSessao(exerciciosParaSessao);
-  }, [treino]);
+    setExerciciosEmSessao(initExercicios(treino));
+  }, [treino.id]);
 
   const exercicioAtual = exerciciosEmSessao[exercicioAtualIndex];
 
@@ -111,7 +115,7 @@ export function WorkoutSession({ treino, onFinish, onCancel }: WorkoutSessionPro
   };
 
   const handleFinalizarTreino = () => {
-    if (!startTime) return;
+    if (!startTime) return; // always defined via lazy init, guard kept for safety
 
     const endTime = new Date();
     const duracaoMinutos = Math.round((endTime.getTime() - startTime.getTime()) / 60000);
