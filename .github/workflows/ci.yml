@@ -113,10 +113,10 @@ jobs:
           echo "SUPABASE_LOCAL_ANON_KEY=$ANON_KEY" >> $GITHUB_ENV
           echo "SUPABASE_LOCAL_SERVICE_ROLE_KEY=$SERVICE_KEY" >> $GITHUB_ENV
 
-      - name: Run database migrations
+      - name: Push database schema
         env:
           DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:54322/postgres
-        run: npx prisma migrate deploy
+        run: npx prisma db push --accept-data-loss
 
       - name: Seed E2E test users
         env:
