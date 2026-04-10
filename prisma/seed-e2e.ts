@@ -6,10 +6,13 @@
  * Run with: npm run seed:e2e
  *
  * UUIDs are fixed so tests can reference them directly.
+ * Credentials MUST match tests/e2e/helpers/auth.ts.
  */
 
-import { createClient } from '@supabase/supabase-js';
+import { Pool } from 'pg';
+import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient, Role } from '@prisma/client';
+import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? 'http://127.0.0.1:54321';
 const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY ?? '';
@@ -18,35 +21,42 @@ const supabase = createClient(supabaseUrl, serviceRoleKey, {
   auth: { autoRefreshToken: false, persistSession: false },
 });
 
-const prisma = new PrismaClient();
+const pool = new Pool({
+  connectionString:
+    process.env.DATABASE_URL ?? 'postgresql://postgres:postgres@127.0.0.1:54322/postgres',
+});
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- PrismaPg adapter has a type mismatch with pg@8 Pool; upstream issue
+const adapter = new PrismaPg(pool as any);
+const prisma = new PrismaClient({ adapter });
 
-// Fixed UUIDs — used in E2E tests to reference specific users
+// Fixed UUIDs — used in E2E tests to reference specific users.
+// Credentials MUST match tests/e2e/helpers/auth.ts
 export const E2E_USERS = {
   gerente: {
     id: '00000000-0000-0000-0000-000000000001',
-    email: 'gerente@e2e.test',
-    password: 'E2eGerente!2026',
+    email: 'gerente@test.com',
+    password: 'Test1234!',
     role: Role.GERENTE,
     nomeCompleto: 'Gerente E2E',
   },
   recepcionista: {
     id: '00000000-0000-0000-0000-000000000002',
-    email: 'recepcionista@e2e.test',
-    password: 'E2eRecep!2026',
+    email: 'recep@test.com',
+    password: 'Test1234!',
     role: Role.RECEPCIONISTA,
     nomeCompleto: 'Recepcionista E2E',
   },
   instrutor: {
     id: '00000000-0000-0000-0000-000000000003',
-    email: 'instrutor@e2e.test',
-    password: 'E2eInstrutor!2026',
+    email: 'instrutor@test.com',
+    password: 'Test1234!',
     role: Role.INSTRUTOR,
     nomeCompleto: 'Instrutor E2E',
   },
   aluno: {
     id: '00000000-0000-0000-0000-000000000004',
-    email: 'aluno@e2e.test',
-    password: 'E2eAluno!2026',
+    email: 'aluno@test.com',
+    password: 'Test1234!',
     cpf: '000.000.000-04',
     nomeCompleto: 'Aluno E2E',
     telefone: '11999990004',
@@ -68,15 +78,15 @@ async function createAuthUser(id: string, email: string, password: string): Prom
 }
 
 async function seed(): Promise<void> {
-  console.log('🌱 Seeding E2E test users...');
+  console.log('Seeding E2E test users...');
 
   // Create Supabase Auth users
   for (const user of [E2E_USERS.gerente, E2E_USERS.recepcionista, E2E_USERS.instrutor]) {
     await createAuthUser(user.id, user.email, user.password);
-    console.log(`  ✓ Auth user: ${user.email}`);
+    console.log(`  Auth user created: ${user.email}`);
   }
   await createAuthUser(E2E_USERS.aluno.id, E2E_USERS.aluno.email, E2E_USERS.aluno.password);
-  console.log(`  ✓ Auth user: ${E2E_USERS.aluno.email}`);
+  console.log(`  Auth user created: ${E2E_USERS.aluno.email}`);
 
   // Upsert Funcionarios (admin staff)
   for (const user of [E2E_USERS.gerente, E2E_USERS.recepcionista, E2E_USERS.instrutor]) {
@@ -90,7 +100,7 @@ async function seed(): Promise<void> {
         role: user.role,
       },
     });
-    console.log(`  ✓ Funcionario: ${user.nomeCompleto} (${user.role})`);
+    console.log(`  Funcionario upserted: ${user.nomeCompleto} (${user.role})`);
   }
 
   // Upsert Aluno
@@ -105,16 +115,17 @@ async function seed(): Promise<void> {
       telefone: E2E_USERS.aluno.telefone,
     },
   });
-  console.log(`  ✓ Aluno: ${E2E_USERS.aluno.nomeCompleto}`);
+  console.log(`  Aluno upserted: ${E2E_USERS.aluno.nomeCompleto}`);
 
-  console.log('✅ E2E seed complete.');
+  console.log('E2E seed complete.');
 }
 
 seed()
   .catch((err: unknown) => {
-    console.error('❌ Seed failed:', err);
+    console.error('Seed failed:', err);
     process.exit(1);
   })
-  .finally(() => {
-    void prisma.$disconnect();
+  .finally(async () => {
+    await prisma.$disconnect();
+    await pool.end();
   });
