@@ -99,8 +99,17 @@ jobs:
 
       - name: Export Supabase keys
         run: |
-          ANON_KEY=$(supabase status | grep 'anon key' | awk '{print $NF}')
-          SERVICE_KEY=$(supabase status | grep 'service_role key' | awk '{print $NF}')
+          # Try --output env first (Supabase CLI v1.23+)
+          STATUS_ENV=$(supabase status --output env 2>/dev/null || echo "")
+          ANON_KEY=$(echo "$STATUS_ENV" | grep "^ANON_KEY=" | cut -d= -f2-)
+          SERVICE_KEY=$(echo "$STATUS_ENV" | grep "^SERVICE_ROLE_KEY=" | cut -d= -f2-)
+          # Fallback: well-known defaults when config.toml has no explicit jwt_secret
+          if [ -z "$ANON_KEY" ]; then
+            ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRFA0NiK7W9odiD2okw387wrjgFjtl7gx5LwhwlM6ic"
+          fi
+          if [ -z "$SERVICE_KEY" ]; then
+            SERVICE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hj04zWl196z2-SBc0"
+          fi
           echo "SUPABASE_LOCAL_ANON_KEY=$ANON_KEY" >> $GITHUB_ENV
           echo "SUPABASE_LOCAL_SERVICE_ROLE_KEY=$SERVICE_KEY" >> $GITHUB_ENV
 
