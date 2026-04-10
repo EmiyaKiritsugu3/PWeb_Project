@@ -19,7 +19,7 @@
 | Prisma migrations                           | ✅ Tracked | `prisma/migrations/`           |
 | ESLint quality gate                         | ✅ Done    | 0 errors — `any` + unused vars |
 | TypeScript typecheck                        | ✅ Clean   | 0 errors (strict mode)         |
-| Unit tests                                  | ✅ Passing | 14/14 (Vitest)                 |
+| Unit tests                                  | ✅ Passing | 18/18 (Vitest)                 |
 | Ops documentation                           | ✅ Done    | Runbook, SLOs, threat model    |
 | Process documentation                       | ✅ Done    | RFC + Postmortem templates     |
 | Local E2E stack                             | ✅ Done    | `supabase start` (Docker)      |
@@ -30,17 +30,18 @@
 
 ## What Is Incomplete
 
-| Area          | Gap                                          | Priority |
-| ------------- | -------------------------------------------- | -------- |
-| Sentry        | Not installed (manual step required first)   | P2       |
-| Lint warnings | 30 `no-console` warnings remain (not errors) | P3       |
+| Area          | Gap                                                            | Priority |
+| ------------- | -------------------------------------------------------------- | -------- |
+| CI security   | 3 moderate vulns in `@prisma/dev` (transitive, non-production) | P3       |
+| Lint warnings | 31 `no-console` warnings remain (not errors)                   | P3       |
+| GitHub secret | `SUPABASE_LOCAL_SERVICE_ROLE_KEY` must be set for CI seed step | P1       |
 
 ## Quality Gates (current status)
 
 ```
 npm run typecheck   → ✅  0 errors
 npm run lint        → ✅  0 errors  (30 warnings: no-console)
-npm run test        → ✅  14/14 passing
+npm run test        → ✅  18/18 passing
 npm run e2e         → ✅  15/15 passing
 ```
 
@@ -87,12 +88,14 @@ npm run e2e         → ✅  15/15 passing
 | 6     | Coverage thresholds         | ✅ Complete |
 | 7     | Playwright E2E              | ✅ Complete |
 | 8     | Sentry error tracking       | ✅ Complete |
-| 9     | Polish & PR                 | ⏳ Next     |
+| 9     | Polish & PR                 | ✅ Complete |
 
 ## Known Issues
 
-- 30 `no-console` warnings in server actions and `data.ts` — accepted for now (server-side debug logging)
+- 31 `no-console` warnings in server actions and `data.ts` — accepted for now (server-side debug logging)
 - `SUPABASE_LOCAL_ANON_KEY` GitHub Actions secret must be set before CI E2E job runs (see RUNBOOK)
+- `SUPABASE_LOCAL_SERVICE_ROLE_KEY` GitHub Actions secret must be set for seed step to create test users
+- 3 moderate vulnerabilities in `@prisma/dev` (transitive via `prisma@7.7.0`); not reachable in production; awaiting upstream fix
 
 ## Update Protocol
 
