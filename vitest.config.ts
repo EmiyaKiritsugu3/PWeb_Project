@@ -21,7 +21,17 @@ export default defineConfig({
         'src/app/**/error.*',
         'src/app/**/not-found.*',
         'src/app/**/layout.*',
+        // Server Actions: tightly coupled to Prisma/Supabase — covered by Playwright E2E (Phase 7)
+        'src/lib/actions/**',
       ],
+      thresholds: {
+        // Pure utility functions — no external deps, must stay fully covered
+        'src/lib/utils.ts': { statements: 100, functions: 100, lines: 100 },
+        // Auth guard — security-critical, must stay fully covered
+        'src/lib/auth.ts': { statements: 100, branches: 100, functions: 100, lines: 100 },
+        // Business logic services — must stay fully covered
+        'src/services/**': { statements: 100, branches: 100, functions: 100, lines: 100 },
+      },
     },
   },
   resolve: {
