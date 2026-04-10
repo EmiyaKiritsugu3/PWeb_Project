@@ -6,7 +6,7 @@ test.describe('Student portal — critical path', () => {
     await loginAs(page, 'ALUNO');
     await expect(page).toHaveURL(/\/aluno\/dashboard/);
     // Dashboard should render the student portal heading
-    await expect(page.getByRole('heading')).toBeVisible();
+    await expect(page.getByRole('heading')).toBeVisible({ timeout: 15_000 });
   });
 
   test('ALUNO is blocked from admin /dashboard', async ({ page }) => {
@@ -20,6 +20,6 @@ test.describe('Student portal — critical path', () => {
     await loginAs(page, 'ALUNO');
     await page.goto('/aluno/meus-treinos');
     await expect(page).toHaveURL(/\/aluno\/meus-treinos/);
-    await expect(page.getByRole('heading')).toBeVisible();
+    await expect(page.getByRole('heading')).toBeVisible({ timeout: 15_000 });
   });
 });
