@@ -2,42 +2,10 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  CardFooter,
-} from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import {
-  Sparkles,
-  BrainCircuit,
-  Info,
-  CalendarOff,
-  CheckCircle2,
-  AlertCircle,
-  Calendar,
-  Trophy,
-  TrendingUp,
-  Zap,
-  Target,
-  Award,
-} from 'lucide-react';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Trophy, TrendingUp, Zap, Target, Award } from 'lucide-react';
 import { generateWorkoutFeedback } from '@/ai/flows/workout-feedback-flow';
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogFooter,
-  AlertDialogCancel,
-} from '@/components/ui/alert-dialog';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { cn } from '@/lib/utils';
 import type { Treino, Aluno, Exercicio } from '@/lib/definitions';
 import { finalizarTreinoAction } from '@/lib/actions/alunos';
 import { useToast } from '@/hooks/use-toast';

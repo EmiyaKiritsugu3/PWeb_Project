@@ -3,8 +3,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 
+interface ChartDataPoint {
+  mes: string;
+  alunos: number;
+}
+
 interface DashboardChartsProps {
-  data: any[];
+  data: ChartDataPoint[];
 }
 
 export function DashboardCharts({ data }: DashboardChartsProps) {

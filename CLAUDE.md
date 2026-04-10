@@ -44,6 +44,21 @@ TypeScript 5 (strict mode, `useUnknownInCatchVariables` enabled): Follow standar
 
 <!-- MANUAL ADDITIONS START -->
 
+## AI Session Protocol
+
+At the start of every session:
+
+1. Read `docs/CURRENT-STATE.md` — understand what works and what is incomplete.
+2. Read `docs/DEFINITION-OF-DONE.md` — know the acceptance criteria before touching code.
+3. Run `git branch --show-current` — confirm you are on the correct feature branch.
+4. Run `npm run lint && npm run test` — establish a clean baseline before any change.
+5. Ask the user: "What is the goal for this session?" if not stated.
+
+At the end of every session:
+
+1. Update `docs/CURRENT-STATE.md` to reflect changes made.
+2. Commit with a Conventional Commit message referencing the task ID (e.g. `feat(e2e): T038 install Playwright`).
+
 ## Planning Protocol
 
 Triggered by: "crie um plano", "faça um plano", "planeje", "plan this", "implementar", "implemente", "execute o plano", "go ahead", "do it", `/speckit-plan`, `/ultraplan`.

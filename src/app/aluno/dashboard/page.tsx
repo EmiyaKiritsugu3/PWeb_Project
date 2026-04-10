@@ -3,7 +3,6 @@ import { prisma } from '@/lib/prisma';
 import AlunoDashboardClient from './dashboard-client';
 import { redirect } from 'next/navigation';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { CalendarOff } from 'lucide-react';
 
 export default async function AlunoDashboardPage() {
   const supabase = await createClient();

@@ -35,7 +35,7 @@ function initExercicios(treino: Treino): ExercicioEmSessao[] {
   }));
 }
 
-export function WorkoutSession({ treino, onFinish, onCancel }: WorkoutSessionProps) {
+export function WorkoutSession({ treino, onFinish, onCancel: _onCancel }: WorkoutSessionProps) {
   const [exerciciosEmSessao, setExerciciosEmSessao] = useState<ExercicioEmSessao[]>(() =>
     initExercicios(treino)
   );
@@ -43,7 +43,7 @@ export function WorkoutSession({ treino, onFinish, onCancel }: WorkoutSessionPro
   const [startTime] = useState<Date>(() => new Date());
 
   // Hook para o cronômetro de descanso
-  const { seconds, minutes, isRunning, start, restart } = useTimer({ expiryTimestamp: new Date() });
+  const { seconds, minutes, isRunning, restart } = useTimer({ expiryTimestamp: new Date() });
 
   // Re-initialize only when treino ID changes (user switches to a different workout)
   useEffect(() => {

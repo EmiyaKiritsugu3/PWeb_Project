@@ -2,9 +2,6 @@
 
 import React, { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { motion } from 'framer-motion';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { PageHeader } from '@/components/page-header';
 import {
   Select,
@@ -14,36 +11,14 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { EXERCICIOS_POR_GRUPO, DIAS_DA_SEMANA } from '@/lib/constants';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import {
-  PlusCircle,
-  Save,
-  Trash2,
-  Wand2,
-  BrainCircuit,
-  Pencil,
-  FileSignature,
-  User,
-  Dumbbell,
-  Play,
-} from 'lucide-react';
-import type { Exercicio, Treino, HistoricoTreino } from '@/lib/definitions';
+import { PlusCircle, Trash2, Pencil, FileSignature, User, Play } from 'lucide-react';
+import type { Treino, HistoricoTreino } from '@/lib/definitions';
 import { useToast } from '@/hooks/use-toast';
 import { WorkoutSession } from '@/components/WorkoutSession';
-import { Combobox } from '@/components/ui/combobox';
-import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { streamWorkoutPlan } from '@/ai/flows/workout-generator-flow';
-import { WorkoutGeneratorInputSchema, type WorkoutGeneratorInput } from '@/ai/schemas';
+import { type WorkoutGeneratorInput } from '@/ai/schemas';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import {
@@ -56,7 +31,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { Skeleton } from '@/components/ui/skeleton';
 import {
   upsertTreinoAction,
   updateTreinoDayAction,
@@ -119,7 +93,7 @@ export default function MeusTreinosClient({
       } else {
         throw new Error(res.error);
       }
-    } catch (error) {
+    } catch (_error) {
       toast({ title: 'Erro ao salvar', variant: 'destructive' });
     }
   };
@@ -150,7 +124,7 @@ export default function MeusTreinosClient({
           meusTreinos.map((t) => (t.id === treinoId ? { ...t, diaSemana: novoDia } : t))
         );
       }
-    } catch (error) {
+    } catch (_error) {
       toast({ title: 'Erro ao atualizar agenda', variant: 'destructive' });
     }
   };
@@ -169,7 +143,7 @@ export default function MeusTreinosClient({
         toast({ title: 'Treino excluído!', variant: 'destructive' });
         setMeusTreinos(meusTreinos.filter((t) => t.id !== deletingTreino.id));
       }
-    } catch (error) {
+    } catch (_error) {
       toast({ title: 'Erro ao excluir', variant: 'destructive' });
     }
 
@@ -187,6 +161,7 @@ export default function MeusTreinosClient({
 
       if (result && result.workouts) {
         for (const workout of result.workouts) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Genkit streaming output lacks precise exercise type
           const novosExercicios = workout.exercicios.map((ex: any) => ({
             nomeExercicio: ex.nomeExercicio,
             series: ex.series,
@@ -330,7 +305,7 @@ export default function MeusTreinosClient({
       } else {
         throw new Error(res.error);
       }
-    } catch (error) {
+    } catch (_error) {
       toast({ title: 'Erro ao salvar histórico', variant: 'destructive' });
     }
   };
