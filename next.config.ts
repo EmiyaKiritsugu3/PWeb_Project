@@ -37,13 +37,14 @@ export default withSentryConfig(nextConfig, {
   org: 'ufrn-universidade-federal-do-r',
   project: 'javascript-nextjs',
 
+  // Auth token for source map uploads (set in CI via SENTRY_AUTH_TOKEN secret)
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+
+  // Proxy Sentry requests through Next.js to avoid ad-blockers
+  tunnelRoute: '/monitoring',
+
   // Upload source maps in CI only (requires SENTRY_AUTH_TOKEN)
   silent: !process.env.CI,
-
-  // Disable source map upload locally (no auth token in dev)
-  sourcemaps: {
-    disable: !process.env.SENTRY_AUTH_TOKEN,
-  },
 
   // Tree-shake Sentry debug code in production builds
   disableLogger: true,
