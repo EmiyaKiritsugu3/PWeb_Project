@@ -19,11 +19,11 @@ export async function loginAs(page: Page, role: TestRole): Promise<void> {
 }
 
 export async function logout(page: Page): Promise<void> {
-  // Navigate to root which redirects unauthenticated users to login
-  await page.goto('/');
-  // Try to click a logout button if present, otherwise just clear cookies
-  const logoutBtn = page.getByRole('button', { name: /sair|logout/i });
-  if (await logoutBtn.isVisible({ timeout: 2_000 }).catch(() => false)) {
-    await logoutBtn.click();
-  }
+  // Always clear cookies and storage to guarantee a clean unauthenticated state.
+  // Supabase SSR stores session tokens in sb-* cookies; a navigation alone is not sufficient.
+  await page.context().clearCookies();
+  await page.evaluate(() => {
+    localStorage.clear();
+    sessionStorage.clear();
+  });
 }
