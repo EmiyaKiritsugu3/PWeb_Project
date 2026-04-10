@@ -25,7 +25,14 @@ async function FinanceiroDataWrapper() {
     },
   });
 
-  return <FinanceiroClient initialInadimplentes={inadimplentes as any} />;
+  return (
+    <FinanceiroClient
+      initialInadimplentes={inadimplentes.map((a) => ({
+        ...a,
+        statusMatricula: String(a.statusMatricula),
+      }))}
+    />
+  );
 }
 
 export default async function FinanceiroPage() {

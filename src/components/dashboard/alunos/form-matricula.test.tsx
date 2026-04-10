@@ -2,35 +2,44 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { FormMatricula } from './form-matricula';
 import type { Aluno, Plano } from '@/lib/definitions';
+import type { ReactNode, ChangeEvent } from 'react';
 
-// Mocking Radix UI / ShadCN UI components
+// Minimal prop shapes for Radix UI / ShadCN UI component mocks
+type MockChildren = { children?: ReactNode };
+type MockDialog = MockChildren & { open?: boolean };
+type MockSelect = MockChildren & { onValueChange: (v: string) => void; value?: string };
+type MockSelectItem = MockChildren & { value: string };
+type MockButton = MockChildren & { onClick?: () => void; disabled?: boolean; variant?: string };
+type MockLabel = MockChildren & { htmlFor?: string };
+type MockPlaceholder = { placeholder?: string };
+
 vi.mock('@/components/ui/dialog', () => ({
-  Dialog: ({ children, open }: any) => (open ? <div>{children}</div> : null),
-  DialogContent: ({ children }: any) => <div>{children}</div>,
-  DialogHeader: ({ children }: any) => <div>{children}</div>,
-  DialogTitle: ({ children }: any) => <h2>{children}</h2>,
-  DialogDescription: ({ children }: any) => <p>{children}</p>,
-  DialogFooter: ({ children }: any) => <footer>{children}</footer>,
+  Dialog: ({ children, open }: MockDialog) => (open ? <div>{children}</div> : null),
+  DialogContent: ({ children }: MockChildren) => <div>{children}</div>,
+  DialogHeader: ({ children }: MockChildren) => <div>{children}</div>,
+  DialogTitle: ({ children }: MockChildren) => <h2>{children}</h2>,
+  DialogDescription: ({ children }: MockChildren) => <p>{children}</p>,
+  DialogFooter: ({ children }: MockChildren) => <footer>{children}</footer>,
 }));
 
 vi.mock('@/components/ui/select', () => ({
-  Select: ({ children, onValueChange, value }: any) => (
+  Select: ({ children, onValueChange, value }: MockSelect) => (
     <select
       data-testid="select-plano"
       value={value}
-      onChange={(e) => onValueChange(e.target.value)}
+      onChange={(e: ChangeEvent<HTMLSelectElement>) => onValueChange(e.target.value)}
     >
       {children}
     </select>
   ),
-  SelectTrigger: ({ children }: any) => <div>{children}</div>,
-  SelectValue: ({ placeholder }: any) => <span>{placeholder}</span>,
-  SelectContent: ({ children }: any) => <>{children}</>,
-  SelectItem: ({ children, value }: any) => <option value={value}>{children}</option>,
+  SelectTrigger: ({ children }: MockChildren) => <div>{children}</div>,
+  SelectValue: ({ placeholder }: MockPlaceholder) => <span>{placeholder}</span>,
+  SelectContent: ({ children }: MockChildren) => <>{children}</>,
+  SelectItem: ({ children, value }: MockSelectItem) => <option value={value}>{children}</option>,
 }));
 
 vi.mock('@/components/ui/button', () => ({
-  Button: ({ children, onClick, disabled, variant }: any) => (
+  Button: ({ children, onClick, disabled, variant }: MockButton) => (
     <button onClick={onClick} disabled={disabled} data-variant={variant}>
       {children}
     </button>
@@ -38,7 +47,7 @@ vi.mock('@/components/ui/button', () => ({
 }));
 
 vi.mock('@/components/ui/label', () => ({
-  Label: ({ children, htmlFor }: any) => <label htmlFor={htmlFor}>{children}</label>,
+  Label: ({ children, htmlFor }: MockLabel) => <label htmlFor={htmlFor}>{children}</label>,
 }));
 
 describe('FormMatricula', () => {

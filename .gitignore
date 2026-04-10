@@ -41,6 +41,8 @@ typecheck_details.txt
 
 # Environment variables
 .env
+.env.test
+.env.staging
 *.local
 !.env.example
 

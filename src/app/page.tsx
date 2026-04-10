@@ -6,9 +6,6 @@ import { Dumbbell } from 'lucide-react';
 import Image from 'next/image';
 
 export default function LandingPage() {
-  // Define a static, server-rendered placeholder to prevent layout shift.
-  const initialImageUrl = 'https://picsum.photos/seed/gym-hero/1920/1080';
-
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground font-body">
       {/* Hero Section */}
