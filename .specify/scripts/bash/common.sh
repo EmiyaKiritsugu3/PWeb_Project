@@ -124,15 +124,18 @@ check_feature_branch() {
         return 0
     fi
 
-    # Accept sequential prefix (3+ digits) but exclude malformed timestamps
-    # Malformed: 7-or-8 digit date + 6-digit time with no trailing slug (e.g. "2026031-143022" or "20260319-143022")
+    # Accept: type/NNN-slug (e.g. feat/004-elite-workflow), NNN-slug (legacy), or timestamp
+    # Malformed: 7-or-8 digit date + 6-digit time with no trailing slug
     local is_sequential=false
-    if [[ "$branch" =~ ^[0-9]{3,}- ]] && [[ ! "$branch" =~ ^[0-9]{7}-[0-9]{6}- ]] && [[ ! "$branch" =~ ^[0-9]{7,8}-[0-9]{6}$ ]]; then
+    local type_prefix_pattern='^(feat|fix|chore|docs|refactor|test|hotfix|perf|ci)/[0-9]{3,}-'
+    if [[ "$branch" =~ $type_prefix_pattern ]]; then
+        is_sequential=true
+    elif [[ "$branch" =~ ^[0-9]{3,}- ]] && [[ ! "$branch" =~ ^[0-9]{7}-[0-9]{6}- ]] && [[ ! "$branch" =~ ^[0-9]{7,8}-[0-9]{6}$ ]]; then
         is_sequential=true
     fi
     if [[ "$is_sequential" != "true" ]] && [[ ! "$branch" =~ ^[0-9]{8}-[0-9]{6}- ]]; then
         echo "ERROR: Not on a feature branch. Current branch: $branch" >&2
-        echo "Feature branches should be named like: 001-feature-name, 1234-feature-name, or 20260319-143022-feature-name" >&2
+        echo "Feature branches should be named like: feat/001-feature-name, fix/002-bug-name, or 001-feature-name" >&2
         return 1
     fi
 
