@@ -97,6 +97,13 @@ jobs:
       - name: Start local Supabase
         run: supabase start
 
+      - name: Export Supabase keys
+        run: |
+          ANON_KEY=$(supabase status | grep 'anon key' | awk '{print $NF}')
+          SERVICE_KEY=$(supabase status | grep 'service_role key' | awk '{print $NF}')
+          echo "SUPABASE_LOCAL_ANON_KEY=$ANON_KEY" >> $GITHUB_ENV
+          echo "SUPABASE_LOCAL_SERVICE_ROLE_KEY=$SERVICE_KEY" >> $GITHUB_ENV
+
       - name: Run database migrations
         env:
           DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:54322/postgres
@@ -106,14 +113,14 @@ jobs:
         env:
           DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:54322/postgres
           NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_LOCAL_ANON_KEY }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_LOCAL_SERVICE_ROLE_KEY }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ env.SUPABASE_LOCAL_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ env.SUPABASE_LOCAL_SERVICE_ROLE_KEY }}
         run: npx tsx prisma/seed-e2e.ts
 
       - name: Run E2E tests
         env:
           NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_LOCAL_ANON_KEY }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ env.SUPABASE_LOCAL_ANON_KEY }}
           DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:54322/postgres
           PLAYWRIGHT_BASE_URL: http://localhost:3001
         run: npm run e2e
