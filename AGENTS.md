@@ -2,6 +2,10 @@
 
 Agent instructions for AI assistants working on this codebase.
 
+> **Constitution**: `.specify/memory/constitution.md` is the authoritative source for
+> principles, tech standards, quality gates, and commit discipline. This file contains
+> only project-map and operational shortcuts not found there.
+
 ## Development Workflow
 
 Every piece of work follows this sequence — no exceptions:
@@ -12,14 +16,8 @@ PDR → Design Spec → Implementation → Tests → ADR → Report → CHANGELO
 
 ## Quality Gates
 
-Before marking any task done, all of the following must pass:
-
-```bash
-npm run typecheck      # Zero TypeScript errors
-npm run lint           # Zero ESLint errors
-npm run format:check   # No Prettier violations
-npm run test:coverage  # All tests pass
-```
+> Defined in constitution §Development Workflow. Run all 4 before marking done:
+> `typecheck` · `lint` · `format:check` · `test`
 
 ## Project Map
 
@@ -37,23 +35,16 @@ npm run test:coverage  # All tests pass
 
 ## Commit Conventions
 
-This project uses [Conventional Commits](https://www.conventionalcommits.org/):
-
-```
-feat(aluno): add streak reset logic
-fix(auth): handle session expiry
-chore(deps): upgrade prisma
-```
-
-Valid types: `feat`, `fix`, `docs`, `refactor`, `test`, `chore`, `perf`, `ci`, `revert`
+> Governed by constitution Principle V. Format: `feat(scope): description`
+> Valid types: `feat` `fix` `docs` `refactor` `test` `chore` `perf` `ci` `revert`
 
 ## Architecture Constraints
 
-- **Auth:** Supabase Auth via SSR — never use client-side auth for protected routes
-- **Database:** All DB access via Prisma Server Actions — never expose Prisma to the client
-- **AI:** Google Genkit flows only — do not call Gemini API directly
-- **Forms:** React Hook Form + Zod — never use uncontrolled forms
-- **Styling:** Tailwind CSS + Shadcn/UI — do not add new CSS frameworks
+> Full stack lock in constitution §Technology Standards. Key enforcement rules:
+>
+> - Auth via SSR only — no client-side auth on protected routes
+> - DB access via Prisma Server Actions only — Prisma must not reach the client
+> - AI calls isolated in `src/ai/` with try/catch — no direct Gemini calls from RSCs
 
 ## Database Changes
 
