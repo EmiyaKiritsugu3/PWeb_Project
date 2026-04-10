@@ -5,7 +5,6 @@ import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Trophy, TrendingUp, Zap, Target, Award } from 'lucide-react';
-import { generateWorkoutFeedback } from '@/ai/flows/workout-feedback-flow';
 import type { Treino, Aluno, Exercicio } from '@/lib/definitions';
 import { finalizarTreinoAction } from '@/lib/actions/alunos';
 import { useToast } from '@/hooks/use-toast';
@@ -42,6 +41,7 @@ export default function AlunoDashboardClient({ aluno, initialTreino }: AlunoDash
       const exerciseNames = completedExercises
         .map((id) => initialTreino.exercicios?.find((ex) => ex.id === id)?.nomeExercicio)
         .filter((name): name is string => !!name);
+      const { generateWorkoutFeedback } = await import('@/ai/flows/workout-feedback-flow');
       const aiResult = await generateWorkoutFeedback({
         goal: initialTreino.objetivo,
         completedExercises: exerciseNames,

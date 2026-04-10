@@ -2,7 +2,7 @@ import { createClient } from '@/utils/supabase/server';
 import { prisma } from '@/lib/prisma';
 import AlunoDashboardClient from './dashboard-client';
 import { redirect } from 'next/navigation';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Card, CardHeader, CardContent } from '@/components/ui/card';
 
 export default async function AlunoDashboardPage() {
   const supabase = await createClient();
@@ -40,7 +40,7 @@ export default async function AlunoDashboardPage() {
       <div className="flex h-[80vh] items-center justify-center">
         <Card className="max-w-md text-center">
           <CardHeader>
-            <CardTitle>Sinto muito!</CardTitle>
+            <h2 className="text-2xl font-semibold leading-none tracking-tight">Sinto muito!</h2>
           </CardHeader>
           <CardContent className="space-y-2">
             <p>Seu perfil de aluno não foi encontrado no novo sistema.</p>
