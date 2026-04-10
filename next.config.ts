@@ -1,4 +1,5 @@
 import type { NextConfig } from 'next';
+import { withSentryConfig } from '@sentry/nextjs';
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -32,4 +33,18 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withSentryConfig(nextConfig, {
+  org: 'ufrn-universidade-federal-do-r',
+  project: 'javascript-nextjs',
+
+  // Upload source maps in CI only (requires SENTRY_AUTH_TOKEN)
+  silent: !process.env.CI,
+
+  // Disable source map upload locally (no auth token in dev)
+  sourcemaps: {
+    disable: !process.env.SENTRY_AUTH_TOKEN,
+  },
+
+  // Tree-shake Sentry debug code in production builds
+  disableLogger: true,
+});
