@@ -1,8 +1,11 @@
 # PWeb_Project Development Guidelines
 
-Auto-generated from all feature plans. Last updated: 2026-04-09
+Auto-generated from all feature plans. Last updated: 2026-04-10
 
 ## Active Technologies
+
+- TypeScript 5 (strict mode, `useUnknownInCatchVariables`) + Node.js 20 + Next.js 15 App Router, Prisma 7, Supabase SSR, Zod 3, Genkit 1.31 (004-elite-workflow-setup)
+- PostgreSQL via Prisma; local Supabase CLI for E2E (ports 54321/54322) (004-elite-workflow-setup)
 
 - TypeScript 5 (strict mode) + Next.js 15, Playwright, @sentry/nextjs, Vitest (004-elite-workflow-setup)
 - PostgreSQL via Prisma (produção + branch de staging) (004-elite-workflow-setup)
@@ -36,11 +39,11 @@ TypeScript 5 (strict mode, `useUnknownInCatchVariables` enabled): Follow standar
 
 ## Recent Changes
 
+- 004-elite-workflow-setup: Added TypeScript 5 (strict mode, `useUnknownInCatchVariables`) + Node.js 20 + Next.js 15 App Router, Prisma 7, Supabase SSR, Zod 3, Genkit 1.31
+
 - 004-elite-workflow-setup: Added TypeScript 5 (strict mode) + Next.js 15, Playwright, @sentry/nextjs, Vitest
 
 - 003-002-us00-financial: Added TypeScript 5 (strict mode) + Next.js 15 App Router, Supabase SSR (`@supabase/ssr`), Prisma 7, Zod 3
-
-- 001-fix-type-safety-bugs: Added TypeScript 5 (strict mode, `useUnknownInCatchVariables` enabled) + React 18, Next.js 15 App Router, Prisma 7, Zod 3, Genkit 1.31
 
 <!-- MANUAL ADDITIONS START -->
 
