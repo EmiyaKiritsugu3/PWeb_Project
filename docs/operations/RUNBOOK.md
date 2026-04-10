@@ -71,12 +71,14 @@ npm run seed:e2e
 
 Creates 4 deterministic test users:
 
-| User          | Email                  | Password          | Role          |
-| ------------- | ---------------------- | ----------------- | ------------- |
-| Gerente       | gerente@e2e.test       | E2eGerente!2026   | GERENTE       |
-| Recepcionista | recepcionista@e2e.test | E2eRecep!2026     | RECEPCIONISTA |
-| Instrutor     | instrutor@e2e.test     | E2eInstrutor!2026 | INSTRUTOR     |
-| Aluno         | aluno@e2e.test         | E2eAluno!2026     | —             |
+| User          | Email              | Password  | Role          |
+| ------------- | ------------------ | --------- | ------------- |
+| Gerente       | gerente@test.com   | Test1234! | GERENTE       |
+| Recepcionista | recep@test.com     | Test1234! | RECEPCIONISTA |
+| Instrutor     | instrutor@test.com | Test1234! | INSTRUTOR     |
+| Aluno         | aluno@test.com     | Test1234! | —             |
+
+> Credentials MUST match `tests/e2e/helpers/auth.ts` and `prisma/seed-e2e.ts` — update all three if changing.
 
 ### Run E2E tests
 
@@ -115,16 +117,28 @@ npm run build       # production build succeeds
 
 Required secrets in GitHub repository settings (`Settings → Secrets → Actions`):
 
-| Secret                          | Description                | Where to get                       |
-| ------------------------------- | -------------------------- | ---------------------------------- |
-| `NEXT_PUBLIC_SUPABASE_URL`      | Production Supabase URL    | Supabase → Settings → API          |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Production anon key        | Supabase → Settings → API          |
-| `SUPABASE_SERVICE_ROLE_KEY`     | Service role key (CI seed) | Supabase → Settings → API          |
-| `DATABASE_URL`                  | Prisma connection string   | Supabase → Settings → Database     |
-| `DIRECT_URL`                    | Direct DB URL (migrations) | Supabase → Settings → Database     |
-| `NEXT_PUBLIC_SENTRY_DSN`        | Sentry error tracking DSN  | sentry.io → Project → Settings     |
-| `SENTRY_AUTH_TOKEN`             | Sentry source maps upload  | sentry.io → Settings → Auth Tokens |
-| `GEMINI_API_KEY`                | Google AI API key          | Google AI Studio                   |
+| Secret                          | Description                        | Where to get                                       |
+| ------------------------------- | ---------------------------------- | -------------------------------------------------- |
+| `NEXT_PUBLIC_SUPABASE_URL`      | Production Supabase URL            | Supabase → Settings → API                          |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Production anon key                | Supabase → Settings → API                          |
+| `SUPABASE_SERVICE_ROLE_KEY`     | Service role key (CI seed)         | Supabase → Settings → API                          |
+| `DATABASE_URL`                  | Prisma connection string           | Supabase → Settings → Database                     |
+| `DIRECT_URL`                    | Direct DB URL (migrations)         | Supabase → Settings → Database                     |
+| `NEXT_PUBLIC_SENTRY_DSN`        | Sentry error tracking DSN          | sentry.io → Project → Settings                     |
+| `SENTRY_AUTH_TOKEN`             | Sentry source maps upload          | sentry.io → Settings → Auth Tokens                 |
+| `GEMINI_API_KEY`                | Google AI API key                  | Google AI Studio                                   |
+| `SUPABASE_LOCAL_ANON_KEY`       | Local Supabase anon key for CI E2E | Run `npx supabase status` locally, copy `anon key` |
+
+### Getting `SUPABASE_LOCAL_ANON_KEY` for CI
+
+The local Supabase CLI uses a fixed JWT secret. To get the anon key value:
+
+```bash
+npm run supabase:start
+npx supabase status  # copy "anon key" value
+```
+
+Set this as a GitHub Actions secret named `SUPABASE_LOCAL_ANON_KEY`. The value is deterministic for any default Supabase CLI installation (same JWT secret = same tokens).
 
 ---
 
