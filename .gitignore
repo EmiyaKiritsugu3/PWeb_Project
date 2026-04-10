@@ -7,6 +7,9 @@
 
 # Testing
 /coverage
+/playwright-report
+/test-results
+/blob-report
 
 # Archive
 docs/archive/
@@ -86,3 +89,9 @@ logs/
 # AI session state (ephemeral, per-developer)
 .remember/
 .specify/feature.json
+.claude/memory/
+docs/.smart-env/
+
+# Playwright
+/playwright/.cache/
+/playwright/.auth/

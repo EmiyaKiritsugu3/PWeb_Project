@@ -26,6 +26,7 @@
 | E2E seed script                             | ✅ Done    | `prisma/seed-e2e.ts` (4 users) |
 | Playwright E2E suite                        | ✅ Done    | 15/15 passing                  |
 | CI E2E job                                  | ✅ Done    | `.github/workflows/ci.yml`     |
+| Sentry error tracking                       | ✅ Done    | SDK + MCP + CLI configurados   |
 
 ## What Is Incomplete
 
@@ -85,8 +86,8 @@ npm run e2e         → ✅  15/15 passing
 | 5     | ESLint quality gates        | ✅ Complete |
 | 6     | Coverage thresholds         | ✅ Complete |
 | 7     | Playwright E2E              | ✅ Complete |
-| 8     | Sentry error tracking       | ⏳ Pending  |
-| 9     | Polish & PR                 | ⏳ Pending  |
+| 8     | Sentry error tracking       | ✅ Complete |
+| 9     | Polish & PR                 | ⏳ Next     |
 
 ## Known Issues
 
