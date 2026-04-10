@@ -99,10 +99,12 @@ jobs:
 
       - name: Export Supabase keys
         run: |
-          # Try --output env first (Supabase CLI v1.23+)
+          # Try --output env first (Supabase CLI v1.23+); strip surrounding quotes
           STATUS_ENV=$(supabase status --output env 2>/dev/null || echo "")
-          ANON_KEY=$(echo "$STATUS_ENV" | grep "^ANON_KEY=" | cut -d= -f2-)
-          SERVICE_KEY=$(echo "$STATUS_ENV" | grep "^SERVICE_ROLE_KEY=" | cut -d= -f2-)
+          ANON_KEY=$(echo "$STATUS_ENV" | grep "^ANON_KEY=" | cut -d= -f2- | sed "s/^[\"']//; s/[\"']$//")
+          SERVICE_KEY=$(echo "$STATUS_ENV" | grep "^SERVICE_ROLE_KEY=" | cut -d= -f2- | sed "s/^[\"']//; s/[\"']$//")
+          echo "Extracted anon key length: ${#ANON_KEY}"
+          echo "Extracted service key length: ${#SERVICE_KEY}"
           # Fallback: well-known defaults when config.toml has no explicit jwt_secret
           if [ -z "$ANON_KEY" ]; then
             ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRFA0NiK7W9odiD2okw387wrjgFjtl7gx5LwhwlM6ic"
