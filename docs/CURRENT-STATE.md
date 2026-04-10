@@ -24,16 +24,15 @@
 | Process documentation                       | ✅ Done    | RFC + Postmortem templates     |
 | Local E2E stack                             | ✅ Done    | `supabase start` (Docker)      |
 | E2E seed script                             | ✅ Done    | `prisma/seed-e2e.ts` (4 users) |
+| Playwright E2E suite                        | ✅ Done    | 15/15 passing                  |
+| CI E2E job                                  | ✅ Done    | `.github/workflows/ci.yml`     |
 
 ## What Is Incomplete
 
-| Area                | Gap                                          | Priority |
-| ------------------- | -------------------------------------------- | -------- |
-| E2E tests           | Playwright not configured yet                | P1       |
-| Sentry              | Not installed (manual step required first)   | P2       |
-| Coverage thresholds | No thresholds enforced in `vitest.config.ts` | P2       |
-| CI E2E job          | GitHub Actions E2E job not yet added         | P1       |
-| Lint warnings       | 30 `no-console` warnings remain (not errors) | P3       |
+| Area          | Gap                                          | Priority |
+| ------------- | -------------------------------------------- | -------- |
+| Sentry        | Not installed (manual step required first)   | P2       |
+| Lint warnings | 30 `no-console` warnings remain (not errors) | P3       |
 
 ## Quality Gates (current status)
 
@@ -41,7 +40,7 @@
 npm run typecheck   → ✅  0 errors
 npm run lint        → ✅  0 errors  (30 warnings: no-console)
 npm run test        → ✅  14/14 passing
-npm run e2e         → ⏳  not yet configured
+npm run e2e         → ✅  15/15 passing
 ```
 
 ## Tech Stack
@@ -53,8 +52,8 @@ npm run e2e         → ⏳  not yet configured
 - **Validation**: Zod 3
 - **AI**: Google Genkit 1.31 + Gemini 2.5 Flash
 - **Styling**: Tailwind CSS 4 + Shadcn/UI
-- **Testing**: Vitest 4 (3 files, 14 tests) — no E2E yet
-- **CI**: GitHub Actions (lint + test jobs)
+- **Testing**: Vitest 4 (3 files, 14 unit tests) + Playwright 1.59 (15 E2E scenarios)
+- **CI**: GitHub Actions (quality + test + e2e jobs)
 - **Local E2E DB**: Supabase CLI (`supabase start` → ports 54321/54322)
 
 ## Key Files
@@ -84,16 +83,15 @@ npm run e2e         → ⏳  not yet configured
 | 1–3   | Governance & constitution   | ✅ Complete |
 | 4     | Staging environment (local) | ✅ Complete |
 | 5     | ESLint quality gates        | ✅ Complete |
-| 6     | Coverage thresholds         | ⏳ Next     |
-| 7     | Playwright E2E              | ⏳ Pending  |
+| 6     | Coverage thresholds         | ✅ Complete |
+| 7     | Playwright E2E              | ✅ Complete |
 | 8     | Sentry error tracking       | ⏳ Pending  |
 | 9     | Polish & PR                 | ⏳ Pending  |
 
 ## Known Issues
 
 - 30 `no-console` warnings in server actions and `data.ts` — accepted for now (server-side debug logging)
-- `npm run e2e` exists in `package.json` but Playwright is not yet installed/configured
-- `.env.staging` must be created manually from `.env.example` before running E2E
+- `SUPABASE_LOCAL_ANON_KEY` GitHub Actions secret must be set before CI E2E job runs (see RUNBOOK)
 
 ## Update Protocol
 
