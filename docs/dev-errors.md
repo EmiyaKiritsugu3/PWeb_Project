@@ -219,5 +219,35 @@ Format: discovered → root cause → fix → effectiveness.
   await expect(page.getByRole('heading')).toBeVisible({ timeout: 15_000 });
   ```
   Aplicado também preventivamente ao teste de `meus-treinos` (mesma estrutura).
-- **Efetividade:** Pendente — CI em andamento
+- **Efetividade:** ✅ Parcialmente — timeout aumentado, mas o teste continuou falhando por duas causas adicionais (ver ERR-018)
 - **Lição:** Em CI, nunca usar o timeout padrão de Playwright (5000ms) para asserções em elementos que dependem de dados carregados server-side. Usar pelo menos 15_000ms.
+
+---
+
+## ERR-018 — E2E Test: `getByRole('heading')` não encontra elemento — duas causas ocultas
+
+- **Data:** 2026-04-10
+- **Contexto:** `tests/e2e/specs/student-portal.spec.ts` — "ALUNO accesses /aluno/dashboard" — falhou mesmo com `{ timeout: 15_000 }`
+- **Sintoma:** `element(s) not found` com timeout de 15 segundos — timeout não era mais o problema
+
+### Causa A — `CardTitle` do Shadcn não é um heading semântico
+
+- **Componente:** `src/components/ui/card.tsx` linhas 28-36
+- **Problema:** `CardTitle` renderiza como `<div>` (não `<h1>`/`<h2>`/`<h3>`). Quando o aluno não existe no Prisma, `page.tsx` mostrava o estado de erro com `<CardTitle>Sinto muito!</CardTitle>` — que é um `<div>`. `getByRole('heading')` só encontra elementos com role semântico de heading (`h1`-`h6` ou `role="heading"`).
+- **Diagnóstico:** O `h1` real só existe no `dashboard-client.tsx`, renderizado quando `aluno` é encontrado. Se o seed E2E criou o usuário no Supabase Auth mas falhou ao criar o registro no Prisma, a página mostra o estado de erro sem heading.
+- **Fix:** Substituir `<CardTitle>` por `<h2 className="text-2xl font-semibold leading-none tracking-tight">` no estado de erro de `page.tsx`. Remover import `CardTitle` não utilizado.
+- **Lição:** Componentes de UI que parecem headings visualmente podem não ser semanticamente. Sempre verificar a tag HTML renderizada, não o nome do componente.
+
+### Causa B — Import estático de AI flow causava erros de bundle em CI
+
+- **Arquivo:** `src/app/aluno/dashboard/dashboard-client.tsx` linha 8
+- **Problema:** `import { generateWorkoutFeedback } from '@/ai/flows/workout-feedback-flow'` era um import estático. O `workout-feedback-flow.ts` usa `@opentelemetry/exporter-jaeger` que não está disponível no ambiente de bundle do Next.js. O erro de bundling em CI gerava warnings repetidos no webserver e podia impedir a montagem do componente.
+- **Detalhe crítico:** O `meus-treinos` test passava porque `workout-generator-flow.ts` (importado lá) não tinha a mesma dependência de OpenTelemetry.
+- **Fix:** Converter para import dinâmico dentro do handler `handleFinishTraining`:
+  ```ts
+  const { generateWorkoutFeedback } = await import('@/ai/flows/workout-feedback-flow');
+  ```
+  O flow só é necessário quando o usuário clica "Finalizar Treino" — nunca no render inicial.
+- **Lição:** Imports de módulos pesados com dependências de runtime (OpenTelemetry, telemetria, etc.) devem ser dinâmicos quando usados apenas em handlers de evento. Import estático ≠ "só executa quando chamado" — o módulo é resolvido e bundled na inicialização.
+
+- **Efetividade:** Pendente — CI em andamento (run `24266743760`)
