@@ -25,7 +25,12 @@ export async function requireRole(allowedRole: Role): Promise<void> {
     .eq('id', user.id)
     .maybeSingle();
 
-  if (error || !data || data.role !== allowedRole) {
+  if (error) {
+    console.error('[requireRole] DB error fetching role:', error.message);
+    redirect('/dashboard');
+  }
+
+  if (!data || data.role !== allowedRole) {
     redirect('/dashboard');
   }
 }

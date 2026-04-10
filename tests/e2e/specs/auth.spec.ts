@@ -22,15 +22,8 @@ test.describe('Authentication — critical path', () => {
     await page.getByLabel(/email/i).fill('naoexiste@test.com');
     await page.getByLabel(/senha|password/i).fill('WrongPass99!');
     await page.getByRole('button', { name: /entrar|login/i }).click();
-    // Should not navigate away — either stays on /login or shows error
-    await page.waitForTimeout(2_000);
-    const url = page.url();
-    const hasError =
-      url.includes('/login') ||
-      (await page
-        .getByText(/inválid|incorret|erro|invalid/i)
-        .isVisible()
-        .catch(() => false));
-    expect(hasError).toBe(true);
+    // Must stay on /login and show an error message
+    await expect(page).toHaveURL(/\/login/, { timeout: 8_000 });
+    await expect(page.getByText(/inválid|incorret|erro|invalid/i)).toBeVisible({ timeout: 8_000 });
   });
 });
