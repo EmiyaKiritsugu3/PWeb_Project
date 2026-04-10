@@ -3,7 +3,7 @@ import { getPlanos } from '@/lib/data';
 import { PlanosClient } from './planos-client';
 import { Skeleton } from '@/components/ui/skeleton';
 import { requireRole } from '@/lib/auth';
-import { Role } from '@prisma/client';
+import { Role } from '@/lib/definitions';
 
 async function PlanosDataWrapper() {
   const planos = await getPlanos();

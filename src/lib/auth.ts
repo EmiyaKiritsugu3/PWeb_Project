@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/utils/supabase/server';
-import type { Role } from '@prisma/client';
+import type { Role } from '@/lib/definitions';
 
 /**
  * Asserts that the currently authenticated user has the required role.

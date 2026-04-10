@@ -37,17 +37,30 @@ export default function AlunoDashboardClient({ aluno, initialTreino }: AlunoDash
     if (!initialTreino) return;
     setIsFeedbackLoading(true);
     setFeedback(null);
+
     try {
       const exerciseNames = completedExercises
         .map((id) => initialTreino.exercicios?.find((ex) => ex.id === id)?.nomeExercicio)
         .filter((name): name is string => !!name);
-      const { generateWorkoutFeedback } = await import('@/ai/flows/workout-feedback-flow');
-      const aiResult = await generateWorkoutFeedback({
-        goal: initialTreino.objetivo,
-        completedExercises: exerciseNames,
-        totalExercises: initialTreino.exercicios?.length || 0,
-      });
-      setFeedback(aiResult);
+
+      // IA Feedback (Fail-safe block)
+      try {
+        const { generateWorkoutFeedback } = await import('@/ai/flows/workout-feedback-flow');
+        const aiResult = await generateWorkoutFeedback({
+          goal: initialTreino.objetivo,
+          completedExercises: exerciseNames,
+          totalExercises: initialTreino.exercicios?.length || 0,
+        });
+        setFeedback(aiResult);
+      } catch (aiError) {
+        console.error('AI Feedback Error:', aiError);
+        toast({
+          title: 'Feedback indisponível',
+          description: 'Sincronizando treino sem o comentário da IA.',
+        });
+      }
+
+      // Main Sincronization Action
       const result = await finalizarTreinoAction(initialTreino.id);
       if (result.success) {
         toast({
@@ -59,11 +72,8 @@ export default function AlunoDashboardClient({ aluno, initialTreino }: AlunoDash
         toast({ title: 'Erro de conexão', variant: 'destructive' });
       }
     } catch (error) {
-      console.error('Error:', error);
-      setFeedback({
-        title: 'Erro de Processamento',
-        message: 'Não conseguimos gerar do feedback da IA, mas seu treino foi salvo localmente.',
-      });
+      console.error('Action Error:', error);
+      toast({ title: 'Erro ao salvar treino', variant: 'destructive' });
     } finally {
       setIsFeedbackLoading(false);
     }
