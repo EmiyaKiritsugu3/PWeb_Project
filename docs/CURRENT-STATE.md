@@ -30,11 +30,12 @@
 
 ## What Is Incomplete
 
-| Area          | Gap                                                            | Priority |
-| ------------- | -------------------------------------------------------------- | -------- |
-| CI security   | 3 moderate vulns in `@prisma/dev` (transitive, non-production) | P3       |
-| Lint warnings | 31 `no-console` warnings remain (not errors)                   | P3       |
-| GitHub secret | `SUPABASE_LOCAL_SERVICE_ROLE_KEY` must be set for CI seed step | P1       |
+| Area          | Gap                                                                | Priority |
+| ------------- | ------------------------------------------------------------------ | -------- |
+| CI security   | 3 moderate vulns in `@prisma/dev` (transitive, awaiting upstream)  | P3       |
+| Lint warnings | 31 `no-console` warnings remain (accepted for server debug)        | P3       |
+| GitHub secret | `SUPABASE_LOCAL_SERVICE_ROLE_KEY` must be set for CI seed          | P1       |
+| Env Sync      | Ensure `NEXT_PUBLIC_SENTRY_DSN` is set in production for scrubbing | P1       |
 
 ## Quality Gates (current status)
 
@@ -80,22 +81,29 @@ npm run e2e         → ✅  15/15 passing
 
 ## Phase Progress (004-elite-workflow-setup)
 
-| Phase | Description                 | Status      |
-| ----- | --------------------------- | ----------- |
-| 1–3   | Governance & constitution   | ✅ Complete |
-| 4     | Staging environment (local) | ✅ Complete |
-| 5     | ESLint quality gates        | ✅ Complete |
-| 6     | Coverage thresholds         | ✅ Complete |
-| 7     | Playwright E2E              | ✅ Complete |
-| 8     | Sentry error tracking       | ✅ Complete |
-| 9     | Polish & PR                 | ✅ Complete |
+| Phase | Description                     | Status      |
+| ----- | ------------------------------- | ----------- |
+| 1–3   | Governance & constitution       | ✅ Complete |
+| 4     | Staging environment (local)     | ✅ Complete |
+| 5     | ESLint quality gates            | ✅ Complete |
+| 6     | Coverage thresholds             | ✅ Complete |
+| 7     | Playwright E2E                  | ✅ Complete |
+| 8     | Sentry & Infra Hardening        | ✅ Complete |
+| 9     | Tailwind 4 & Type Safety Update | ✅ Complete |
+
+## Technical Debt Governance
+
+The following items are recognized as "Managed Debt" — intentional compromises for compatibility or performance:
+
+1. **Sentry Boundary Casts**: Use of `any` in `beforeSend` (suppressed with `eslint-disable`) is required due to Sentry SDK interface rigidness.
+2. **Server console.log**: 31 warnings in Server Actions are preserved to ensure minimal observability in the terminal during development.
+3. **Prisma Type Overrides**: We use `@pg/types` pinning to resolve Prisma 7/Next 15 conflicts until `@prisma/adapter-pg` upstream fixes land.
 
 ## Known Issues
 
-- 31 `no-console` warnings in server actions and `data.ts` — accepted for now (server-side debug logging)
-- `SUPABASE_LOCAL_ANON_KEY` GitHub Actions secret must be set before CI E2E job runs (see RUNBOOK)
-- `SUPABASE_LOCAL_SERVICE_ROLE_KEY` GitHub Actions secret must be set for seed step to create test users
-- 3 moderate vulnerabilities in `@prisma/dev` (transitive via `prisma@7.7.0`); not reachable in production; awaiting upstream fix
+- 31 `no-console` warnings in server actions — accepted for server-side debug logging.
+- GitHub Secrets for CI (Playwright) require one-time manual setup.
+- Transitive dependency vulnerabilities in `@prisma/dev` (not reachable in production).
 
 ## Update Protocol
 
