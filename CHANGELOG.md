@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Privacy-First Replays**: enabled Sentry Replay with `maskAllText: true` to prevent PII leakage while maintaining UI debugability.
 - **Full-stack User Traceability**: linked Supabase UUID/Email to Sentry context on both client (`SupabaseAuthProvider`) and server (`getUser` helper).
 - **Project Linking**: Successfully transitioned to the specific `smartmanagementesystem` Sentry environment with CLI binding for automated releases.
+- **Vercel CI/CD Integration**: Linked Sentry to Vercel for automated environment variable synchronization and sourcemap deployments.
 
 ### Changed
 

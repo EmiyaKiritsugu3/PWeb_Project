@@ -31,13 +31,10 @@
 
 ---
 
-### SLO-03: Student Portal Availability
-
-| Metric                                     | Target        | Measurement                    |
-| ------------------------------------------ | ------------- | ------------------------------ | -------------------------------------------------------------- | -------------------------------- |
-| Portal load success rate                   | ≥ 99% / month | HTTP 200 / total on `/aluno/*` |
-| Server error exposes stack trace to client | Medium        | Medium                         | Next.js hides stack in production; Sentry captures server-side | ✅ Mitigated (Sentry active)     |
-| CPF/email logged to stdout in plain text   | Medium        | High                           | `beforeSend` in Sentry config scrubs PII fields                | ✅ Mitigated (beforeSend active) |
+| Metric                                     | Target | Measurement                                                    | Status                       |
+| ------------------------------------------ | ------ | -------------------------------------------------------------- | ---------------------------- |
+| Server error exposes stack trace to client | Medium | Next.js hides stack in production; Sentry captures server-side | ✅ Mitigated (Sentry active) |
+| CPF/email logged to stdout in plain text   | High   | `beforeSend` in Sentry config scrubs PII fields                | ✅ Mitigated (Scrub active)  |
 
 ---
 
@@ -88,4 +85,4 @@ freeze non-critical feature work until budget recovers.
 | SLO-04 | Genkit + Sentry User Traceability | ✅ Unified  |
 | SLO-05 | GitHub Actions badges             | ✅ Active   |
 
-**Update**: Sentry is now fully configured for Next.js 15 (v10) with user traceability on both client and server. Latency metrics are captured automatically via `src/instrumentation-client.ts`. Transaction tracing includes Prisma database spans. Linked to project: `smartmanagementesystem`.
+**Update**: Sentry is now fully integrated with Next.js 15 (v10) and linked to project: `smartmanagementesystem`. CI/CD automation is handled via **Vercel Integration**, ensuring synchronized environment variables and automated sourcemap deployment for every release.
