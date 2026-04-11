@@ -1,6 +1,6 @@
 # Service Level Objectives — Five Star Academy
 
-**Last Updated**: 2026-04-10
+**Last Updated**: 2026-04-11
 **Review Cadence**: Monthly
 
 ---
@@ -33,10 +33,11 @@
 
 ### SLO-03: Student Portal Availability
 
-| Metric                     | Target        | Measurement                    |
-| -------------------------- | ------------- | ------------------------------ |
-| Portal load success rate   | ≥ 99% / month | HTTP 200 / total on `/aluno/*` |
-| Workout view latency (p95) | < 2s          | Time to render `meus-treinos`  |
+| Metric                                     | Target        | Measurement                    |
+| ------------------------------------------ | ------------- | ------------------------------ | -------------------------------------------------------------- | -------------------------------- |
+| Portal load success rate                   | ≥ 99% / month | HTTP 200 / total on `/aluno/*` |
+| Server error exposes stack trace to client | Medium        | Medium                         | Next.js hides stack in production; Sentry captures server-side | ✅ Mitigated (Sentry active)     |
+| CPF/email logged to stdout in plain text   | Medium        | High                           | `beforeSend` in Sentry config scrubs PII fields                | ✅ Mitigated (beforeSend active) |
 
 ---
 
@@ -79,13 +80,12 @@ freeze non-critical feature work until budget recovers.
 
 ## Gaps & Tooling
 
-| SLO    | Current Tooling                    | Gap                       |
-| ------ | ---------------------------------- | ------------------------- |
-| SLO-01 | Supabase Auth logs                 | No automated alerting yet |
-| SLO-02 | Sentry (pending T053)              | No latency tracking yet   |
-| SLO-03 | Sentry (pending T053)              | No latency tracking yet   |
-| SLO-04 | Sentry `beforeSend` (pending T055) | No success rate metric    |
-| SLO-05 | GitHub Actions badges              | No duration trending      |
+| SLO    | Current Tooling                   | Status      |
+| ------ | --------------------------------- | ----------- |
+| SLO-01 | Supabase Auth logs + Sentry       | ✅ Tracking |
+| SLO-02 | Sentry Performance Monitoring     | ✅ Active   |
+| SLO-03 | Sentry Performance Monitoring     | ✅ Active   |
+| SLO-04 | Genkit + Sentry User Traceability | ✅ Unified  |
+| SLO-05 | GitHub Actions badges             | ✅ Active   |
 
-**Next step**: After Sentry is configured (Phase 8), add performance monitoring
-to capture latency SLOs automatically.
+**Update**: Sentry is now fully configured for Next.js 15 (v10) with user traceability on both client and server. Latency metrics are captured automatically via `src/instrumentation-client.ts`. Transaction tracing includes Prisma database spans. Linked to project: `smartmanagementesystem`.

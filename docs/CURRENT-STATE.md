@@ -1,32 +1,32 @@
 # Current State — Five Star Academy
 
-**Last Updated**: 2026-04-10
-**Branch**: `004-elite-workflow-setup`
-**Version**: 0.4.0 (pre-release)
+**Last Updated**: 2026-04-11
+**Branch**: `fix/telemetry-and-e2e-stability`
+**Version**: 0.4.1 (pre-release)
 
 ## What Works Today
 
-| Feature                                     | Status     | Notes                          |
-| ------------------------------------------- | ---------- | ------------------------------ |
-| Admin login                                 | ✅ Working | Supabase Auth SSR              |
-| Student login (Portal do Aluno)             | ✅ Working | Separate session               |
-| Admin dashboard                             | ✅ Working | GERENTE + RECEPCIONISTA        |
-| Financial routes (`/financeiro`, `/planos`) | ✅ Working | GERENTE-only gate              |
-| Student workout view                        | ✅ Working | `meus-treinos`                 |
-| AI workout generator                        | ✅ Working | Genkit + Gemini                |
-| Student enrollment                          | ✅ Working | Admin creates aluno            |
-| Gamification (XP, streaks)                  | ✅ Working | Hook `use-workout-tracker`     |
-| Prisma migrations                           | ✅ Tracked | `prisma/migrations/`           |
-| ESLint quality gate                         | ✅ Done    | 0 errors — `any` + unused vars |
-| TypeScript typecheck                        | ✅ Clean   | 0 errors (strict mode)         |
-| Unit tests                                  | ✅ Passing | 18/18 (Vitest)                 |
-| Ops documentation                           | ✅ Done    | Runbook, SLOs, threat model    |
-| Process documentation                       | ✅ Done    | RFC + Postmortem templates     |
-| Local E2E stack                             | ✅ Done    | `supabase start` (Docker)      |
-| E2E seed script                             | ✅ Done    | `prisma/seed-e2e.ts` (4 users) |
-| Playwright E2E suite                        | ✅ Done    | 15/15 passing                  |
-| CI E2E job                                  | ✅ Done    | `.github/workflows/ci.yml`     |
-| Sentry error tracking                       | ✅ Done    | SDK + MCP + CLI configurados   |
+| Feature                                     | Status        | Notes                          |
+| ------------------------------------------- | ------------- | ------------------------------ |
+| Admin login                                 | ✅ Working    | Supabase Auth SSR              |
+| Student login (Portal do Aluno)             | ✅ Working    | Separate session               |
+| Admin dashboard                             | ✅ Working    | GERENTE + RECEPCIONISTA        |
+| Financial routes (`/financeiro`, `/planos`) | ✅ Working    | GERENTE-only gate              |
+| Student workout view                        | ✅ Working    | `meus-treinos`                 |
+| AI workout generator                        | ✅ Working    | Genkit + Gemini                |
+| Student enrollment                          | ✅ Working    | Admin creates aluno            |
+| Gamification (XP, streaks)                  | ✅ Working    | Hook `use-workout-tracker`     |
+| Prisma migrations                           | ✅ Tracked    | `prisma/migrations/`           |
+| ESLint quality gate                         | ✅ Done       | 0 errors — `any` + unused vars |
+| TypeScript typecheck                        | ✅ Clean      | 0 errors (strict mode)         |
+| Unit tests                                  | ✅ Passing    | 18/18 (Vitest)                 |
+| Ops documentation                           | ✅ Done       | Runbook, SLOs, threat model    |
+| Process documentation                       | ✅ Done       | RFC + Postmortem templates     |
+| Local E2E stack                             | ✅ Done       | `supabase start` (Docker)      |
+| E2E seed script                             | ✅ Done       | `prisma/seed-e2e.ts` (4 users) |
+| Playwright E2E suite                        | ✅ Done       | 15/15 passing                  |
+| CI E2E job                                  | ✅ Done       | `.github/workflows/ci.yml`     |
+| Sentry error tracking                       | ✅ Modernized | Next.js 15, v10, User Context  |
 
 ## What Is Incomplete
 
