@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import React, { createContext, useContext, useMemo, useState, useEffect } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import type { User } from '@supabase/supabase-js';
+import * as Sentry from '@sentry/nextjs';
 
 // Internal state for user authentication
 interface UserAuthState {
@@ -41,6 +42,16 @@ export const SupabaseAuthProvider: React.FC<{ children: ReactNode }> = ({ childr
         data: { user: sbUser },
         error,
       } = await supabase.auth.getUser();
+
+      if (sbUser) {
+        Sentry.setUser({
+          id: sbUser.id,
+          email: sbUser.email,
+        });
+      } else {
+        Sentry.setUser(null);
+      }
+
       setUserAuthState({
         user: sbUser,
         isUserLoading: false,
@@ -53,8 +64,19 @@ export const SupabaseAuthProvider: React.FC<{ children: ReactNode }> = ({ childr
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
+      const user = session?.user || null;
+
+      if (user) {
+        Sentry.setUser({
+          id: user.id,
+          email: user.email,
+        });
+      } else {
+        Sentry.setUser(null);
+      }
+
       setUserAuthState({
-        user: session?.user || null,
+        user: user,
         isUserLoading: false,
         userError: null,
       });

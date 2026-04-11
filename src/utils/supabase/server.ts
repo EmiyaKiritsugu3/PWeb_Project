@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
+import * as Sentry from '@sentry/nextjs';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY;
@@ -22,4 +23,27 @@ export const createClient = async () => {
       },
     },
   });
+};
+
+/**
+ * Server-side helper to get the current user and automatically
+ * link their state to Sentry for error tracking and performance.
+ */
+export const getUser = async () => {
+  const supabase = await createClient();
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+
+  if (user) {
+    Sentry.setUser({
+      id: user.id,
+      email: user.email,
+    });
+  } else {
+    Sentry.setUser(null);
+  }
+
+  return { user, error };
 };
