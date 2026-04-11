@@ -2,42 +2,9 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  CardFooter,
-} from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import {
-  Sparkles,
-  BrainCircuit,
-  Info,
-  CalendarOff,
-  CheckCircle2,
-  AlertCircle,
-  Calendar,
-  Trophy,
-  TrendingUp,
-  Zap,
-  Target,
-  Award,
-} from 'lucide-react';
-import { Skeleton } from '@/components/ui/skeleton';
-import { generateWorkoutFeedback } from '@/ai/flows/workout-feedback-flow';
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogFooter,
-  AlertDialogCancel,
-} from '@/components/ui/alert-dialog';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { cn } from '@/lib/utils';
+import { Trophy, TrendingUp, Zap, Target, Award } from 'lucide-react';
 import type { Treino, Aluno, Exercicio } from '@/lib/definitions';
 import { finalizarTreinoAction } from '@/lib/actions/alunos';
 import { useToast } from '@/hooks/use-toast';
@@ -70,16 +37,30 @@ export default function AlunoDashboardClient({ aluno, initialTreino }: AlunoDash
     if (!initialTreino) return;
     setIsFeedbackLoading(true);
     setFeedback(null);
+
     try {
       const exerciseNames = completedExercises
         .map((id) => initialTreino.exercicios?.find((ex) => ex.id === id)?.nomeExercicio)
         .filter((name): name is string => !!name);
-      const aiResult = await generateWorkoutFeedback({
-        goal: initialTreino.objetivo,
-        completedExercises: exerciseNames,
-        totalExercises: initialTreino.exercicios?.length || 0,
-      });
-      setFeedback(aiResult);
+
+      // IA Feedback (Fail-safe block)
+      try {
+        const { generateWorkoutFeedback } = await import('@/ai/flows/workout-feedback-flow');
+        const aiResult = await generateWorkoutFeedback({
+          goal: initialTreino.objetivo,
+          completedExercises: exerciseNames,
+          totalExercises: initialTreino.exercicios?.length || 0,
+        });
+        setFeedback(aiResult);
+      } catch (aiError) {
+        console.error('AI Feedback Error:', aiError);
+        toast({
+          title: 'Feedback indisponível',
+          description: 'Sincronizando treino sem o comentário da IA.',
+        });
+      }
+
+      // Main Sincronization Action
       const result = await finalizarTreinoAction(initialTreino.id);
       if (result.success) {
         toast({
@@ -91,11 +72,8 @@ export default function AlunoDashboardClient({ aluno, initialTreino }: AlunoDash
         toast({ title: 'Erro de conexão', variant: 'destructive' });
       }
     } catch (error) {
-      console.error('Error:', error);
-      setFeedback({
-        title: 'Erro de Processamento',
-        message: 'Não conseguimos gerar do feedback da IA, mas seu treino foi salvo localmente.',
-      });
+      console.error('Action Error:', error);
+      toast({ title: 'Erro ao salvar treino', variant: 'destructive' });
     } finally {
       setIsFeedbackLoading(false);
     }

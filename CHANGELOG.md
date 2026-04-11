@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] — 2026-04-10 — Elite Workflow Setup (004)
+
+### Added
+
+- **ESLint quality gates**: `no-explicit-any` and `no-unused-vars` (with `caughtErrorsIgnorePattern`) set to error; 0 errors across entire codebase
+- **Coverage thresholds**: per-glob Vitest thresholds on `src/lib/utils.ts`, `src/lib/auth.ts`, `src/services/**`; server actions excluded (covered by E2E)
+- **Playwright E2E suite**: 15 scenarios across 4 spec files (auth, financial-access, nav-visibility, student-portal); local Supabase CLI stack with deterministic seed users
+- **CI E2E job**: GitHub Actions job starts Supabase, runs migrations, seeds test users, executes Playwright; 3 secrets configured
+- **Sentry error tracking**: `@sentry/nextjs` with `instrumentation-client.ts`, `instrumentation.ts`, `global-error.tsx`; `withSentryConfig` with source map upload and tunnel route
+- **Prisma `@@map` directives**: all models mapped to lowercase plural table names (matches Supabase REST API)
+- **Ops documentation**: RUNBOOK, INCIDENT-RESPONSE, SLOs, threat model (17 STRIDE threats), RFC and postmortem templates
+- **Constitution & governance**: `.specify/memory/constitution.md` with 5 principles; CLAUDE.md auto-generated
+
+### Fixed
+
+- Supabase REST API table name mismatch: `Funcionario` → `funcionarios` via `@@map`
+- Prisma seed adapter: `Pool + PrismaPg` required when datasource has no `url`
+- E2E port conflict: moved Next.js dev server to port 3001 (Supabase MCP occupies 3000)
+
 ## [Unreleased]
 
 ### Added

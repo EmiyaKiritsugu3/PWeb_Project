@@ -1,5 +1,4 @@
 import type { Treino } from '@/lib/definitions';
-import { Aluno } from '@/lib/definitions';
 import { prisma } from '@/lib/prisma';
 import { createClient } from '@/utils/supabase/server';
 import MeusTreinosClient from './meus-treinos-client';

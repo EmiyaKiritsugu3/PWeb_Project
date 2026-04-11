@@ -7,6 +7,9 @@
 
 # Testing
 /coverage
+/playwright-report
+/test-results
+/blob-report
 
 # Archive
 docs/archive/
@@ -41,6 +44,8 @@ typecheck_details.txt
 
 # Environment variables
 .env
+.env.test
+.env.staging
 *.local
 !.env.example
 
@@ -84,3 +89,9 @@ logs/
 # AI session state (ephemeral, per-developer)
 .remember/
 .specify/feature.json
+.claude/memory/
+docs/.smart-env/
+
+# Playwright
+/playwright/.cache/
+/playwright/.auth/

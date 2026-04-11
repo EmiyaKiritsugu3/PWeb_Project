@@ -10,6 +10,7 @@ function createPrismaClient() {
   const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
   });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- PrismaPg adapter has a type mismatch with pg@8 Pool; upstream issue
   const adapter = new PrismaPg(pool as any);
   return new PrismaClient({ adapter }).$extends({
     result: {

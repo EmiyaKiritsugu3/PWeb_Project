@@ -113,7 +113,7 @@ export async function getDashboardStats() {
       if (faturamentoValidado.success) {
         faturamentoMensal = faturamentoValidado.data.TotalRecebido;
       }
-    } catch (viewError) {
+    } catch (_viewError) {
       console.warn(
         'Aviso: Falha ao ler V_FaturamentoMensal. O banco pode estar vazio ou a view ausente.'
       );

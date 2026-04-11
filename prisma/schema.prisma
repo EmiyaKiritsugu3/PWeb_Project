@@ -12,6 +12,8 @@ model Funcionario {
   email        String   @unique
   role         Role     @default(RECEPCIONISTA)
   Treinos      Treino[]
+
+  @@map("funcionarios")
 }
 
 model Aluno {
@@ -34,6 +36,8 @@ model Aluno {
   Matriculas         Matricula[]
   Pagamentos         Pagamento[]
   Treinos            Treino[]
+
+  @@map("alunos")
 }
 
 model Plano {
@@ -42,6 +46,8 @@ model Plano {
   preco       Float
   duracaoDias Int
   Matriculas  Matricula[]
+
+  @@map("planos")
 }
 
 model Matricula {
@@ -57,6 +63,7 @@ model Matricula {
 
   @@index([alunoId])
   @@index([status])
+  @@map("matriculas")
 }
 
 model Pagamento {
@@ -71,6 +78,7 @@ model Pagamento {
 
   @@index([alunoId])
   @@index([dataPagamento])
+  @@map("pagamentos")
 }
 
 model Treino {
@@ -86,6 +94,7 @@ model Treino {
   Instrutor        Funcionario?      @relation(fields: [instrutorId], references: [id])
 
   @@index([alunoId])
+  @@map("treinos")
 }
 
 model Exercicio {
@@ -97,6 +106,8 @@ model Exercicio {
   observacoes   String?
   descricao     String?
   Treino        Treino  @relation(fields: [treinoId], references: [id], onDelete: Cascade)
+
+  @@map("exercicios")
 }
 
 model HistoricoTreino {
@@ -110,6 +121,7 @@ model HistoricoTreino {
   SeriesExecutadas SerieExecutada[]
 
   @@index([alunoId, dataExecucao])
+  @@map("historico_treinos")
 }
 
 model SerieExecutada {
@@ -124,6 +136,7 @@ model SerieExecutada {
   HistoricoTreino   HistoricoTreino @relation(fields: [historicoTreinoId], references: [id], onDelete: Cascade)
 
   @@index([historicoTreinoId])
+  @@map("series_executadas")
 }
 
 enum Role {
