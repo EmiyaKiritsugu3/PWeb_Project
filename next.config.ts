@@ -47,5 +47,11 @@ export default withSentryConfig(nextConfig, {
   silent: !process.env.CI,
 
   // Tree-shake Sentry debug code in production builds
-  disableLogger: true,
+  widenClientFileUpload: true,
+
+  // Modern replacement for disableLogger as per Sentry warning
+  // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/tree-shaking/
+  bundleSizeOptimizations: {
+    excludeDebugStatements: true,
+  },
 });
