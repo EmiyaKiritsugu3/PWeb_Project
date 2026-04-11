@@ -1,30 +1,3 @@
-<!--
-SYNC IMPACT REPORT
-==================
-Version Change: [template] → 1.0.0 (initial ratification — template fully populated)
-
-Modified Principles:
-  - All placeholders replaced with concrete project-specific rules (no prior content to diff)
-
-Added Sections:
-  - Core Principles (5 principles)
-  - Technology Standards
-  - Development Workflow
-  - Governance
-
-Removed Sections:
-  - None (all template sections retained and filled)
-
-Templates Requiring Updates:
-  - .specify/templates/plan-template.md ✅ aligned — Constitution Check gate references valid principles
-  - .specify/templates/spec-template.md ✅ aligned — scope and requirements structure consistent
-  - .specify/templates/tasks-template.md ✅ aligned — task phases match workflow defined here
-  - .specify/templates/commands/ — no command files found, nothing to update
-
-Follow-up TODOs:
-  - None — all placeholders resolved
--->
-
 # Five Star Gym Constitution
 
 ## Core Principles
@@ -81,7 +54,9 @@ All commits MUST follow the Conventional Commits specification enforced by
 `@commitlint/config-conventional` via Husky pre-commit hooks. `lint-staged` MUST
 run ESLint and Prettier on all staged `.ts`/`.tsx` files before a commit is
 accepted. Force-pushing to `main` is forbidden. Feature work MUST happen on
-dedicated branches following the pattern `feat/<issue-number>-<short-description>`.
+dedicated branches following the pattern `<type>/<issue-number>-<short-description>`
+(e.g. `feat/004-elite-workflow`, `fix/012-login-redirect`). Valid types mirror
+Conventional Commits: `feat`, `fix`, `chore`, `docs`, `refactor`, `test`, `hotfix`, `perf`, `ci`.
 
 **Rationale**: An academic project reviewed by external evaluators requires a clean,
 traceable history. Conventional commits enable automated changelog generation
@@ -119,8 +94,7 @@ amendment:
 4. **Environment variables**: All required variables MUST be documented in `.env.example`
    at the repo root. Secrets MUST NOT be committed.
 5. **Observability**: Server-side errors MUST be logged with structured context
-   (route, user ID if available, error message). OpenTelemetry exporters are
-   pre-configured and MUST NOT be removed.
+   (route, user ID if available, error message).
 
 ## Governance
 
@@ -146,4 +120,4 @@ plan confirming no principles are violated. The plan template enforces this gate
 For runtime development guidance see the agent file at
 `.specify/templates/agent-file-template.md`.
 
-**Version**: 1.0.0 | **Ratified**: 2026-03-11 | **Last Amended**: 2026-04-09
+**Version**: 1.0.2 | **Ratified**: 2026-03-11 | **Last Amended**: 2026-04-10

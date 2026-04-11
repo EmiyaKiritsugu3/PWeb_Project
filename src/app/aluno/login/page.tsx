@@ -24,7 +24,7 @@ import {
 } from '@/components/ui/card';
 import { Dumbbell } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
 import { createClient } from '@/utils/supabase/client';
@@ -88,10 +88,10 @@ export default function AlunoLoginPage() {
         className: 'bg-accent text-accent-foreground',
       });
       router.push('/aluno/dashboard');
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: 'Erro de autenticação',
-        description: error.message,
+        description: error instanceof Error ? error.message : 'Erro desconhecido',
         variant: 'destructive',
       });
     } finally {

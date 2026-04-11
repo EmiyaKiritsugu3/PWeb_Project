@@ -2,9 +2,7 @@
 
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { motion } from 'framer-motion';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { PageHeader } from '@/components/page-header';
 import {
   Select,
   SelectContent,
@@ -25,7 +23,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { PlusCircle, Save, Trash2, Wand2, BrainCircuit, UserCheck, Dumbbell } from 'lucide-react';
-import type { Aluno, Exercicio, Treino } from '@/lib/definitions';
+import type { Aluno, Exercicio } from '@/lib/definitions';
 import { useToast } from '@/hooks/use-toast';
 import { Combobox } from '@/components/ui/combobox';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
@@ -216,7 +214,7 @@ function PlanoGeradoParaEdicao({
     if (field === 'series') {
       exercicio[field] = typeof value === 'string' ? parseInt(value, 10) || 0 : (value as number);
     } else {
-      (exercicio as any)[field] = value;
+      (exercicio as Record<string, unknown>)[field] = value;
     }
 
     setPlanoEditado(novoPlano);
@@ -395,7 +393,7 @@ export default function TreinosManagementClient({
       } else {
         throw new Error(res.error);
       }
-    } catch (error) {
+    } catch (_error) {
       toast({ title: 'Erro ao salvar', variant: 'destructive' });
     }
   };
@@ -447,7 +445,7 @@ export default function TreinosManagementClient({
       }
       toast({ title: 'Plano Atribuído!', className: 'bg-accent text-accent-foreground' });
       setPlanoGerado(null);
-    } catch (error) {
+    } catch (_error) {
       toast({ title: 'Erro ao salvar plano', variant: 'destructive' });
     }
   };

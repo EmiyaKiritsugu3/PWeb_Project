@@ -1,0 +1,227 @@
+{
+  "main": {
+    "id": "7d44718c83d26f87",
+    "type": "split",
+    "children": [
+      {
+        "id": "aee62c2e7cdadf80",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "bad7fb61f0dc5d1f",
+            "type": "leaf",
+            "state": {
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "Graph view"
+            }
+          },
+          {
+            "id": "8171e32c308ccd3f",
+            "type": "leaf",
+            "state": {
+              "type": "smart-release-notes-view",
+              "state": {},
+              "icon": "file-text",
+              "title": "Release Notes"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "ba6ba94b9559ed52",
+    "type": "split",
+    "children": [
+      {
+        "id": "69bf66c4c4dc0a9a",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "41e890697478fb98",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "a4b15811572c0cdd",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "f8f677997765d809",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "a0c4d621abf8c1ad",
+    "type": "split",
+    "children": [
+      {
+        "id": "31d95b7f6e16fdd8",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "18a8e6ec62438545",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks"
+            }
+          },
+          {
+            "id": "baef945e3f70fc2b",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links"
+            }
+          },
+          {
+            "id": "cb6b1675014cedd1",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "20543bf4915cb87f",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "32e7ccc4875a0327",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline"
+            }
+          },
+          {
+            "id": "50292fcab1b59f57",
+            "type": "leaf",
+            "state": {
+              "type": "smart-connections-view",
+              "state": {},
+              "icon": "smart-connections",
+              "title": "Connections"
+            }
+          }
+        ],
+        "currentTab": 5
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false,
+      "smart-connections:Smart Connections: Open connections view": false,
+      "smart-connections:Smart Connections: Open random connection": false,
+      "smart-connections:Smart Lookup: Open lookup view": false,
+      "obsidian-textgenerator-plugin:Generate Text!": false,
+      "obsidian-textgenerator-plugin:Text Generator: Templates Packages Manager": false
+    }
+  },
+  "active": "bad7fb61f0dc5d1f",
+  "lastOpenFiles": [
+    "specs/specs/001-fix-type-safety-bugs/checklists/requirements.md",
+    "specs/specs/004-elite-workflow-setup/spec.md",
+    "specs/specs/004-elite-workflow-setup/research.md",
+    "specs/specs/004-elite-workflow-setup/quickstart.md",
+    "specs/specs/004-elite-workflow-setup/plan.md",
+    "specs/specs/004-elite-workflow-setup/data-model.md",
+    "specs/specs/003-002-us00-financial/tasks.md",
+    "specs/specs/003-002-us00-financial/spec.md",
+    "specs/specs/003-002-us00-financial/research.md",
+    "specs/specs/003-002-us00-financial/plan.md",
+    "specs/specs/001-fix-type-safety-bugs/tasks.md",
+    "specs/specs/001-fix-type-safety-bugs/spec.md",
+    "specs/specs/001-fix-type-safety-bugs/research.md",
+    "specs/specs/001-fix-type-safety-bugs/quickstart.md",
+    "specs/specs/001-fix-type-safety-bugs/plan.md",
+    "specs/specs/001-fix-type-safety-bugs/checklists",
+    "specs/specs/004-elite-workflow-setup",
+    "specs/specs/003-002-us00-financial",
+    "specs/specs/001-fix-type-safety-bugs",
+    "specs/specs"
+  ]
+}

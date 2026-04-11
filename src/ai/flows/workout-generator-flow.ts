@@ -19,11 +19,6 @@ ${grupo.exercicios.map((ex) => `- ${ex.nomeExercicio}`).join('\n')}
 `
 ).join('');
 
-// Cria um Set com todos os nomes de exercícios válidos para uma validação rápida.
-const validExerciseNames = new Set(
-  EXERCICIOS_POR_GRUPO.flatMap((g) => g.exercicios.map((ex) => ex.nomeExercicio))
-);
-
 export const streamWorkoutPlan = ai.defineFlow(
   {
     name: 'streamWorkoutPlan',

@@ -27,6 +27,13 @@ hooks:
       description: Auto-commit before spec clarification
       condition: null
   before_plan:
+    - extension: local
+      command: speckit-pre-plan
+      enabled: true
+      optional: false
+      prompt: null
+      description: Validate feature branch and feature.json before planning
+      condition: null
     - extension: git
       command: speckit.git.commit
       enabled: true

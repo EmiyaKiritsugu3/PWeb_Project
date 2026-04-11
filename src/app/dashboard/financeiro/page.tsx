@@ -5,7 +5,7 @@ import { prisma } from '@/lib/prisma';
 import FinanceiroClient from './financeiro-client';
 import { PremiumSkeleton } from '@/components/ui/premium-skeleton';
 import { requireRole } from '@/lib/auth';
-import { Role } from '@prisma/client';
+import { Role } from '@/lib/definitions';
 
 export const dynamic = 'force-dynamic';
 
@@ -25,7 +25,14 @@ async function FinanceiroDataWrapper() {
     },
   });
 
-  return <FinanceiroClient initialInadimplentes={inadimplentes as any} />;
+  return (
+    <FinanceiroClient
+      initialInadimplentes={inadimplentes.map((a) => ({
+        ...a,
+        statusMatricula: String(a.statusMatricula),
+      }))}
+    />
+  );
 }
 
 export default async function FinanceiroPage() {
