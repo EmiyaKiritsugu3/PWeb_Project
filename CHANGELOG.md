@@ -10,14 +10,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - **Sentry v10 Modernization**: migrated to Next.js 15 standards using `src/instrumentation-client.ts` for navigation tracing.
-- **Privacy-First Replays**: enabled Sentry Replay with `maskAllText: true` to prevent PII leakage while maintaining UI debugability.
-- **Full-stack User Traceability**: linked Supabase UUID/Email to Sentry context on both client (`SupabaseAuthProvider`) and server (`getUser` helper).
-- **Project Linking**: Successfully transitioned to the specific `smartmanagementesystem` Sentry environment with CLI binding for automated releases.
+- **Deep PII Scrubbing**: implemented a recursive sanitization engine in `sentry.server.config.ts` to protect student data (CPF, health hashes) in server logs.
+- **Privacy-First Replays**: enabled Sentry Replay with strict `maskAllInputs: true` and `maskAllText: true` to prevent PII leakage.
+- **DB Connection Heartbeat**: added a surgical `SELECT 1` check in `instrumentation.ts` to verify database health on application boot.
+- **Full-stack User Traceability**: linked Supabase UUID/Email to Sentry context on both client and server.
 - **Vercel CI/CD Integration**: Linked Sentry to Vercel for automated environment variable synchronization and sourcemap deployments.
 
 ### Changed
 
-- **Sentry Config Tree-shaking**: replaced deprecated `disableLogger` with `bundleSizeOptimizations` in `next.config.ts` to silence build warnings.
+- **Prisma 7 Type Elevation**: removed generic `as any` casts by pinning `@types/pg` to version `8.11.11` via package `overrides`.
+- **Database Pool Governance**: implemented `max: 20`, `idleTimeout`, and `connectionTimeout` in `src/lib/prisma.ts` for improved resilience.
 
 ### Fixed
 
