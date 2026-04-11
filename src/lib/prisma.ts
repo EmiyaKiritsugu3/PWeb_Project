@@ -7,30 +7,47 @@ const globalForPrisma = globalThis as unknown as {
 };
 
 function createPrismaClient() {
+  if (!process.env.DATABASE_URL) {
+    throw new Error('DATABASE_URL is not defined in environment variables');
+  }
+
   const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
+    max: 20, // Connection pooling governance
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 2000,
   });
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- PrismaPg adapter has a type mismatch with pg@8 Pool; upstream issue
-  const adapter = new PrismaPg(pool as any);
-  return new PrismaClient({ adapter }).$extends({
+
+  // Handle pool errors to prevent process crashes
+  pool.on('error', (err) => {
+    // eslint-disable-next-line no-console
+    console.error('Unexpected error on idle database client', err);
+  });
+
+  const adapter = new PrismaPg(pool);
+  const client = new PrismaClient({ adapter }).$extends({
     result: {
       aluno: {
         xpToNextLevel: {
           needs: { nivel: true },
           compute(aluno) {
-            return aluno.nivel * 1500;
+            return (aluno.nivel ?? 1) * 1500;
           },
         },
         progressPerc: {
           needs: { exp: true, nivel: true },
           compute(aluno) {
-            const xpReq = aluno.nivel * 1500;
-            return Math.min(Math.round((aluno.exp / xpReq) * 100), 100);
+            const nivel = aluno.nivel ?? 1;
+            const exp = aluno.exp ?? 0;
+            const xpReq = nivel * 1500;
+            return Math.min(Math.round((exp / xpReq) * 100), 100);
           },
         },
       },
     },
   });
+
+  return client;
 }
 
 export const prisma = globalForPrisma.prisma ?? createPrismaClient();

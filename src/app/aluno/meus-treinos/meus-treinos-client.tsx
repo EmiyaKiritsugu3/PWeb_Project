@@ -11,6 +11,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { EXERCICIOS_POR_GRUPO, DIAS_DA_SEMANA } from '@/lib/constants';
+import * as Sentry from '@sentry/nextjs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { PlusCircle, Trash2, Pencil, FileSignature, User, Play } from 'lucide-react';
@@ -161,17 +162,26 @@ export default function MeusTreinosClient({
 
       if (result && result.workouts) {
         for (const workout of result.workouts) {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Genkit streaming output lacks precise exercise type
-          const novosExercicios = workout.exercicios.map((ex: any) => ({
-            nomeExercicio: ex.nomeExercicio,
-            series: ex.series,
-            repeticoes: ex.repeticoes,
-            observacoes: ex.observacoes,
-            descricao:
-              EXERCICIOS_POR_GRUPO.flatMap((g) => g.exercicios).find(
-                (ez) => ez.nomeExercicio === ex.nomeExercicio
-              )?.descricao || '',
-          }));
+          const novosExercicios = workout.exercicios.map((ex) => {
+            const exercicioMaster = EXERCICIOS_POR_GRUPO.flatMap((g) => g.exercicios).find(
+              (ez) => ez.nomeExercicio === ex.nomeExercicio
+            );
+
+            if (!exercicioMaster) {
+              Sentry.captureMessage(`AI Hallucination: Exercise "${ex.nomeExercicio}" not found in constants.`, {
+                level: 'warning',
+                extra: { workout: workout.nome, goal: data.objetivo },
+              });
+            }
+
+            return {
+              nomeExercicio: ex.nomeExercicio,
+              series: ex.series,
+              repeticoes: ex.repeticoes,
+              observacoes: ex.observacoes,
+              descricao: exercicioMaster?.descricao || '',
+            };
+          });
 
           const diaSugerido = workout.diaSugerido;
           const isDayOccupied = meusTreinos.some((t) => t.diaSemana === diaSugerido);

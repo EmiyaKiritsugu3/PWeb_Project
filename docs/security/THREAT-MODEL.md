@@ -48,12 +48,12 @@
 
 ### I — Information Disclosure (Data Leak)
 
-| Threat                                        | Likelihood | Impact   | Mitigation                                                          | Status                        |
-| --------------------------------------------- | ---------- | -------- | ------------------------------------------------------------------- | ----------------------------- |
-| Server error exposes stack trace to client    | Medium     | Medium   | Next.js hides stack in production; Sentry captures server-side      | ✅ Mitigated (Sentry pending) |
-| CPF/email logged to stdout in plain text      | Medium     | High     | `beforeSend` in Sentry config scrubs PII fields                     | ✅ Planned (T055)             |
-| `.env` committed with secrets                 | Low        | Critical | `.gitignore` covers `.env*`; `.env.example` uses placeholders       | ✅ Mitigated                  |
-| DB connection string exposed in client bundle | Low        | Critical | Prisma only runs server-side; `DIRECT_URL` never in `NEXT_PUBLIC_*` | ✅ Mitigated                  |
+| Threat                                        | Likelihood | Impact   | Mitigation                                                          | Status                           |
+| --------------------------------------------- | ---------- | -------- | ------------------------------------------------------------------- | -------------------------------- |
+| Server error exposes stack trace to client    | Medium     | Medium   | Next.js hides stack in production; Sentry captures server-side      | ✅ Mitigated (Sentry active)     |
+| CPF/email logged to stdout in plain text      | Medium     | High     | `beforeSend` in Sentry config scrubs PII fields                     | ✅ Mitigated (beforeSend active) |
+| `.env` committed with secrets                 | Low        | Critical | `.gitignore` covers `.env*`; `.env.example` uses placeholders       | ✅ Mitigated                     |
+| DB connection string exposed in client bundle | Low        | Critical | Prisma only runs server-side; `DIRECT_URL` never in `NEXT_PUBLIC_*` | ✅ Mitigated                     |
 
 ### D — Denial of Service
 
