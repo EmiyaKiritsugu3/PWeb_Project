@@ -72,6 +72,7 @@
     "@supabase/supabase-js": "^2.100.1",
     "@tailwindcss/postcss": "^4.2.2",
     "@tanstack/react-table": "^8.19.2",
+    "@vercel/speed-insights": "^2.0.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",
@@ -98,6 +99,7 @@
   "devDependencies": {
     "@commitlint/cli": "^20.5.0",
     "@commitlint/config-conventional": "^20.5.0",
+    "@opentelemetry/exporter-jaeger": "^1.25.1",
     "@playwright/test": "^1.59.1",
     "@tanstack/react-table": "^8.19.2",
     "@testing-library/jest-dom": "^6.9.1",
@@ -124,8 +126,7 @@
     "tailwindcss": "^4.2.2",
     "tsx": "^4.20.6",
     "typescript": "^5",
-    "vitest": "^4.1.2",
-    "@opentelemetry/exporter-jaeger": "^1.25.1"
+    "vitest": "^4.1.2"
   },
   "overrides": {
     "http-proxy-agent": "^7.0.2",
