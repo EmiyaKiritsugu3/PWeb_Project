@@ -6,9 +6,13 @@ Sentry.init({
   // Replay is only available in the browser
   integrations: [
     Sentry.replayIntegration({
-      // Mask all text to protect student privacy (PII)
+      // Mask all text and block all media to protect student privacy (PII)
       maskAllText: true,
       blockAllMedia: true,
+      // Avoid recording sensitive student management areas
+      maskAllInputs: true,
+      networkDetailAllowUrls: [window.location.origin],
+      networkCaptureBodies: false,
     }),
   ],
 

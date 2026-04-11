@@ -56,6 +56,7 @@ export default withSentryConfig(nextConfig, {
 
   // OPTIMIZATION: Disable Sentry plugins in development to resolve
   // [webpack.cache.PackFileCacheStrategy] warnings and speed up dev builds.
-  disableServerWebpackPlugin: process.env.NODE_ENV === 'development',
-  disableClientWebpackPlugin: process.env.NODE_ENV === 'development',
+  sourcemaps: {
+    disable: process.env.NODE_ENV === 'development',
+  },
 });
