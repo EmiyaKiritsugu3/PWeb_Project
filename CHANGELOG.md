@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased] — 2026-04-11 — Sentry & Build Stability
+
+### Added
+
+- **Sentry v10 Modernization**: migrated to Next.js 15 standards using `src/instrumentation-client.ts` for navigation tracing.
+- **Privacy-First Replays**: enabled Sentry Replay with `maskAllText: true` to prevent PII leakage while maintaining UI debugability.
+- **Full-stack User Traceability**: linked Supabase UUID/Email to Sentry context on both client (`SupabaseAuthProvider`) and server (`getUser` helper).
+- **Project Linking**: Successfully transitioned to the specific `smartmanagementesystem` Sentry environment with CLI binding for automated releases.
+
+### Changed
+
+- **Sentry Config Tree-shaking**: replaced deprecated `disableLogger` with `bundleSizeOptimizations` in `next.config.ts` to silence build warnings.
+
+### Fixed
+
+- **ESLint Flat Config**: repaired missing `@typescript-eslint` plugin and parser configuration in `eslint.config.mjs` that was breaking production builds.
+
 ## [0.4.0] — 2026-04-10 — Elite Workflow Setup (004)
 
 ### Added
