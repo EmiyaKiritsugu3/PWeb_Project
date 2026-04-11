@@ -1,13 +1,13 @@
 # PWeb_Project Development Guidelines
 
-Auto-generated from all feature plans. Last updated: 2026-04-10
+Auto-generated from all feature plans. Last updated: 2026-04-11
 
 ## Active Technologies
 
 - TypeScript 5 (strict mode, `useUnknownInCatchVariables`) + Node.js 20 + Next.js 15 App Router, Prisma 7, Supabase SSR, Zod 3, Genkit 1.31 (004-elite-workflow-setup)
 - PostgreSQL via Prisma; local Supabase CLI for E2E (ports 54321/54322) (004-elite-workflow-setup)
 
-- TypeScript 5 (strict mode) + Next.js 15, Playwright, @sentry/nextjs, Vitest (004-elite-workflow-setup)
+- TypeScript 5 (strict mode) + Next.js 15, Playwright, @sentry/nextjs (v10), Vitest, instrumentation-client.ts (fix/telemetry-and-e2e-stability)
 - PostgreSQL via Prisma (produção + branch de staging) (004-elite-workflow-setup)
 
 - TypeScript 5 (strict mode) + Next.js 15 App Router, Supabase SSR (`@supabase/ssr`), Prisma 7, Zod 3 (003-002-us00-financial)
@@ -40,6 +40,7 @@ TypeScript 5 (strict mode, `useUnknownInCatchVariables` enabled): Follow standar
 ## Recent Changes
 
 - 004-elite-workflow-setup: Added TypeScript 5 (strict mode, `useUnknownInCatchVariables`) + Node.js 20 + Next.js 15 App Router, Prisma 7, Supabase SSR, Zod 3, Genkit 1.31
+- fix/telemetry-and-e2e-stability: Modernized Sentry to v10 + Next.js 15, implemented Privacy-First Replay, linked Supabase User IDs to observability, and repaired ESLint flat config.
 
 - 004-elite-workflow-setup: Added TypeScript 5 (strict mode) + Next.js 15, Playwright, @sentry/nextjs, Vitest
 

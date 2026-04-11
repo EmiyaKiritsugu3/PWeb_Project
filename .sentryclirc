@@ -1,0 +1,7 @@
+[defaults]
+org=ufrn-universidade-federal-do-r
+project=smartmanagementesystem
+
+[auth]
+# Note: The auth token is usually provided via SENTRY_AUTH_TOKEN env var in CI.
+# If running locally, you can run 'sentry-cli login'.

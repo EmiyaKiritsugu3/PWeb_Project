@@ -35,7 +35,7 @@ const nextConfig: NextConfig = {
 
 export default withSentryConfig(nextConfig, {
   org: 'ufrn-universidade-federal-do-r',
-  project: 'javascript-nextjs',
+  project: 'smartmanagementesystem',
 
   // Auth token for source map uploads (set in CI via SENTRY_AUTH_TOKEN secret)
   authToken: process.env.SENTRY_AUTH_TOKEN,
@@ -47,5 +47,16 @@ export default withSentryConfig(nextConfig, {
   silent: !process.env.CI,
 
   // Tree-shake Sentry debug code in production builds
-  disableLogger: true,
+  widenClientFileUpload: true,
+
+  // Modern replacement for disableLogger as per Sentry warning
+  bundleSizeOptimizations: {
+    excludeDebugStatements: true,
+  },
+
+  // OPTIMIZATION: Disable Sentry plugins in development to resolve
+  // [webpack.cache.PackFileCacheStrategy] warnings and speed up dev builds.
+  sourcemaps: {
+    disable: process.env.NODE_ENV === 'development',
+  },
 });

@@ -56,16 +56,16 @@ export const streamWorkoutPlan = ai.defineFlow(
     });
 
     for await (const chunk of responseStream.stream) {
-      if (chunk && chunk.output) {
+      if (chunk?.output) {
         sendChunk(chunk.output as WorkoutGeneratorOutput);
       }
     }
 
     const finalOutput = await responseStream.response;
-    if (!finalOutput || !finalOutput.output) {
+    if (!finalOutput?.output) {
       throw new Error('A IA não retornou um plano de treino válido.');
     }
-    return finalOutput.output as WorkoutGeneratorOutput;
+    return finalOutput.output;
   }
 );
 

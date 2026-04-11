@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased] — 2026-04-11 — Sentry & Build Stability
+
+### Added
+
+- **Sentry v10 Modernization**: migrated to Next.js 15 standards using `src/instrumentation-client.ts` for navigation tracing.
+- **Deep PII Scrubbing**: implemented a recursive sanitization engine in `sentry.server.config.ts` to protect student data (CPF, health hashes) in server logs.
+- **Privacy-First Replays**: enabled Sentry Replay with strict `maskAllInputs: true` and `maskAllText: true` to prevent PII leakage.
+- **DB Connection Heartbeat**: added a surgical `SELECT 1` check in `instrumentation.ts` to verify database health on application boot.
+- **Full-stack User Traceability**: linked Supabase UUID/Email to Sentry context on both client and server.
+- **Vercel CI/CD Integration**: Linked Sentry to Vercel for automated environment variable synchronization and sourcemap deployments.
+
+### Changed
+
+- **Prisma 7 Type Elevation**: removed generic `as any` casts by pinning `@types/pg` to version `8.11.11` via package `overrides`.
+- **Database Pool Governance**: implemented `max: 20`, `idleTimeout`, and `connectionTimeout` in `src/lib/prisma.ts` for improved resilience.
+
+### Fixed
+
+- **ESLint Flat Config**: repaired missing `@typescript-eslint` plugin and parser configuration in `eslint.config.mjs` that was breaking production builds.
+
 ## [0.4.0] — 2026-04-10 — Elite Workflow Setup (004)
 
 ### Added
