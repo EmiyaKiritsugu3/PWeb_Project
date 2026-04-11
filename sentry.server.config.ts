@@ -20,17 +20,39 @@ Sentry.init({
     }
 
     // Deep sanitize breadcrumbs and extra data for PII
-    const sensitiveKeys = ['cpf', 'password', 'biometriaHash', 'fotoUrl', 'telefone'];
-    const scrub = (obj: unknown): unknown => {
+    // Specialists: Security Auditor (Lexicon) + Senior Architect (Logic)
+    const sensitiveKeys = [
+      'cpf',
+      'rg',
+      'email',
+      'password',
+      'biometria',
+      'biometriaHash',
+      'fotoUrl',
+      'telefone',
+      'matricula',
+      'token',
+      'secret',
+    ];
+
+    const scrub = (obj: unknown, cache = new WeakSet()): unknown => {
+      // Specialist Guard: Primitive/Null early exit
       if (!obj || typeof obj !== 'object') return obj;
-      if (Array.isArray(obj)) return obj.map(scrub);
+
+      // Specialist Guard: Circular reference detection
+      if (cache.has(obj)) return '[CIRCULAR]';
+      cache.add(obj);
+
+      if (Array.isArray(obj)) {
+        return obj.map((item) => scrub(item, cache));
+      }
 
       const newObj = { ...(obj as Record<string, unknown>) };
       for (const key in newObj) {
         if (sensitiveKeys.includes(key.toLowerCase())) {
           newObj[key] = '[SCRUBBED]';
         } else {
-          newObj[key] = scrub(newObj[key]);
+          newObj[key] = scrub(newObj[key], cache);
         }
       }
       return newObj;
@@ -39,12 +61,14 @@ Sentry.init({
     if (event.breadcrumbs) {
       event.breadcrumbs = event.breadcrumbs.map((breadcrumb) => ({
         ...breadcrumb,
-        data: scrub(breadcrumb.data),
+        // Boundary Cast: Sentry expects Record<string, any>
+        data: scrub(breadcrumb.data) as Record<string, any>,
       }));
     }
 
     if (event.extra) {
-      event.extra = scrub(event.extra);
+      // Boundary Cast: Sentry expects Extras (Record<string, any>)
+      event.extra = scrub(event.extra) as Record<string, any>;
     }
 
     return event;
