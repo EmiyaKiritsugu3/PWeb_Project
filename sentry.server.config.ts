@@ -62,12 +62,14 @@ Sentry.init({
       event.breadcrumbs = event.breadcrumbs.map((breadcrumb) => ({
         ...breadcrumb,
         // Boundary Cast: Sentry expects Record<string, any>
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         data: scrub(breadcrumb.data) as Record<string, any>,
       }));
     }
 
     if (event.extra) {
       // Boundary Cast: Sentry expects Extras (Record<string, any>)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       event.extra = scrub(event.extra) as Record<string, any>;
     }
 
