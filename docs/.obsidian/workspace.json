@@ -4,27 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "aee62c2e7cdadf80",
+        "id": "ef3a367f18f4a73f",
         "type": "tabs",
         "children": [
           {
-            "id": "bad7fb61f0dc5d1f",
+            "id": "7a54e2cabf4474d1",
             "type": "leaf",
             "state": {
               "type": "graph",
               "state": {},
               "icon": "lucide-git-fork",
               "title": "Graph view"
-            }
-          },
-          {
-            "id": "8171e32c308ccd3f",
-            "type": "leaf",
-            "state": {
-              "type": "smart-release-notes-view",
-              "state": {},
-              "icon": "file-text",
-              "title": "Release Notes"
             }
           }
         ]
@@ -201,8 +191,26 @@
       "obsidian-textgenerator-plugin:Text Generator: Templates Packages Manager": false
     }
   },
-  "active": "bad7fb61f0dc5d1f",
+  "active": "7a54e2cabf4474d1",
   "lastOpenFiles": [
+    "dev-errors.md",
+    "security/THREAT-MODEL.md",
+    "security",
+    "process/RFC-TEMPLATE.md",
+    "process/POSTMORTEM-TEMPLATE.md",
+    "process",
+    "operations/RUNBOOK.md",
+    "operations/INCIDENT-RESPONSE.md",
+    "operations",
+    "observability/SLOS.md",
+    "observability",
+    "decisions/INSIGHTS-CI-E2E-PIPELINE.md",
+    "DEFINITION-OF-DONE.md",
+    "CURRENT-STATE.md",
+    "archive/architecture/ANALYSIS.md",
+    "decisions/ADR-004-prisma-migration-governance.md",
+    "decisions/ADR-003-render-phase-sync.md",
+    "README.md",
     "specs/specs/001-fix-type-safety-bugs/checklists/requirements.md",
     "specs/specs/004-elite-workflow-setup/spec.md",
     "specs/specs/004-elite-workflow-setup/research.md",
@@ -215,9 +223,6 @@
     "specs/specs/003-002-us00-financial/plan.md",
     "specs/specs/001-fix-type-safety-bugs/tasks.md",
     "specs/specs/001-fix-type-safety-bugs/spec.md",
-    "specs/specs/001-fix-type-safety-bugs/research.md",
-    "specs/specs/001-fix-type-safety-bugs/quickstart.md",
-    "specs/specs/001-fix-type-safety-bugs/plan.md",
     "specs/specs/001-fix-type-safety-bugs/checklists",
     "specs/specs/004-elite-workflow-setup",
     "specs/specs/003-002-us00-financial",
