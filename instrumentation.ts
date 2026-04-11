@@ -13,15 +13,20 @@ export async function register() {
   if (process.env.NEXT_RUNTIME === 'nodejs') {
     try {
       const { prisma } = await import('./src/lib/prisma');
-      // Surgical heartbeat to verify connectivity without heavy I/O
-      await prisma.$queryRaw`SELECT 1`;
+      // [DE] Timeout Wrapper: Ensure boot doesn't hang indefinitely
+      const heartbeat = prisma.$queryRaw`SELECT 1`;
+      const timeout = (ms: number) =>
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error(`Database heartbeat timed out after ${ms}ms`)), ms)
+        );
+
+      await Promise.race([heartbeat, timeout(5000)]);
+
       // eslint-disable-next-line no-console
       console.log('✅ Database connection established successfully');
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('❌ Database connection heartbeat failed during startup:', error);
-      // We don't throw here to allow the app to boot,
-      // but Sentry will capture this if it's already initialized.
       Sentry.captureException(error);
     }
   }
