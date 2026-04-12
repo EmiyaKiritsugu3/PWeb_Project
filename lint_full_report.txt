@@ -1,0 +1,80 @@
+
+> nextn@1.0.0 lint
+> eslint src
+
+
+/home/emiyakiritsugu/Projetos_Antigravity/PWeb_Project/src/app/aluno/dashboard/dashboard-client.tsx
+  56:9  warning  Unexpected console statement  no-console
+  75:7  warning  Unexpected console statement  no-console
+
+/home/emiyakiritsugu/Projetos_Antigravity/PWeb_Project/src/app/aluno/meus-treinos/meus-treinos-client.tsx
+  158:7   warning  Unexpected console statement  no-console
+  161:7   warning  Unexpected console statement  no-console
+  205:13  warning  Unexpected console statement  no-console
+  216:9   warning  Unexpected console statement  no-console
+  220:7   warning  Unexpected console statement  no-console
+
+/home/emiyakiritsugu/Projetos_Antigravity/PWeb_Project/src/app/dashboard/dev/page.tsx
+  30:7  warning  Unexpected console statement  no-console
+
+/home/emiyakiritsugu/Projetos_Antigravity/PWeb_Project/src/app/dashboard/treinos/treinos-client.tsx
+  408:7   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  409:56  error    Unexpected any. Specify a different type                                                               ts/no-explicit-any
+  419:7   warning  Unexpected console statement                                                                           no-console
+
+/home/emiyakiritsugu/Projetos_Antigravity/PWeb_Project/src/components/dashboard/alunos/data-table.tsx
+  46:17  warning  Compilation Skipped: Use of incompatible library
+
+This API returns functions which cannot be memoized without leading to stale UI. To prevent this, by default React Compiler will skip memoizing this component/hook. However, you may see issues if values from this API are passed to other components/hooks that are memoized.
+
+/home/emiyakiritsugu/Projetos_Antigravity/PWeb_Project/src/components/dashboard/alunos/data-table.tsx:46:17
+  44 |   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  45 |
+> 46 |   const table = useReactTable({
+     |                 ^^^^^^^^^^^^^ TanStack Table's `useReactTable()` API returns functions that cannot be memoized safely
+  47 |     data,
+  48 |     columns,
+  49 |     getCoreRowModel: getCoreRowModel(),  react-hooks/incompatible-library
+
+/home/emiyakiritsugu/Projetos_Antigravity/PWeb_Project/src/lib/actions/alunos.ts
+  120:5  warning  Unexpected console statement  no-console
+  158:5  warning  Unexpected console statement  no-console
+  195:5  warning  Unexpected console statement  no-console
+  219:5  warning  Unexpected console statement  no-console
+  268:5  warning  Unexpected console statement  no-console
+
+/home/emiyakiritsugu/Projetos_Antigravity/PWeb_Project/src/lib/actions/financeiro.ts
+  71:5  warning  Unexpected console statement  no-console
+
+/home/emiyakiritsugu/Projetos_Antigravity/PWeb_Project/src/lib/actions/treinos.ts
+   82:5  warning  Unexpected console statement  no-console
+  106:5  warning  Unexpected console statement  no-console
+  127:5  warning  Unexpected console statement  no-console
+  267:5  warning  Unexpected console statement  no-console
+
+/home/emiyakiritsugu/Projetos_Antigravity/PWeb_Project/src/lib/auth.test.ts
+   64:5   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+   65:52  error    Unexpected any. Specify a different type                                                               ts/no-explicit-any
+   74:5   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+   75:52  error    Unexpected any. Specify a different type                                                               ts/no-explicit-any
+   83:5   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+   84:52  error    Unexpected any. Specify a different type                                                               ts/no-explicit-any
+   92:5   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+   93:52  error    Unexpected any. Specify a different type                                                               ts/no-explicit-any
+  101:5   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  102:52  error    Unexpected any. Specify a different type                                                               ts/no-explicit-any
+
+/home/emiyakiritsugu/Projetos_Antigravity/PWeb_Project/src/lib/auth.ts
+  29:5  warning  Unexpected console statement  no-console
+
+/home/emiyakiritsugu/Projetos_Antigravity/PWeb_Project/src/lib/data.ts
+   25:5  warning  Unexpected console statement  no-console
+   37:5  warning  Unexpected console statement  no-console
+   61:5  warning  Unexpected console statement  no-console
+   90:5  warning  Unexpected console statement  no-console
+  117:7  warning  Unexpected console statement  no-console
+  137:5  warning  Unexpected console statement  no-console
+
+✖ 39 problems (6 errors, 33 warnings)
+  0 errors and 6 warnings potentially fixable with the `--fix` option.
+
