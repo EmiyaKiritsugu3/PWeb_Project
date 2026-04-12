@@ -1,20 +1,17 @@
-import nextConfig from 'eslint-config-next/core-web-vitals';
+import js from '@eslint/js';
+import tseslint from 'typescript-eslint';
 import prettierConfig from 'eslint-config-prettier';
-import tsPlugin from '@typescript-eslint/eslint-plugin';
-import tsParser from '@typescript-eslint/parser';
 
-export default [
+export default tseslint.config(
   {
     ignores: ['.next/**', 'node_modules/**', 'coverage/**', 'src/components/ui/sidebar.tsx'],
   },
-  ...nextConfig,
+  js.configs.recommended,
+  ...tseslint.configs.recommended,
   prettierConfig,
   {
-    plugins: {
-      '@typescript-eslint': tsPlugin,
-    },
+    files: ['**/*.ts', '**/*.tsx'],
     languageOptions: {
-      parser: tsParser,
       parserOptions: {
         ecmaVersion: 'latest',
         sourceType: 'module',
@@ -30,9 +27,6 @@ export default [
       'no-console': 'warn',
       'no-debugger': 'error',
       'prefer-const': 'error',
-      'react-hooks/rules-of-hooks': 'warn',
-      'react-hooks/set-state-in-effect': 'warn',
-      'react-hooks/incompatible-library': 'warn',
     },
-  },
-];
+  }
+);

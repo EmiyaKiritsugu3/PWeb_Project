@@ -26,7 +26,8 @@
     "e2e:report": "playwright show-report",
     "supabase:start": "supabase start",
     "supabase:stop": "supabase stop",
-    "seed:e2e": "dotenv -e .env.test -- tsx prisma/seed-e2e.ts"
+    "seed:e2e": "dotenv -e .env.test -- tsx prisma/seed-e2e.ts",
+    "pre-flight": "npm run typecheck && npm run lint && npm run test"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
@@ -99,6 +100,10 @@
   "devDependencies": {
     "@commitlint/cli": "^20.5.0",
     "@commitlint/config-conventional": "^20.5.0",
+    "@eslint/config-array": "^0.23.5",
+    "@eslint/eslintrc": "^3.3.5",
+    "@eslint/js": "^10.0.1",
+    "@humanfs/node": "^0.16.7",
     "@opentelemetry/exporter-jaeger": "^1.25.1",
     "@playwright/test": "^1.59.1",
     "@tanstack/react-table": "^8.19.2",
@@ -126,6 +131,7 @@
     "tailwindcss": "^4.2.2",
     "tsx": "^4.20.6",
     "typescript": "^5",
+    "typescript-eslint": "^8.58.1",
     "vitest": "^4.1.2"
   },
   "overrides": {
