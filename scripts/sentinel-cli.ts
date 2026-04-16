@@ -141,12 +141,56 @@ function status() {
   console.log('------------------\n');
 }
 
+async function verifyPlan() {
+  console.log('\n🛡️  SENTINEL: VERIFYING IMPLEMENTATION PLAN...\n');
+
+  if (!fs.existsSync(PLAN_PATH)) {
+    console.error('❌ Error: implementation_plan.md not found.');
+    process.exit(1);
+  }
+
+  const content = fs.readFileSync(PLAN_PATH, 'utf8');
+  const requiredMarkers = [
+    '[PID-SENTINEL]',
+    'Phase Alpha',
+    'Phase Beta',
+    'Phase Gamma',
+    'Phase Delta',
+    'Phase Epsilon',
+    'Dialectical Audit',
+    'Function Point Analysis',
+    'Checklist',
+  ];
+
+  const missing = [];
+  for (const marker of requiredMarkers) {
+    if (!content.includes(marker)) {
+      missing.push(marker);
+    }
+  }
+
+  if (missing.length > 0) {
+    console.error('❌ PROTOCOL BREACH: The following mandatory sections are missing:');
+    missing.forEach((m) => console.error(`   - ${m}`));
+    console.log(
+      '\n💡 Tip: Use `./sentinel forge` or `./sentinel plan` to generate a compliant skeleton.'
+    );
+    process.exit(1);
+  }
+
+  console.log('✅ PLAN VERIFIED: All [PID-SENTINEL] markers detected.');
+}
+
 const command = process.argv[2];
 
 async function main() {
   switch (command) {
     case 'plan':
       await plan();
+      break;
+    case 'verify-plan':
+    case 'v':
+      await verifyPlan();
       break;
     case 'brainstorm':
     case 'shout':
