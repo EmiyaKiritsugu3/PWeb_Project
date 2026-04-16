@@ -132,16 +132,23 @@ ${
 
 - **EPICENTER**: Insight Engine generated core vision.
 - **RIPPLES**:
-${impactFiles.length > 0 ? impactFiles.map((f) => `  - \`${path.relative(process.cwd(), f)}\``).join('\n') : '  - No direct file collision detected (Greenfield).'}
+${impactFiles.length > 0 ? impactFiles.map((f) => `  - \`${path.relative(process.cwd(), f)}\``).join('\n') : '  - No direct file collision detected.'}
+- **RISK_LEVEL**: ${totalFP > 15 ? 'HIGH' : totalFP > 5 ? 'MEDIUM' : 'LOW'}
 
-### V. Fail-Safe Operations
-
+### V. Fail-Safe Operations (Phase Epsilon)
 - **POLICY(INTEGRITY)**: "Data integrity precedes feature availability."
-- **MECHANISM**: Mandatory fallback paths. If implementation causes regression in E2E or Unit test gates, revert the branch to Baseline.
+- **MECHANISM**: Mandatory fallback paths. If regressions occur, revert to the deterministic baseline.
 
 ---
 
+## 📋 Sentinel Governance Checklist & Gotchas
+- [ ] 1. Run \`npm run pre-flight\` before edit.
+- [ ] 2. Run \`./sentinel verify-plan\` before execution.
+- [ ] 3. Ensure all new files follow the semantic naming convention.
+- [ ] **GOTCHA**: [AI must identify specific side-effects here]
+
 ## Technical Execution (Proposed Changes)
+<!-- AI: Flesh out the architecture here -->
 <!-- AI: Flesh out the architecture here based on the forged context and ripples -->
 
 ## Function Point Analysis (FPA)
