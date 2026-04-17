@@ -56,9 +56,10 @@ ${preflightStatus === 'FAIL' ? '\n```\n' + preflightOutput + '\n```' : 'No regre
 
   // Auto-open logic
   try {
-    const opener =
-      process.platform === 'win32' ? 'start' : process.platform === 'darwin' ? 'open' : 'xdg-open';
-    spawn(opener, [PLAN_PATH], { detached: true, stdio: 'ignore' }).unref();
+    const isWin = process.platform === 'win32';
+    const opener = isWin ? 'cmd' : process.platform === 'darwin' ? 'open' : 'xdg-open';
+    const args = isWin ? ['/c', 'start', '""', PLAN_PATH] : [PLAN_PATH];
+    spawn(opener, args, { detached: true, stdio: 'ignore' }).unref();
     console.log('📖 Opening plan in your default editor...');
   } catch {
     console.log('🔗 Link: ' + path.relative(process.cwd(), PLAN_PATH));
@@ -108,13 +109,25 @@ async function forge() {
     },
   ]);
 
-  await forgePlan(insightFile, parseInt(pathIndex));
+  const index = parseInt(pathIndex);
+  if (isNaN(index) || index <= 0) {
+    console.error('❌ Error: Path index must be a positive integer.');
+    return;
+  }
+
+  const success = await forgePlan(insightFile, index);
+
+  if (!success) {
+    console.error('❌ Forge failed. Implementation plan was not generated.');
+    return;
+  }
 
   // Auto-open logic
   try {
-    const opener =
-      process.platform === 'win32' ? 'start' : process.platform === 'darwin' ? 'open' : 'xdg-open';
-    spawn(opener, [PLAN_PATH], { detached: true, stdio: 'ignore' }).unref();
+    const isWin = process.platform === 'win32';
+    const opener = isWin ? 'cmd' : process.platform === 'darwin' ? 'open' : 'xdg-open';
+    const args = isWin ? ['/c', 'start', '""', PLAN_PATH] : [PLAN_PATH];
+    spawn(opener, args, { detached: true, stdio: 'ignore' }).unref();
     console.log('📖 Plan forged and opened in your default editor.');
   } catch {
     console.log('🔗 Link: ' + path.relative(process.cwd(), PLAN_PATH));

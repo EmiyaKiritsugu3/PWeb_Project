@@ -21,7 +21,7 @@ function getAllFiles(dirPath: string, arrayOfFiles: string[] = []): string[] {
   return arrayOfFiles;
 }
 
-export async function forgePlan(insightFile: string, pathIndex: number) {
+export async function forgePlan(insightFile: string, pathIndex: number): Promise<boolean> {
   const insightPath = path.join(INSIGHTS_DIR, insightFile);
   const content = fs.readFileSync(insightPath, 'utf8');
 
@@ -33,7 +33,7 @@ export async function forgePlan(insightFile: string, pathIndex: number) {
     console.error(
       `❌ Parse Error: Cannot find ${pathDivider} in the insight report. Forging aborted.`
     );
-    return;
+    return false;
   }
 
   const splitStart = content.split(pathDivider)[1];
@@ -41,6 +41,10 @@ export async function forgePlan(insightFile: string, pathIndex: number) {
 
   // Extract name and vision safely from the chunk
   const lines = chunk.split('\n').filter((l) => l.trim() !== '');
+  if (lines.length === 0) {
+    console.error('❌ Parse Error: Selected path block is empty.');
+    return false;
+  }
   const pathName = lines[0].trim();
 
   const visionLine = lines.find((l) => l.includes('**The Vision**:'));
@@ -77,8 +81,23 @@ export async function forgePlan(insightFile: string, pathIndex: number) {
     console.error('⚠️ Context scanning failed. Proceeding with limited FPA.');
   }
 
-  // 🧮 Auto-FPA Calculation
-  const fpaRules = JSON.parse(fs.readFileSync(FPA_RULES_PATH, 'utf8')).fpa_rules;
+  // 🧮 Auto-FPA Calculation with Fail-Safe Fallbacks
+  let fpaRules = {
+    InternalLogicalFiles: { points_per_file: 7 },
+    ExternalInterfaceFiles: { points_per_file: 5 },
+  };
+
+  if (fs.existsSync(FPA_RULES_PATH)) {
+    try {
+      const parsed = JSON.parse(fs.readFileSync(FPA_RULES_PATH, 'utf8'));
+      if (parsed.fpa_rules) fpaRules = parsed.fpa_rules;
+    } catch (_e) {
+      console.warn('⚠️ FPA Rules malformed. Using internal defaults.');
+    }
+  } else {
+    console.warn('⚠️ FPA Rules file missing. Using internal defaults.');
+  }
+
   let totalFP = 0;
 
   impactFiles.forEach((f) => {
@@ -165,4 +184,5 @@ ${impactFiles.length > 0 ? impactFiles.map((f) => `  - \`${path.relative(process
 
   fs.writeFileSync(PLAN_PATH, plan);
   console.log(`\n✅ ELITE PLAN FORGED SUCCESSFULLY: implementation_plan.md`);
+  return true;
 }
