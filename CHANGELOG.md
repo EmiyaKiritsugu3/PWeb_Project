@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased] — 2026-04-17 — Sentry Infrastructure Hardening
+
+### Added
+
+- **Standardized Next.js 15 Sentry Config**: Moved client-side initialization to `sentry.client.config.ts` at the root for better Turbopack compatibility.
+- **MCP Stabilization**: Explicitly defined `SENTRY_ORG` and `SENTRY_PROJECT` in `mcp_config.json` to prevent 404/403 errors during auto-discovery.
+
+### Changed
+
+- **Build Performance**: Disabled Sentry sourcemaps in development to resolve `PackFileCacheStrategy` warnings and speed up dev cycles.
+- **Telemetry Proxy**: Optimized the `/monitoring` tunnel route for high-frequency event proxying.
+
+### Fixed
+
+- **Module Resolution**: Resolved "Can't resolve './sentry.client.config.ts'" errors in the dev build by aligning root file locations.
+- **MCP Authorization Logic**: Hardened the Sentry MCP server environment variables to support privileged tokens.
+
 ## [Unreleased] — 2026-04-11 — Sentry & Build Stability
 
 ### Added

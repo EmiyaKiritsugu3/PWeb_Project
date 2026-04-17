@@ -51,6 +51,12 @@ A aplicação oferece duas jornadas totalmente separadas e seguras:
 - **Engine:** [Google Genkit](https://firebase.google.com/docs/genkit)
 - **Modelos:** Gemini (Google AI)
 
+### Observabilidade & Performance
+
+- **Error Tracking:** [Sentry](https://sentry.io/) (Next.js v15 integration)
+- **Privacidade:** Filtro recursivo de PII (CPF, senhas) no servidor e cliente.
+- **Monitoring:** Túnel de telemetria via `/monitoring` para evitar bloqueios por ad-blockers.
+
 ---
 
 ## 🚀 Como Executar o Projeto

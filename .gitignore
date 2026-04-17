@@ -119,7 +119,9 @@ docs/observability/
 docs/operations/
 docs/pdr/
 docs/process/
+!docs/process/FPA-RULES.json
 docs/reports/
 docs/security/
+!docs/security/BASELINE.json
 docs/specs/
 docs/Project Index.md

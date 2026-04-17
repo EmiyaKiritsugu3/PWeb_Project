@@ -33,6 +33,11 @@ To prevent technical debt in AI integration, we implemented:
 Migrated the entire design system to Tailwind 4 (Oxide engine) to leverage:
 - **Native Custom Properties**: Replaced legacy HSL `:root` variables with a unified `@theme` block.
 - **OKLCH Color Space**: Adopted OKLCH tokens for consistent vibrancy and accessibility across the "Premium Dark" interface.
+### 6. Next.js 15 Sentry Instrumentation Pattern
+To comply with Next.js 15's move towards `instrumentation.ts` and ensure full compatibility with Turbopack, we migrated our client-side initialization:
+- **Root-level Config**: Moved `src/instrumentation-client.ts` to `sentry.client.config.ts` at the project root.
+- **Automatic Injection**: This allows the Sentry Webpack/Turbopack plugins to automatically inject the client-side telemetry code into the browser bundle without manual imports in layouts.
+- **Server/Edge Alignment**: Maintained `sentry.server.config.ts` and `sentry.edge.config.ts` at the root, imported conditionally within `instrumentation.ts`.
 
 ## Consequences
 

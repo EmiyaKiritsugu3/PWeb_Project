@@ -168,10 +168,13 @@ export default function MeusTreinosClient({
             );
 
             if (!exercicioMaster) {
-              Sentry.captureMessage(`AI Hallucination: Exercise "${ex.nomeExercicio}" not found in constants.`, {
-                level: 'warning',
-                extra: { workout: workout.nome, goal: data.objetivo },
-              });
+              Sentry.captureMessage(
+                `AI Hallucination: Exercise "${ex.nomeExercicio}" not found in constants.`,
+                {
+                  level: 'warning',
+                  extra: { workout: workout.nome, goal: data.objetivo },
+                }
+              );
             }
 
             return {

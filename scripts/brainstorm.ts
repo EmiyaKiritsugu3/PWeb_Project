@@ -24,8 +24,12 @@ export async function runBrainstorm() {
   ]);
 
   const theme = themeInput.trim() || 'Autopilot 360 Scan';
+  const sanitizedTheme = theme
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
 
-  const reportFile = `INSIGHT-${new Date().toISOString().split('T')[0]}-${theme.toLowerCase().replace(/\s+/g, '-')}.md`;
+  const reportFile = `INSIGHT-${new Date().toISOString().split('T')[0]}-${sanitizedTheme || 'unnamed'}.md`;
   const reportPath = path.join(INSIGHTS_DIR, reportFile);
 
   const skeleton = `# Insight Report: ${theme}

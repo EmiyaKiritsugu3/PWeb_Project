@@ -58,24 +58,46 @@
   --animate-glow-pulse: glow-pulse 2s ease-in-out infinite;
 
   @keyframes accordion-down {
-    from { height: 0; }
-    to { height: var(--radix-accordion-content-height); }
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
   }
   @keyframes accordion-up {
-    from { height: var(--radix-accordion-content-height); }
-    to { height: 0; }
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
   }
   @keyframes circular-progress {
-    0% { stroke-dashoffset: 100; }
-    100% { stroke-dashoffset: 0; }
+    0% {
+      stroke-dashoffset: 100;
+    }
+    100% {
+      stroke-dashoffset: 0;
+    }
   }
   @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
   }
   @keyframes glow-pulse {
-    0%, 100% { opacity: 0.5; }
-    50% { opacity: 1; }
+    0%,
+    100% {
+      opacity: 0.5;
+    }
+    50% {
+      opacity: 1;
+    }
   }
 }
 
@@ -86,7 +108,9 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
-    font-feature-settings: 'rlig' 1, 'calt' 1;
+    font-feature-settings:
+      'rlig' 1,
+      'calt' 1;
   }
 }
 
@@ -101,13 +125,17 @@
   .glow-cyan {
     box-shadow: var(--shadow-glow-cyan);
     transition: box-shadow 0.3s ease-in-out;
-    &:hover { box-shadow: var(--shadow-glow-cyan-hover); }
+    &:hover {
+      box-shadow: var(--shadow-glow-cyan-hover);
+    }
   }
 
   .glow-gold {
     box-shadow: var(--shadow-glow-gold);
     transition: box-shadow 0.3s ease-in-out;
-    &:hover { box-shadow: var(--shadow-glow-gold-hover); }
+    &:hover {
+      box-shadow: var(--shadow-glow-gold-hover);
+    }
   }
 
   .text-gradient-cyan {
@@ -132,9 +160,20 @@
     animation: pulse-subtle 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
   @keyframes pulse-subtle {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.85; transform: scale(0.98); }
+    0%,
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.85;
+      transform: scale(0.98);
+    }
   }
-  .perspective-1000 { perspective: 1000px; }
-  .preserve-3d { transform-style: preserve-3d; }
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
 }

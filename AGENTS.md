@@ -38,8 +38,9 @@ Every piece of work follows the **Sovereign Council Protocol (v4.0.1)**:
 | `src/hooks/`          | Custom React hooks                       |
 | `src/ai/`             | Google Genkit AI flows                   |
 | `src/utils/supabase/` | Supabase SSR client helpers              |
-| `prisma/`             | Prisma schema, migrations, seed          |
-| `docs/`               | Documentation (ADRs, specs, stories)     |
+| `prisma/`               | Prisma schema, migrations, seed          |
+| `docs/`                 | Documentation (ADRs, specs, stories)     |
+| `sentry.*.config.ts`    | Sentry infrastructure (Root only)        |
 
 ## Commit Conventions
 
@@ -51,8 +52,9 @@ Every piece of work follows the **Sovereign Council Protocol (v4.0.1)**:
 > Full stack lock in constitution §Technology Standards. Key enforcement rules:
 >
 > - Auth via SSR only — no client-side auth on protected routes
-> - DB access via Prisma Server Actions only — Prisma must not reach the client
-> - AI calls isolated in `src/ai/` with try/catch — no direct Gemini calls from RSCs
+- DB access via Prisma Server Actions only — Prisma must not reach the client
+- AI calls isolated in `src/ai/` with try/catch — no direct Gemini calls from RSCs
+- Sentry configs MUST remain at the project root for Next.js 15 compatibility
 
 ## Database Changes
 
