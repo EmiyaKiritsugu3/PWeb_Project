@@ -1,4 +1,4 @@
-import type { Page } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 
 const CREDENTIALS = {
   GERENTE: { email: 'gerente@test.com', password: 'Test1234!', redirect: '/dashboard' },
@@ -10,12 +10,19 @@ const CREDENTIALS = {
 export type TestRole = keyof typeof CREDENTIALS;
 
 export async function loginAs(page: Page, role: TestRole): Promise<void> {
-  const { email, password, redirect } = CREDENTIALS[role];
+  const { email, password, redirect: expectedPath } = CREDENTIALS[role];
   await page.goto('/login');
   await page.getByLabel(/email/i).fill(email);
   await page.getByLabel(/senha|password/i).fill(password);
   await page.getByRole('button', { name: /entrar|login/i }).click();
-  await page.waitForURL(`**${redirect}**`, { timeout: 15_000 });
+  // Verify the server action issued the correct redirect (URL momentarily hits the dashboard)
+  await page.waitForURL('**/dashboard**', { timeout: 15_000 });
+  // Next.js server actions inline-render the redirect target using the POST request context,
+  // where the session cookie is in Set-Cookie (response) but NOT yet in Cookie (request).
+  // A hard navigation after the action completes ensures the browser sends the cookie properly.
+  await page.goto(expectedPath);
+  // Confirm the dashboard actually painted
+  await expect(page.getByRole('heading').first()).toBeVisible({ timeout: 15_000 });
 }
 
 export async function logout(page: Page): Promise<void> {

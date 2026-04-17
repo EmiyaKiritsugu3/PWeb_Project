@@ -1,7 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
 import dotenv from 'dotenv';
 
-dotenv.config({ path: '.env.test' });
+// override: true ensures .env.test values win over any pre-loaded .env.local
+dotenv.config({ path: '.env.test', override: true });
 
 export default defineConfig({
   testDir: './tests/e2e/specs',
@@ -11,14 +12,24 @@ export default defineConfig({
   workers: 1,
   reporter: process.env.CI ? 'github' : 'list',
   use: {
-    baseURL: process.env.PLAYWRIGHT_BASE_URL ?? 'http://localhost:3001',
+    baseURL: process.env.PLAYWRIGHT_BASE_URL ?? 'http://localhost:3333',
     trace: 'on-first-retry',
+    actionTimeout: 10_000,
   },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: {
-    command: 'npm run dev -- --port 3001',
-    url: 'http://localhost:3001',
-    reuseExistingServer: !process.env.CI,
+    // Port 3333 is dedicated to E2E — avoids reusing the dev server on 3001
+    // which may carry .env.local (production) credentials.
+    command: 'npm run dev -- --port 3333',
+    url: 'http://localhost:3333',
+    reuseExistingServer: false,
     timeout: 120_000,
+    // Explicitly forward test env vars so Next.js cannot fall back to .env.local
+    env: {
+      NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL ?? '',
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '',
+      DATABASE_URL: process.env.DATABASE_URL ?? '',
+      DIRECT_URL: process.env.DIRECT_URL ?? '',
+    },
   },
 });

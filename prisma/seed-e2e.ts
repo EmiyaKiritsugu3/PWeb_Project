@@ -63,6 +63,12 @@ export const E2E_USERS = {
   },
 } as const;
 
+async function purgeAuthUsers(emails: string[]): Promise<void> {
+  // Deleting via SQL ensures we remove any existing user regardless of their UUID,
+  // so that admin.createUser can recreate them with the fixed deterministic IDs.
+  await pool.query('DELETE FROM auth.users WHERE email = ANY($1::text[])', [emails]);
+}
+
 async function createAuthUser(id: string, email: string, password: string): Promise<void> {
   const { error } = await supabase.auth.admin.createUser({
     user_metadata: {},
@@ -72,13 +78,18 @@ async function createAuthUser(id: string, email: string, password: string): Prom
     id,
   });
 
-  if (error && !error.message.includes('already been registered')) {
+  if (error) {
     throw new Error(`Failed to create auth user ${email}: ${error.message}`);
   }
 }
 
 async function seed(): Promise<void> {
   console.log('Seeding E2E test users...');
+
+  // Purge existing auth users so fixed UUIDs are always honoured
+  const allEmails = Object.values(E2E_USERS).map((u) => u.email);
+  await purgeAuthUsers(allEmails);
+  console.log('  Purged existing auth users.');
 
   // Create Supabase Auth users
   for (const user of [E2E_USERS.gerente, E2E_USERS.recepcionista, E2E_USERS.instrutor]) {
