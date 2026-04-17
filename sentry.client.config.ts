@@ -11,7 +11,7 @@ Sentry.init({
       blockAllMedia: true,
       // Avoid recording sensitive student management areas
       maskAllInputs: true,
-      networkDetailAllowUrls: [window.location.origin],
+      networkDetailAllowUrls: [typeof window !== 'undefined' ? window.location.origin : ''],
       networkCaptureBodies: false,
     }),
   ],
@@ -29,6 +29,3 @@ Sentry.init({
   // Filter out noisy errors typical in local dev or browser extensions
   ignoreErrors: ['top.GLOBALS', 'chrome-extension://', 'moz-extension://'],
 });
-
-// Specialist Hook: Sentry v10 requires this for navigation instrumentation
-export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;

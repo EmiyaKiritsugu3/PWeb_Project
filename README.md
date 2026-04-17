@@ -51,6 +51,24 @@ A aplicação oferece duas jornadas totalmente separadas e seguras:
 - **Engine:** [Google Genkit](https://firebase.google.com/docs/genkit)
 - **Modelos:** Gemini (Google AI)
 
+### Observabilidade & Performance
+
+- **Error Tracking:** [Sentry](https://sentry.io/) (Next.js v15 integration)
+- **Privacidade:** Filtro recursivo de PII (CPF, senhas) no servidor e cliente.
+- **Monitoring:** Túnel de telemetria via `/monitoring` para evitar bloqueios por ad-blockers.
+- **Sentinel Engine:** Orquestrador de desenvolvimento com IA para planejamento (`plan`), brainstorming (`shout`) e geração de código (`forge`) com governança FPA.
+
+---
+
+## 🛡️ Sentinel Development Engine (CLI)
+
+O projeto inclui o **Sentinel**, um sistema operacional de desenvolvimento alimentado por IA que orquestra o ciclo de vida do software:
+
+- **`npm run sentinel shout`**: Inicia um brainstorm dialético para novas features.
+- **`npm run sentinel plan`**: Gera um plano de implementação [PID-SENTINEL] com análise de impacto.
+- **`npm run sentinel forge`**: Transforma insights em esqueletos de implementação técnica com cálculo automático de Function Points (FPA).
+- **`npm run pre-flight`**: Portão de qualidade obrigatório (Lint, Format, Types, Tests).
+
 ---
 
 ## 🚀 Como Executar o Projeto
