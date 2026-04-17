@@ -27,7 +27,7 @@
     "supabase:start": "supabase start",
     "supabase:stop": "supabase stop",
     "seed:e2e": "dotenv -e .env.test -- tsx prisma/seed-e2e.ts",
-    "pre-flight": "npm run typecheck && npm run format:check && npm run lint && npm run test",
+    "pre-flight": "npm run typecheck && npm run lint && npm run format:check && npm run test",
     "protocol:plan": "tsx scripts/sentinel-cli.ts plan",
     "sentinel": "tsx scripts/sentinel-cli.ts"
   },

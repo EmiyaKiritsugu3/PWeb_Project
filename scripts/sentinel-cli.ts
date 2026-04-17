@@ -109,7 +109,12 @@ async function forge() {
     },
   ]);
 
-  const index = parseInt(pathIndex);
+  if (!/^\d+$/.test(pathIndex)) {
+    console.error('❌ Error: Path index must be a numeric integer string.');
+    return;
+  }
+
+  const index = parseInt(pathIndex, 10);
   if (isNaN(index) || index <= 0) {
     console.error('❌ Error: Path index must be a positive integer.');
     return;
