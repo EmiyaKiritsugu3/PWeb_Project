@@ -95,3 +95,33 @@ docs/.smart-env/
 # Playwright
 /playwright/.cache/
 /playwright/.auth/
+
+# [SENTINEL-OVERLORD] Local Overlay (Sovereign Context)
+# Untrack dev-workflow and AI-memory to keep public repo lean.
+AGENTS.md
+CLAUDE.md
+DESIGN.md
+CONTRIBUTING.md
+implementation_plan.md
+task.md
+walkthrough.md
+
+# AI Metadata
+.claude/
+.remember/
+.specify/
+
+# Advanced Obsidian Vault (Internal Only)
+docs/.obsidian/
+docs/archive/
+docs/decisions/
+docs/observability/
+docs/operations/
+docs/pdr/
+docs/process/
+!docs/process/FPA-RULES.json
+docs/reports/
+docs/security/
+!docs/security/BASELINE.json
+docs/specs/
+docs/Project Index.md

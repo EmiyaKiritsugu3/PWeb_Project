@@ -8,11 +8,19 @@ Agent instructions for AI assistants working on this codebase.
 
 ## Development Workflow
 
-Every piece of work follows this sequence — no exceptions:
+Every piece of work follows the **Sovereign Council Protocol (v4.0.1)**:
 
-```
-PDR → Design Spec → Implementation → Tests → ADR → Report → CHANGELOG
-```
+1. **Bootstrap**: `./sentinel plan` or `npm run protocol:plan` (Interpreted via `GEMINI.md`).
+2. **Analysis**: **Overlord** calculates FP/Tier & **Architect** generates Heatmap.
+3. **Consensus**: **Warden** & **Auditor** debate (+ **Arbiter** if deadlock).
+4. **Ratification**: Generate Implementation Plan with Consistency Score.
+5. **Surgical Execution**: Atomic commits → Tests → Verification.
+6. **Archival**: Council Minutes → Walkthrough → CHANGELOG.
+
+### Complexity Tiers (FPA Driven)
+- **Tier 1 (FP ≤ 5)**: Architect + Dev (Direct execution).
+- **Tier 2 (5 < FP ≤ 15)**: Architect + Auditor + Dev.
+- **Tier 3 (FP > 15)**: Full Sovereign Council (Consensus Meeting).
 
 ## Quality Gates
 
@@ -30,8 +38,9 @@ PDR → Design Spec → Implementation → Tests → ADR → Report → CHANGELO
 | `src/hooks/`          | Custom React hooks                       |
 | `src/ai/`             | Google Genkit AI flows                   |
 | `src/utils/supabase/` | Supabase SSR client helpers              |
-| `prisma/`             | Prisma schema, migrations, seed          |
-| `docs/`               | Documentation (ADRs, specs, stories)     |
+| `prisma/`               | Prisma schema, migrations, seed          |
+| `docs/`                 | Documentation (ADRs, specs, stories)     |
+| `sentry.*.config.ts`    | Sentry infrastructure (Root only)        |
 
 ## Commit Conventions
 
@@ -43,8 +52,9 @@ PDR → Design Spec → Implementation → Tests → ADR → Report → CHANGELO
 > Full stack lock in constitution §Technology Standards. Key enforcement rules:
 >
 > - Auth via SSR only — no client-side auth on protected routes
-> - DB access via Prisma Server Actions only — Prisma must not reach the client
-> - AI calls isolated in `src/ai/` with try/catch — no direct Gemini calls from RSCs
+- DB access via Prisma Server Actions only — Prisma must not reach the client
+- AI calls isolated in `src/ai/` with try/catch — no direct Gemini calls from RSCs
+- Sentry configs MUST remain at the project root for Next.js 15 compatibility
 
 ## Database Changes
 
