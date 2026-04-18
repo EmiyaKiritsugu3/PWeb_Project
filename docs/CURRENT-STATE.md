@@ -1,49 +1,51 @@
 # Current State — Five Star Academy
 
-**Last Updated**: 2026-04-11
-**Branch**: `fix/telemetry-and-e2e-stability`
-**Version**: 0.4.1 (pre-release)
+**Last Updated**: 2026-04-17
+**Branch**: `fix/e2e-auth-stabilization` → PR #69 open against `main`
+**Version**: 0.4.2 (pre-release)
 
 ## What Works Today
 
-| Feature                                     | Status        | Notes                          |
-| ------------------------------------------- | ------------- | ------------------------------ |
-| Admin login                                 | ✅ Working    | Supabase Auth SSR              |
-| Student login (Portal do Aluno)             | ✅ Working    | Separate session               |
-| Admin dashboard                             | ✅ Working    | GERENTE + RECEPCIONISTA        |
-| Financial routes (`/financeiro`, `/planos`) | ✅ Working    | GERENTE-only gate              |
-| Student workout view                        | ✅ Working    | `meus-treinos`                 |
-| AI workout generator                        | ✅ Working    | Genkit + Gemini                |
-| Student enrollment                          | ✅ Working    | Admin creates aluno            |
-| Gamification (XP, streaks)                  | ✅ Working    | Hook `use-workout-tracker`     |
-| Prisma migrations                           | ✅ Tracked    | `prisma/migrations/`           |
-| ESLint quality gate                         | ✅ Done       | 0 errors — `any` + unused vars |
-| TypeScript typecheck                        | ✅ Clean      | 0 errors (strict mode)         |
-| Unit tests                                  | ✅ Passing    | 18/18 (Vitest)                 |
-| Ops documentation                           | ✅ Done       | Runbook, SLOs, threat model    |
-| Process documentation                       | ✅ Done       | RFC + Postmortem templates     |
-| Local E2E stack                             | ✅ Done       | `supabase start` (Docker)      |
-| E2E seed script                             | ✅ Done       | `prisma/seed-e2e.ts` (4 users) |
-| Playwright E2E suite                        | ✅ Done       | 15/15 passing                  |
-| CI E2E job                                  | ✅ Done       | `.github/workflows/ci.yml`     |
-| Sentry error tracking                       | ✅ Modernized | Next.js 15, v10, User Context  |
+| Feature                                     | Status        | Notes                                              |
+| ------------------------------------------- | ------------- | -------------------------------------------------- |
+| Admin login                                 | ✅ Working    | Supabase Auth SSR                                  |
+| Student login (Portal do Aluno)             | ✅ Working    | Separate session                                   |
+| Admin dashboard                             | ✅ Working    | GERENTE + RECEPCIONISTA                            |
+| Financial routes (`/financeiro`, `/planos`) | ✅ Working    | GERENTE-only gate                                  |
+| Student workout view                        | ✅ Working    | `meus-treinos`                                     |
+| AI workout generator                        | ✅ Working    | Genkit + Gemini                                    |
+| Student enrollment                          | ✅ Working    | Admin creates aluno                                |
+| Gamification (XP, streaks)                  | ✅ Working    | Hook `use-workout-tracker`                         |
+| Prisma migrations                           | ✅ Tracked    | `prisma/migrations/`                               |
+| ESLint quality gate                         | ✅ Done       | 0 errors — `any` + unused vars                     |
+| TypeScript typecheck                        | ✅ Clean      | 0 errors (strict mode)                             |
+| Unit tests                                  | ✅ Passing    | 18/18 (Vitest)                                     |
+| Ops documentation                           | ✅ Done       | Runbook, SLOs, threat model                        |
+| Process documentation                       | ✅ Done       | RFC + Postmortem templates                         |
+| Local E2E stack                             | ✅ Done       | `supabase start` (Docker)                          |
+| E2E seed script                             | ✅ Done       | `prisma/seed-e2e.ts` (4 users, purge-on-seed)      |
+| Playwright E2E suite                        | ✅ Done       | 15/15 passing                                      |
+| CI E2E job                                  | ✅ Done       | `.github/workflows/ci.yml`                         |
+| Sentry error tracking                       | ✅ Modernized | Next.js 15, v10, `instrumentation-client.ts`       |
+| Structured logging                          | ✅ Done       | `src/lib/logger.ts` (Logger wrapper, Sentry-aware) |
 
 ## What Is Incomplete
 
-| Area          | Gap                                                                | Priority |
-| ------------- | ------------------------------------------------------------------ | -------- |
-| CI security   | 3 moderate vulns in `@prisma/dev` (transitive, awaiting upstream)  | P3       |
-| Lint warnings | 31 `no-console` warnings remain (accepted for server debug)        | P3       |
-| GitHub secret | `SUPABASE_LOCAL_SERVICE_ROLE_KEY` must be set for CI seed          | P1       |
-| Env Sync      | Ensure `NEXT_PUBLIC_SENTRY_DSN` is set in production for scrubbing | P1       |
+| Area          | Gap                                                                     | Priority |
+| ------------- | ----------------------------------------------------------------------- | -------- |
+| CI security   | 3 moderate vulns in `@prisma/dev` (transitive, awaiting upstream)       | P3       |
+| Lint warnings | `no-console` warnings reduced — remaining are accepted Logger internals | P3       |
+| GitHub secret | `SUPABASE_LOCAL_SERVICE_ROLE_KEY` must be set for CI seed               | P1       |
+| Env Sync      | Ensure `NEXT_PUBLIC_SENTRY_DSN` is set in production for scrubbing      | P1       |
+| PR merge      | PR #69 (`fix/e2e-auth-stabilization`) open, awaiting CI green + review  | P1       |
 
 ## Quality Gates (current status)
 
 ```
 npm run typecheck   → ✅  0 errors
-npm run lint        → ✅  0 errors  (30 warnings: no-console)
+npm run lint        → ✅  0 errors
 npm run test        → ✅  18/18 passing
-npm run e2e         → ✅  15/15 passing
+npm run e2e         → ✅  15/15 passing  (local, 2026-04-17)
 ```
 
 ## Tech Stack
@@ -71,7 +73,7 @@ npm run e2e         → ✅  15/15 passing
 | `src/ai/flows/`                        | Genkit AI flows                                    |
 | `prisma/schema.prisma`                 | DB schema                                          |
 | `prisma/seed.ts`                       | Dev seed data                                      |
-| `prisma/seed-e2e.ts`                   | E2E seed (4 deterministic users, fixed UUIDs)      |
+| `prisma/seed-e2e.ts`                   | E2E seed (4 users, fixed UUIDs, purge-on-reseed)   |
 | `docs/security/THREAT-MODEL.md`        | STRIDE analysis (17 threats)                       |
 | `docs/operations/RUNBOOK.md`           | Local setup, deploy, migrations, secrets           |
 | `docs/operations/INCIDENT-RESPONSE.md` | P1/P2/P3 response procedure                        |
@@ -96,14 +98,14 @@ npm run e2e         → ✅  15/15 passing
 The following items are recognized as "Managed Debt" — intentional compromises for compatibility or performance:
 
 1. **Sentry Boundary Casts**: Use of `any` in `beforeSend` (suppressed with `eslint-disable`) is required due to Sentry SDK interface rigidness.
-2. **Server console.log**: 31 warnings in Server Actions are preserved to ensure minimal observability in the terminal during development.
+2. **Logger internals**: `Logger` uses `console.*` internally — these are the only remaining `no-console` warnings and are acceptable as the structured logging layer.
 3. **Prisma Type Overrides**: We use `@pg/types` pinning to resolve Prisma 7/Next 15 conflicts until `@prisma/adapter-pg` upstream fixes land.
 
 ## Known Issues
 
-- 31 `no-console` warnings in server actions — accepted for server-side debug logging.
 - GitHub Secrets for CI (Playwright) require one-time manual setup.
 - Transitive dependency vulnerabilities in `@prisma/dev` (not reachable in production).
+- `isRedirectError` must be imported from `next/dist/client/components/redirect-error` (not `next/navigation`) — no public API yet in Next.js 15.
 
 ## Update Protocol
 
