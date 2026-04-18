@@ -250,4 +250,73 @@ Format: discovered → root cause → fix → effectiveness.
   O flow só é necessário quando o usuário clica "Finalizar Treino" — nunca no render inicial.
 - **Lição:** Imports de módulos pesados com dependências de runtime (OpenTelemetry, telemetria, etc.) devem ser dinâmicos quando usados apenas em handlers de evento. Import estático ≠ "só executa quando chamado" — o módulo é resolvido e bundled na inicialização.
 
-- **Efetividade:** Pendente — CI em andamento (run `24266743760`)
+- **Efetividade:** ✅ Resolvido — import dinâmico eliminou o erro de bundle; student-portal suite passou em CI
+
+---
+
+## ERR-019 — E2E Auth: `redirect()` em server action nunca executa — swallowed por `try/catch`
+
+- **Data:** 2026-04-17
+- **Contexto:** Branch `fix/e2e-auth-stabilization` — `src/app/actions/auth.ts` — login de todos os roles
+- **Sintoma:** Login retornava sem erro, mas o browser ficava na página `/login` sem navegar. `waitForURL('**/dashboard**')` timeout em 15s.
+- **Causa raiz:** Next.js App Router implementa `redirect()` lançando internamente uma exceção especial (`NEXT_REDIRECT`). Se o `redirect()` é chamado dentro de um bloco `try/catch` sem re-throw, a exceção é absorvida — o redirect nunca acontece e a server action simplesmente retorna `undefined`.
+- **Fix:** Adicionar guard `isRedirectError` antes de qualquer catch genérico:
+
+  ```ts
+  import { isRedirectError } from 'next/dist/client/components/redirect-error';
+  // ⚠️ NÃO importar de 'next/navigation' — não exporta isRedirectError (TS2305)
+
+  try {
+    redirect('/dashboard');
+  } catch (err: unknown) {
+    if (isRedirectError(err)) throw err; // ← re-throw obrigatório
+    return { error: 'Erro inesperado' };
+  }
+  ```
+
+- **Arquivo afetado:** `src/app/actions/auth.ts`
+- **Lição:** `redirect()` do Next.js é implementado via throw. Nunca envolver em `try/catch` sem o guard `isRedirectError`. O path de import correto é `next/dist/client/components/redirect-error` — `next/navigation` não exporta essa função (erro TypeScript TS2305 se tentar).
+- **Efetividade:** ✅ Resolvido — todos os roles redirecionaram corretamente após o fix
+
+---
+
+## ERR-020 — E2E Auth: ALUNO sempre aterrissa em `/aluno/login` após login bem-sucedido
+
+- **Data:** 2026-04-17
+- **Contexto:** Branch `fix/e2e-auth-stabilization` — `tests/e2e/specs/auth.spec.ts` — teste ALUNO
+- **Sintoma:** Login do ALUNO: `waitForURL` passava (URL mudava para `/aluno/dashboard`), mas a página renderizava `/aluno/login`. `getByRole('heading')` — element not found.
+- **Causa raiz:** Next.js App Router inline-renderiza o target do redirect durante a mesma resposta POST da server action. Nesse momento, `cookies()` no server component lê os **request headers** — mas o cookie de sessão (`sb-*-auth-token`) setado por `signInWithPassword()` só existe no **response** `Set-Cookie`. O browser ainda não armazenou o cookie, então `getUser()` falha e a página redireciona para `/aluno/login`.
+  - Ponto crítico: `/dashboard` (admin) não chama `getUser()` no server component e não foi afetado. `/aluno/dashboard` chama e foi afetado.
+- **Fix:** No helper `loginAs()`, forçar uma navegação GET após o `waitForURL`:
+  ```ts
+  await page.waitForURL('**/dashboard**', { timeout: 15_000 });
+  await page.goto(expectedPath); // GET real — browser já tem o cookie armazenado
+  ```
+- **Arquivo afetado:** `tests/e2e/helpers/auth.ts`
+- **Lição:** Em Next.js App Router, o inline RSC render do redirect target não recebe o cookie de sessão que acabou de ser setado. Qualquer server component que chame `getUser()` ou `cookies()` e seja redirect target de uma server action está sujeito a esse timing. Em produção funciona (browser faz GET separado); em E2E é necessário forçar o GET explicitamente.
+- **Efetividade:** ✅ Resolvido — ALUNO aterrou em `/aluno/dashboard` em todas as execuções subsequentes
+
+---
+
+## ERR-021 — E2E Auth: Todos os logins falhando com `TimeoutError: page.waitForURL` — servidor usando credenciais de produção
+
+- **Data:** 2026-04-17
+- **Contexto:** Branch `fix/e2e-auth-stabilization` — primeira execução após configurar o `.env.test`
+- **Sintoma:** `TimeoutError: page.waitForURL: Timeout 15000ms exceeded` em todos os 3 testes de login. Apenas o teste de credenciais inválidas passava.
+- **Causa raiz:** `playwright.config.ts` tinha `reuseExistingServer: true` (padrão) e a porta padrão (3001). Um servidor dev já estava rodando na porta 3001 carregado com `.env.local` (credenciais Supabase de produção). O Playwright reusou esse servidor — os usuários de teste não existem no projeto Supabase de produção, então todos os logins falhavam silenciosamente no `signInWithPassword()`.
+- **Diagnóstico confirmado:** Trocar temporariamente para `reuseExistingServer: false` e port 3333 mostrou que o servidor novo (com `.env.test`) funcionava.
+- **Fix:** Em `playwright.config.ts`:
+  ```ts
+  webServer: {
+    command: 'npm run dev -- --port 3333', // porta dedicada E2E
+    url: 'http://localhost:3333',
+    reuseExistingServer: false, // ← nunca reusar
+    env: {
+      NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL ?? '',
+      // ... forward explícito de todas as vars do .env.test
+    },
+  }
+  ```
+- **Arquivo afetado:** `playwright.config.ts`
+- **Lição:** `reuseExistingServer: true` é conveniente para velocidade mas perigoso quando o projeto tem múltiplos ambientes (`.env.local` + `.env.test`). O servidor reutilizado pode ter sido iniciado com qualquer conjunto de variáveis de ambiente. Em projetos com staging/test isolation, sempre usar `reuseExistingServer: false` + porta dedicada para E2E.
+- **Efetividade:** ✅ Resolvido — porta 3333 dedicada, servidor sempre iniciado com `.env.test`

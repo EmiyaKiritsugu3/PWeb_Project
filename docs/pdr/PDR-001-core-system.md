@@ -113,7 +113,32 @@ Access and capabilities are strictly scoped by the user's role:
 - **Data Models:** `auth.users` (Supabase) linked to `public.funcionarios` / `public.alunos` (PostgreSQL).
 - **Acceptance Criteria:** Valid credentials login successfully; invalid are denied; routing sends Managers to `/dashboard` and Students to `/aluno`; logout invalidates server session.
 
-## 6. Known Risks
+## 6. Implementation Status
+
+> Last updated: 2026-04-17 — reflects state on branch `fix/e2e-auth-stabilization` (PR #69)
+
+| US    | Title                 | Status        | Notes                                                            |
+| ----- | --------------------- | ------------- | ---------------------------------------------------------------- |
+| US00  | User Authentication   | ✅ Delivered  | Supabase SSR, role-based redirect, `isRedirectError` guard       |
+| US01  | Student Management    | ✅ Delivered  | CRUD alunos, data-table with search/sort, enrollment form        |
+| US02  | Plan Management       | ✅ Delivered  | CRUD planos, GERENTE-only gate                                   |
+| US03  | Workout Prescription  | ✅ Delivered  | Manual workout creation by instructor                            |
+| US04  | AI Workout Generation | ✅ Delivered  | Genkit + Gemini 2.5 Flash, Zod-validated output                  |
+| US05  | Student Portal        | ✅ Delivered  | `/aluno/dashboard`, `/aluno/meus-treinos`, gamification          |
+| US06  | Motivational Feedback | ✅ Delivered  | AI feedback after workout completion (dynamic import for bundle) |
+| US07  | Financial Dashboard   | ⚠️ Partial   | Routes gated, KPI dashboard views not yet implemented            |
+
+### Key RF status
+
+| RF     | Status       | Notes                                                        |
+| ------ | ------------ | ------------------------------------------------------------ |
+| RF08.01 | ✅ Done     | Unified login with conditional routing                       |
+| RF08.02 | ⏳ Pending  | Turnstile API (IoT biometrics endpoint) — not yet planned    |
+| RF09.01 | ⏳ Pending  | Managerial CTE views — Prisma raw queries not yet created    |
+| RF09.02 | ⏳ Pending  | Expiration status triggers — handled in app layer for now    |
+| RF09.03 | ⏳ Pending  | TCL transactions — atomic create not yet implemented         |
+
+## 7. Known Risks
 
 1. **AI Hallucinations (JSON injection):**
    - _Mitigation:_ Rigorous System Prompting and strict Zod schema validation on Genkit outputs.
