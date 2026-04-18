@@ -11,6 +11,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { EXERCICIOS_POR_GRUPO, DIAS_DA_SEMANA } from '@/lib/constants';
+import { Logger } from '@/lib/logger';
 import * as Sentry from '@sentry/nextjs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -155,10 +156,10 @@ export default function MeusTreinosClient({
   const handleGenerate = async (data: WorkoutGeneratorInput) => {
     setIsGenerating(true);
     try {
-      console.log('Chamando a IA com dados:', data);
+      Logger.info('Chamando a IA com dados:', data);
       // Chama a Server Action (o proxy gerado pelo Next.js da Flow)
       const result = await streamWorkoutPlan(data);
-      console.log('Resultado da IA retornado:', result);
+      Logger.info('Resultado da IA retornado:', result);
 
       if (result && result.workouts) {
         for (const workout of result.workouts) {
@@ -198,7 +199,7 @@ export default function MeusTreinosClient({
           });
 
           if (!res.success) {
-            console.error('Erro ao salvar treino no banco:', res.error);
+            Logger.error('Erro ao salvar treino no banco:', res.error);
             throw new Error('Erro ao salvar no banco: ' + res.error);
           }
         }
@@ -209,11 +210,11 @@ export default function MeusTreinosClient({
           duration: 5000,
         });
       } else {
-        console.error('Resultado inesperado da IA:', result);
+        Logger.error('Resultado inesperado da IA:', result);
         throw new Error('Formato de retorno inválido.');
       }
     } catch (error) {
-      console.error('Erro completo ao gerar plano:', error);
+      Logger.error('Erro completo ao gerar plano:', error);
       toast({ title: 'Erro da IA', description: (error as Error).message, variant: 'destructive' });
     } finally {
       setIsGenerating(false);

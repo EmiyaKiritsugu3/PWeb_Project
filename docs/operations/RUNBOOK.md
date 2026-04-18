@@ -1,6 +1,6 @@
 # Operations Runbook — Five Star Academy
 
-**Last Updated**: 2026-04-10
+**Last Updated**: 2026-04-17
 
 ---
 
@@ -83,8 +83,11 @@ Creates 4 deterministic test users:
 ### Run E2E tests
 
 ```bash
-# Run all Playwright tests
+# Run all Playwright tests (starts Next.js on port 3333 automatically)
 npm run e2e
+
+# Run a single spec file
+npm run e2e -- tests/e2e/specs/auth.spec.ts
 
 # Open interactive UI mode
 npm run e2e:ui
@@ -92,6 +95,12 @@ npm run e2e:ui
 # View last test report
 npm run e2e:report
 ```
+
+> **Port isolation**: E2E always starts Next.js on port **3333** (`playwright.config.ts → webServer`).
+> This avoids reusing a dev server on port 3001 that may carry `.env.local` production credentials.
+> `reuseExistingServer: false` is intentional — never change it.
+
+> **Session cookie timing**: `loginAs()` in `tests/e2e/helpers/auth.ts` performs a hard `page.goto(expectedPath)` after `waitForURL`. This is required because Next.js App Router inline-renders redirect targets during the server action POST response, where `Set-Cookie` is not yet in the `Cookie` request header. The hard navigation forces a new GET where the browser includes the session cookie.
 
 ### Stop the local stack
 

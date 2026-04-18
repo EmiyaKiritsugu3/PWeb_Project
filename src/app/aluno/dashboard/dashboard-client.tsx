@@ -6,6 +6,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Trophy, TrendingUp, Zap, Target, Award } from 'lucide-react';
 import type { Treino, Aluno, Exercicio } from '@/lib/definitions';
+import { Logger } from '@/lib/logger';
 import { finalizarTreinoAction } from '@/lib/actions/alunos';
 import { useToast } from '@/hooks/use-toast';
 import { CircularProgress } from '@/components/ui/circular-progress';
@@ -53,7 +54,7 @@ export default function AlunoDashboardClient({ aluno, initialTreino }: AlunoDash
         });
         setFeedback(aiResult);
       } catch (aiError) {
-        console.error('AI Feedback Error:', aiError);
+        Logger.error('AI Feedback Error:', aiError);
         toast({
           title: 'Feedback indisponível',
           description: 'Sincronizando treino sem o comentário da IA.',
@@ -72,7 +73,7 @@ export default function AlunoDashboardClient({ aluno, initialTreino }: AlunoDash
         toast({ title: 'Erro de conexão', variant: 'destructive' });
       }
     } catch (error) {
-      console.error('Action Error:', error);
+      Logger.error('Action Error:', error);
       toast({ title: 'Erro ao salvar treino', variant: 'destructive' });
     } finally {
       setIsFeedbackLoading(false);
@@ -98,10 +99,14 @@ export default function AlunoDashboardClient({ aluno, initialTreino }: AlunoDash
         transition={{ type: 'spring', stiffness: 300, damping: 20 }}
       >
         <div>
-          <h1 className="text-4xl md:text-6xl font-black headline tracking-tighter text-white">
+          <h1
+            data-testid="dashboard-welcome"
+            className="text-4xl md:text-6xl font-black headline tracking-tighter text-white"
+          >
             FALA,{' '}
             <span className="text-cyan-400">{aluno.nomeCompleto.split(' ')[0].toUpperCase()}!</span>
           </h1>
+
           <p className="text-muted-foreground mt-2 font-medium">Bora subir de nível hoje?</p>
         </div>
 

@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased] — 2026-04-17 — E2E Auth Stabilization & Observability [PID-SENTINEL]
+
+### Added
+
+- **Structured Logger**: `src/lib/logger.ts` — thin wrapper around `console.*` with Sentry-aware error forwarding; eliminates raw `console.*` calls across the codebase.
+- **`data-testid="dashboard-welcome"`**: stable E2E anchor on the student dashboard `h1` (`dashboard-client.tsx`).
+
+### Changed
+
+- **Playwright env isolation**: port 3333 dedicated to E2E (`playwright.config.ts`); `reuseExistingServer: false` prevents reuse of a dev server carrying `.env.local` production credentials; explicit `env` block forwards Supabase vars to the webServer child process.
+- **Seed determinism**: `purgeAuthUsers()` in `prisma/seed-e2e.ts` deletes `auth.users` by email before re-seeding with fixed UUIDs, eliminating UUID collision failures on re-run.
+- **`sentry.client.config.ts` → `instrumentation-client.ts`**: migrated Sentry client init to Next.js 15 / v10 standard location; old file removed.
+- **Observability**: replaced all `console.error` / `console.log` calls in client components and server actions with `Logger.*`; added `Sentry.captureException` in `alunos`, `financeiro`, `treinos` server actions.
+- **Defensive XP serialization**: `/aluno/dashboard` page now null-guards `aluno.exp` and `aluno.nivel` and protects against division-by-zero in progress calculation.
+
+### Fixed
+
+- **ALUNO E2E login flake**: `loginAs()` helper adds a hard `page.goto(expectedPath)` after `waitForURL` to force a GET request where the browser includes the session cookie. Next.js App Router inline-renders the redirect target during the server action POST, where `Set-Cookie` is not yet in the `Cookie` request header, causing `getUser()` to fail and redirect to `/aluno/login`.
+- **`isRedirectError` swallowed**: wrapped `redirect()` in `src/app/actions/auth.ts` with `try/catch` that re-throws via `isRedirectError` (from `next/dist/client/components/redirect-error`) so Next.js can inline-render the redirect target.
+- **Strict-mode violation in heading assertion**: `getByRole('heading')` matched 2 elements on the admin dashboard; changed to `.first()` (and later to `data-testid` in student portal spec) to avoid Playwright strict-mode errors.
+
 ## [Unreleased] — 2026-04-17 — Sentinel Core Hardening
 
 ### Added

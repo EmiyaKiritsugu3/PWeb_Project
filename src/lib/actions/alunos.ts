@@ -6,6 +6,7 @@ import { revalidatePath } from 'next/cache';
 import { AlunoSchema, AlunoBaseSchema } from '@/lib/definitions';
 import type { AlunoBase } from '@/lib/definitions';
 import { createClient } from '@/utils/supabase/server';
+import * as Sentry from '@sentry/nextjs';
 
 export async function finalizarTreinoAction(treinoId: string, durationMinutes: number = 60) {
   try {
@@ -117,7 +118,7 @@ export async function finalizarTreinoAction(treinoId: string, durationMinutes: n
     revalidatePath('/aluno/dashboard');
     return { success: true, data: historico };
   } catch (error) {
-    console.error('Erro ao finalizar treino:', error);
+    Sentry.captureException(error);
     return { success: false, error: error instanceof Error ? error.message : 'Erro desconhecido' };
   }
 }
@@ -155,7 +156,7 @@ export async function createAlunoAction(
     // O retorno do Prisma inclui o ID, validado pelo AlunoSchema (Entity)
     return { success: true, data: AlunoSchema.parse(aluno) };
   } catch (error) {
-    console.error('Prisma create error:', error);
+    Sentry.captureException(error);
     if (error instanceof Error && error.name === 'ZodError') {
       return { success: false, error: 'Dados inválidos' };
     }
@@ -192,7 +193,7 @@ export async function updateAlunoAction(id: string, data: Partial<AlunoBase>) {
     revalidatePath('/dashboard/alunos');
     return { success: true, data: AlunoSchema.parse(updated) };
   } catch (error) {
-    console.error('Prisma update error:', error);
+    Sentry.captureException(error);
     if (error instanceof Error && error.name === 'ZodError') {
       return { success: false, error: 'Dados inválidos' };
     }
@@ -216,7 +217,7 @@ export async function deleteAlunoAction(id: string) {
     revalidatePath('/dashboard/alunos');
     return { success: true };
   } catch (error) {
-    console.error('Prisma delete error:', error);
+    Sentry.captureException(error);
     return { success: false, error: error instanceof Error ? error.message : 'Erro desconhecido' };
   }
 }
@@ -265,7 +266,7 @@ export async function createMatriculaAction(alunoId: string, planoId: string) {
     revalidatePath('/dashboard/alunos');
     return { success: true, data: matricula };
   } catch (error) {
-    console.error('Prisma matricula error:', error);
+    Sentry.captureException(error);
     return { success: false, error: error instanceof Error ? error.message : 'Erro desconhecido' };
   }
 }
