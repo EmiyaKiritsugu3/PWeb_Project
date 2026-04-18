@@ -1,8 +1,8 @@
 # Current State — Five Star Academy
 
-**Last Updated**: 2026-04-17
-**Branch**: `fix/e2e-auth-stabilization` → PR #69 open against `main`
-**Version**: 0.4.2 (pre-release)
+**Last Updated**: 2026-04-18
+**Branch**: `main`
+**Version**: 0.5.0 (It2 complete)
 
 ## What Works Today
 
@@ -25,9 +25,10 @@
 | Local E2E stack                             | ✅ Done       | `supabase start` (Docker)                          |
 | E2E seed script                             | ✅ Done       | `prisma/seed-e2e.ts` (4 users, purge-on-seed)      |
 | Playwright E2E suite                        | ✅ Done       | 15/15 passing                                      |
-| CI E2E job                                  | ✅ Done       | `.github/workflows/ci.yml`                         |
+| CI E2E job                                  | ✅ Green      | 15/15 passing in CI (PR #69 + #70)                 |
 | Sentry error tracking                       | ✅ Modernized | Next.js 15, v10, `instrumentation-client.ts`       |
 | Structured logging                          | ✅ Done       | `src/lib/logger.ts` (Logger wrapper, Sentry-aware) |
+| Dependencies                                | ✅ Updated    | All patch/minor bumped via PR #70; lockfile clean  |
 
 ## What Is Incomplete
 
@@ -35,9 +36,8 @@
 | ------------- | ----------------------------------------------------------------------- | -------- |
 | CI security   | 3 moderate vulns in `@prisma/dev` (transitive, awaiting upstream)       | P3       |
 | Lint warnings | `no-console` warnings reduced — remaining are accepted Logger internals | P3       |
-| GitHub secret | `SUPABASE_LOCAL_SERVICE_ROLE_KEY` must be set for CI seed               | P1       |
-| Env Sync      | Ensure `NEXT_PUBLIC_SENTRY_DSN` is set in production for scrubbing      | P1       |
-| PR merge      | PR #69 (`fix/e2e-auth-stabilization`) open, awaiting CI green + review  | P1       |
+| Env Sync      | `NEXT_PUBLIC_SENTRY_DSN` must be set in production for error scrubbing  | P1       |
+| `@types/pg`   | Pinned at `8.11.11` — upgrade to `8.20.0` needs manual compat check     | P3       |
 
 ## Quality Gates (current status)
 
@@ -45,7 +45,8 @@
 npm run typecheck   → ✅  0 errors
 npm run lint        → ✅  0 errors
 npm run test        → ✅  18/18 passing
-npm run e2e         → ✅  15/15 passing  (local, 2026-04-17)
+npm run e2e         → ✅  15/15 passing  (local + CI, 2026-04-18)
+npm run build       → ✅  production build succeeds
 ```
 
 ## Tech Stack
@@ -55,7 +56,7 @@ npm run e2e         → ✅  15/15 passing  (local, 2026-04-17)
 - **Auth**: Supabase Auth SSR (`@supabase/ssr`)
 - **Database**: PostgreSQL via Prisma 7
 - **Validation**: Zod 3
-- **AI**: Google Genkit 1.31 + Gemini 2.5 Flash
+- **AI**: Google Genkit 1.32 + Gemini 2.5 Flash
 - **Styling**: Tailwind CSS 4 + Shadcn/UI
 - **Testing**: Vitest 4 (3 files, 14 unit tests) + Playwright 1.59 (15 E2E scenarios)
 - **CI**: GitHub Actions (quality + test + e2e jobs)

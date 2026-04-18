@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] — 2026-04-18 — It2 Complete: CI Green, Dependencies Updated, E2E Stabilized
+
+### Added
+
+- **E2E test timeout headroom**: `playwright.config.ts` sets `timeout: 60_000` and `navigationTimeout: 60_000` to accommodate first-request Next.js dev-mode compilation of `/aluno/dashboard` (~20s on CI runners).
+
+### Changed
+
+- **Dependencies**: all patch/minor packages bumped (PR #70). `genkit` + `@genkit-ai/*` aligned to `^1.32.0`; lockfile fully regenerated from scratch to fix transitive dep sync errors (`magicast`, `@opentelemetry/*`, `protobufjs` were missing after `npm update --save`).
+- **ALUNO E2E login**: `loginAs(page, 'ALUNO')` now navigates to `/aluno/login` (client-side Supabase auth + `router.push`) instead of the admin `/login` server action. Eliminates the inline RSC render timing gap where `getUser()=null` caused a double-redirect before the browser could send the session cookie.
+- **`waitForURL` pattern**: changed from `'**/dashboard**'` to `(url) => !url.pathname.startsWith(loginPath)` — works for both `/login` (staff) and `/aluno/login` (student) departure detection.
+
+### Fixed
+
+- **`npm ci` lockfile sync in CI**: `npm update --save` only resolves declared ranges, not full transitive trees; missing packages caused `npm ci` to fail. Fixed by full lockfile regeneration (`rm package-lock.json && npm install`).
+- **CI E2E ALUNO timeout**: first-request compilation of `/aluno/dashboard` (framer-motion, recharts) takes >20s in Next.js dev mode on CI, exceeding the 30s test timeout. Fixed by using `/aluno/login` flow + 60s timeout.
+- **`@tanstack/react-table` duplicate**: removed from `devDependencies` (was duplicated in `dependencies`).
+
 ## [Unreleased] — 2026-04-17 — E2E Auth Stabilization & Observability [PID-SENTINEL]
 
 ### Added
