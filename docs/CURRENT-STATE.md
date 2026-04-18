@@ -6,29 +6,29 @@
 
 ## What Works Today
 
-| Feature                                     | Status        | Notes                                              |
-| ------------------------------------------- | ------------- | -------------------------------------------------- |
-| Admin login                                 | ✅ Working    | Supabase Auth SSR                                  |
-| Student login (Portal do Aluno)             | ✅ Working    | Separate session                                   |
-| Admin dashboard                             | ✅ Working    | GERENTE + RECEPCIONISTA                            |
-| Financial routes (`/financeiro`, `/planos`) | ✅ Working    | GERENTE-only gate                                  |
-| Student workout view                        | ✅ Working    | `meus-treinos`                                     |
-| AI workout generator                        | ✅ Working    | Genkit + Gemini                                    |
-| Student enrollment                          | ✅ Working    | Admin creates aluno                                |
-| Gamification (XP, streaks)                  | ✅ Working    | Hook `use-workout-tracker`                         |
-| Prisma migrations                           | ✅ Tracked    | `prisma/migrations/`                               |
-| ESLint quality gate                         | ✅ Done       | 0 errors — `any` + unused vars                     |
-| TypeScript typecheck                        | ✅ Clean      | 0 errors (strict mode)                             |
-| Unit tests                                  | ✅ Passing    | 18/18 (Vitest)                                     |
-| Ops documentation                           | ✅ Done       | Runbook, SLOs, threat model                        |
-| Process documentation                       | ✅ Done       | RFC + Postmortem templates                         |
-| Local E2E stack                             | ✅ Done       | `supabase start` (Docker)                          |
-| E2E seed script                             | ✅ Done       | `prisma/seed-e2e.ts` (4 users, purge-on-seed)      |
-| Playwright E2E suite                        | ✅ Done       | 15/15 passing                                      |
-| CI E2E job                                  | ✅ Green      | 15/15 passing in CI (PR #69 + #70)                 |
-| Sentry error tracking                       | ✅ Modernized | Next.js 15, v10, `instrumentation-client.ts`       |
-| Structured logging                          | ✅ Done       | `src/lib/logger.ts` (Logger wrapper, Sentry-aware) |
-| Dependencies                                | ✅ Updated    | All patch/minor bumped via PR #70; lockfile clean  |
+| Feature                                     | Status     | Notes                                                                    |
+| ------------------------------------------- | ---------- | ------------------------------------------------------------------------ |
+| Admin login                                 | ✅ Working | Supabase Auth SSR                                                        |
+| Student login (Portal do Aluno)             | ✅ Working | Separate session                                                         |
+| Admin dashboard                             | ✅ Working | GERENTE + RECEPCIONISTA                                                  |
+| Financial routes (`/financeiro`, `/planos`) | ✅ Working | GERENTE-only gate                                                        |
+| Student workout view                        | ✅ Working | `meus-treinos`                                                           |
+| AI workout generator                        | ✅ Working | Genkit + Gemini                                                          |
+| Student enrollment                          | ✅ Working | Admin creates aluno                                                      |
+| Gamification (XP, streaks)                  | ✅ Working | Hook `use-workout-tracker`                                               |
+| Prisma migrations                           | ✅ Tracked | `prisma/migrations/`                                                     |
+| ESLint quality gate                         | ✅ Done    | 0 errors — `any` + unused vars                                           |
+| TypeScript typecheck                        | ✅ Clean   | 0 errors (strict mode)                                                   |
+| Unit tests                                  | ✅ Passing | 18/18 (Vitest)                                                           |
+| Ops documentation                           | ✅ Done    | Runbook, SLOs, threat model                                              |
+| Process documentation                       | ✅ Done    | RFC + Postmortem templates                                               |
+| Local E2E stack                             | ✅ Done    | `supabase start` (Docker)                                                |
+| E2E seed script                             | ✅ Done    | `prisma/seed-e2e.ts` (4 users, purge-on-seed)                            |
+| Playwright E2E suite                        | ✅ Done    | 15/15 passing                                                            |
+| CI E2E job                                  | ✅ Green   | 15/15 passing in CI (PR #69 + #70)                                       |
+| Sentry error tracking                       | ✅ Active  | DSN + auth token set in Vercel; source maps (92) uploaded on every build |
+| Structured logging                          | ✅ Done    | `src/lib/logger.ts` (Logger wrapper, Sentry-aware)                       |
+| Dependencies                                | ✅ Updated | All patch/minor bumped via PR #70; lockfile clean                        |
 
 ## What Is Incomplete
 
@@ -36,8 +36,7 @@
 | ------------- | ----------------------------------------------------------------------- | -------- |
 | CI security   | 3 moderate vulns in `@prisma/dev` (transitive, awaiting upstream)       | P3       |
 | Lint warnings | `no-console` warnings reduced — remaining are accepted Logger internals | P3       |
-| Env Sync      | `NEXT_PUBLIC_SENTRY_DSN` must be set in production for error scrubbing  | P1       |
-| `@types/pg`   | Pinned at `8.11.11` — upgrade to `8.20.0` needs manual compat check     | P3       |
+| `@types/pg`   | Pinned at `8.11.11` — dependabot PR #63 open, needs manual compat check | P3       |
 
 ## Quality Gates (current status)
 

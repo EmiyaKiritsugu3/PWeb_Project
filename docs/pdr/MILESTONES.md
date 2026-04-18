@@ -34,7 +34,7 @@ Everything originally planned for It1–It2 was delivered during It1:
 | Merge PR #69 (`fix/e2e-auth-stabilization`)       | P1       | ✅ Merged        |
 | Merge PR #70 (`chore/update-dependencies`)        | P1       | ✅ Merged        |
 | E2E job green in CI (15/15)                       | P1       | ✅ Confirmed     |
-| Set `NEXT_PUBLIC_SENTRY_DSN` in production        | P1       | ⚠️ Still pending |
+| Set `NEXT_PUBLIC_SENTRY_DSN` in production        | P1       | ✅ Done (2026-04-18, via Vercel CLI) |
 
 ---
 
