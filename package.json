@@ -113,7 +113,7 @@
     "@testing-library/react": "^16.3.2",
     "@types/eslint": "^9.6.1",
     "@types/node": "^20.19.39",
-    "@types/pg": "8.11.11",
+    "@types/pg": "8.20.0",
     "@types/react": "^18.3.28",
     "@types/react-dom": "^18.3.7",
     "@vitejs/plugin-react": "^6.0.1",
@@ -140,7 +140,7 @@
     "http-proxy-agent": "^7.0.2",
     "teeny-request": "^9.0.0",
     "retry-request": "^8.0.0",
-    "@types/pg": "8.11.11",
+    "@types/pg": "8.20.0",
     "@hono/node-server": "1.19.14"
   }
 }
