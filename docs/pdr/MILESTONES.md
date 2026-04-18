@@ -1,22 +1,47 @@
 # Project Milestones & Release Plan
 
 **Semester Target:** 2026.1
+**Last Updated:** 2026-04-17
 
 ## Iteration Plan
 
-| Iteration               | Period          | Objectives                                       | Deliverables                    |
-| ----------------------- | --------------- | ------------------------------------------------ | ------------------------------- |
-| **It0 (Inception)**     | Mar 10 - Mar 26 | Planning, studies, and tech stack definition.    | Repository setup, initial docs. |
-| **It1 (Requirements)**  | Mar 27 - Apr 17 | Vision, Data Models, User Stories.               | Detailed US00, PDRs.            |
-| **It2 (Core Admin)**    | Apr 18 - May 08 | Dashboard and Student Management implementation. | CRUD Students, Auth flow.       |
-| **It3 (AI & Workouts)** | May 09 - May 29 | Workout management and AI generation.            | Gemini Genkit integrations.     |
-| **It4 (Student App)**   | May 30 - Jun 19 | Student Portal and Gamification features.        | Mobile-first portal, feedback.  |
-| **It5 (Wrap-up)**       | Jun 20 - Jul 10 | Final QA, bug fixes, and closing documentation.  | Complete MVP System.            |
+| Iteration               | Period          | Status          | Objectives                                                | Deliverables                                          |
+| ----------------------- | --------------- | --------------- | --------------------------------------------------------- | ----------------------------------------------------- |
+| **It0 (Inception)**     | Mar 10 - Mar 26 | ✅ Complete     | Planning, studies, and tech stack definition.             | Repository setup, initial docs.                       |
+| **It1 (Requirements)**  | Mar 27 - Apr 17 | ✅ Complete     | Vision, data models, user stories, full quality pipeline. | PDRs, E2E suite, CI/CD, Sentry, CRUD, Student Portal. |
+| **It2 (Stabilization)** | Apr 18 - May 08 | 🔄 In Progress  | Merge PR #69, Sentry CI secrets, E2E in CI green.         | Stable main branch, CI fully green, v0.5.0 release.   |
+| **It3 (AI & Workouts)** | May 09 - May 29 | ⏳ Planned      | Workout management and AI generation polish.              | Gemini Genkit integrations.                           |
+| **It4 (Student App)**   | May 30 - Jun 19 | ⏳ Planned      | Student Portal and Gamification features.                 | Mobile-first portal, feedback.                        |
+| **It5 (Wrap-up)**       | Jun 20 - Jul 10 | ⏳ Planned      | Final QA, bug fixes, and closing documentation.           | Complete MVP System.                                  |
+
+### It1 Delivered (ahead of original scope)
+
+Everything originally planned for It1–It2 was delivered during It1:
+
+- ✅ Admin login + role-based access (GERENTE / RECEPCIONISTA / INSTRUTOR)
+- ✅ Student login (`/aluno`) with separate session
+- ✅ Admin dashboard: student CRM, financial routes, AI workout generator
+- ✅ Student portal: workout execution, meus-treinos, gamification (XP, levels, streaks)
+- ✅ ESLint 0 errors, TypeScript strict, 18/18 unit tests, 15/15 E2E scenarios
+- ✅ CI/CD pipeline (GitHub Actions: lint + test + E2E)
+- ✅ Sentry v10 (Next.js 15), structured Logger, privacy-first Replay
+- ✅ Ops documentation: RUNBOOK, SLOs, THREAT-MODEL, INCIDENT-RESPONSE
+
+### It2 Remaining Work
+
+| Task                                              | Priority | Status      |
+| ------------------------------------------------- | -------- | ----------- |
+| Merge PR #69 (`fix/e2e-auth-stabilization`)       | P1       | Open        |
+| Set `SUPABASE_LOCAL_SERVICE_ROLE_KEY` GitHub secret | P1     | Pending     |
+| Confirm E2E job green in CI after merge           | P1       | Pending     |
+| Set `NEXT_PUBLIC_SENTRY_DSN` in production        | P1       | Pending     |
+
+---
 
 ## Release Schedule
 
-| Release          | Target Date | Scope                                                                     |
-| ---------------- | ----------- | ------------------------------------------------------------------------- |
-| **v0.1.0**       | Apr 17      | Initial documentation, scaffolding, CI/CD, database schema setup.         |
-| **v0.5.0**       | May 08      | Authentication system and administrative CRUD operations functional.      |
-| **v1.0.0 (MVP)** | Jul 10      | Complete system including Dashboard, Student Portal, and AI integrations. |
+| Release          | Target Date | Status        | Scope                                                                      |
+| ---------------- | ----------- | ------------- | -------------------------------------------------------------------------- |
+| **v0.1.0**       | Apr 17      | ✅ Released   | Documentation, scaffolding, CI/CD, database schema, full feature set.     |
+| **v0.5.0**       | May 08      | ⏳ Planned    | CI fully green, Sentry in production, PR #69 merged, secrets configured.  |
+| **v1.0.0 (MVP)** | Jul 10      | ⏳ Planned    | Complete system including Dashboard, Student Portal, and AI integrations.  |
