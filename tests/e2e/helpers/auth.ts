@@ -46,7 +46,8 @@ export async function loginAs(page: Page, role: TestRole): Promise<void> {
   // Hard GET to confirm the session cookie is in the Cookie header for all subsequent requests.
   await page.goto(expectedPath);
   // Confirm the dashboard actually painted
-  await expect(page.getByRole('heading').first()).toBeVisible({ timeout: 15_000 });
+  // 30s timeout: first-request compilation of /aluno/dashboard in CI dev mode can take ~20s.
+  await expect(page.getByRole('heading').first()).toBeVisible({ timeout: 30_000 });
 }
 
 export async function logout(page: Page): Promise<void> {
