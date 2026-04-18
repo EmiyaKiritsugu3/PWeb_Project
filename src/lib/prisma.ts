@@ -1,6 +1,7 @@
 import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '@prisma/client';
+import { Logger } from './logger';
 
 const globalForPrisma = globalThis as unknown as {
   prisma: ReturnType<typeof createPrismaClient> | undefined;
@@ -20,8 +21,7 @@ function createPrismaClient() {
 
   // Handle pool errors to prevent process crashes
   pool.on('error', (err) => {
-    // eslint-disable-next-line no-console
-    console.error('Unexpected error on idle database client', err);
+    Logger.error('Unexpected error on idle database client', err);
   });
 
   const adapter = new PrismaPg(pool);

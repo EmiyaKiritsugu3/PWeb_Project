@@ -23,6 +23,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { PlusCircle, Save, Trash2, Wand2, BrainCircuit, UserCheck, Dumbbell } from 'lucide-react';
+import { Logger } from '@/lib/logger';
 import type { Aluno, Exercicio } from '@/lib/definitions';
 import { useToast } from '@/hooks/use-toast';
 import { Combobox } from '@/components/ui/combobox';
@@ -416,7 +417,7 @@ export default function TreinosManagementClient({
       setPlanoGerado(finalResult);
       toast({ title: 'Plano Gerado!' });
     } catch (error) {
-      console.error(error);
+      Logger.error('Erro na geração de treino:', error);
       toast({ title: 'Erro da IA', variant: 'destructive' });
     } finally {
       setIsGenerating(false);

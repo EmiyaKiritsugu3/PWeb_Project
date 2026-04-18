@@ -5,8 +5,8 @@ test.describe('Student portal — critical path', () => {
   test('ALUNO accesses /aluno/dashboard', async ({ page }) => {
     await loginAs(page, 'ALUNO');
     await expect(page).toHaveURL(/\/aluno\/dashboard/);
-    // Dashboard should render the student portal heading
-    await expect(page.getByRole('heading')).toBeVisible({ timeout: 15_000 });
+    // [PID-SENTINEL] Stabilized selector using data-testid
+    await expect(page.getByTestId('dashboard-welcome')).toBeVisible({ timeout: 15_000 });
   });
 
   test('ALUNO is blocked from admin /dashboard', async ({ page }) => {
