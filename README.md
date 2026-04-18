@@ -75,26 +75,33 @@ O projeto inclui o **Sentinel**, um sistema operacional de desenvolvimento alime
 
 ### Pré-requisitos
 
-- Node.js 18.x ou superior
-- Instância do PostgreSQL (ou projeto Supabase)
-- Chave de API do Google AI (Gemini)
+- Node.js 20+
+- Docker (necessário para o stack E2E local via Supabase CLI)
+- npm
 
 ### 1. Configurar Variáveis de Ambiente
 
-Crie um arquivo `.env` na raiz do projeto com as seguintes chaves:
+Crie um arquivo `.env.local` na raiz do projeto com as seguintes chaves:
 
 ```env
 # Banco de Dados (Prisma)
 DATABASE_URL="postgresql://user:password@host:port/dbname"
+DIRECT_URL="postgresql://user:password@host:port/dbname"
 
 # Supabase (Auth & API)
 NEXT_PUBLIC_SUPABASE_URL="sua-url-do-supabase"
-NEXT_PUBLIC_SUPABASE_ANON_KEY="sua-chave-anon"
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY="sua-chave-publishable"
 SUPABASE_SERVICE_ROLE_KEY="sua-chave-service-role"
 
 # Inteligência Artificial
 GOOGLE_GENAI_API_KEY="sua-google-ai-key"
+
+# Observabilidade
+NEXT_PUBLIC_SENTRY_DSN="sua-dsn-do-sentry"
+SENTRY_AUTH_TOKEN="seu-token-sentry"
 ```
+
+Consulte `.env.example` para a lista completa de variáveis.
 
 ### 2. Instalação e Setup
 
@@ -105,10 +112,10 @@ npm install
 # Gerar o cliente Prisma
 npx prisma generate
 
-# Sincronizar o banco de dados
-npx prisma db push
+# Aplicar migrations
+npx prisma migrate deploy
 
-# (Opcional) Popular o banco com dados iniciais
+# (Opcional) Popular o banco com dados de desenvolvimento
 npm run prisma:seed
 ```
 
@@ -118,18 +125,26 @@ npm run prisma:seed
 npm run dev
 ```
 
-Acesse `http://localhost:3000` para ver a aplicação em execução.
+Acesse `http://localhost:3001` para ver a aplicação em execução.
+
+### 4. Quality Gates
+
+```bash
+npm run typecheck   # TypeScript strict — 0 erros
+npm run lint        # ESLint — 0 erros
+npm run test        # Vitest — 18/18 testes
+npm run e2e         # Playwright — 15/15 cenários (requer Docker + supabase start)
+```
 
 ---
 
-## 📘 Projeto 02 - Iteração 1
+## 📘 Documentação do Projeto
 
-Documentação técnica e requisitos da primeira iteração do Projeto 02:
-
-- [Arquitetura do Projeto](./docs/arquitetura.md)
 - [Documento de Visão](./docs/doc-visao.md)
 - [Documento de User Stories](./docs/doc-userstories.md)
-- [AcademicDevFlow (Repositório Principal)](#)
+- [Modelo de Dados](./docs/doc-modelos.md)
+- [Estado Atual](./docs/CURRENT-STATE.md)
+- [Milestones](./docs/pdr/MILESTONES.md)
 
 ---
 

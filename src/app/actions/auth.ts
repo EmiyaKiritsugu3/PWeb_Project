@@ -2,6 +2,7 @@
 
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
+import { isRedirectError } from 'next/dist/client/components/redirect-error';
 import { z } from 'zod';
 
 const loginSchema = z.object({
@@ -29,17 +30,28 @@ export async function login(prevState: { error: string } | undefined, formData: 
     return { error: 'E-mail ou senha inválidos. Por favor, tente novamente.' };
   }
 
-  // Fetch profile role to determine redirect
-  const { data: profile } = await supabase
-    .from('funcionarios')
-    .select('role')
-    .eq('id', authData.user.id)
-    .single();
+  try {
+    // Fetch profile role to determine redirect destination
+    const { data: profile, error: profileError } = await supabase
+      .from('funcionarios')
+      .select('role')
+      .eq('id', authData.user.id)
+      .single();
 
-  if (profile) {
-    redirect('/dashboard');
-  } else {
-    redirect('/aluno/dashboard');
+    // PGRST116 = "no rows found" — expected for alunos; any other code is a real DB error
+    if (profileError && profileError.code !== 'PGRST116') {
+      return { error: 'Erro ao verificar perfil. Por favor, tente novamente.' };
+    }
+
+    if (profile) {
+      redirect('/dashboard');
+    } else {
+      redirect('/aluno/dashboard');
+    }
+  } catch (err: unknown) {
+    // redirect() throws internally — must re-throw or the navigation is swallowed
+    if (isRedirectError(err)) throw err;
+    return { error: 'Ocorreu um erro inesperado. Por favor, tente novamente.' };
   }
 }
 

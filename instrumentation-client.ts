@@ -29,3 +29,8 @@ Sentry.init({
   // Filter out noisy errors typical in local dev or browser extensions
   ignoreErrors: ['top.GLOBALS', 'chrome-extension://', 'moz-extension://'],
 });
+
+/**
+ * Modern Sentry Instrumentation for Next.js 15 Navigation Tracing.
+ */
+export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;

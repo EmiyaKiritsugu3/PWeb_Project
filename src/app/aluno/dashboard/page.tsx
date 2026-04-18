@@ -79,15 +79,21 @@ export default async function AlunoDashboardPage() {
   });
 
   // 3. Serializar objetos e injetar DTOs Calculados (Evitar erros de Symbol/Date)
-  const serializedAluno = JSON.parse(JSON.stringify(aluno));
-  const xpToNextLevel = serializedAluno.nivel * 1500;
-  serializedAluno.xpToNextLevel = xpToNextLevel;
-  serializedAluno.progressPerc = Math.min(
-    Math.round((serializedAluno.exp / xpToNextLevel) * 100),
-    100
-  );
+  // [PID-SENTINEL] Defensive XP Serialization
+  const xp = aluno.exp ?? 0;
+  const nivel = aluno.nivel ?? 1;
+  const xpToNextLevel = Math.max(nivel * 1500, 1500); // Floor at 1500 to avoid div by zero
+  const progressPerc = Math.min(Math.round((xp / xpToNextLevel) * 100) || 0, 100);
 
-  const serializedTreino = JSON.parse(JSON.stringify(treinoDoDia));
+  const serializedAluno = {
+    ...JSON.parse(JSON.stringify(aluno)),
+    xpToNextLevel,
+    progressPerc,
+    exp: xp,
+    nivel: nivel,
+  };
+
+  const serializedTreino = treinoDoDia ? JSON.parse(JSON.stringify(treinoDoDia)) : null;
 
   return <AlunoDashboardClient aluno={serializedAluno} initialTreino={serializedTreino} />;
 }
