@@ -15,11 +15,15 @@ export async function loginAs(page: Page, role: TestRole): Promise<void> {
   await page.getByLabel(/email/i).fill(email);
   await page.getByLabel(/senha|password/i).fill(password);
   await page.getByRole('button', { name: /entrar|login/i }).click();
-  // Verify the server action issued the correct redirect (URL momentarily hits the dashboard)
-  await page.waitForURL('**/dashboard**', { timeout: 15_000 });
-  // Next.js server actions inline-render the redirect target using the POST request context,
-  // where the session cookie is in Set-Cookie (response) but NOT yet in Cookie (request).
-  // A hard navigation after the action completes ensures the browser sends the cookie properly.
+  // Wait for any navigation away from /login — the server action has completed
+  // and set the session cookie in Set-Cookie once the URL changes.
+  // Note: for ALUNO, the inline RSC render of /aluno/dashboard sees getUser()=null
+  // (cookie is in Set-Cookie, not yet in Cookie header) and immediately redirects
+  // to /aluno/login. So the URL never passes through **/dashboard** for ALUNO.
+  // We wait for any departure from /login instead, then do a hard navigation that
+  // sends the fresh session cookie in the Cookie request header.
+  await page.waitForURL((url) => url.pathname !== '/login', { timeout: 15_000 });
+  // Hard GET to the expected path — browser now sends the session cookie correctly.
   await page.goto(expectedPath);
   // Confirm the dashboard actually painted
   await expect(page.getByRole('heading').first()).toBeVisible({ timeout: 15_000 });
