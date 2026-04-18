@@ -15,7 +15,12 @@ export default defineConfig({
     baseURL: process.env.PLAYWRIGHT_BASE_URL ?? 'http://localhost:3333',
     trace: 'on-first-retry',
     actionTimeout: 10_000,
+    // 60s test + navigation timeout: Next.js dev mode compiles routes on first request.
+    // /aluno/dashboard has heavy imports (framer-motion, recharts) that take >15s to
+    // compile in CI on first access. 60s gives enough headroom for first-request compilation.
+    navigationTimeout: 60_000,
   },
+  timeout: 60_000,
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: {
     // Port 3333 is dedicated to E2E — avoids reusing the dev server on 3001
