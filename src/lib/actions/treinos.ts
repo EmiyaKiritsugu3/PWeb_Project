@@ -12,6 +12,7 @@ import {
   type HistoricoTreinoBase,
 } from '@/lib/definitions';
 import { createClient } from '@/utils/supabase/server';
+import * as Sentry from '@sentry/nextjs';
 
 export async function upsertTreinoAction(treinoData: TreinoBase | (TreinoBase & { id: string })) {
   try {
@@ -79,7 +80,7 @@ export async function upsertTreinoAction(treinoData: TreinoBase | (TreinoBase & 
     revalidatePath('/dashboard/treinos');
     return { success: true };
   } catch (error) {
-    console.error('Erro ao salvar treino:', error);
+    Sentry.captureException(error);
     if (error instanceof Error && error.name === 'ZodError') {
       return { success: false, error: 'Dados do treino inválidos' };
     }
@@ -103,7 +104,7 @@ export async function updateTreinoDayAction(treinoId: string, diaSemana: number 
     revalidatePath('/aluno/meus-treinos');
     return { success: true };
   } catch (error) {
-    console.error('Erro ao atualizar dia do treino:', error);
+    Sentry.captureException(error);
     return { success: false, error: (error as Error).message };
   }
 }
@@ -124,7 +125,7 @@ export async function deleteTreinoAction(treinoId: string) {
     revalidatePath('/dashboard/treinos');
     return { success: true };
   } catch (error) {
-    console.error('Erro ao excluir treino:', error);
+    Sentry.captureException(error);
     return { success: false, error: (error as Error).message };
   }
 }
@@ -264,7 +265,7 @@ export async function registrarHistoricoTreinoAction(
     revalidatePath('/aluno/meus-treinos');
     return { success: true, data: result };
   } catch (error) {
-    console.error('Erro ao registrar histórico de treino:', error);
+    Sentry.captureException(error);
     if (error instanceof Error && error.name === 'ZodError') {
       return { success: false, error: 'Dados do histórico inválidos' };
     }

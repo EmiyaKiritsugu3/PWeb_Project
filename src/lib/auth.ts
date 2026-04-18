@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/utils/supabase/server';
+import { Logger } from '@/lib/logger';
 import type { Role } from '@/lib/definitions';
 
 /**
@@ -26,7 +27,7 @@ export async function requireRole(allowedRole: Role): Promise<void> {
     .maybeSingle();
 
   if (error) {
-    console.error('[requireRole] DB error fetching role:', error.message);
+    Logger.error(`[requireRole] DB error fetching role: ${error.message}`, error);
     redirect('/dashboard');
   }
 

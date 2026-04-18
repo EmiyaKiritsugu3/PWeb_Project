@@ -2,6 +2,7 @@
 
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
+import * as Sentry from '@sentry/nextjs';
 
 export async function registrarPagamentoAction(alunoId: string) {
   try {
@@ -68,7 +69,7 @@ export async function registrarPagamentoAction(alunoId: string) {
     revalidatePath('/dashboard/financeiro');
     return { success: true };
   } catch (error) {
-    console.error('Erro ao registrar pagamento:', error);
+    Sentry.captureException(error);
     return { success: false, error: (error as Error).message };
   }
 }

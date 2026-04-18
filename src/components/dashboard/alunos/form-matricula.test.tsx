@@ -11,7 +11,6 @@ type MockSelect = MockChildren & { onValueChange: (v: string) => void; value?: s
 type MockSelectItem = MockChildren & { value: string };
 type MockButton = MockChildren & { onClick?: () => void; disabled?: boolean; variant?: string };
 type MockLabel = MockChildren & { htmlFor?: string };
-type MockPlaceholder = { placeholder?: string };
 
 vi.mock('@/components/ui/dialog', () => ({
   Dialog: ({ children, open }: MockDialog) => (open ? <div>{children}</div> : null),
@@ -32,8 +31,8 @@ vi.mock('@/components/ui/select', () => ({
       {children}
     </select>
   ),
-  SelectTrigger: ({ children }: MockChildren) => <div>{children}</div>,
-  SelectValue: ({ placeholder }: MockPlaceholder) => <span>{placeholder}</span>,
+  SelectTrigger: () => null,
+  SelectValue: () => null,
   SelectContent: ({ children }: MockChildren) => <>{children}</>,
   SelectItem: ({ children, value }: MockSelectItem) => <option value={value}>{children}</option>,
 }));

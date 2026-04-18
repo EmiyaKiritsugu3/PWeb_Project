@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Loader } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Logger } from '@/lib/logger';
 
 export default function DevPage() {
   const [models, setModels] = useState<string[]>([]);
@@ -27,7 +28,7 @@ export default function DevPage() {
         description: 'A listagem de modelos foi desabilitada para corrigir o build.',
       });
     } catch (error) {
-      console.error('Erro ao listar modelos:', error);
+      Logger.error('Erro ao listar modelos:', error);
       toast({
         title: 'Erro ao listar modelos',
         description: 'Esta funcionalidade está desabilitada.',

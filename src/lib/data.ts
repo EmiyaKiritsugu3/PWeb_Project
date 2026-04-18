@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs';
 import { prisma } from './prisma';
 import {
   AlunoSchema,
@@ -22,7 +23,7 @@ export async function getAlunos(): Promise<Aluno[]> {
     // AlunoSchema agora exige ID obrigatório, o que o Prisma retorna
     return alunos.map((aluno) => AlunoSchema.parse(aluno));
   } catch (error) {
-    console.error('Erro ao buscar alunos:', error);
+    Sentry.captureException(error);
     return [];
   }
 }
@@ -34,7 +35,7 @@ export async function getPlanos(): Promise<Plano[]> {
     });
     return planos.map((plano) => PlanoSchema.parse(plano));
   } catch (error) {
-    console.error('Erro ao buscar planos:', error);
+    Sentry.captureException(error);
     return [];
   }
 }
@@ -58,7 +59,7 @@ export async function getTreinos(alunoId?: string): Promise<Treino[]> {
       });
     });
   } catch (error) {
-    console.error('Erro ao buscar treinos:', error);
+    Sentry.captureException(error);
     return [];
   }
 }
@@ -87,7 +88,7 @@ export async function getAlunoDetalhes(id: string) {
       },
     });
   } catch (error) {
-    console.error('Erro ao buscar detalhes do aluno:', error);
+    Sentry.captureException(error);
     return null;
   }
 }
@@ -114,7 +115,7 @@ export async function getDashboardStats() {
         faturamentoMensal = faturamentoValidado.data.TotalRecebido;
       }
     } catch (_viewError) {
-      console.warn(
+      Sentry.captureMessage(
         'Aviso: Falha ao ler V_FaturamentoMensal. O banco pode estar vazio ou a view ausente.'
       );
     }
@@ -134,7 +135,7 @@ export async function getDashboardStats() {
       crescimentoAnual,
     });
   } catch (error) {
-    console.error('Erro crítico ao buscar estatísticas do Dashboard:', error);
+    Sentry.captureException(error);
     return DashboardStatsSchema.parse({}); // Retorna valores padrão seguros do schema
   }
 }
