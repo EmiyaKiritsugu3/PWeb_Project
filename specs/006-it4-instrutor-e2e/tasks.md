@@ -16,7 +16,7 @@
 
 **Purpose**: Confirm clean baseline before adding new E2E spec.
 
-- [ ] T001 Verify baseline quality gates pass — run `npm run lint && npm run typecheck && npm test` and confirm 0 errors / 22/22 tests
+- [x] T001 Verify baseline quality gates pass — run `npm run lint && npm run typecheck && npm test` and confirm 0 errors / 22/22 tests
 
 ---
 
@@ -24,7 +24,7 @@
 
 **Purpose**: Confirm the seeded ALUNO's `nomeCompleto` so selectors in the E2E spec use the correct name.
 
-- [ ] T002 Confirm ALUNO seed name — read `prisma/seed-e2e.ts` and extract the `nomeCompleto` of the ALUNO user (`id: 00000000-0000-0000-0000-000000000004`) to use in Playwright `getByRole('option', { name: ... })`
+- [x] T002 Confirm ALUNO seed name — read `prisma/seed-e2e.ts` and extract the `nomeCompleto` of the ALUNO user (`id: 00000000-0000-0000-0000-000000000004`) to use in Playwright `getByRole('option', { name: ... })`
 
 ---
 
@@ -34,7 +34,7 @@
 
 **Independent test criteria**: `npm run e2e -- --grep "INSTRUTOR"` passes with 1 new test (18/18 total).
 
-- [ ] T003 [US1] Write E2E spec in `tests/e2e/specs/instrutor-workflow.spec.ts` — implement the full cross-session flow per `quickstart.md`:
+- [x] T003 [US1] Write E2E spec in `tests/e2e/specs/instrutor-workflow.spec.ts` — implement the full cross-session flow per `quickstart.md`:
   1. `loginAs(page, 'INSTRUTOR')` → navigate to `/dashboard/treinos`
   2. Click Shadcn Select trigger (`getByRole('combobox')`) → wait for option → click ALUNO by name
   3. Fill `objetivo` input with unique value (e.g. `Hipertrofia E2E It4`)
@@ -45,7 +45,7 @@
   8. Assert card containing "Hipertrofia E2E It4" is visible
   9. Assert `page.getByText('Do Personal')` is visible within that card
 
-- [ ] T004 [P] [US1] Update `tests/e2e/CRITICAL-PATHS.md` — add row 18 for "INSTRUTOR assigns workout → ALUNO sees Do Personal badge"; move from Pending table to Coverage Table; update total from 17 → 18
+- [x] T004 [P] [US1] Update `tests/e2e/CRITICAL-PATHS.md` — add row 18 for "INSTRUTOR assigns workout → ALUNO sees Do Personal badge"; move from Pending table to Coverage Table; update total from 17 → 18
 
 ---
 
@@ -53,10 +53,10 @@
 
 **Purpose**: Confirm all gates pass with the new test included.
 
-- [ ] T005 Run full E2E suite locally — `npm run supabase:start && npm run seed:e2e && npm run e2e` — confirm 18/18 pass; fix any selector failures using patterns from `tests/e2e/CRITICAL-PATHS.md` (Lessons Learned)
-- [ ] T006 Run quality gates — `npm run lint && npm run typecheck && npm test` — confirm 0 errors / 22/22 unit tests still pass
-- [ ] T007 [P] Update `docs/CURRENT-STATE.md` — bump E2E count from 17 → 18, add It4 progress table, update version header
-- [ ] T008 [P] Update `CHANGELOG.md` — add `[Unreleased]` section for It4 with Added entry for `instrutor-workflow.spec.ts`
+- [x] T005 Run full E2E suite locally — `npm run supabase:start && npm run seed:e2e && npm run e2e` — confirm 18/18 pass; fix any selector failures using patterns from `tests/e2e/CRITICAL-PATHS.md` (Lessons Learned)
+- [x] T006 Run quality gates — `npm run lint && npm run typecheck && npm test` — confirm 0 errors / 22/22 unit tests still pass
+- [x] T007 [P] Update `docs/CURRENT-STATE.md` — bump E2E count from 17 → 18, add It4 progress table, update version header
+- [x] T008 [P] Update `CHANGELOG.md` — add `[Unreleased]` section for It4 with Added entry for `instrutor-workflow.spec.ts`
 
 ---
 

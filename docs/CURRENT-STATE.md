@@ -6,30 +6,30 @@
 
 ## What Works Today
 
-| Feature                                     | Status     | Notes                                                                    |
-| ------------------------------------------- | ---------- | ------------------------------------------------------------------------ |
-| Admin login                                 | ✅ Working | Supabase Auth SSR                                                        |
-| Student login (Portal do Aluno)             | ✅ Working | Separate session                                                         |
-| Admin dashboard                             | ✅ Working | GERENTE + RECEPCIONISTA                                                  |
-| Financial routes (`/financeiro`, `/planos`) | ✅ Working | GERENTE-only gate                                                        |
-| Student workout view                        | ✅ Working | `meus-treinos`                                                           |
-| AI workout generator                        | ✅ Working | Genkit + Gemini                                                          |
-| Student enrollment                          | ✅ Working | Admin creates aluno                                                      |
-| Gamification (XP, streaks)                  | ✅ Working | Hook `use-workout-tracker`                                               |
-| Prisma migrations                           | ✅ Tracked | `prisma/migrations/`                                                     |
-| ESLint quality gate                         | ✅ Done    | 0 errors — `any` + unused vars                                           |
-| TypeScript typecheck                        | ✅ Clean   | 0 errors (strict mode)                                                   |
-| AI workout feedback (US06)                  | ✅ Done    | `WorkoutSession.tsx` — Genkit call + try/catch fallback + feedback card  |
-| Unit tests                                  | ✅ Passing | 22/22 (Vitest)                                                           |
-| Ops documentation                           | ✅ Done    | Runbook, SLOs, threat model                                              |
-| Process documentation                       | ✅ Done    | RFC + Postmortem templates                                               |
-| Local E2E stack                             | ✅ Done    | `supabase start` (Docker)                                                |
-| E2E seed script                             | ✅ Done    | `prisma/seed-e2e.ts` (5 fixtures: 4 users + 1 treino with 2 exercícios)  |
-| Playwright E2E suite                        | ✅ Done    | 17 scenarios (15 previous + workout session + enrollment)                |
-| CI E2E job                                  | ✅ Green   | 17/17 passing in CI (PR #71 merged); CodeRabbit fixes in PR #72          |
-| Sentry error tracking                       | ✅ Active  | DSN + auth token set in Vercel; source maps (92) uploaded on every build |
-| Structured logging                          | ✅ Done    | `src/lib/logger.ts` (Logger wrapper, Sentry-aware)                       |
-| Dependencies                                | ✅ Updated | All patch/minor bumped via PR #70; lockfile clean                        |
+| Feature                                     | Status     | Notes                                                                                           |
+| ------------------------------------------- | ---------- | ----------------------------------------------------------------------------------------------- |
+| Admin login                                 | ✅ Working | Supabase Auth SSR                                                                               |
+| Student login (Portal do Aluno)             | ✅ Working | Separate session                                                                                |
+| Admin dashboard                             | ✅ Working | GERENTE + RECEPCIONISTA                                                                         |
+| Financial routes (`/financeiro`, `/planos`) | ✅ Working | GERENTE-only gate                                                                               |
+| Student workout view                        | ✅ Working | `meus-treinos`                                                                                  |
+| AI workout generator                        | ✅ Working | Genkit + Gemini                                                                                 |
+| Student enrollment                          | ✅ Working | Admin creates aluno                                                                             |
+| Gamification (XP, streaks)                  | ✅ Working | Hook `use-workout-tracker`                                                                      |
+| Prisma migrations                           | ✅ Tracked | `prisma/migrations/`                                                                            |
+| ESLint quality gate                         | ✅ Done    | 0 errors — `any` + unused vars                                                                  |
+| TypeScript typecheck                        | ✅ Clean   | 0 errors (strict mode)                                                                          |
+| AI workout feedback (US06)                  | ✅ Done    | `WorkoutSession.tsx` — Genkit call + try/catch fallback + feedback card                         |
+| Unit tests                                  | ✅ Passing | 22/22 (Vitest)                                                                                  |
+| Ops documentation                           | ✅ Done    | Runbook, SLOs, threat model                                                                     |
+| Process documentation                       | ✅ Done    | RFC + Postmortem templates                                                                      |
+| Local E2E stack                             | ✅ Done    | `supabase start` (Docker)                                                                       |
+| E2E seed script                             | ✅ Done    | `prisma/seed-e2e.ts` (5 fixtures: 4 users + 1 treino with 2 exercícios)                         |
+| Playwright E2E suite                        | ✅ Done    | 18 scenarios (+ instrutor-workflow: INSTRUTOR assigns workout → ALUNO sees "Do Personal" badge) |
+| CI E2E job                                  | ✅ Green   | 18/18 passing locally (It4); 17/17 in last CI (PR #72); PR pending                              |
+| Sentry error tracking                       | ✅ Active  | DSN + auth token set in Vercel; source maps (92) uploaded on every build                        |
+| Structured logging                          | ✅ Done    | `src/lib/logger.ts` (Logger wrapper, Sentry-aware)                                              |
+| Dependencies                                | ✅ Updated | All patch/minor bumped via PR #70; lockfile clean                                               |
 
 ## What Is Incomplete
 
