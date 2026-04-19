@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased] — 2026-04-19 — CodeRabbit follow-up (PR #72)
+
+### Fixed
+
+- **`WorkoutSession.tsx`**: add `isFinishing` guard to `handleFinalizarTreino` — prevents duplicate saves/XP on rapid double-click; button disabled while in-flight.
+- **`workout-session.spec.ts`**: scope `iniciarButton` to `div.rounded-lg` row filtered by `'Treino E2E'`; add `MAX_EXERCISES=20` guard to `while` loop for deterministic failure on regression.
+- **`workout-feedback-flow.test.ts`**: type-annotate fallback shape as `WorkoutFeedbackOutput` so compiler validates the contract.
+
+---
+
 ## [Unreleased] — 2026-04-18
 
 ### Added

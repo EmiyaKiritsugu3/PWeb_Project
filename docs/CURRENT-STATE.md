@@ -1,8 +1,8 @@
 # Current State — Five Star Academy
 
-**Last Updated**: 2026-04-18
-**Branch**: `feat/005-it3-ai-workouts`
-**Version**: 0.6.0 (It3 complete — all quality gates green, 17/17 E2E passing)
+**Last Updated**: 2026-04-19
+**Branch**: `main` (v0.6.0 tagged)
+**Version**: 0.6.0 (It3 complete — PR #71 merged, CodeRabbit fixes in PR #72)
 
 ## What Works Today
 
@@ -26,7 +26,7 @@
 | Local E2E stack                             | ✅ Done    | `supabase start` (Docker)                                                |
 | E2E seed script                             | ✅ Done    | `prisma/seed-e2e.ts` (5 fixtures: 4 users + 1 treino with 2 exercícios)  |
 | Playwright E2E suite                        | ✅ Done    | 17 scenarios (15 previous + workout session + enrollment)                |
-| CI E2E job                                  | ✅ Green   | 15/15 passing in CI (PR #69 + #70); 17/17 pending merge of It3           |
+| CI E2E job                                  | ✅ Green   | 17/17 passing in CI (PR #71 merged); CodeRabbit fixes in PR #72          |
 | Sentry error tracking                       | ✅ Active  | DSN + auth token set in Vercel; source maps (92) uploaded on every build |
 | Structured logging                          | ✅ Done    | `src/lib/logger.ts` (Logger wrapper, Sentry-aware)                       |
 | Dependencies                                | ✅ Updated | All patch/minor bumped via PR #70; lockfile clean                        |
