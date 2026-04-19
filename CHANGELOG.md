@@ -5,7 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] — 2026-04-18 — It3: AI Workout Feedback & E2E Expansion
+## [Unreleased] — 2026-04-19 — CodeRabbit follow-up (PR #72)
+
+### Fixed
+
+- **`WorkoutSession.tsx`**: add `isFinishing` guard to `handleFinalizarTreino` — prevents duplicate saves/XP on rapid double-click; button disabled while in-flight.
+- **`workout-session.spec.ts`**: scope `iniciarButton` to `div.rounded-lg` row filtered by `'Treino E2E'`; add `MAX_EXERCISES=20` guard to `while` loop for deterministic failure on regression.
+- **`workout-feedback-flow.test.ts`**: type-annotate fallback shape as `WorkoutFeedbackOutput` so compiler validates the contract.
+
+---
+
+## [Unreleased] — 2026-04-18
 
 ### Added
 
@@ -24,12 +34,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **E2E strict mode** (`student-portal.spec.ts`): `getByRole('heading')` now targets `{ name: 'Meus Treinos' }` — the seed treino added a second `<h3>` heading, breaking the previously unambiguous selector.
 - **E2E Tailwind selector** (`workout-session.spec.ts`): `.grid .grid-cols-4 button` (space = descendant) replaced with `div.grid-cols-4 button` — Tailwind applies both `grid` and `grid-cols-4` to the **same** element, so the descendant combinator never matched.
 - **E2E dialog scoping** (`enrollment.spec.ts`): submit button now scoped to `page.getByRole('dialog')` to avoid fragile `.last()` ordering among all matching buttons on the page.
-
----
-
-## [Unreleased] — 2026-04-18 — Observability: Sentry Production Wiring
-
-### Added
 
 - **`NEXT_PUBLIC_SENTRY_DSN`**: configured in Vercel Production via CLI — Sentry error tracking now active in production.
 - **`SENTRY_AUTH_TOKEN`**: configured in Vercel Production — source maps (92 files) uploaded on every build, enabling readable stack traces in Sentry.
