@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import type { WorkoutFeedbackOutput } from '@/ai/flows/workout-feedback-flow';
 
 vi.mock('@/ai/genkit', () => ({
   ai: {
@@ -71,7 +72,7 @@ describe('generateWorkoutFeedback', () => {
 // Integration contract: WorkoutSession must handle the rejection gracefully
 describe('WorkoutSession feedback contract', () => {
   it('fallback feedback shape is valid', () => {
-    const fallback = {
+    const fallback: WorkoutFeedbackOutput = {
       title: 'Treino Concluído!',
       message: 'Continue assim!',
     };
