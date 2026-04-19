@@ -9,8 +9,9 @@ test.describe('Workout session — completion flow', () => {
     await page.goto('/aluno/meus-treinos');
     await expect(page).toHaveURL(/\/aluno\/meus-treinos/);
 
-    // Start the seeded "Treino E2E" workout
-    const iniciarButton = page.getByRole('button', { name: /iniciar/i }).first();
+    // Start the seeded "Treino E2E" workout — scope to row containing that name
+    const treinoRow = page.locator('div.rounded-lg').filter({ hasText: 'Treino E2E' });
+    const iniciarButton = treinoRow.getByRole('button', { name: /iniciar/i });
     await expect(iniciarButton).toBeVisible({ timeout: 15_000 });
     await iniciarButton.click();
 
@@ -24,7 +25,11 @@ test.describe('Workout session — completion flow', () => {
     const proximoButton = page.getByRole('button', { name: /próximo/i });
     const finalizarButton = page.getByRole('button', { name: /finalizar treino/i });
 
+    const MAX_EXERCISES = 20;
+    let steps = 0;
     while (await proximoButton.isVisible()) {
+      if (++steps > MAX_EXERCISES)
+        throw new Error('Workout navigation loop exceeded max exercises — UI regression?');
       await proximoButton.click();
       // Mark a series on the next exercise too
       const nextCheckButton = page.locator('div.grid-cols-4').getByRole('button').first();

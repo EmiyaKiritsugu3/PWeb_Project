@@ -55,6 +55,7 @@ export function WorkoutSession({ treino, onFinish, onCancel }: WorkoutSessionPro
   const [completed, setCompleted] = useState(false);
   const [feedback, setFeedback] = useState<WorkoutFeedbackOutput | null>(null);
   const [isLoadingFeedback, setIsLoadingFeedback] = useState(false);
+  const [isFinishing, setIsFinishing] = useState(false);
 
   // Hook para o cronômetro de descanso
   const { seconds, minutes, isRunning, restart } = useTimer({ expiryTimestamp: new Date() });
@@ -132,6 +133,8 @@ export function WorkoutSession({ treino, onFinish, onCancel }: WorkoutSessionPro
   };
 
   const handleFinalizarTreino = async () => {
+    if (isFinishing) return;
+    setIsFinishing(true);
     const endTime = new Date();
     const duracaoMinutos = Math.round((endTime.getTime() - startTime.getTime()) / 60000);
 
@@ -165,6 +168,7 @@ export function WorkoutSession({ treino, onFinish, onCancel }: WorkoutSessionPro
       setFeedback({ title: 'Treino Concluído!', message: 'Continue assim!' });
     } finally {
       setIsLoadingFeedback(false);
+      setIsFinishing(false);
     }
   };
 
@@ -275,7 +279,11 @@ export function WorkoutSession({ treino, onFinish, onCancel }: WorkoutSessionPro
         </Button>
 
         {exercicioAtualIndex === exerciciosEmSessao.length - 1 ? (
-          <Button onClick={handleFinalizarTreino} className="bg-green-600 hover:bg-green-700">
+          <Button
+            onClick={handleFinalizarTreino}
+            className="bg-green-600 hover:bg-green-700"
+            disabled={isFinishing}
+          >
             Finalizar Treino
           </Button>
         ) : (

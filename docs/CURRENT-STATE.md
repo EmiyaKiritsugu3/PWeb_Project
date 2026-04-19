@@ -2,7 +2,7 @@
 
 **Last Updated**: 2026-04-18
 **Branch**: `feat/005-it3-ai-workouts`
-**Version**: 0.6.0-dev (It3 in progress — implementation complete, E2E pending final run)
+**Version**: 0.6.0 (It3 complete — all quality gates green, 17/17 E2E passing)
 
 ## What Works Today
 
