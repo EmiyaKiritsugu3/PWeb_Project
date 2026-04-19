@@ -20,6 +20,8 @@ test.describe('Student portal — critical path', () => {
     await loginAs(page, 'ALUNO');
     await page.goto('/aluno/meus-treinos');
     await expect(page).toHaveURL(/\/aluno\/meus-treinos/);
-    await expect(page.getByRole('heading')).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByRole('heading', { name: 'Meus Treinos' })).toBeVisible({
+      timeout: 15_000,
+    });
   });
 });

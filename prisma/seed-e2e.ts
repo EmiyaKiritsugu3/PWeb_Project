@@ -21,10 +21,13 @@ const supabase = createClient(supabaseUrl, serviceRoleKey, {
   auth: { autoRefreshToken: false, persistSession: false },
 });
 
-const pool = new Pool({
-  connectionString:
-    process.env.DATABASE_URL ?? 'postgresql://postgres:postgres@127.0.0.1:54322/postgres',
-});
+if (!process.env.DATABASE_URL) {
+  throw new Error(
+    'DATABASE_URL env var is required. Run: npm run supabase:start && npm run env:pull'
+  );
+}
+
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- PrismaPg adapter has a type mismatch with pg@8 Pool; upstream issue
 const adapter = new PrismaPg(pool as any);
 const prisma = new PrismaClient({ adapter });
@@ -127,6 +130,27 @@ async function seed(): Promise<void> {
     },
   });
   console.log(`  Aluno upserted: ${E2E_USERS.aluno.nomeCompleto}`);
+
+  // Seed 1 Treino for ALUNO (required for workout-session E2E)
+  const treinoE2eId = '00000000-0000-0000-0000-000000000010';
+  await prisma.treino.upsert({
+    where: { id: treinoE2eId },
+    update: {},
+    create: {
+      id: treinoE2eId,
+      alunoId: E2E_USERS.aluno.id,
+      instrutorId: E2E_USERS.instrutor.id,
+      objetivo: 'Treino E2E',
+      diaSemana: 1,
+      Exercicios: {
+        create: [
+          { nomeExercicio: 'Supino Reto', series: 3, repeticoes: '10-12', observacoes: '' },
+          { nomeExercicio: 'Crucifixo', series: 3, repeticoes: '12-15', observacoes: '' },
+        ],
+      },
+    },
+  });
+  console.log('  Treino E2E upserted: Treino E2E (2 exercícios)');
 
   console.log('E2E seed complete.');
 }
