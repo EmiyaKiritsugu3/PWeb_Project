@@ -5,6 +5,37 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased] — 2026-04-18 — It3: AI Workout Feedback & E2E Expansion
+
+### Added
+
+- **US06 — AI Workout Feedback** (`src/components/WorkoutSession.tsx`): after completing a workout, the component calls `generateWorkoutFeedback` (Genkit + Gemini 2.5 Flash) inside a `try/catch`. On success, renders a feedback card (`data-testid="workout-feedback-card"`) with an AI-generated title and motivational message. On failure, falls back to `{ title: 'Treino Concluído!', message: 'Continue assim!' }`. The workout save (`onFinish`) is not gated on AI availability — Constitution Principle IV satisfied.
+- **E2E: workout session completion** (`tests/e2e/specs/workout-session.spec.ts`): ALUNO logs in, starts the seeded "Treino E2E", marks series done, clicks "Finalizar Treino", waits for `[data-testid="workout-feedback-card"]`, then navigates to `/aluno/dashboard` and asserts `[data-testid="xp-display"]` is visible.
+- **E2E: student enrollment** (`tests/e2e/specs/enrollment.spec.ts`): GERENTE opens the enrollment dialog, fills name/email/CPF (timestamp-based to avoid unique constraint collisions), submits, and asserts the new aluno appears in the list.
+- **Unit tests** (`src/ai/flows/workout-feedback-flow.test.ts`): 4 tests covering AI feedback resolution, rejection propagation, empty-exercise fallback, and the fallback shape contract. 22/22 unit tests passing.
+- **Seed extension** (`prisma/seed-e2e.ts`): seeded 1 `Treino` record (`id: 00000000-0000-0000-0000-000000000010`) with 2 `Exercicio` rows (Supino Reto 3×10-12, Crucifixo 3×12-15) linked to the ALUNO + INSTRUTOR fixed UUIDs.
+- **`data-testid="xp-display"`**: added to XP paragraph in `dashboard-client.tsx` for stable E2E assertion.
+- **`CRITICAL-PATHS.md`**: updated from 15 → 17 covered scenarios; moved "Workout session completion" and "Student enrollment flow" from Pending to Coverage Table.
+
+### Fixed
+
+- **`meus-treinos-client.tsx`**: removed `setTreinoEmSessao(null)` from `handleFinishWorkout` — it was unmounting `WorkoutSession` before the feedback screen could render. Session now stays mounted until the user clicks "Fechar Treino" (`onCancel`).
+- **`seed-e2e.ts` CWE-798**: removed hardcoded `postgresql://postgres:postgres@...` fallback; replaced with explicit `if (!process.env.DATABASE_URL) throw new Error(...)` guard.
+- **E2E strict mode** (`student-portal.spec.ts`): `getByRole('heading')` now targets `{ name: 'Meus Treinos' }` — the seed treino added a second `<h3>` heading, breaking the previously unambiguous selector.
+- **E2E Tailwind selector** (`workout-session.spec.ts`): `.grid .grid-cols-4 button` (space = descendant) replaced with `div.grid-cols-4 button` — Tailwind applies both `grid` and `grid-cols-4` to the **same** element, so the descendant combinator never matched.
+- **E2E dialog scoping** (`enrollment.spec.ts`): submit button now scoped to `page.getByRole('dialog')` to avoid fragile `.last()` ordering among all matching buttons on the page.
+
+---
+
+## [Unreleased] — 2026-04-18 — Observability: Sentry Production Wiring
+
+### Added
+
+- **`NEXT_PUBLIC_SENTRY_DSN`**: configured in Vercel Production via CLI — Sentry error tracking now active in production.
+- **`SENTRY_AUTH_TOKEN`**: configured in Vercel Production — source maps (92 files) uploaded on every build, enabling readable stack traces in Sentry.
+
+---
+
 ## [0.5.0] — 2026-04-18 — It2 Complete: CI Green, Dependencies Updated, E2E Stabilized
 
 ### Added

@@ -2,7 +2,7 @@
 
 **Suite**: Playwright — `tests/e2e/specs/`
 **Browser**: Chromium (headless)
-**Total scenarios**: 15
+**Total scenarios**: 17
 
 ## Coverage Table
 
@@ -23,16 +23,16 @@
 | 13  | `student-portal.spec.ts`   | ALUNO accesses /aluno/dashboard                     | ✅ Covered |
 | 14  | `student-portal.spec.ts`   | ALUNO blocked from admin /dashboard                 | ✅ Covered |
 | 15  | `student-portal.spec.ts`   | ALUNO accesses /aluno/meus-treinos                  | ✅ Covered |
+| 16  | `workout-session.spec.ts`  | ALUNO completes workout → AI feedback card shown    | ✅ Covered |
+| 17  | `enrollment.spec.ts`       | GERENTE creates aluno → appears in list             | ✅ Covered |
 
 ## Pending / Future Scenarios
 
-| Scenario                                                 | Priority | Notes                                   |
-| -------------------------------------------------------- | -------- | --------------------------------------- |
-| Workout session completion (start → finish → XP awarded) | P1       | Requires AI mock or skip AI step        |
-| Student enrollment flow (admin creates aluno)            | P1       | Happy path + validation errors          |
-| INSTRUTOR assigns workout to student                     | P2       | Instrutor role E2E not yet covered      |
-| Payment status update (inadimplente → ativo)             | P2       | Financial write path                    |
-| Session expiry → redirect to login                       | P2       | Requires time manipulation or short JWT |
+| Scenario                                     | Priority | Notes                                   |
+| -------------------------------------------- | -------- | --------------------------------------- |
+| INSTRUTOR assigns workout to student         | P2       | Instrutor role E2E not yet covered      |
+| Payment status update (inadimplente → ativo) | P2       | Financial write path                    |
+| Session expiry → redirect to login           | P2       | Requires time manipulation or short JWT |
 
 ## Running Locally
 
@@ -40,7 +40,7 @@
 # Prerequisites: Docker running
 npm run supabase:start   # start local Supabase (ports 54321/54322)
 npm run seed:e2e         # create 4 deterministic test users
-npm run e2e              # run all 15 scenarios
+npm run e2e              # run all 17 scenarios
 npm run supabase:stop    # cleanup
 ```
 

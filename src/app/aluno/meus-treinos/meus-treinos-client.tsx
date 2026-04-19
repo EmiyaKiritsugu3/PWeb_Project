@@ -315,7 +315,8 @@ export default function MeusTreinosClient({
           description: 'Seu progresso e XP foram salvos!',
           className: 'bg-green-600 text-white',
         });
-        setTreinoEmSessao(null);
+        // Do NOT close the session here — WorkoutSession transitions to its own
+        // completion screen and fetches AI feedback. onCancel closes it.
       } else {
         throw new Error(res.error);
       }

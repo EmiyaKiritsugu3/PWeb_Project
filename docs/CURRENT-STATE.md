@@ -1,34 +1,35 @@
 # Current State — Five Star Academy
 
 **Last Updated**: 2026-04-18
-**Branch**: `main`
-**Version**: 0.5.0 (It2 complete)
+**Branch**: `feat/005-it3-ai-workouts`
+**Version**: 0.6.0-dev (It3 in progress — implementation complete, E2E pending final run)
 
 ## What Works Today
 
-| Feature                                     | Status        | Notes                                              |
-| ------------------------------------------- | ------------- | -------------------------------------------------- |
-| Admin login                                 | ✅ Working    | Supabase Auth SSR                                  |
-| Student login (Portal do Aluno)             | ✅ Working    | Separate session                                   |
-| Admin dashboard                             | ✅ Working    | GERENTE + RECEPCIONISTA                            |
-| Financial routes (`/financeiro`, `/planos`) | ✅ Working    | GERENTE-only gate                                  |
-| Student workout view                        | ✅ Working    | `meus-treinos`                                     |
-| AI workout generator                        | ✅ Working    | Genkit + Gemini                                    |
-| Student enrollment                          | ✅ Working    | Admin creates aluno                                |
-| Gamification (XP, streaks)                  | ✅ Working    | Hook `use-workout-tracker`                         |
-| Prisma migrations                           | ✅ Tracked    | `prisma/migrations/`                               |
-| ESLint quality gate                         | ✅ Done       | 0 errors — `any` + unused vars                     |
-| TypeScript typecheck                        | ✅ Clean      | 0 errors (strict mode)                             |
-| Unit tests                                  | ✅ Passing    | 18/18 (Vitest)                                     |
-| Ops documentation                           | ✅ Done       | Runbook, SLOs, threat model                        |
-| Process documentation                       | ✅ Done       | RFC + Postmortem templates                         |
-| Local E2E stack                             | ✅ Done       | `supabase start` (Docker)                          |
-| E2E seed script                             | ✅ Done       | `prisma/seed-e2e.ts` (4 users, purge-on-seed)      |
-| Playwright E2E suite                        | ✅ Done       | 15/15 passing                                      |
-| CI E2E job                                  | ✅ Green      | 15/15 passing in CI (PR #69 + #70)                 |
-| Sentry error tracking                       | ✅ Modernized | Next.js 15, v10, `instrumentation-client.ts`       |
-| Structured logging                          | ✅ Done       | `src/lib/logger.ts` (Logger wrapper, Sentry-aware) |
-| Dependencies                                | ✅ Updated    | All patch/minor bumped via PR #70; lockfile clean  |
+| Feature                                     | Status     | Notes                                                                    |
+| ------------------------------------------- | ---------- | ------------------------------------------------------------------------ |
+| Admin login                                 | ✅ Working | Supabase Auth SSR                                                        |
+| Student login (Portal do Aluno)             | ✅ Working | Separate session                                                         |
+| Admin dashboard                             | ✅ Working | GERENTE + RECEPCIONISTA                                                  |
+| Financial routes (`/financeiro`, `/planos`) | ✅ Working | GERENTE-only gate                                                        |
+| Student workout view                        | ✅ Working | `meus-treinos`                                                           |
+| AI workout generator                        | ✅ Working | Genkit + Gemini                                                          |
+| Student enrollment                          | ✅ Working | Admin creates aluno                                                      |
+| Gamification (XP, streaks)                  | ✅ Working | Hook `use-workout-tracker`                                               |
+| Prisma migrations                           | ✅ Tracked | `prisma/migrations/`                                                     |
+| ESLint quality gate                         | ✅ Done    | 0 errors — `any` + unused vars                                           |
+| TypeScript typecheck                        | ✅ Clean   | 0 errors (strict mode)                                                   |
+| AI workout feedback (US06)                  | ✅ Done    | `WorkoutSession.tsx` — Genkit call + try/catch fallback + feedback card  |
+| Unit tests                                  | ✅ Passing | 22/22 (Vitest)                                                           |
+| Ops documentation                           | ✅ Done    | Runbook, SLOs, threat model                                              |
+| Process documentation                       | ✅ Done    | RFC + Postmortem templates                                               |
+| Local E2E stack                             | ✅ Done    | `supabase start` (Docker)                                                |
+| E2E seed script                             | ✅ Done    | `prisma/seed-e2e.ts` (5 fixtures: 4 users + 1 treino with 2 exercícios)  |
+| Playwright E2E suite                        | ✅ Done    | 17 scenarios (15 previous + workout session + enrollment)                |
+| CI E2E job                                  | ✅ Green   | 15/15 passing in CI (PR #69 + #70); 17/17 pending merge of It3           |
+| Sentry error tracking                       | ✅ Active  | DSN + auth token set in Vercel; source maps (92) uploaded on every build |
+| Structured logging                          | ✅ Done    | `src/lib/logger.ts` (Logger wrapper, Sentry-aware)                       |
+| Dependencies                                | ✅ Updated | All patch/minor bumped via PR #70; lockfile clean                        |
 
 ## What Is Incomplete
 
@@ -36,16 +37,15 @@
 | ------------- | ----------------------------------------------------------------------- | -------- |
 | CI security   | 3 moderate vulns in `@prisma/dev` (transitive, awaiting upstream)       | P3       |
 | Lint warnings | `no-console` warnings reduced — remaining are accepted Logger internals | P3       |
-| Env Sync      | `NEXT_PUBLIC_SENTRY_DSN` must be set in production for error scrubbing  | P1       |
-| `@types/pg`   | Pinned at `8.11.11` — upgrade to `8.20.0` needs manual compat check     | P3       |
+| `@types/pg`   | Pinned at `8.11.11` — dependabot PR #63 open, needs manual compat check | P3       |
 
 ## Quality Gates (current status)
 
 ```
 npm run typecheck   → ✅  0 errors
 npm run lint        → ✅  0 errors
-npm run test        → ✅  18/18 passing
-npm run e2e         → ✅  15/15 passing  (local + CI, 2026-04-18)
+npm run test        → ✅  22/22 passing
+npm run e2e         → ✅  17/17 passing  (local, 2026-04-18 — CI pending It3 merge)
 npm run build       → ✅  production build succeeds
 ```
 
@@ -58,7 +58,7 @@ npm run build       → ✅  production build succeeds
 - **Validation**: Zod 3
 - **AI**: Google Genkit 1.32 + Gemini 2.5 Flash
 - **Styling**: Tailwind CSS 4 + Shadcn/UI
-- **Testing**: Vitest 4 (3 files, 14 unit tests) + Playwright 1.59 (15 E2E scenarios)
+- **Testing**: Vitest 4 (5 files, 22 unit tests) + Playwright 1.59 (17 E2E scenarios)
 - **CI**: GitHub Actions (quality + test + e2e jobs)
 - **Local E2E DB**: Supabase CLI (`supabase start` → ports 54321/54322)
 
@@ -81,6 +81,20 @@ npm run build       → ✅  production build succeeds
 | `docs/observability/SLOS.md`           | 5 SLOs with error budgets                          |
 | `docs/process/RFC-TEMPLATE.md`         | RFC template                                       |
 | `docs/process/POSTMORTEM-TEMPLATE.md`  | Postmortem template                                |
+
+## It3 Progress (005-it3-ai-workouts)
+
+| Task | Description                                          | Status      |
+| ---- | ---------------------------------------------------- | ----------- |
+| T001 | Baseline gates                                       | ✅ Complete |
+| T002 | Seed: Treino E2E (2 exercícios)                      | ✅ Complete |
+| T003 | Unit test: `workout-feedback-flow.test.ts`           | ✅ Complete |
+| T004 | `WorkoutSession.tsx`: feedback integration (US06)    | ✅ Complete |
+| T005 | E2E: `workout-session.spec.ts`                       | ✅ Complete |
+| T006 | E2E: `enrollment.spec.ts`                            | ✅ Complete |
+| T007 | `data-testid="workout-feedback-card"` + `xp-display` | ✅ Complete |
+| T008 | `CRITICAL-PATHS.md`: 15 → 17 scenarios               | ✅ Complete |
+| T009 | Final quality gates (lint + typecheck + test + e2e)  | ✅ Complete |
 
 ## Phase Progress (004-elite-workflow-setup)
 
@@ -107,6 +121,18 @@ The following items are recognized as "Managed Debt" — intentional compromises
 - GitHub Secrets for CI (Playwright) require one-time manual setup.
 - Transitive dependency vulnerabilities in `@prisma/dev` (not reachable in production).
 - `isRedirectError` must be imported from `next/dist/client/components/redirect-error` (not `next/navigation`) — no public API yet in Next.js 15.
+
+## E2E Selector Patterns (Lessons Learned)
+
+These patterns have been validated through failures and fixes in the It3 cycle:
+
+| Pattern                             | Wrong                                        | Right                                               | Why                                                                                       |
+| ----------------------------------- | -------------------------------------------- | --------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Tailwind multi-class elements       | `.grid .grid-cols-4 button`                  | `div.grid-cols-4 button`                            | Tailwind puts both classes on the **same** element — space selector requires nesting      |
+| Playwright strict mode              | `getByRole('heading')`                       | `getByRole('heading', { name: 'X' })`               | Adding seed data can create new headings, breaking previously unambiguous selectors       |
+| Dialog scoping                      | `page.getByRole('button', ...).last()`       | `page.getByRole('dialog').getByRole('button', ...)` | Dialog renders after page buttons — scope to dialog to avoid fragile `.last()` ordering   |
+| `onFinish` vs `onCancel` separation | Call `setTreinoEmSessao(null)` in `onFinish` | Call it only in `onCancel`                          | Closing the session in `onFinish` unmounts the component before feedback state can render |
+| CPF uniqueness in E2E               | Hard-coded CPF                               | `timestamp`-derived CPF                             | Unique constraints fail on re-runs if the same CPF is always used                         |
 
 ## Update Protocol
 
