@@ -3,16 +3,27 @@
 import { useState, useEffect } from 'react';
 import type { Treino, Exercicio, SerieExecutada, HistoricoTreino } from '@/lib/definitions';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+  CardDescription,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, ArrowRight, Check, Timer } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, Timer, Sparkles } from 'lucide-react';
 import { useTimer } from 'react-timer-hook';
+import {
+  generateWorkoutFeedback,
+  type WorkoutFeedbackOutput,
+} from '@/ai/flows/workout-feedback-flow';
 
 // Props para o componente
 interface WorkoutSessionProps {
   treino: Treino;
-  onFinish: (historico: Omit<HistoricoTreino, 'id' | 'alunoId'>) => void;
+  onFinish: (historico: Omit<HistoricoTreino, 'id' | 'alunoId'>) => Promise<void> | void;
   onCancel: () => void;
 }
 
@@ -35,12 +46,15 @@ function initExercicios(treino: Treino): ExercicioEmSessao[] {
   }));
 }
 
-export function WorkoutSession({ treino, onFinish, onCancel: _onCancel }: WorkoutSessionProps) {
+export function WorkoutSession({ treino, onFinish, onCancel }: WorkoutSessionProps) {
   const [exerciciosEmSessao, setExerciciosEmSessao] = useState<ExercicioEmSessao[]>(() =>
     initExercicios(treino)
   );
   const [exercicioAtualIndex, setExercicioAtualIndex] = useState(0);
   const [startTime] = useState<Date>(() => new Date());
+  const [completed, setCompleted] = useState(false);
+  const [feedback, setFeedback] = useState<WorkoutFeedbackOutput | null>(null);
+  const [isLoadingFeedback, setIsLoadingFeedback] = useState(false);
 
   // Hook para o cronômetro de descanso
   const { seconds, minutes, isRunning, restart } = useTimer({ expiryTimestamp: new Date() });
@@ -48,11 +62,14 @@ export function WorkoutSession({ treino, onFinish, onCancel: _onCancel }: Workou
   // Re-initialize only when treino ID changes (user switches to a different workout)
   useEffect(() => {
     setExerciciosEmSessao(initExercicios(treino));
+    setExercicioAtualIndex(0);
+    setCompleted(false);
+    setFeedback(null);
   }, [treino.id]);
 
   const exercicioAtual = exerciciosEmSessao[exercicioAtualIndex];
 
-  if (!exercicioAtual) {
+  if (!exercicioAtual && !completed) {
     return <div>Carregando treino...</div>;
   }
 
@@ -114,9 +131,7 @@ export function WorkoutSession({ treino, onFinish, onCancel: _onCancel }: Workou
     }
   };
 
-  const handleFinalizarTreino = () => {
-    if (!startTime) return; // always defined via lazy init, guard kept for safety
-
+  const handleFinalizarTreino = async () => {
     const endTime = new Date();
     const duracaoMinutos = Math.round((endTime.getTime() - startTime.getTime()) / 60000);
 
@@ -131,8 +146,65 @@ export function WorkoutSession({ treino, onFinish, onCancel: _onCancel }: Workou
       })),
     };
 
-    onFinish(historico);
+    await onFinish(historico);
+    setCompleted(true);
+
+    const completedExercises = exerciciosEmSessao
+      .filter((ex) => ex.seriesExecutadas.some((s) => s.concluido))
+      .map((ex) => ex.exercicioOriginal.nomeExercicio);
+
+    setIsLoadingFeedback(true);
+    try {
+      const result = await generateWorkoutFeedback({
+        goal: treino.objetivo,
+        completedExercises,
+        totalExercises: exerciciosEmSessao.length,
+      });
+      setFeedback(result);
+    } catch {
+      setFeedback({ title: 'Treino Concluído!', message: 'Continue assim!' });
+    } finally {
+      setIsLoadingFeedback(false);
+    }
   };
+
+  // --- Tela de Conclusão ---
+
+  if (completed) {
+    return (
+      <Card className="w-full max-w-2xl mx-auto">
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl">Treino Finalizado!</CardTitle>
+          <CardDescription>Excelente trabalho. Veja seu feedback abaixo.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {isLoadingFeedback ? (
+            <div className="flex items-center justify-center gap-2 text-muted-foreground py-8">
+              <Sparkles className="h-5 w-5 animate-pulse" />
+              <span>Gerando seu feedback personalizado...</span>
+            </div>
+          ) : feedback ? (
+            <Card data-testid="workout-feedback-card" className="bg-primary/5 border-primary/20">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-lg text-primary">
+                  <Sparkles className="h-5 w-5" />
+                  {feedback.title}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">{feedback.message}</p>
+              </CardContent>
+            </Card>
+          ) : null}
+        </CardContent>
+        <CardFooter className="justify-center">
+          <Button onClick={onCancel}>Fechar Treino</Button>
+        </CardFooter>
+      </Card>
+    );
+  }
+
+  // --- Tela de Sessão Ativa ---
 
   return (
     <Card className="w-full max-w-2xl mx-auto">

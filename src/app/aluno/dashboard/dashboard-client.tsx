@@ -217,7 +217,7 @@ export default function AlunoDashboardClient({ aluno, initialTreino }: AlunoDash
                   <h3 className="text-3xl font-mono font-bold tracking-tight text-white">
                     NÍVEL {aluno.nivel}
                   </h3>
-                  <p className="text-sm text-zinc-400 font-bold mt-1">
+                  <p className="text-sm text-zinc-400 font-bold mt-1" data-testid="xp-display">
                     {aluno.exp} / {xpToNextLevel} <span className="text-cyan-400">XP</span>
                   </p>
                 </div>
