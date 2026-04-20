@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased] — 2026-04-19 — It4: INSTRUTOR workflow E2E
+
+### Added
+
+- **E2E: INSTRUTOR workflow** (`tests/e2e/specs/instrutor-workflow.spec.ts`): INSTRUTOR logs in, creates a manual treino for the seeded ALUNO (select aluno, fill objetivo, add exercise via cmdk Combobox, save), then switches to ALUNO session and asserts the workout appears in `/aluno/meus-treinos` with "Do Personal" badge.
+
+### Fixed
+
+- **`workout-session.spec.ts`**: tighten row selector from `div.rounded-lg` to `div.rounded-lg.border.p-4` — prevents the outer section Card (which also matches and contains all Iniciar buttons) from causing a strict-mode violation when more than one "Planos do Personal" workout is present.
+
+---
+
 ## [Unreleased] — 2026-04-19 — CodeRabbit follow-up (PR #72)
 
 ### Fixed

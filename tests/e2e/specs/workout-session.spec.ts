@@ -9,8 +9,9 @@ test.describe('Workout session — completion flow', () => {
     await page.goto('/aluno/meus-treinos');
     await expect(page).toHaveURL(/\/aluno\/meus-treinos/);
 
-    // Start the seeded "Treino E2E" workout — scope to row containing that name
-    const treinoRow = page.locator('div.rounded-lg').filter({ hasText: 'Treino E2E' });
+    // Start the seeded "Treino E2E" workout — scope to the individual row (p-4),
+    // not the outer section card which also contains this text as a child.
+    const treinoRow = page.locator('div.rounded-lg.border.p-4').filter({ hasText: 'Treino E2E' });
     const iniciarButton = treinoRow.getByRole('button', { name: /iniciar/i });
     await expect(iniciarButton).toBeVisible({ timeout: 15_000 });
     await iniciarButton.click();
