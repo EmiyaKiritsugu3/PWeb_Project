@@ -73,9 +73,9 @@ tests/e2e/
 
 ## Risk Register
 
-| Risk                                        | Mitigation                                                                       |
-| ------------------------------------------- | -------------------------------------------------------------------------------- |
-| Shadcn Select portal not in DOM             | Wait for `page.getByRole('option')` visibility after click                       |
-| Aluno name in seed differs from expectation | Confirmed: `aluno@test.com` → name TBD from DB; use email-based filter if needed |
-| Exercise Combobox search varies by version  | Use `getByPlaceholder` fallback; assert first option visible before click        |
-| Previous session cookie bleeds across roles | `logout()` helper clears cookies + localStorage                                  |
+| Risk                                        | Mitigation                                                                                |
+| ------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Shadcn Select portal not in DOM             | Wait for `page.getByRole('option')` visibility after click                                |
+| Aluno name in seed differs from expectation | Confirmed seeded display name is `Aluno E2E`; selector matches option text `/aluno e2e/i` |
+| Exercise Combobox search varies by version  | Use `getByPlaceholder` fallback; assert first option visible before click                 |
+| Previous session cookie bleeds across roles | `logout()` helper clears cookies + localStorage                                           |

@@ -37,7 +37,7 @@ assign a workout to a seeded ALUNO,
 
 ## Seed Data (already exists in `prisma/seed-e2e.ts`)
 
-| Role      | UUID                                 | Email                   |
-| --------- | ------------------------------------ | ----------------------- |
-| INSTRUTOR | 00000000-0000-0000-0000-000000000003 | instrutor@fivestar.test |
-| ALUNO     | 00000000-0000-0000-0000-000000000004 | aluno@fivestar.test     |
+| Role      | UUID                                 | Email              |
+| --------- | ------------------------------------ | ------------------ |
+| INSTRUTOR | 00000000-0000-0000-0000-000000000003 | instrutor@test.com |
+| ALUNO     | 00000000-0000-0000-0000-000000000004 | aluno@test.com     |

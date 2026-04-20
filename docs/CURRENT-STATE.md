@@ -45,7 +45,7 @@
 npm run typecheck   → ✅  0 errors
 npm run lint        → ✅  0 errors
 npm run test        → ✅  22/22 passing
-npm run e2e         → ✅  17/17 passing  (local, 2026-04-18 — CI pending It3 merge)
+npm run e2e         → ✅  18/18 passing  (local, 2026-04-19 — It4)
 npm run build       → ✅  production build succeeds
 ```
 
@@ -58,7 +58,7 @@ npm run build       → ✅  production build succeeds
 - **Validation**: Zod 3
 - **AI**: Google Genkit 1.32 + Gemini 2.5 Flash
 - **Styling**: Tailwind CSS 4 + Shadcn/UI
-- **Testing**: Vitest 4 (5 files, 22 unit tests) + Playwright 1.59 (17 E2E scenarios)
+- **Testing**: Vitest 4 (5 files, 22 unit tests) + Playwright 1.59 (18 E2E scenarios)
 - **CI**: GitHub Actions (quality + test + e2e jobs)
 - **Local E2E DB**: Supabase CLI (`supabase start` → ports 54321/54322)
 

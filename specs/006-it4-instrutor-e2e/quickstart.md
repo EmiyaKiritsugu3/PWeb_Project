@@ -15,7 +15,7 @@
 3. **Select ALUNO** from the Shadcn Select ("Escolha um aluno...") → click trigger → click "Aluno E2E" option
 4. **Fill objetivo** in the text input → type "Hipertrofia E2E It4"
 5. **Add exercise**: click "Adicionar Exercício" → Shadcn Combobox search → click first option
-6. **Save**: click "Salvar Treino" → expect success toast
+6. **Save**: click "Salvar Treino" → expect form reset (e.g., `objetivo` input becomes empty)
 7. **Switch to ALUNO session**: logout INSTRUTOR, login ALUNO
 8. **Navigate to** `/aluno/meus-treinos`
 9. **Assert**: card with "Hipertrofia E2E It4" is visible and has "Do Personal" badge

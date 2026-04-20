@@ -1,12 +1,17 @@
 # Research: It4 — INSTRUTOR Workflow E2E Coverage
 
-## Decision: No new implementation needed
+## Decision: No new implementation needed for happy-path E2E coverage
 
-**Decision**: The assign-workout flow is fully implemented in production code.
-**Rationale**: `instrutorId` is saved in `createTreinoAction`; `meus-treinos-client`
+**Decision**: The happy-path assign-workout flow is implemented and sufficient for current E2E coverage.
+**Rationale**: `instrutorId` is persisted in `upsertTreinoAction`/`createTreinoAction`; `meus-treinos-client`
 already segments "Treinos do Personal" by filtering `t.instrutorId !== userId`. The
 "Do Personal" badge renders for these treinos. INSTRUTOR login path and seed data
 already exist in the E2E helper and `prisma/seed-e2e.ts`.
+**Known gap**: `upsertTreinoAction` accepts `instrutorId` from the client payload and validates its
+format (Zod) but does NOT enforce that it matches the authenticated user's ID. An authenticated
+staff member could attribute a treino to a different instrutor by spoofing the field. Server-side
+authorization hardening (derive/enforce `instrutorId` from the authenticated session) is tracked as a
+separate task for It5.
 **Alternatives considered**: Adding a new INSTRUTOR-specific portal (out of scope per spec).
 
 ---
