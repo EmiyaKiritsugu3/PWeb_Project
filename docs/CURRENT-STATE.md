@@ -122,17 +122,9 @@ The following items are recognized as "Managed Debt" — intentional compromises
 - Transitive dependency vulnerabilities in `@prisma/dev` (not reachable in production).
 - `isRedirectError` must be imported from `next/dist/client/components/redirect-error` (not `next/navigation`) — no public API yet in Next.js 15.
 
-## E2E Selector Patterns (Lessons Learned)
+## E2E Selector Patterns
 
-These patterns have been validated through failures and fixes in the It3 cycle:
-
-| Pattern                             | Wrong                                        | Right                                               | Why                                                                                       |
-| ----------------------------------- | -------------------------------------------- | --------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| Tailwind multi-class elements       | `.grid .grid-cols-4 button`                  | `div.grid-cols-4 button`                            | Tailwind puts both classes on the **same** element — space selector requires nesting      |
-| Playwright strict mode              | `getByRole('heading')`                       | `getByRole('heading', { name: 'X' })`               | Adding seed data can create new headings, breaking previously unambiguous selectors       |
-| Dialog scoping                      | `page.getByRole('button', ...).last()`       | `page.getByRole('dialog').getByRole('button', ...)` | Dialog renders after page buttons — scope to dialog to avoid fragile `.last()` ordering   |
-| `onFinish` vs `onCancel` separation | Call `setTreinoEmSessao(null)` in `onFinish` | Call it only in `onCancel`                          | Closing the session in `onFinish` unmounts the component before feedback state can render |
-| CPF uniqueness in E2E               | Hard-coded CPF                               | `timestamp`-derived CPF                             | Unique constraints fail on re-runs if the same CPF is always used                         |
+→ Maintained in [`tests/e2e/CRITICAL-PATHS.md`](../tests/e2e/CRITICAL-PATHS.md) — Lessons Learned section (12 validated patterns across It2–It4).
 
 ## Update Protocol
 
