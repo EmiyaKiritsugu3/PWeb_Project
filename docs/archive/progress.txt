@@ -1,5 +1,0 @@
-# Aegis OS Progress Ledger
-
-- 2026-03-31: Successfully scaffolded the core Antigravity Agentic Workspace architecture, instituting `AGENTS.md`, strict `.agents` standard routing, and stateless Ralph logs.
-- 2026-03-30: Merged critical security fix branching restoring `pg` types safely into `main` without regressing the Premium Dark UI overhaul.
-- [Prior log history aggregated here]
