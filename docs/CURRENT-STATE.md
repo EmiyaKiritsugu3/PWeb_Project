@@ -1,8 +1,8 @@
 # Current State — Five Star Academy
 
-**Last Updated**: 2026-04-19
-**Branch**: `main` (v0.6.0 tagged)
-**Version**: 0.6.0 (It3 complete — PR #71 merged, CodeRabbit fixes in PR #72)
+**Last Updated**: 2026-04-20
+**Branch**: `main` (v0.7.0 — It4 merged PR #73)
+**Version**: 0.7.0 (It4 complete — INSTRUTOR workflow E2E, 18/18 passing)
 
 ## What Works Today
 
