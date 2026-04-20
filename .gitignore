@@ -96,24 +96,33 @@ docs/.smart-env/
 /playwright/.cache/
 /playwright/.auth/
 
-# [SENTINEL-OVERLORD] Local Overlay (Sovereign Context)
-# Untrack dev-workflow and AI-memory to keep public repo lean.
+# Dev-workflow and AI tooling (local only)
 AGENTS.md
-CLAUDE.md
+GEMINI.md
 DESIGN.md
-CONTRIBUTING.md
 implementation_plan.md
 task.md
 walkthrough.md
 
-# AI Metadata
+# AI session tooling
 .claude/
 .remember/
 .specify/
 
-# Advanced Obsidian Vault (Internal Only)
+# Feature planning artifacts
+specs/
+
+# Dev scripts (not part of the build)
+scripts/
+sentinel
+
+# Local IDE / cloud environment config
+.idx/
+
+# Obsidian vault (internal knowledge base)
 docs/.obsidian/
 docs/archive/
+docs/assets/
 docs/decisions/
 docs/observability/
 docs/operations/
@@ -124,4 +133,6 @@ docs/reports/
 docs/security/
 !docs/security/BASELINE.json
 docs/specs/
-docs/Project Index.md
+docs/Project\ Index.md
+docs/doc-*.md
+docs/dev-errors.md
