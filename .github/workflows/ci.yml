@@ -21,8 +21,11 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
           cache: 'npm'
+
+      - name: Upgrade npm
+        run: npm install -g npm@11
 
       - name: Install dependencies
         run: npm ci
@@ -51,8 +54,11 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
           cache: 'npm'
+
+      - name: Upgrade npm
+        run: npm install -g npm@11
 
       - name: Install dependencies
         run: npm ci
@@ -83,8 +89,11 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
           cache: 'npm'
+
+      - name: Upgrade npm
+        run: npm install -g npm@11
 
       - name: Install dependencies
         run: npm ci
@@ -102,18 +111,13 @@ jobs:
 
       - name: Export Supabase keys
         run: |
-          # Try --output env first (Supabase CLI v1.23+); strip surrounding quotes
           STATUS_ENV=$(supabase status --output env 2>/dev/null || echo "")
           ANON_KEY=$(echo "$STATUS_ENV" | grep "^ANON_KEY=" | cut -d= -f2- | sed "s/^[\"']//; s/[\"']$//")
           SERVICE_KEY=$(echo "$STATUS_ENV" | grep "^SERVICE_ROLE_KEY=" | cut -d= -f2- | sed "s/^[\"']//; s/[\"']$//")
-          echo "Extracted anon key length: ${#ANON_KEY}"
-          echo "Extracted service key length: ${#SERVICE_KEY}"
-          # Fallback: well-known defaults when config.toml has no explicit jwt_secret
-          if [ -z "$ANON_KEY" ]; then
-            ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRFA0NiK7W9odiD2okw387wrjgFjtl7gx5LwhwlM6ic"
-          fi
-          if [ -z "$SERVICE_KEY" ]; then
-            SERVICE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hj04zWl196z2-SBc0"
+          if [ -z "$ANON_KEY" ] || [ -z "$SERVICE_KEY" ]; then
+            echo "ERROR: Could not extract Supabase keys from 'supabase status --output env'"
+            supabase status
+            exit 1
           fi
           echo "SUPABASE_LOCAL_ANON_KEY=$ANON_KEY" >> $GITHUB_ENV
           echo "SUPABASE_LOCAL_SERVICE_ROLE_KEY=$SERVICE_KEY" >> $GITHUB_ENV
