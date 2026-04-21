@@ -21,7 +21,21 @@ export async function upsertTreinoAction(treinoData: TreinoBase | (TreinoBase & 
       data: { user },
       error: authError,
     } = await supabase.auth.getUser();
-    if (authError || !user) throw new Error('Usuário não autenticado');
+    if (authError || !user) return { success: false, error: 'Usuário não autenticado' };
+
+    const { data: funcData, error: roleError } = await supabase
+      .from('funcionarios')
+      .select('role')
+      .eq('id', user.id)
+      .maybeSingle();
+
+    if (roleError) return { success: false, error: 'Erro ao verificar permissões' };
+
+    // RECEPCIONISTA is explicitly blocked; ALUNO (not in funcionarios) gets null
+    if (funcData?.role === 'RECEPCIONISTA') {
+      return { success: false, error: 'Acesso não autorizado' };
+    }
+    const derivedInstrutorId = funcData?.role === 'INSTRUTOR' ? user.id : null;
 
     // Validação flexível: se tiver ID, valida como Entity; se não, como Base.
     let validatedData;
@@ -32,7 +46,7 @@ export async function upsertTreinoAction(treinoData: TreinoBase | (TreinoBase & 
     }
 
     // Extraímos os dados validados. 'id' será undefined se for Base.
-    const { alunoId, instrutorId, objetivo, exercicios, diaSemana } = validatedData;
+    const { alunoId, objetivo, exercicios, diaSemana } = validatedData;
     const id =
       'id' in validatedData ? (validatedData as TreinoBase & { id: string }).id : undefined;
 
@@ -60,7 +74,7 @@ export async function upsertTreinoAction(treinoData: TreinoBase | (TreinoBase & 
       await prisma.treino.create({
         data: {
           alunoId,
-          instrutorId: instrutorId || null,
+          instrutorId: derivedInstrutorId,
           objetivo,
           diaSemana,
           Exercicios: {
