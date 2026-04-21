@@ -3,6 +3,7 @@
 Auto-generated from all feature plans. Last updated: 2026-04-19
 
 ## Active Technologies
+
 - TypeScript 5 (strict mode) + Playwright 1.59, Next.js 15 App Router, Supabase local CLI (feat/006-it4-instrutor-e2e)
 - PostgreSQL via Prisma (local Supabase, ports 54321/54322) (feat/006-it4-instrutor-e2e)
 
@@ -40,12 +41,11 @@ All 4 gates must pass before merging.
 TypeScript 5 (strict mode, `useUnknownInCatchVariables` enabled): Follow standard conventions
 
 ## Recent Changes
+
 - feat/006-it4-instrutor-e2e: Added TypeScript 5 (strict mode) + Playwright 1.59, Next.js 15 App Router, Supabase local CLI
 
 - 004-elite-workflow-setup: Added TypeScript 5 (strict mode, `useUnknownInCatchVariables`) + Node.js 20 + Next.js 15 App Router, Prisma 7, Supabase SSR, Zod 3, Genkit 1.31
 - fix/telemetry-and-e2e-stability: Modernized Sentry to v10 + Next.js 15, implemented Privacy-First Replay, linked Supabase User IDs to observability, and repaired ESLint flat config.
-
-
 
 <!-- MANUAL ADDITIONS START -->
 
