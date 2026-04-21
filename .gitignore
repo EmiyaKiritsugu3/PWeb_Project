@@ -109,8 +109,8 @@ walkthrough.md
 .remember/
 .specify/
 
-# Feature planning artifacts
-specs/
+# Feature planning artifacts (root-level only — not tests/e2e/specs/)
+/specs/
 
 # Dev scripts (not part of the build)
 scripts/
