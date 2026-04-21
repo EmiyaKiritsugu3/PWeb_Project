@@ -1,8 +1,8 @@
 # Current State — Five Star Academy
 
-**Last Updated**: 2026-04-20
-**Branch**: `main` (v0.7.0 — It4 merged PR #73)
-**Version**: 0.7.0 (It4 complete — INSTRUTOR workflow E2E, 18/18 passing)
+**Last Updated**: 2026-04-21
+**Branch**: `feat/007-it5-instrutor-auth` (It5 — T01 in progress)
+**Version**: 0.7.0 (It4 base — It5 hardening not yet merged)
 
 ## What Works Today
 
@@ -31,13 +31,34 @@
 | Structured logging                          | ✅ Done    | `src/lib/logger.ts` (Logger wrapper, Sentry-aware)                                              |
 | Dependencies                                | ✅ Updated | All patch/minor bumped via PR #70; lockfile clean                                               |
 
+## It5 Progress (007-it5-instrutor-auth)
+
+**Spec**: `specs/007-it5-instrutor-auth/` — all Phase 0–1 artifacts complete (spec, plan, research, data-model, quickstart, tasks)
+**12 tasks planned** — implementation not yet started
+
+| Task | Description                                                  | Status     |
+| ---- | ------------------------------------------------------------ | ---------- |
+| T001 | Add `requireAnyRole` to `src/lib/auth.ts`                    | ⏳ Pending |
+| T002 | Create failing E2E negative test                             | ⏳ Pending |
+| T003 | Gate `/dashboard/treinos` with `requireAnyRole`              | ⏳ Pending |
+| T004 | Write failing unit tests for `upsertTreinoAction`            | ⏳ Pending |
+| T005 | Remove `instrutorId` from `TreinoBaseSchema`                 | ⏳ Pending |
+| T006 | Harden `upsertTreinoAction` (derive instrutorId server-side) | ⏳ Pending |
+| T007 | Remove `instrutorId` prop from `TreinosManagementClient`     | ⏳ Pending |
+| T008 | Remove `getUser` + `instrutorId` prop from `TreinosPage`     | ⏳ Pending |
+| T009 | Write failing ownership unit tests                           | ⏳ Pending |
+| T010 | Add ownership check to `updateTreinoDayAction`               | ⏳ Pending |
+| T011 | Add ownership check to `deleteTreinoAction`                  | ⏳ Pending |
+| T012 | Update `CRITICAL-PATHS.md` 18 → 19 scenarios                 | ⏳ Pending |
+
 ## What Is Incomplete
 
-| Area          | Gap                                                                     | Priority |
-| ------------- | ----------------------------------------------------------------------- | -------- |
-| CI security   | 3 moderate vulns in `@prisma/dev` (transitive, awaiting upstream)       | P3       |
-| Lint warnings | `no-console` warnings reduced — remaining are accepted Logger internals | P3       |
-| `@types/pg`   | Pinned at `8.11.11` — dependabot PR #63 open, needs manual compat check | P3       |
+| Area          | Gap                                                                                                                                    | Priority         |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------- | ---------------- |
+| **Auth gap**  | `upsertTreinoAction` accepts client-supplied `instrutorId`; no ownership check on update/delete; `/dashboard/treinos` has no role gate | **P1 — It5 T01** |
+| CI security   | 3 moderate vulns in `@prisma/dev` (transitive, awaiting upstream)                                                                      | P3               |
+| Lint warnings | `no-console` warnings reduced — remaining are accepted Logger internals                                                                | P3               |
+| `@types/pg`   | Pinned at `8.11.11` — dependabot PR #63 open, needs manual compat check                                                                | P3               |
 
 ## Quality Gates (current status)
 
@@ -69,7 +90,7 @@ npm run build       → ✅  production build succeeds
 | `src/app/dashboard/`                   | Admin portal pages                                 |
 | `src/app/aluno/`                       | Student portal pages                               |
 | `src/lib/actions/`                     | Server Actions (auth, alunos, treinos, financeiro) |
-| `src/lib/auth.ts`                      | `requireRole()` helper                             |
+| `src/lib/auth.ts`                      | `requireRole()` + `requireAnyRole()` (It5 pending) |
 | `src/services/`                        | Business logic (XP, streaks)                       |
 | `src/ai/flows/`                        | Genkit AI flows                                    |
 | `prisma/schema.prisma`                 | DB schema                                          |

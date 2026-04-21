@@ -1,8 +1,11 @@
 # PWeb_Project Development Guidelines
 
-Auto-generated from all feature plans. Last updated: 2026-04-19
+Auto-generated from all feature plans. Last updated: 2026-04-21
 
 ## Active Technologies
+
+- TypeScript 5 (strict mode, `useUnknownInCatchVariables`) + Next.js 15 App Router, Supabase Auth SSR (`@supabase/ssr`), Prisma 7, Zod 3 (feat/007-it5-instrutor-auth)
+- PostgreSQL via Prisma (no migration for this spec) (feat/007-it5-instrutor-auth)
 
 - TypeScript 5 (strict mode) + Playwright 1.59, Next.js 15 App Router, Supabase local CLI (feat/006-it4-instrutor-e2e)
 - PostgreSQL via Prisma (local Supabase, ports 54321/54322) (feat/006-it4-instrutor-e2e)
@@ -42,10 +45,11 @@ TypeScript 5 (strict mode, `useUnknownInCatchVariables` enabled): Follow standar
 
 ## Recent Changes
 
+- feat/007-it5-instrutor-auth: Added TypeScript 5 (strict mode, `useUnknownInCatchVariables`) + Next.js 15 App Router, Supabase Auth SSR (`@supabase/ssr`), Prisma 7, Zod 3
+
 - feat/006-it4-instrutor-e2e: Added TypeScript 5 (strict mode) + Playwright 1.59, Next.js 15 App Router, Supabase local CLI
 
 - 004-elite-workflow-setup: Added TypeScript 5 (strict mode, `useUnknownInCatchVariables`) + Node.js 20 + Next.js 15 App Router, Prisma 7, Supabase SSR, Zod 3, Genkit 1.31
-- fix/telemetry-and-e2e-stability: Modernized Sentry to v10 + Next.js 15, implemented Privacy-First Replay, linked Supabase User IDs to observability, and repaired ESLint flat config.
 
 <!-- MANUAL ADDITIONS START -->
 
