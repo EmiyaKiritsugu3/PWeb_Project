@@ -2,30 +2,31 @@
 
 **Suite**: Playwright — `tests/e2e/specs/`
 **Browser**: Chromium (headless)
-**Total scenarios**: 18
+**Total scenarios**: 19
 
 ## Coverage Table
 
-| #   | File                         | Scenario                                                   | Status     |
-| --- | ---------------------------- | ---------------------------------------------------------- | ---------- |
-| 1   | `auth.spec.ts`               | GERENTE login → redirects to /dashboard                    | ✅ Covered |
-| 2   | `auth.spec.ts`               | RECEPCIONISTA login → redirects to /dashboard              | ✅ Covered |
-| 3   | `auth.spec.ts`               | ALUNO login → redirects to /aluno/dashboard                | ✅ Covered |
-| 4   | `auth.spec.ts`               | Invalid credentials → stays on /login with error           | ✅ Covered |
-| 5   | `financial-access.spec.ts`   | GERENTE accesses /dashboard/financeiro                     | ✅ Covered |
-| 6   | `financial-access.spec.ts`   | GERENTE accesses /dashboard/planos                         | ✅ Covered |
-| 7   | `financial-access.spec.ts`   | RECEPCIONISTA blocked from /dashboard/financeiro           | ✅ Covered |
-| 8   | `financial-access.spec.ts`   | INSTRUTOR blocked from /dashboard/financeiro               | ✅ Covered |
-| 9   | `financial-access.spec.ts`   | Unauthenticated → redirected to /login                     | ✅ Covered |
-| 10  | `nav-visibility.spec.ts`     | GERENTE sees Financeiro nav; RECEPCIONISTA does not        | ✅ Covered |
-| 11  | `nav-visibility.spec.ts`     | GERENTE sees Planos nav; RECEPCIONISTA does not            | ✅ Covered |
-| 12  | `nav-visibility.spec.ts`     | Admin nav absent from student portal                       | ✅ Covered |
-| 13  | `student-portal.spec.ts`     | ALUNO accesses /aluno/dashboard                            | ✅ Covered |
-| 14  | `student-portal.spec.ts`     | ALUNO blocked from admin /dashboard                        | ✅ Covered |
-| 15  | `student-portal.spec.ts`     | ALUNO accesses /aluno/meus-treinos                         | ✅ Covered |
-| 16  | `workout-session.spec.ts`    | ALUNO completes workout → AI feedback card shown           | ✅ Covered |
-| 17  | `enrollment.spec.ts`         | GERENTE creates aluno → appears in list                    | ✅ Covered |
-| 18  | `instrutor-workflow.spec.ts` | INSTRUTOR assigns workout → ALUNO sees "Do Personal" badge | ✅ Covered |
+| #   | File                              | Scenario                                                   | Status     |
+| --- | --------------------------------- | ---------------------------------------------------------- | ---------- |
+| 1   | `auth.spec.ts`                    | GERENTE login → redirects to /dashboard                    | ✅ Covered |
+| 2   | `auth.spec.ts`                    | RECEPCIONISTA login → redirects to /dashboard              | ✅ Covered |
+| 3   | `auth.spec.ts`                    | ALUNO login → redirects to /aluno/dashboard                | ✅ Covered |
+| 4   | `auth.spec.ts`                    | Invalid credentials → stays on /login with error           | ✅ Covered |
+| 5   | `financial-access.spec.ts`        | GERENTE accesses /dashboard/financeiro                     | ✅ Covered |
+| 6   | `financial-access.spec.ts`        | GERENTE accesses /dashboard/planos                         | ✅ Covered |
+| 7   | `financial-access.spec.ts`        | RECEPCIONISTA blocked from /dashboard/financeiro           | ✅ Covered |
+| 8   | `financial-access.spec.ts`        | INSTRUTOR blocked from /dashboard/financeiro               | ✅ Covered |
+| 9   | `financial-access.spec.ts`        | Unauthenticated → redirected to /login                     | ✅ Covered |
+| 10  | `nav-visibility.spec.ts`          | GERENTE sees Financeiro nav; RECEPCIONISTA does not        | ✅ Covered |
+| 11  | `nav-visibility.spec.ts`          | GERENTE sees Planos nav; RECEPCIONISTA does not            | ✅ Covered |
+| 12  | `nav-visibility.spec.ts`          | Admin nav absent from student portal                       | ✅ Covered |
+| 13  | `student-portal.spec.ts`          | ALUNO accesses /aluno/dashboard                            | ✅ Covered |
+| 14  | `student-portal.spec.ts`          | ALUNO blocked from admin /dashboard                        | ✅ Covered |
+| 15  | `student-portal.spec.ts`          | ALUNO accesses /aluno/meus-treinos                         | ✅ Covered |
+| 16  | `workout-session.spec.ts`         | ALUNO completes workout → AI feedback card shown           | ✅ Covered |
+| 17  | `enrollment.spec.ts`              | GERENTE creates aluno → appears in list                    | ✅ Covered |
+| 18  | `instrutor-workflow.spec.ts`      | INSTRUTOR assigns workout → ALUNO sees "Do Personal" badge | ✅ Covered |
+| 19  | `instrutor-auth-negative.spec.ts` | RECEPCIONISTA/ALUNO blocked from /dashboard/treinos        | ✅ Covered |
 
 ## Pending / Future Scenarios
 
@@ -40,7 +41,7 @@
 # Prerequisites: Docker running
 npm run supabase:start   # start local Supabase (ports 54321/54322)
 npm run seed:e2e         # create 4 deterministic test users
-npm run e2e              # run all 18 scenarios
+npm run e2e              # run all 19 scenarios
 npm run supabase:stop    # cleanup
 ```
 
