@@ -145,7 +145,22 @@ export async function deleteTreinoAction(treinoId: string) {
       data: { user },
       error: authError,
     } = await supabase.auth.getUser();
-    if (authError || !user) throw new Error('Usuário não autenticado');
+    if (authError || !user) return { success: false, error: 'Usuário não autenticado' };
+
+    const { data: funcData } = await supabase
+      .from('funcionarios')
+      .select('role')
+      .eq('id', user.id)
+      .maybeSingle();
+
+    const treino = await prisma.treino.findUnique({
+      where: { id: treinoId },
+      select: { instrutorId: true },
+    });
+
+    if (funcData?.role !== 'GERENTE' && treino?.instrutorId !== user.id) {
+      return { success: false, error: 'Acesso não autorizado' };
+    }
 
     await prisma.treino.delete({
       where: { id: treinoId },
