@@ -53,19 +53,17 @@
 
 ## What Is Incomplete
 
-| Area          | Gap                                                                                                                                    | Priority              |
-| ------------- | -------------------------------------------------------------------------------------------------------------------------------------- | --------------------- |
-| **Auth gap**  | `upsertTreinoAction` accepts client-supplied `instrutorId`; no ownership check on update/delete; `/dashboard/treinos` has no role gate | **P1 — It5 T01**      |
-| **TS2882**    | `src/types/css.d.ts` deleted in PR #80 TS6 upgrade; `globals.css` side-effect import errors in typecheck                               | P2 — fix before merge |
-| CI security   | 3 moderate vulns in `@prisma/dev` (transitive, awaiting upstream)                                                                      | P3                    |
-| Lint warnings | `no-console` warnings reduced — remaining are accepted Logger internals                                                                | P3                    |
-| `@types/pg`   | Pinned at `8.11.11` — dependabot PR #63 open, needs manual compat check                                                                | P3                    |
+| Area          | Gap                                                                                                                                    | Priority         |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------- | ---------------- |
+| **Auth gap**  | `upsertTreinoAction` accepts client-supplied `instrutorId`; no ownership check on update/delete; `/dashboard/treinos` has no role gate | **P1 — It5 T01** |
+| CI security   | 3 moderate vulns in `@prisma/dev` (transitive, awaiting upstream)                                                                      | P3               |
+| Lint warnings | `no-console` warnings reduced — remaining are accepted Logger internals                                                                | P3               |
+| `@types/pg`   | Pinned at `8.11.11` — dependabot PR #63 open, needs manual compat check                                                                | P3               |
 
 ## Quality Gates (current status)
 
 ```
-npm run typecheck   → ⚠️  1 pre-existing error: TS2882 globals.css side-effect import
-                         (src/types/css.d.ts deleted in PR #80 TypeScript 6 upgrade)
+npm run typecheck   → ✅  0 errors  (TS2882 fixed: src/types/css.d.ts restored)
 npm run lint        → ✅  0 errors
 npm run test        → ✅  22/22 passing
 npm run e2e         → ✅  18/18 passing  (local, 2026-04-19 — It4)
