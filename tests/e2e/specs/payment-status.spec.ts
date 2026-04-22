@@ -22,8 +22,10 @@ test.describe('Payment status write-path', () => {
     // Confirm payment
     await dialog.getByRole('button', { name: 'Confirmar e Reativar' }).click();
 
-    // Assert success toast
-    await expect(page.getByText('Pagamento Registrado!')).toBeVisible({ timeout: 10_000 });
+    // Assert success toast — scope to role="status" to avoid strict-mode on parent/child both matching
+    await expect(page.getByRole('status').filter({ hasText: 'Pagamento Registrado!' })).toBeVisible(
+      { timeout: 10_000 }
+    );
 
     // Reload and verify persistence — page re-fetches from DB; aluno must be gone from list
     await page.reload();
