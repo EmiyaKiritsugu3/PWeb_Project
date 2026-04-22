@@ -136,5 +136,7 @@ docs/specs/
 docs/Project\ Index.md
 docs/doc-*.md
 docs/dev-errors.md
-\n# Sentinel Standalone Framework\nsentinel-core/
-\nsentinel-core/
+
+# Sentinel Standalone Framework
+sentinel-core/
+

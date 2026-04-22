@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { createAluno, updateAluno, deleteAluno, getAluno } from './alunoService';
 import { db } from '@/lib/dummyDb';
 
@@ -12,13 +12,21 @@ vi.mock('@/lib/dummyDb', () => ({
 }));
 
 describe('alunoService', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   it('creates an aluno', async () => {
     const data = { nome: 'Test', email: 'test@test.com', matricula: '123' };
-    vi.mocked(db.insert).mockResolvedValue({ id: 'new-id', ...data });
+    const mockId = 'new-id';
+    vi.mocked(db.insert).mockResolvedValue({ id: mockId, ...data });
 
     const result = await createAluno(data);
-    expect(result.id).toBe('new-id');
-    expect(db.insert).toHaveBeenCalledWith('alunos', expect.objectContaining(data));
+    expect(result.id).toBe(mockId);
+    expect(db.insert).toHaveBeenCalledWith(
+      'alunos',
+      expect.objectContaining({ id: expect.any(String), ...data })
+    );
   });
 
   it('updates an aluno', async () => {

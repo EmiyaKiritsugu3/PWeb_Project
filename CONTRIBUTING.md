@@ -21,13 +21,13 @@ PDR → Design Spec → Implementation → Tests → ADR → Report → CHANGELO
 
 This project uses [Conventional Commits](https://www.conventionalcommits.org/):
 
-```
-<type>(<scope>): <description>
+```text
+<type>(<scope>): TXXX <description>
 
-feat(aluno): add streak reset logic on missed workout day
-fix(auth): handle session expiry during workout execution
-docs(adr): record decision on gamification XP formula
-chore(deps): upgrade prisma to v7.5.0
+feat(aluno): T041 add streak reset logic on missed workout day
+fix(auth): T052 handle session expiry during workout execution
+docs(adr): T063 record decision on gamification XP formula
+chore(deps): T011 upgrade prisma to v7.5.0
 ```
 
 **Valid types:** `feat`, `fix`, `docs`, `refactor`, `test`, `chore`, `perf`, `ci`, `revert`
