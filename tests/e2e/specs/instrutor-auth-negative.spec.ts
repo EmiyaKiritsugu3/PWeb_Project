@@ -13,13 +13,11 @@ test.describe('INSTRUTOR auth — negative scenarios', () => {
     await expect(page).toHaveURL(/\/dashboard(?!\/treinos)/);
   });
 
-  test('ALUNO cannot access /dashboard/treinos — redirected away', async ({ page }) => {
+  test('ALUNO cannot access /dashboard/treinos — redirected to /aluno', async ({ page }) => {
     await loginAs(page, 'ALUNO');
     await page.goto('/dashboard/treinos');
-    await page.waitForURL((url) => !url.pathname.startsWith('/dashboard/treinos'), {
-      timeout: 15_000,
-    });
-    expect(page.url()).not.toContain('/dashboard/treinos');
+    await page.waitForURL((url) => url.pathname.startsWith('/aluno'), { timeout: 15_000 });
+    await expect(page).toHaveURL(/\/aluno/);
   });
 
   test.afterEach(async ({ page }) => {

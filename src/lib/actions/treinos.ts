@@ -31,7 +31,7 @@ export async function upsertTreinoAction(treinoData: TreinoBase | (TreinoBase & 
 
     if (roleError) return { success: false, error: 'Erro ao verificar permissões' };
 
-    // RECEPCIONISTA is explicitly blocked; ALUNO (not in funcionarios) gets null
+    // RECEPCIONISTA is explicitly blocked; ALUNO (not in funcionarios) gets null instrutorId
     if (funcData?.role === 'RECEPCIONISTA') {
       return { success: false, error: 'Acesso não autorizado' };
     }
@@ -46,7 +46,9 @@ export async function upsertTreinoAction(treinoData: TreinoBase | (TreinoBase & 
     }
 
     // Extraímos os dados validados. 'id' será undefined se for Base.
-    const { alunoId, objetivo, exercicios, diaSemana } = validatedData;
+    const { objetivo, exercicios, diaSemana } = validatedData;
+    // ALUNOs: override alunoId with server-verified user.id to prevent cross-user spoofing
+    const alunoId = funcData === null ? user.id : validatedData.alunoId;
     const id =
       'id' in validatedData ? (validatedData as TreinoBase & { id: string }).id : undefined;
 
@@ -119,10 +121,14 @@ export async function updateTreinoDayAction(treinoId: string, diaSemana: number 
 
     const treino = await prisma.treino.findUnique({
       where: { id: treinoId },
-      select: { instrutorId: true },
+      select: { instrutorId: true, alunoId: true },
     });
 
-    if (funcData?.role !== 'GERENTE' && treino?.instrutorId !== user.id) {
+    if (
+      funcData?.role !== 'GERENTE' &&
+      treino?.instrutorId !== user.id &&
+      treino?.alunoId !== user.id
+    ) {
       return { success: false, error: 'Acesso não autorizado' };
     }
 
@@ -155,10 +161,14 @@ export async function deleteTreinoAction(treinoId: string) {
 
     const treino = await prisma.treino.findUnique({
       where: { id: treinoId },
-      select: { instrutorId: true },
+      select: { instrutorId: true, alunoId: true },
     });
 
-    if (funcData?.role !== 'GERENTE' && treino?.instrutorId !== user.id) {
+    if (
+      funcData?.role !== 'GERENTE' &&
+      treino?.instrutorId !== user.id &&
+      treino?.alunoId !== user.id
+    ) {
       return { success: false, error: 'Acesso não autorizado' };
     }
 
