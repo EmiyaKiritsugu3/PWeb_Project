@@ -21,7 +21,7 @@ PDR → Design Spec → Implementation → Tests → ADR → Report → CHANGELO
 
 This project uses [Conventional Commits](https://www.conventionalcommits.org/):
 
-```text
+````text
 <type>(<scope>): TXXX <description>
 
 feat(aluno): T041 add streak reset logic on missed workout day
@@ -80,3 +80,4 @@ Never commit secrets. All environment variables must be:
 | UI        | Shadcn/UI + Tailwind CSS v4    |
 | AI        | Google Genkit + Gemini         |
 | Testing   | Vitest + React Testing Library |
+````
