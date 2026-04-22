@@ -124,9 +124,9 @@ export const columns = ({ onEdit, onDelete, onNewMatricula }: ColumnsProps): Col
       const nome = row.getValue('nomeCompleto') as string;
       const email = row.original.email;
       return (
-        <div className="grid gap-0.5 md:hidden">
+        <div className="flex flex-col gap-0.5">
           <p className="font-medium">{nome}</p>
-          <p className="text-xs text-muted-foreground">{email}</p>
+          <p className="text-xs text-muted-foreground md:hidden">{email}</p>
         </div>
       );
     },
