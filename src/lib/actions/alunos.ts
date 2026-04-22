@@ -48,19 +48,17 @@ export async function finalizarTreinoAction(treinoId: string, durationMinutes: n
         // 3. Lógica de Gamificação (Delegated to Service)
         const rewards = calculateTreinoRewards(aluno, 0, hoje);
 
-        if (rewards.novoStreak !== aluno.streakDiasSeguidos || rewards.novaExp !== aluno.exp) {
-          // Update Aluno with new rewards
-          await tx.aluno.update({
-            where: { id: aluno.id },
-            data: {
-              exp: rewards.novaExp,
-              nivel: rewards.novoNivel,
-              streakDiasSeguidos: rewards.novoStreak,
-              treinosNoMes: rewards.novosTreinosNoMes,
-              ultimoTreinoData: hoje,
-            },
-          });
-        }
+        // Update Aluno with rewards (idempotency handled by Service)
+        await tx.aluno.update({
+          where: { id: aluno.id },
+          data: {
+            exp: rewards.novaExp,
+            nivel: rewards.novoNivel,
+            streakDiasSeguidos: rewards.novoStreak,
+            treinosNoMes: rewards.novosTreinosNoMes,
+            ultimoTreinoData: hoje,
+          },
+        });
 
         return novoHistorico;
       },

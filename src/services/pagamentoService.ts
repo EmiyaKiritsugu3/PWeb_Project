@@ -1,3 +1,5 @@
+import { PrismaClientExtended } from '@/lib/prisma';
+
 /**
  * Pagamento Service
  * Encapsulates the business logic for registering payments and re-activating student enrollments.
@@ -8,10 +10,9 @@ export interface PaymentResult {
   error?: string;
 }
 
-export async function processPayment(
+export async function processPayment<T extends Record<string, any>>(
   alunoId: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Accommodate both PrismaClient and Prisma.TransactionClient
-  tx: any
+  tx: T
 ): Promise<PaymentResult> {
   // 1. Buscar o aluno e sua matrícula ativa (ou a mais recente vencida)
   const aluno = await tx.aluno.findUnique({
@@ -19,6 +20,9 @@ export async function processPayment(
     select: {
       id: true,
       Matriculas: {
+        where: {
+          status: { in: ['ATIVA', 'VENCIDA'] },
+        },
         orderBy: { dataVencimento: 'desc' },
         take: 1,
         select: {
@@ -63,11 +67,15 @@ export async function processPayment(
   // 4. Criar Registro de Pagamento
   const plano = await tx.plano.findUnique({ where: { id: matriculaAtiva.planoId } });
 
+  if (!plano) {
+    throw new Error(`Plano ${matriculaAtiva.planoId} não encontrado durante o processamento.`);
+  }
+
   await tx.pagamento.create({
     data: {
       alunoId: alunoId,
       matriculaId: matriculaAtiva.id,
-      valor: plano?.preco || 0,
+      valor: plano.preco,
       metodo: 'PIX',
     },
   });

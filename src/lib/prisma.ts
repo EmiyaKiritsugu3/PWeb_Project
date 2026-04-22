@@ -50,6 +50,8 @@ function createPrismaClient() {
   return client;
 }
 
+export type PrismaClientExtended = ReturnType<typeof createPrismaClient>;
+
 export const prisma = globalForPrisma.prisma ?? createPrismaClient();
 
 if (process.env.NODE_ENV !== 'production') {

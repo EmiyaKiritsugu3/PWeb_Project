@@ -88,17 +88,15 @@ describe('PagamentoService', () => {
     expect(result.error).toBe('Matrícula não encontrada para este aluno.');
   });
 
-  it('falls back to 0 if plano is not found', async () => {
+  it('throws error if plano is not found', async () => {
     mockTx.aluno.findUnique.mockResolvedValue({
       id: 'aluno-1',
       Matriculas: [{ id: 'm1', dataVencimento: new Date(), planoId: 'p1' }],
     });
     mockTx.plano.findUnique.mockResolvedValue(null);
 
-    await processPayment('aluno-1', mockTx);
-
-    expect(mockTx.pagamento.create).toHaveBeenCalledWith({
-      data: expect.objectContaining({ valor: 0 }),
-    });
+    await expect(processPayment('aluno-1', mockTx)).rejects.toThrow(
+      'Plano p1 não encontrado durante o processamento.'
+    );
   });
 });
