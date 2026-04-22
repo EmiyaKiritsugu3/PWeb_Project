@@ -62,7 +62,14 @@ describe('PagamentoService', () => {
     const alunoId = 'aluno-123';
     mockTx.aluno.findUnique.mockResolvedValue({
       id: alunoId,
-      Matriculas: [{ id: 'm1', dataVencimento: new Date(), planoId: 'p1', Plano: { preco: 100, duracaoDias: 30 } }],
+      Matriculas: [
+        {
+          id: 'm1',
+          dataVencimento: new Date(),
+          planoId: 'p1',
+          Plano: { preco: 100, duracaoDias: 30 },
+        },
+      ],
     });
     mockTx.pagamento.findFirst.mockResolvedValue({ id: 'existing-payment' });
 
@@ -73,18 +80,18 @@ describe('PagamentoService', () => {
     expect(mockTx.pagamento.create).not.toHaveBeenCalled();
   });
 
-  it('returns error if no matricula is found', async () => {
-    mockTx.aluno.findUnique.mockResolvedValue({ id: 'aluno-1', Matriculas: [] });
-    const result = await processPayment('aluno-1', mockTx);
-    expect(result.success).toBe(false);
-    expect(result.error).toBe('Matrícula não encontrada para este aluno.');
-  });
-
   it('returns error if aluno is not found', async () => {
     mockTx.aluno.findUnique.mockResolvedValue(null);
     const result = await processPayment('invalid-id', mockTx);
     expect(result.success).toBe(false);
     expect(result.error).toBe('Aluno não encontrado');
+  });
+
+  it('returns error if no matricula is found', async () => {
+    mockTx.aluno.findUnique.mockResolvedValue({ id: 'aluno-1', Matriculas: [] });
+    const result = await processPayment('aluno-1', mockTx);
+    expect(result.success).toBe(false);
+    expect(result.error).toBe('Matrícula não encontrada para este aluno.');
   });
 
   it('throws error if plano is missing in relation', async () => {
