@@ -213,9 +213,6 @@ export async function registrarHistoricoTreinoAction(
     }
 
     const hoje = new Date();
-    const hojeStr = new Intl.DateTimeFormat('fr-CA', { timeZone: 'America/Sao_Paulo' }).format(
-      hoje
-    ); // yyyy-mm-dd
 
     // 1. Criar Histórico de Treino e Séries em uma transação
     const result = await prisma.$transaction(
