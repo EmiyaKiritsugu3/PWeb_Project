@@ -2,7 +2,7 @@
 
 **Suite**: Playwright — `tests/e2e/specs/`
 **Browser**: Chromium (headless)
-**Total scenarios**: 19
+**Total scenarios**: 20
 
 ## Coverage Table
 
@@ -27,13 +27,13 @@
 | 17  | `enrollment.spec.ts`              | GERENTE creates aluno → appears in list                    | ✅ Covered |
 | 18  | `instrutor-workflow.spec.ts`      | INSTRUTOR assigns workout → ALUNO sees "Do Personal" badge | ✅ Covered |
 | 19  | `instrutor-auth-negative.spec.ts` | RECEPCIONISTA/ALUNO blocked from /dashboard/treinos        | ✅ Covered |
+| 20  | `payment-status.spec.ts`          | GERENTE registers payment: INADIMPLENTE aluno → ATIVA      | ✅ Covered |
 
 ## Pending / Future Scenarios
 
-| Scenario                                     | Priority | Notes                                   |
-| -------------------------------------------- | -------- | --------------------------------------- |
-| Payment status update (inadimplente → ativo) | P2       | Financial write path                    |
-| Session expiry → redirect to login           | P2       | Requires time manipulation or short JWT |
+| Scenario                           | Priority | Notes                                   |
+| ---------------------------------- | -------- | --------------------------------------- |
+| Session expiry → redirect to login | P2       | Requires time manipulation or short JWT |
 
 ## Running Locally
 

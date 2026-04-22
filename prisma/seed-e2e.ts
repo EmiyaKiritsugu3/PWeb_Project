@@ -131,6 +131,51 @@ async function seed(): Promise<void> {
   });
   console.log(`  Aluno upserted: ${E2E_USERS.aluno.nomeCompleto}`);
 
+  // Seed Plano + INADIMPLENTE Aluno + Matricula (required for payment-status E2E)
+  const planoE2eId = '00000000-0000-0000-0000-000000000020';
+  const alunoInadimplenteId = '00000000-0000-0000-0000-000000000005';
+  const matriculaE2eId = '00000000-0000-0000-0000-000000000030';
+
+  await prisma.plano.upsert({
+    where: { id: planoE2eId },
+    update: {},
+    create: {
+      id: planoE2eId,
+      nome: 'Plano Mensal E2E',
+      preco: 99.9,
+      duracaoDias: 30,
+    },
+  });
+  console.log('  Plano E2E upserted: Plano Mensal E2E');
+
+  // No auth user needed — GERENTE is the actor; aluno only needs a Prisma record
+  await prisma.aluno.upsert({
+    where: { id: alunoInadimplenteId },
+    update: { statusMatricula: 'INADIMPLENTE' },
+    create: {
+      id: alunoInadimplenteId,
+      email: 'aluno-inadimplente@test.com',
+      nomeCompleto: 'Aluno Inadimplente E2E',
+      cpf: '000.000.000-05',
+      telefone: '11999990005',
+      statusMatricula: 'INADIMPLENTE',
+    },
+  });
+  console.log('  Aluno INADIMPLENTE upserted: Aluno Inadimplente E2E');
+
+  await prisma.matricula.upsert({
+    where: { id: matriculaE2eId },
+    update: {},
+    create: {
+      id: matriculaE2eId,
+      alunoId: alunoInadimplenteId,
+      planoId: planoE2eId,
+      dataVencimento: new Date('2025-01-01'),
+      status: 'VENCIDA',
+    },
+  });
+  console.log('  Matricula E2E upserted: Plano Mensal E2E (VENCIDA)');
+
   // Seed 1 Treino for ALUNO (required for workout-session E2E)
   const treinoE2eId = '00000000-0000-0000-0000-000000000010';
   await prisma.treino.upsert({
