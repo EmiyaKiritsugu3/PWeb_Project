@@ -14,7 +14,7 @@ export async function registrarPagamentoAction(alunoId: string) {
     if (result.success) {
       revalidatePath('/dashboard/financeiro');
     }
-
+    
     return result;
   } catch (error) {
     Sentry.captureException(error);
