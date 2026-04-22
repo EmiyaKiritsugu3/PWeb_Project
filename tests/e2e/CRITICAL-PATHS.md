@@ -41,7 +41,7 @@
 # Prerequisites: Docker running
 npm run supabase:start   # start local Supabase (ports 54321/54322)
 npm run seed:e2e         # create 4 deterministic test users
-npm run e2e              # run all 19 scenarios
+npm run e2e              # run all 20 scenarios
 npm run supabase:stop    # cleanup
 ```
 

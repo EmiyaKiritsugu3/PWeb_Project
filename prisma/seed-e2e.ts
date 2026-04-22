@@ -138,7 +138,7 @@ async function seed(): Promise<void> {
 
   await prisma.plano.upsert({
     where: { id: planoE2eId },
-    update: {},
+    update: { nome: 'Plano Mensal E2E', preco: 99.9, duracaoDias: 30 },
     create: {
       id: planoE2eId,
       nome: 'Plano Mensal E2E',
@@ -165,7 +165,7 @@ async function seed(): Promise<void> {
 
   await prisma.matricula.upsert({
     where: { id: matriculaE2eId },
-    update: {},
+    update: { status: 'VENCIDA', dataVencimento: new Date('2025-01-01') },
     create: {
       id: matriculaE2eId,
       alunoId: alunoInadimplenteId,

@@ -7,11 +7,11 @@ test.describe('Payment status write-path', () => {
     await page.goto('/dashboard/financeiro');
 
     // Verify INADIMPLENTE aluno is present in the table
-    await expect(page.getByText('Aluno Inadimplente E2E')).toBeVisible({ timeout: 15_000 });
-    await expect(page.getByText('INADIMPLENTE')).toBeVisible();
+    const row = page.getByRole('row', { name: /Aluno Inadimplente E2E/ });
+    await expect(row).toBeVisible({ timeout: 15_000 });
+    await expect(row.getByText('INADIMPLENTE', { exact: true })).toBeVisible();
 
     // Click "Registrar Pagamento" scoped to the aluno's row
-    const row = page.getByRole('row', { name: /Aluno Inadimplente E2E/ });
     await row.getByRole('button', { name: 'Registrar Pagamento' }).click();
 
     // AlertDialog should open
@@ -25,8 +25,9 @@ test.describe('Payment status write-path', () => {
     // Assert success toast
     await expect(page.getByText('Pagamento Registrado!')).toBeVisible({ timeout: 10_000 });
 
-    // Reload and verify persistence — aluno should no longer appear in inadimplente list
+    // Reload and verify persistence — page re-fetches from DB; aluno must be gone from list
     await page.reload();
     await expect(page.getByText('Aluno Inadimplente E2E')).not.toBeVisible({ timeout: 15_000 });
+    await expect(page.getByText('Nenhum aluno inadimplente.')).toBeVisible();
   });
 });
