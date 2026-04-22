@@ -1,5 +1,3 @@
-import { PrismaClientExtended } from '@/lib/prisma';
-
 /**
  * Pagamento Service
  * Encapsulates the business logic for registering payments and re-activating student enrollments.
@@ -10,9 +8,10 @@ export interface PaymentResult {
   error?: string;
 }
 
-export async function processPayment<T extends Record<string, any>>(
+export async function processPayment(
   alunoId: string,
-  tx: T
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  tx: any
 ): Promise<PaymentResult> {
   // 1. Buscar o aluno e sua matrícula ativa (ou a mais recente vencida)
   const aluno = await tx.aluno.findUnique({
