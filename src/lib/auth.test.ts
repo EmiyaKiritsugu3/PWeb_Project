@@ -88,8 +88,8 @@ describe('requireRole', () => {
   });
 
   it('redirects to /login when Supabase auth returns an error', async () => {
-    const supabase = buildSupabaseMock({ userId: undefined, authError: true });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const supabase = buildSupabaseMock({ userId: 'some-id', authError: true });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Supabase mock does not match full client type
     mockCreateClient.mockResolvedValue(supabase as any);
 
     await requireRole('GERENTE');
