@@ -4,11 +4,11 @@ import { Logger } from '@/lib/logger';
 import type { Role } from '@/lib/definitions';
 
 /**
- * Asserts that the currently authenticated user has the required role.
- * Redirects to '/login' if no session exists.
- * Redirects to '/dashboard' if role doesn't match (fail-closed on DB errors).
+ * Asserts that the current user holds one of the allowed roles.
+ * Redirects to '/login' if unauthenticated; to '/dashboard' if unauthorized
+ * or on any DB error (fail-closed).
  */
-export async function requireRole(allowedRole: Role): Promise<void> {
+export async function requireAnyRole(allowedRoles: Role[]): Promise<void> {
   const supabase = await createClient();
 
   const {
@@ -27,11 +27,20 @@ export async function requireRole(allowedRole: Role): Promise<void> {
     .maybeSingle();
 
   if (error) {
-    Logger.error(`[requireRole] DB error fetching role: ${error.message}`, error);
+    Logger.error(`[auth] DB error fetching role: ${error.message}`, error);
     redirect('/dashboard');
+    return;
   }
 
-  if (!data || data.role !== allowedRole) {
+  if (!data || !allowedRoles.includes(data.role)) {
     redirect('/dashboard');
   }
+}
+
+/**
+ * Asserts that the currently authenticated user has the required role.
+ * Delegates to requireAnyRole for consistent fail-closed behavior.
+ */
+export async function requireRole(allowedRole: Role): Promise<void> {
+  return requireAnyRole([allowedRole]);
 }

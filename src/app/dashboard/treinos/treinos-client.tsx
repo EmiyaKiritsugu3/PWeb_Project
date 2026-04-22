@@ -316,13 +316,7 @@ function PlanoGeradoParaEdicao({
   );
 }
 
-export default function TreinosManagementClient({
-  initialAlunos,
-  instrutorId,
-}: {
-  initialAlunos: Aluno[];
-  instrutorId: string;
-}) {
+export default function TreinosManagementClient({ initialAlunos }: { initialAlunos: Aluno[] }) {
   const { toast } = useToast();
   const [selectedAlunoId, setSelectedAlunoId] = useState<string | null>(null);
   const [objetivo, setObjetivo] = useState('');
@@ -381,7 +375,6 @@ export default function TreinosManagementClient({
     try {
       const res = await upsertTreinoAction({
         alunoId: selectedAlunoId,
-        instrutorId,
         objetivo,
         exercicios: exercicios as Exercicio[],
         diaSemana: null,
@@ -430,7 +423,6 @@ export default function TreinosManagementClient({
       for (const workout of planoEditado.workouts) {
         await upsertTreinoAction({
           alunoId: selectedAluno.id,
-          instrutorId,
           objetivo: workout.nome,
           exercicios: workout.exercicios.map((ex) => ({
             nomeExercicio: ex.nomeExercicio,
