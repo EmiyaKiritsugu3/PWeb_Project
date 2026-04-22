@@ -11,7 +11,7 @@ vi.mock('@/utils/supabase/server', () => ({
   createClient: vi.fn(),
 }));
 
-import { requireRole } from './auth';
+import { requireRole, requireAnyRole } from './auth';
 import { createClient } from '@/utils/supabase/server';
 
 const mockCreateClient = vi.mocked(createClient);
@@ -102,6 +102,58 @@ describe('requireRole', () => {
     mockCreateClient.mockResolvedValue(supabase as any);
 
     await requireRole('GERENTE');
+    expect(mockRedirect).toHaveBeenCalledWith('/dashboard');
+  });
+});
+
+describe('requireAnyRole', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('resolves without redirect when user role is in the allowed list', async () => {
+    const supabase = buildSupabaseMock({ userId: 'user-1', role: 'INSTRUTOR' });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Supabase mock does not match full client type
+    mockCreateClient.mockResolvedValue(supabase as any);
+
+    await requireAnyRole(['INSTRUTOR', 'GERENTE']);
+
+    expect(mockRedirect).not.toHaveBeenCalled();
+  });
+
+  it('redirects to /dashboard when user role is not in the allowed list', async () => {
+    const supabase = buildSupabaseMock({ userId: 'user-1', role: 'RECEPCIONISTA' });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Supabase mock does not match full client type
+    mockCreateClient.mockResolvedValue(supabase as any);
+
+    await requireAnyRole(['INSTRUTOR', 'GERENTE']);
+    expect(mockRedirect).toHaveBeenCalledWith('/dashboard');
+  });
+
+  it('redirects to /login when no authenticated user', async () => {
+    const supabase = buildSupabaseMock({ userId: undefined });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Supabase mock does not match full client type
+    mockCreateClient.mockResolvedValue(supabase as any);
+
+    await requireAnyRole(['INSTRUTOR', 'GERENTE']);
+    expect(mockRedirect).toHaveBeenCalledWith('/login');
+  });
+
+  it('redirects to /dashboard (fail-closed) when DB query errors', async () => {
+    const supabase = buildSupabaseMock({ userId: 'user-1', dbError: true });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Supabase mock does not match full client type
+    mockCreateClient.mockResolvedValue(supabase as any);
+
+    await requireAnyRole(['INSTRUTOR', 'GERENTE']);
+    expect(mockRedirect).toHaveBeenCalledWith('/dashboard');
+  });
+
+  it('redirects to /dashboard when role is null (ALUNO — no funcionario record)', async () => {
+    const supabase = buildSupabaseMock({ userId: 'user-1', role: undefined });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Supabase mock does not match full client type
+    mockCreateClient.mockResolvedValue(supabase as any);
+
+    await requireAnyRole(['INSTRUTOR', 'GERENTE']);
     expect(mockRedirect).toHaveBeenCalledWith('/dashboard');
   });
 });
