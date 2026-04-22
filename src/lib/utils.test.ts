@@ -10,6 +10,7 @@ describe('cn utility', () => {
     const isTrue = true;
     const isFalse = false;
     expect(cn('base', isTrue && 'is-true', isFalse && 'is-false')).toBe('base is-true');
+    expect(cn('base', { 'is-true': isTrue, 'is-false': isFalse })).toBe('base is-true');
   });
 
   it('handles undefined and null', () => {

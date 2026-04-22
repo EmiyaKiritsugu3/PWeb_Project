@@ -46,36 +46,50 @@ export async function upsertTreinoAction(treinoData: TreinoBase | (TreinoBase & 
       validatedData = TreinoBaseSchema.parse(treinoData);
     }
 
-    // Extraímos os dados validados. 'id' será undefined se for Base.
     const { objetivo, exercicios, diaSemana } = validatedData;
-    // ALUNOs: override alunoId with server-verified user.id to prevent cross-user spoofing
     const alunoId = funcData === null ? user.id : validatedData.alunoId;
     const id =
       'id' in validatedData ? (validatedData as TreinoBase & { id: string }).id : undefined;
 
     if (id) {
-      // 1. Update Treino
-      await prisma.treino.update({
+      // 1. Authorization check before update
+      const existingTreino = await prisma.treino.findUnique({
         where: { id },
-        data: {
-          objetivo,
-          diaSemana,
-          alunoId,
-          instrutorId: derivedInstrutorId,
-        },
+        select: { instrutorId: true, alunoId: true },
       });
 
-      // 2. Sync Exercicios (Delete current, insert new) — Simple sync strategy
-      await prisma.exercicio.deleteMany({ where: { treinoId: id } });
-      await prisma.exercicio.createMany({
-        data: exercicios.map((ex) => ({
-          treinoId: id,
-          nomeExercicio: ex.nomeExercicio,
-          series: ex.series,
-          repeticoes: ex.repeticoes,
-          observacoes: ex.observacoes || '',
-          descricao: ex.descricao || '',
-        })),
+      if (!existingTreino) return { success: false, error: 'Treino não encontrado' };
+
+      const isOwner =
+        funcData?.role === 'GERENTE' ||
+        existingTreino.instrutorId === user.id ||
+        existingTreino.alunoId === user.id;
+
+      if (!isOwner) return { success: false, error: 'Acesso não autorizado para edição' };
+
+      // 2. Atomic Update Flow
+      await prisma.$transaction(async (tx) => {
+        await tx.treino.update({
+          where: { id },
+          data: {
+            objetivo,
+            diaSemana,
+            alunoId,
+            instrutorId: derivedInstrutorId,
+          },
+        });
+
+        await tx.exercicio.deleteMany({ where: { treinoId: id } });
+        await tx.exercicio.createMany({
+          data: exercicios.map((ex) => ({
+            treinoId: id,
+            nomeExercicio: ex.nomeExercicio,
+            series: ex.series,
+            repeticoes: ex.repeticoes,
+            observacoes: ex.observacoes || '',
+            descricao: ex.descricao || '',
+          })),
+        });
       });
     } else {
       // CREATE flow
@@ -251,19 +265,17 @@ export async function registrarHistoricoTreinoAction(
 
         const rewards = calculateTreinoRewards(aluno, totalSeriesConcluidas, hoje);
 
-        if (rewards.novoStreak !== aluno.streakDiasSeguidos || rewards.novaExp !== aluno.exp) {
-          // 3. Atualizar Aluno
-          await tx.aluno.update({
-            where: { id: aluno.id },
-            data: {
-              exp: rewards.novaExp,
-              nivel: rewards.novoNivel,
-              streakDiasSeguidos: rewards.novoStreak,
-              treinosNoMes: rewards.novosTreinosNoMes,
-              ultimoTreinoData: hoje,
-            },
-          });
-        }
+        // 3. Atualizar Aluno (Always persist calculated rewards)
+        await tx.aluno.update({
+          where: { id: aluno.id },
+          data: {
+            exp: rewards.novaExp,
+            nivel: rewards.novoNivel,
+            streakDiasSeguidos: rewards.novoStreak,
+            treinosNoMes: rewards.novosTreinosNoMes,
+            ultimoTreinoData: hoje,
+          },
+        });
 
         return historico;
       },

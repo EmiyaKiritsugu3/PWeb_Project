@@ -13,7 +13,7 @@ export async function processPayment(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   tx: any
 ): Promise<PaymentResult> {
-  // 1. Buscar o aluno e sua matrícula ativa (ou a mais recente vencida)
+  // 1. Buscar o aluno e sua matrícula ativa (ou a mais recente vencida) incluindo o plano
   const aluno = await tx.aluno.findUnique({
     where: { id: alunoId },
     select: {
@@ -28,6 +28,12 @@ export async function processPayment(
           id: true,
           dataVencimento: true,
           planoId: true,
+          Plano: {
+            select: {
+              preco: true,
+              duracaoDias: true,
+            },
+          },
         },
       },
     },
@@ -43,17 +49,40 @@ export async function processPayment(
     return { success: false, error: 'Matrícula não encontrada para este aluno.' };
   }
 
-  // 2. Atualizar Aluno
+  if (!matriculaAtiva.Plano) {
+    throw new Error(`Plano ${matriculaAtiva.planoId} não encontrado durante o processamento.`);
+  }
+
+  // 2. Idempotency Check: Prevent multiple payments for the same enrollment on the same day
+  const hoje = new Date();
+  const hojeStr = new Intl.DateTimeFormat('fr-CA', { timeZone: 'America/Sao_Paulo' }).format(hoje);
+
+  const pagamentoHoje = await tx.pagamento.findFirst({
+    where: {
+      alunoId,
+      matriculaId: matriculaAtiva.id,
+      dataPagamento: {
+        gte: new Date(`${hojeStr}T00:00:00.000Z`),
+        lte: new Date(`${hojeStr}T23:59:59.999Z`),
+      },
+    },
+  });
+
+  if (pagamentoHoje) {
+    return { success: true }; // Already processed today
+  }
+
+  // 3. Atualizar Aluno
   await tx.aluno.update({
     where: { id: alunoId },
     data: { statusMatricula: 'ATIVA' },
   });
 
-  // 3. Atualizar Matrícula (Reativa e estende por 30 dias)
+  // 4. Atualizar Matrícula (Reativa e estende pela duração do plano)
   const novaDataVencimento = new Date(
-    Math.max(new Date().getTime(), new Date(matriculaAtiva.dataVencimento).getTime())
+    Math.max(hoje.getTime(), new Date(matriculaAtiva.dataVencimento).getTime())
   );
-  novaDataVencimento.setDate(novaDataVencimento.getDate() + 30);
+  novaDataVencimento.setDate(novaDataVencimento.getDate() + matriculaAtiva.Plano.duracaoDias);
 
   await tx.matricula.update({
     where: { id: matriculaAtiva.id },
@@ -63,18 +92,12 @@ export async function processPayment(
     },
   });
 
-  // 4. Criar Registro de Pagamento
-  const plano = await tx.plano.findUnique({ where: { id: matriculaAtiva.planoId } });
-
-  if (!plano) {
-    throw new Error(`Plano ${matriculaAtiva.planoId} não encontrado durante o processamento.`);
-  }
-
+  // 5. Criar Registro de Pagamento
   await tx.pagamento.create({
     data: {
       alunoId: alunoId,
       matriculaId: matriculaAtiva.id,
-      valor: plano.preco,
+      valor: matriculaAtiva.Plano.preco,
       metodo: 'PIX',
     },
   });
