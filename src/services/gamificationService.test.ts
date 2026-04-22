@@ -68,5 +68,31 @@ describe('GamificationService', () => {
     const result = calculateTreinoRewards(alunoFromLastMonth, 5, new Date('2026-04-01T12:00:00'));
 
     expect(result.novosTreinosNoMes).toBe(1);
+    expect(result.novoStreak).toBe(1); // Streak also resets if not consecutive
+  });
+
+  it('prevents multiple rewards on the same day', () => {
+    const today = new Date('2026-04-22T12:00:00');
+    const alunoAlreadyTrained = {
+      ...mockAluno,
+      exp: 500,
+      ultimoTreinoData: today,
+    };
+
+    const result = calculateTreinoRewards(alunoAlreadyTrained, 10, today);
+
+    expect(result.novaExp).toBe(500); // No XP added
+    expect(result.novosTreinosNoMes).toBe(mockAluno.treinosNoMes);
+  });
+
+  it('handles zero completed series correctly', () => {
+    const result = calculateTreinoRewards(mockAluno, 0, new Date('2026-04-22T12:00:00'));
+    // 100 base + 0 series = 100 XP
+    expect(result.novaExp).toBe(100);
+  });
+
+  it('starts a new streak if there was no previous workout', () => {
+    const result = calculateTreinoRewards(mockAluno, 5, new Date('2026-04-22T12:00:00'));
+    expect(result.novoStreak).toBe(1);
   });
 });
