@@ -13,6 +13,7 @@ import {
 } from '@/lib/definitions';
 import { createClient } from '@/utils/supabase/server';
 import * as Sentry from '@sentry/nextjs';
+import { calculateTreinoRewards } from '@/services/gamificationService';
 
 export async function upsertTreinoAction(treinoData: TreinoBase | (TreinoBase & { id: string })) {
   try {
@@ -240,67 +241,23 @@ export async function registrarHistoricoTreinoAction(
           },
         });
 
-        // 2. Lógica de Gamificação
-        let novoStreak = aluno.streakDiasSeguidos;
-        let novoNivel = aluno.nivel;
-        let novaExp = aluno.exp;
-        let treinosNoMes = aluno.treinosNoMes;
+        // 2. Lógica de Gamificação (Delegated to Service)
+        const totalSeriesConcluidas = validatedData.exercicios.reduce(
+          (acc, ex) => acc + ex.seriesExecutadas.filter((s) => s.concluido).length,
+          0
+        );
 
-        const dataUltimoTreino = aluno.ultimoTreinoData
-          ? new Intl.DateTimeFormat('fr-CA', { timeZone: 'America/Sao_Paulo' }).format(
-              new Date(aluno.ultimoTreinoData)
-            )
-          : null;
+        const rewards = calculateTreinoRewards(aluno, totalSeriesConcluidas, hoje);
 
-        if (dataUltimoTreino !== hojeStr) {
-          // É um novo dia de treino!
-          const mesAtualStr = hojeStr.split('-')[1];
-          const mesUltimoTreinoStr = dataUltimoTreino ? dataUltimoTreino.split('-')[1] : null;
-
-          if (mesAtualStr !== mesUltimoTreinoStr) {
-            treinosNoMes = 1; // It's a new month, reset
-          } else {
-            treinosNoMes += 1;
-          }
-
-          novaExp += 100; // 100 XP base por treino completo
-
-          // Bônus por volume de séries concluídas
-          const totalSeriesConcluidas = validatedData.exercicios.reduce(
-            (acc, ex) => acc + ex.seriesExecutadas.filter((s) => s.concluido).length,
-            0
-          );
-          novaExp += totalSeriesConcluidas * 10; // 10 XP por série
-
-          // Lógica de Streak (Ofensiva)
-          const ontem = new Date();
-          ontem.setDate(ontem.getDate() - 1);
-          const ontemStr = new Intl.DateTimeFormat('fr-CA', {
-            timeZone: 'America/Sao_Paulo',
-          }).format(ontem);
-
-          if (dataUltimoTreino === ontemStr) {
-            novoStreak += 1;
-            novaExp += 50; // Bônus de 50 XP por manter a sequência
-          } else if (dataUltimoTreino !== hojeStr) {
-            novoStreak = 1;
-          }
-
-          // Lógica de Level Up (Nível * 1500 XP - ajustado para o novo sistema)
-          const expNecessaria = novoNivel * 1500;
-          if (novaExp >= expNecessaria) {
-            novaExp -= expNecessaria;
-            novoNivel += 1;
-          }
-
+        if (rewards.novoStreak !== aluno.streakDiasSeguidos || rewards.novaExp !== aluno.exp) {
           // 3. Atualizar Aluno
           await tx.aluno.update({
             where: { id: aluno.id },
             data: {
-              exp: novaExp,
-              nivel: novoNivel,
-              streakDiasSeguidos: novoStreak,
-              treinosNoMes: treinosNoMes,
+              exp: rewards.novaExp,
+              nivel: rewards.novoNivel,
+              streakDiasSeguidos: rewards.novoStreak,
+              treinosNoMes: rewards.novosTreinosNoMes,
               ultimoTreinoData: hoje,
             },
           });
