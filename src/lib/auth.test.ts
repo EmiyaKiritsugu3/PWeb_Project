@@ -87,6 +87,15 @@ describe('requireRole', () => {
     expect(mockRedirect).toHaveBeenCalledWith('/login');
   });
 
+  it('redirects to /login when Supabase auth returns an error', async () => {
+    const supabase = buildSupabaseMock({ userId: undefined, authError: true });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mockCreateClient.mockResolvedValue(supabase as any);
+
+    await requireRole('GERENTE');
+    expect(mockRedirect).toHaveBeenCalledWith('/login');
+  });
+
   it('redirects to /dashboard (fail-closed) when DB query errors', async () => {
     const supabase = buildSupabaseMock({ userId: 'user-1', dbError: true });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Supabase mock does not match full client type
