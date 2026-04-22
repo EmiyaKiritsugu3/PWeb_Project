@@ -1,0 +1,6 @@
+# Ignore everything in this directory from root ESLint checks
+# This is a standalone CLI tool, not part of the web application.
+src/**/*
+dist/**/*
+*.ts
+*.js

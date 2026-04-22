@@ -1,0 +1,18 @@
+{
+  "planPath": "implementation_plan.md",
+  "preFlightCommand": "npm run pre-flight",
+  "paths": {
+    "insightsDir": "docs/reports/insights",
+    "sourceDirs": ["src"],
+    "fpaRules": "docs/process/FPA-RULES.json",
+    "baseline": "docs/security/BASELINE.json",
+    "currentState": "docs/CURRENT-STATE.md"
+  },
+  "fpa": {
+    "criticalPaths": {
+      "prisma/schema": 7,
+      "src/services/": 7
+    },
+    "defaultFilePoints": 4
+  }
+}
