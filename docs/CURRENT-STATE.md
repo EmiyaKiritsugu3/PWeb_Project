@@ -1,35 +1,55 @@
 # Current State — Five Star Academy
 
-**Last Updated**: 2026-04-20
-**Branch**: `main` (v0.7.0 — It4 merged PR #73)
-**Version**: 0.7.0 (It4 complete — INSTRUTOR workflow E2E, 18/18 passing)
+**Last Updated**: 2026-04-21
+**Branch**: `feat/007-it5-instrutor-auth` (It5 — all 12 tasks complete, PR ready)
+**Version**: 0.7.0 (It4 base — It5 hardening pending merge)
 
 ## What Works Today
 
-| Feature                                     | Status     | Notes                                                                                           |
-| ------------------------------------------- | ---------- | ----------------------------------------------------------------------------------------------- |
-| Admin login                                 | ✅ Working | Supabase Auth SSR                                                                               |
-| Student login (Portal do Aluno)             | ✅ Working | Separate session                                                                                |
-| Admin dashboard                             | ✅ Working | GERENTE + RECEPCIONISTA                                                                         |
-| Financial routes (`/financeiro`, `/planos`) | ✅ Working | GERENTE-only gate                                                                               |
-| Student workout view                        | ✅ Working | `meus-treinos`                                                                                  |
-| AI workout generator                        | ✅ Working | Genkit + Gemini                                                                                 |
-| Student enrollment                          | ✅ Working | Admin creates aluno                                                                             |
-| Gamification (XP, streaks)                  | ✅ Working | Hook `use-workout-tracker`                                                                      |
-| Prisma migrations                           | ✅ Tracked | `prisma/migrations/`                                                                            |
-| ESLint quality gate                         | ✅ Done    | 0 errors — `any` + unused vars                                                                  |
-| TypeScript typecheck                        | ✅ Clean   | 0 errors (strict mode)                                                                          |
-| AI workout feedback (US06)                  | ✅ Done    | `WorkoutSession.tsx` — Genkit call + try/catch fallback + feedback card                         |
-| Unit tests                                  | ✅ Passing | 22/22 (Vitest)                                                                                  |
-| Ops documentation                           | ✅ Done    | Runbook, SLOs, threat model                                                                     |
-| Process documentation                       | ✅ Done    | RFC + Postmortem templates                                                                      |
-| Local E2E stack                             | ✅ Done    | `supabase start` (Docker)                                                                       |
-| E2E seed script                             | ✅ Done    | `prisma/seed-e2e.ts` (5 fixtures: 4 users + 1 treino with 2 exercícios)                         |
-| Playwright E2E suite                        | ✅ Done    | 18 scenarios (+ instrutor-workflow: INSTRUTOR assigns workout → ALUNO sees "Do Personal" badge) |
-| CI E2E job                                  | ✅ Green   | 18/18 passing locally (It4); 17/17 in last CI (PR #72); PR pending                              |
-| Sentry error tracking                       | ✅ Active  | DSN + auth token set in Vercel; source maps (92) uploaded on every build                        |
-| Structured logging                          | ✅ Done    | `src/lib/logger.ts` (Logger wrapper, Sentry-aware)                                              |
-| Dependencies                                | ✅ Updated | All patch/minor bumped via PR #70; lockfile clean                                               |
+| Feature                                     | Status     | Notes                                                                                                |
+| ------------------------------------------- | ---------- | ---------------------------------------------------------------------------------------------------- |
+| Admin login                                 | ✅ Working | Supabase Auth SSR                                                                                    |
+| Student login (Portal do Aluno)             | ✅ Working | Separate session                                                                                     |
+| Admin dashboard                             | ✅ Working | GERENTE + RECEPCIONISTA                                                                              |
+| Financial routes (`/financeiro`, `/planos`) | ✅ Working | GERENTE-only gate                                                                                    |
+| Student workout view                        | ✅ Working | `meus-treinos`                                                                                       |
+| AI workout generator                        | ✅ Working | Genkit + Gemini                                                                                      |
+| Student enrollment                          | ✅ Working | Admin creates aluno                                                                                  |
+| Gamification (XP, streaks)                  | ✅ Working | Hook `use-workout-tracker`                                                                           |
+| Prisma migrations                           | ✅ Tracked | `prisma/migrations/`                                                                                 |
+| ESLint quality gate                         | ✅ Done    | 0 errors — `any` + unused vars                                                                       |
+| TypeScript typecheck                        | ✅ Clean   | 0 errors (strict mode)                                                                               |
+| AI workout feedback (US06)                  | ✅ Done    | `WorkoutSession.tsx` — Genkit call + try/catch fallback + feedback card                              |
+| Unit tests                                  | ✅ Passing | 32/32 (Vitest — +10 for It5 treinos auth tests)                                                      |
+| Ops documentation                           | ✅ Done    | Runbook, SLOs, threat model                                                                          |
+| Process documentation                       | ✅ Done    | RFC + Postmortem templates                                                                           |
+| Local E2E stack                             | ✅ Done    | `supabase start` (Docker)                                                                            |
+| E2E seed script                             | ✅ Done    | `prisma/seed-e2e.ts` (5 fixtures: 4 users + 1 treino with 2 exercícios)                              |
+| Playwright E2E suite                        | ✅ Done    | 19 scenarios (18 It4 + instrutor-auth-negative: RECEPCIONISTA/ALUNO blocked from /dashboard/treinos) |
+| CI E2E job                                  | ✅ Green   | 18/18 passing locally (It4); 17/17 in last CI (PR #72); PR pending                                   |
+| Sentry error tracking                       | ✅ Active  | DSN + auth token set in Vercel; source maps (92) uploaded on every build                             |
+| Structured logging                          | ✅ Done    | `src/lib/logger.ts` (Logger wrapper, Sentry-aware)                                                   |
+| Dependencies                                | ✅ Updated | All patch/minor bumped via PR #70; lockfile clean                                                    |
+
+## It5 Progress (007-it5-instrutor-auth)
+
+**Spec**: `specs/007-it5-instrutor-auth/` — all Phase 0–1 artifacts complete (spec, plan, research, data-model, quickstart, tasks)
+**12 tasks — ALL COMPLETE** ✅
+
+| Task | Description                                                   | Status      |
+| ---- | ------------------------------------------------------------- | ----------- |
+| T001 | Add `requireAnyRole` to `src/lib/auth.ts`                     | ✅ Complete |
+| T002 | Create E2E negative test (RECEPCIONISTA/ALUNO blocked)        | ✅ Complete |
+| T003 | Gate `/dashboard/treinos` with `requireAnyRole`               | ✅ Complete |
+| T004 | Write unit tests for `upsertTreinoAction` (TDD red)           | ✅ Complete |
+| T005 | Remove `instrutorId` from `TreinoBaseSchema`                  | ✅ Complete |
+| T006 | Harden `upsertTreinoAction` (derive instrutorId from session) | ✅ Complete |
+| T007 | Remove `instrutorId` prop from `TreinosManagementClient`      | ✅ Complete |
+| T008 | Remove `getUser` + `instrutorId` prop from `TreinosPage`      | ✅ Complete |
+| T009 | Write ownership unit tests (TDD red)                          | ✅ Complete |
+| T010 | Add ownership check to `updateTreinoDayAction`                | ✅ Complete |
+| T011 | Add ownership check to `deleteTreinoAction`                   | ✅ Complete |
+| T012 | Update `CRITICAL-PATHS.md` 18 → 19 scenarios                  | ✅ Complete |
 
 ## What Is Incomplete
 
@@ -42,10 +62,10 @@
 ## Quality Gates (current status)
 
 ```
-npm run typecheck   → ✅  0 errors
+npm run typecheck   → ✅  0 errors  (TS2882 fixed: src/types/css.d.ts restored)
 npm run lint        → ✅  0 errors
-npm run test        → ✅  22/22 passing
-npm run e2e         → ✅  18/18 passing  (local, 2026-04-19 — It4)
+npm run test        → ✅  32/32 passing  (+10 It5 auth tests)
+npm run e2e         → ⏳  19 scenarios (18 confirmed It4; #19 needs E2E run against local stack)
 npm run build       → ✅  production build succeeds
 ```
 
@@ -58,7 +78,7 @@ npm run build       → ✅  production build succeeds
 - **Validation**: Zod 3
 - **AI**: Google Genkit 1.32 + Gemini 2.5 Flash
 - **Styling**: Tailwind CSS 4 + Shadcn/UI
-- **Testing**: Vitest 4 (5 files, 22 unit tests) + Playwright 1.59 (18 E2E scenarios)
+- **Testing**: Vitest 4 (6 files, 32 unit tests) + Playwright 1.59 (19 E2E scenarios)
 - **CI**: GitHub Actions (quality + test + e2e jobs)
 - **Local E2E DB**: Supabase CLI (`supabase start` → ports 54321/54322)
 
@@ -69,7 +89,7 @@ npm run build       → ✅  production build succeeds
 | `src/app/dashboard/`                   | Admin portal pages                                 |
 | `src/app/aluno/`                       | Student portal pages                               |
 | `src/lib/actions/`                     | Server Actions (auth, alunos, treinos, financeiro) |
-| `src/lib/auth.ts`                      | `requireRole()` helper                             |
+| `src/lib/auth.ts`                      | `requireRole()` + `requireAnyRole()` (It5 — live)  |
 | `src/services/`                        | Business logic (XP, streaks)                       |
 | `src/ai/flows/`                        | Genkit AI flows                                    |
 | `prisma/schema.prisma`                 | DB schema                                          |

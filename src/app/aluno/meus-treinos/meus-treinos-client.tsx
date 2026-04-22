@@ -73,9 +73,8 @@ export default function MeusTreinosClient({
     try {
       const res = await upsertTreinoAction({
         ...treinoData,
-        id: editingTreino?.id,
+        ...(editingTreino ? { id: editingTreino.id } : {}),
         alunoId: userId,
-        instrutorId: userId,
       });
 
       if (res.success) {
@@ -192,7 +191,6 @@ export default function MeusTreinosClient({
 
           const res = await upsertTreinoAction({
             alunoId: userId,
-            instrutorId: undefined,
             objetivo: workout.nome,
             exercicios: novosExercicios,
             diaSemana: isDayOccupied ? null : diaSugerido,

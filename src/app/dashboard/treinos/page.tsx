@@ -1,18 +1,11 @@
 import { prisma } from '@/lib/prisma';
-import { createClient } from '@/utils/supabase/server';
+import { requireAnyRole } from '@/lib/auth';
 import { PageHeader } from '@/components/page-header';
 import TreinosManagementClient from './treinos-client';
 import type { Aluno } from '@/lib/definitions';
 
 export default async function TreinosPage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return <div>Não autorizado</div>;
-  }
+  await requireAnyRole(['INSTRUTOR', 'GERENTE']);
 
   // Buscar todos os alunos para a seleção via Prisma
   const alunosPrisma = await prisma.aluno.findMany({
@@ -42,7 +35,7 @@ export default async function TreinosPage() {
         title="Gestão de Treinos"
         description="Monte treinos manualmente ou use a IA para gerar sugestões personalizadas para os alunos."
       />
-      <TreinosManagementClient initialAlunos={alunosData} instrutorId={user.id} />
+      <TreinosManagementClient initialAlunos={alunosData} />
     </>
   );
 }

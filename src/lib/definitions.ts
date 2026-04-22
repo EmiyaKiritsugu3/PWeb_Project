@@ -55,7 +55,7 @@ export type Exercicio = z.infer<typeof ExercicioSchema>;
 
 export const TreinoBaseSchema = z.object({
   alunoId: z.string().uuid('ID do aluno inválido'),
-  instrutorId: z.string().uuid('ID do instrutor inválido').optional(),
+  // instrutorId is server-derived from session — not accepted from client
   objetivo: z.string().min(3, 'Objetivo é obrigatório'),
   dataCriacao: z.string().or(z.date()).optional(),
   /** Dia da semana (0 = Domingo, 1 = Segunda, ..., 6 = Sábado). Null se não estiver ativo. */
@@ -65,6 +65,7 @@ export const TreinoBaseSchema = z.object({
 
 export const TreinoSchema = TreinoBaseSchema.extend({
   id: z.string().uuid('ID inválido'),
+  instrutorId: z.string().uuid().optional().nullable(),
   // Note: Here we update exercicios to be the Entity version if we are fetching from DB
   exercicios: z.array(ExercicioSchema).min(1),
 });
