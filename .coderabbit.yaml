@@ -11,4 +11,3 @@ reviews:
 code_generation:
   docstrings:
     enabled: false
-    language: typescript
