@@ -24,20 +24,19 @@ export function calculateTreinoRewards(
   completedSeriesCount: number,
   today: Date = new Date()
 ): GamificationResult {
-  const hojeStr = new Intl.DateTimeFormat('fr-CA', { timeZone: 'America/Sao_Paulo' }).format(today);
+  // Use YYYY-MM-DD for day comparisons and YYYY-MM for month comparisons
+  const formatSP = (date: Date) =>
+    new Intl.DateTimeFormat('fr-CA', { timeZone: 'America/Sao_Paulo' }).format(date);
 
-  const dataUltimoTreino = aluno.ultimoTreinoData
-    ? new Intl.DateTimeFormat('fr-CA', { timeZone: 'America/Sao_Paulo' }).format(
-        new Date(aluno.ultimoTreinoData)
-      )
-    : null;
+  const hojeStr = formatSP(today);
+  const dataUltimoTreino = aluno.ultimoTreinoData ? formatSP(new Date(aluno.ultimoTreinoData)) : null;
 
   let novaExp = aluno.exp;
   let novoNivel = aluno.nivel;
   let novoStreak = aluno.streakDiasSeguidos;
   let treinosNoMes = aluno.treinosNoMes;
 
-  // Prevent multiple rewards on the same day
+  // Prevent multiple rewards on the same day (Idempotency)
   if (dataUltimoTreino === hojeStr) {
     return {
       novaExp,
@@ -51,22 +50,19 @@ export function calculateTreinoRewards(
   novaExp += 100; // 100 XP base per workout
   novaExp += completedSeriesCount * 10; // 10 XP per completed series
 
-  // 2. Monthly count logic
-  const mesAtualStr = hojeStr.split('-')[1];
-  const mesUltimoTreinoStr = dataUltimoTreino ? dataUltimoTreino.split('-')[1] : null;
+  // 2. Monthly count logic (Compare YYYY-MM to avoid year-boundary bugs)
+  const mesAtualKey = hojeStr.slice(0, 7); // "YYYY-MM"
+  const mesUltimoTreinoKey = dataUltimoTreino ? dataUltimoTreino.slice(0, 7) : null;
 
-  if (mesAtualStr !== mesUltimoTreinoStr) {
+  if (mesAtualKey !== mesUltimoTreinoKey) {
     treinosNoMes = 1;
   } else {
     treinosNoMes += 1;
   }
 
   // 3. Streak Logic
-  const ontem = new Date(today);
-  ontem.setDate(ontem.getDate() - 1);
-  const ontemStr = new Intl.DateTimeFormat('fr-CA', {
-    timeZone: 'America/Sao_Paulo',
-  }).format(ontem);
+  // Derive "yesterday" using absolute timestamp to avoid local TZ arithmetic issues
+  const ontemStr = formatSP(new Date(today.getTime() - 86400000));
 
   if (dataUltimoTreino === ontemStr) {
     novoStreak += 1;
@@ -76,9 +72,9 @@ export function calculateTreinoRewards(
   }
 
   // 4. Level Up Logic (Progressive threshold: Level * 1500)
-  const expNecessaria = novoNivel * 1500;
-  if (novaExp >= expNecessaria) {
-    novaExp -= expNecessaria;
+  // Loop until XP is below threshold to support multiple level gains
+  while (novaExp >= novoNivel * 1500) {
+    novaExp -= novoNivel * 1500;
     novoNivel += 1;
   }
 

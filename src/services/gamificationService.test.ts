@@ -95,4 +95,30 @@ describe('GamificationService', () => {
     const result = calculateTreinoRewards(mockAluno, 5, new Date('2026-04-22T12:00:00'));
     expect(result.novoStreak).toBe(1);
   });
+
+  it('supports multiple level gains in one workout', () => {
+    const alunoOverloaded = {
+      ...mockAluno,
+      exp: 1400,
+      nivel: 1,
+    };
+    // 1400 + 100 base + (300 series * 10) = 4500 XP
+    // Threshold L1: 1500 -> New XP 3000, Level 2
+    // Threshold L2: 3000 -> New XP 0, Level 3
+    const result = calculateTreinoRewards(alunoOverloaded, 300, new Date('2026-04-22T12:00:00'));
+
+    expect(result.novoNivel).toBe(3);
+    expect(result.novaExp).toBe(0);
+  });
+
+  it('resets monthly workouts correctly across year boundaries', () => {
+    const alunoLastDay2025 = {
+      ...mockAluno,
+      treinosNoMes: 20,
+      ultimoTreinoData: new Date('2025-12-31T12:00:00'),
+    };
+    const result = calculateTreinoRewards(alunoLastDay2025, 5, new Date('2026-01-01T12:00:00'));
+
+    expect(result.novosTreinosNoMes).toBe(1);
+  });
 });
