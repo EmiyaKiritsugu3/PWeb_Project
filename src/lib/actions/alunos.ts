@@ -22,9 +22,6 @@ export async function finalizarTreinoAction(treinoId: string, durationMinutes: n
     }
 
     const hoje = new Date();
-    const hojeStr = new Intl.DateTimeFormat('fr-CA', { timeZone: 'America/Sao_Paulo' }).format(
-      hoje
-    ); // yyyy-mm-dd
 
     // Executa a operação gamificada numa Transação Serializável e Atômica
     const historico = await prisma.$transaction(
