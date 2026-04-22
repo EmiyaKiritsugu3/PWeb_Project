@@ -13,9 +13,13 @@ export async function requireAnyRole(allowedRoles: Role[]): Promise<void> {
 
   const {
     data: { user },
+    error: authError,
   } = await supabase.auth.getUser();
 
-  if (!user) {
+  if (authError || !user) {
+    if (authError) {
+      Logger.error(`[auth] Supabase getUser error: ${authError.message}`, authError);
+    }
     redirect('/login');
     return;
   }

@@ -4,7 +4,7 @@
 
 Every piece of work follows this sequence — no exceptions:
 
-```
+```text
 PDR → Design Spec → Implementation → Tests → ADR → Report → CHANGELOG
 ```
 
@@ -28,7 +28,7 @@ feat(aluno): T041 add streak reset logic on missed workout day
 fix(auth): T052 handle session expiry during workout execution
 docs(adr): T063 record decision on gamification XP formula
 chore(deps): T011 upgrade prisma to v7.5.0
-```
+```text
 
 **Valid types:** `feat`, `fix`, `docs`, `refactor`, `test`, `chore`, `perf`, `ci`, `revert`
 
@@ -38,12 +38,12 @@ Commit messages are validated automatically via `commitlint` on every commit.
 
 Before opening a PR, all of these must pass locally:
 
-```bash
+```textbash
 npm run typecheck      # Zero TypeScript errors
 npm run lint           # Zero ESLint errors
 npm run format:check   # No Prettier violations
 npm run test:coverage  # All tests pass + coverage thresholds met
-```
+```text
 
 These are also enforced in CI — PRs that fail any gate will not be merged.
 
