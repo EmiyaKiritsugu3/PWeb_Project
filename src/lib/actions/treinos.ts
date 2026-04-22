@@ -69,13 +69,28 @@ export async function upsertTreinoAction(treinoData: TreinoBase | (TreinoBase & 
 
       // 2. Atomic Update Flow
       await prisma.$transaction(async (tx) => {
+        // Preserve ownership fields unless caller is authorized to reassign them.
+        // Only GERENTE can reassign a treino to a different aluno.
+        const nextAlunoId = funcData?.role === 'GERENTE' ? alunoId : existingTreino.alunoId;
+
+        // If caller is an INSTRUTOR, they become the new instructor for this treino.
+        // Otherwise (GERENTE/ALUNO), we preserve the existing instrutorId.
+        const nextInstrutorId =
+          funcData?.role === 'INSTRUTOR' ? user.id : existingTreino.instrutorId;
+
+        // Validation: If alunoId changed, ensure the target student exists
+        if (nextAlunoId !== existingTreino.alunoId) {
+          const studentExists = await tx.aluno.findUnique({ where: { id: nextAlunoId } });
+          if (!studentExists) throw new Error('Aluno de destino não encontrado.');
+        }
+
         await tx.treino.update({
           where: { id },
           data: {
             objetivo,
             diaSemana,
-            alunoId,
-            instrutorId: derivedInstrutorId,
+            alunoId: nextAlunoId,
+            instrutorId: nextInstrutorId,
           },
         });
 
@@ -291,6 +306,9 @@ export async function registrarHistoricoTreinoAction(
     return { success: true, data: result };
   } catch (error) {
     Sentry.captureException(error);
-    return { success: false, error: (error as Error).message };
+    if (error instanceof Error && error.name === 'ZodError') {
+      return { success: false, error: 'Dados do histórico inválidos' };
+    }
+    return { success: false, error: 'Erro ao registrar treino. Tente novamente.' };
   }
 }

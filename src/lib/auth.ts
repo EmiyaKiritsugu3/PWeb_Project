@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation';
-import { createClient } from '@/utils/supabase/server';
+import { createClient, getUser } from '@/utils/supabase/server';
 import { Logger } from '@/lib/logger';
 import type { Role } from '@/lib/definitions';
 
@@ -9,12 +9,7 @@ import type { Role } from '@/lib/definitions';
  * or on any DB error (fail-closed).
  */
 export async function requireAnyRole(allowedRoles: Role[]): Promise<void> {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser();
+  const { user, error: authError } = await getUser();
 
   if (authError || !user) {
     if (authError) {
@@ -24,6 +19,7 @@ export async function requireAnyRole(allowedRoles: Role[]): Promise<void> {
     return;
   }
 
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from('funcionarios')
     .select('role')
