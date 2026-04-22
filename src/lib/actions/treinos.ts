@@ -54,32 +54,37 @@ export async function upsertTreinoAction(treinoData: TreinoBase | (TreinoBase & 
       'id' in validatedData ? (validatedData as TreinoBase & { id: string }).id : undefined;
 
     if (id) {
-      // Update
+      // 1. Update Treino
       await prisma.treino.update({
         where: { id },
         data: {
           objetivo,
           diaSemana,
-          Exercicios: {
-            deleteMany: {},
-            create: exercicios.map((ex) => ({
-              nomeExercicio: ex.nomeExercicio,
-              series: ex.series,
-              repeticoes: ex.repeticoes,
-              observacoes: ex.observacoes || '',
-              descricao: ex.descricao || '',
-            })),
-          },
-        },
-      });
-    } else {
-      // Create
-      await prisma.treino.create({
-        data: {
           alunoId,
           instrutorId: derivedInstrutorId,
+        },
+      });
+
+      // 2. Sync Exercicios (Delete current, insert new) — Simple sync strategy
+      await prisma.exercicio.deleteMany({ where: { treinoId: id } });
+      await prisma.exercicio.createMany({
+        data: exercicios.map((ex) => ({
+          treinoId: id,
+          nomeExercicio: ex.nomeExercicio,
+          series: ex.series,
+          repeticoes: ex.repeticoes,
+          observacoes: ex.observacoes || '',
+          descricao: ex.descricao || '',
+        })),
+      });
+    } else {
+      // CREATE flow
+      await prisma.treino.create({
+        data: {
           objetivo,
           diaSemana,
+          alunoId,
+          instrutorId: derivedInstrutorId,
           Exercicios: {
             create: exercicios.map((ex) => ({
               nomeExercicio: ex.nomeExercicio,
@@ -274,9 +279,6 @@ export async function registrarHistoricoTreinoAction(
     return { success: true, data: result };
   } catch (error) {
     Sentry.captureException(error);
-    if (error instanceof Error && error.name === 'ZodError') {
-      return { success: false, error: 'Dados do histórico inválidos' };
-    }
-    return { success: false, error: error instanceof Error ? error.message : 'Erro desconhecido' };
+    return { success: false, error: (error as Error).message };
   }
 }
