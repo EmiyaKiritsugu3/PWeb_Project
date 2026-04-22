@@ -45,7 +45,7 @@ describe('PagamentoService', () => {
     const result = await processPayment(alunoId, mockTx);
 
     expect(result.success).toBe(true);
-    
+
     // Should update student status
     expect(mockTx.aluno.update).toHaveBeenCalledWith({
       where: { id: alunoId },
@@ -55,7 +55,7 @@ describe('PagamentoService', () => {
     // Should update and extend matricula by 30 days from today (since it was expired)
     const expectedNewVencimento = new Date(mockDate);
     expectedNewVencimento.setDate(expectedNewVencimento.getDate() + 30);
-    
+
     expect(mockTx.matricula.update).toHaveBeenCalledWith({
       where: { id: matriculaId },
       data: {
