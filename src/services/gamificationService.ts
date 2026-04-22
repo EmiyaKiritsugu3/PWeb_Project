@@ -29,7 +29,9 @@ export function calculateTreinoRewards(
     new Intl.DateTimeFormat('fr-CA', { timeZone: 'America/Sao_Paulo' }).format(date);
 
   const hojeStr = formatSP(today);
-  const dataUltimoTreino = aluno.ultimoTreinoData ? formatSP(new Date(aluno.ultimoTreinoData)) : null;
+  const dataUltimoTreino = aluno.ultimoTreinoData
+    ? formatSP(new Date(aluno.ultimoTreinoData))
+    : null;
 
   let novaExp = aluno.exp;
   let novoNivel = aluno.nivel;
