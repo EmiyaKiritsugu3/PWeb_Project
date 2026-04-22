@@ -26,7 +26,7 @@
 | Local E2E stack                             | ✅ Done    | `supabase start` (Docker)                                                                              |
 | E2E seed script                             | ✅ Done    | `prisma/seed-e2e.ts` (7 fixtures: 4 staff+aluno + 1 treino + INADIMPLENTE aluno + plano + matrícula)   |
 | Playwright E2E suite                        | ✅ Done    | 20 scenarios (19 It4+It5 auth + payment-status write-path)                                             |
-| CI E2E job                                  | ✅ Green   | PR #83 in CI                                                                                           |
+| CI E2E job                                  | ⏳ Pending | PR #83 in CI (awaiting green)                                                                          |
 | Sentry error tracking                       | ✅ Active  | DSN + auth token set in Vercel; source maps uploaded on every build                                    |
 | Structured logging                          | ✅ Done    | `src/lib/logger.ts` (Logger wrapper, Sentry-aware)                                                     |
 | INSTRUTOR auth hardening                    | ✅ Merged  | PR #81 — `instrutorId` server-derived, ownership guards, `requireAnyRole` gate on `/dashboard/treinos` |
