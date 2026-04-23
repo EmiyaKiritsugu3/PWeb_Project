@@ -32,7 +32,8 @@ export default defineConfig({
     // Explicitly forward test env vars so Next.js cannot fall back to .env.local
     env: {
       NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL ?? '',
-      NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '',
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY:
+        process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY ?? '',
       DATABASE_URL: process.env.DATABASE_URL ?? '',
       DIRECT_URL: process.env.DIRECT_URL ?? '',
     },

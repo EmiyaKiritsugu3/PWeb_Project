@@ -1,7 +1,6 @@
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import * as Sentry from '@sentry/nextjs';
-import { cache } from 'react';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY;
@@ -29,9 +28,8 @@ export const createClient = async () => {
 /**
  * Server-side helper to get the current user and automatically
  * link their state to Sentry for error tracking and performance.
- * Uses React cache() to ensure only one fetch happens per request.
  */
-export const getUser = cache(async () => {
+export const getUser = async () => {
   const supabase = await createClient();
   const {
     data: { user },
@@ -48,4 +46,4 @@ export const getUser = cache(async () => {
   }
 
   return { user, error };
-});
+};
