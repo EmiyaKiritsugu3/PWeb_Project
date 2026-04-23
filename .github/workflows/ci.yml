@@ -21,14 +21,11 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '24'
+          node-version: '22'
           cache: 'npm'
 
-      - name: Upgrade npm
-        run: npm install -g npm@11
-
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --legacy-peer-deps
 
       - name: Security audit
         run: npm audit --audit-level=high
@@ -54,14 +51,11 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '24'
+          node-version: '22'
           cache: 'npm'
 
-      - name: Upgrade npm
-        run: npm install -g npm@11
-
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --legacy-peer-deps
 
       - name: Run tests with coverage
         run: npm run test:coverage
@@ -89,14 +83,11 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '24'
+          node-version: '22'
           cache: 'npm'
 
-      - name: Upgrade npm
-        run: npm install -g npm@11
-
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --legacy-peer-deps
 
       - name: Install Playwright browsers
         run: npx playwright install chromium --with-deps
@@ -138,7 +129,6 @@ jobs:
       - name: Run E2E tests
         env:
           NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ env.SUPABASE_LOCAL_ANON_KEY }}
           NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY: ${{ env.SUPABASE_LOCAL_ANON_KEY }}
           DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:54322/postgres
           PLAYWRIGHT_BASE_URL: http://localhost:3333

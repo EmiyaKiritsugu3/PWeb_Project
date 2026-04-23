@@ -2,7 +2,10 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 vi.mock('next/cache', () => ({ revalidatePath: vi.fn() }));
 vi.mock('@sentry/nextjs', () => ({ captureException: vi.fn() }));
-vi.mock('@/utils/supabase/server', () => ({ createClient: vi.fn() }));
+vi.mock('@/utils/supabase/server', () => ({
+  createClient: vi.fn(),
+  getUser: vi.fn(),
+}));
 vi.mock('@/lib/prisma', () => ({
   prisma: {
     treino: {
@@ -15,10 +18,11 @@ vi.mock('@/lib/prisma', () => ({
 }));
 
 import { upsertTreinoAction, updateTreinoDayAction, deleteTreinoAction } from './treinos';
-import { createClient } from '@/utils/supabase/server';
+import { createClient, getUser } from '@/utils/supabase/server';
 import { prisma } from '@/lib/prisma';
 
 const mockCreateClient = vi.mocked(createClient);
+const mockGetUser = vi.mocked(getUser);
 const mockTreino = vi.mocked(prisma.treino);
 
 const INSTRUTOR_UUID = '00000000-0000-0000-0000-000000000003';
@@ -68,6 +72,10 @@ describe('upsertTreinoAction — instrutorId derivation', () => {
   });
 
   it('INSTRUTOR: prisma.treino.create called with instrutorId = session user.id', async () => {
+    mockGetUser.mockResolvedValue({
+      user: { id: INSTRUTOR_UUID, email: 'inst@test.com' } as any, // eslint-disable-line @typescript-eslint/no-explicit-any
+      error: null,
+    });
     const supabase = buildSupabaseMock(INSTRUTOR_UUID, 'INSTRUTOR');
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mockCreateClient.mockResolvedValue(supabase as any);
@@ -83,6 +91,10 @@ describe('upsertTreinoAction — instrutorId derivation', () => {
   });
 
   it('GERENTE: prisma.treino.create called with instrutorId = null', async () => {
+    mockGetUser.mockResolvedValue({
+      user: { id: GERENTE_UUID, email: 'gerente@test.com' } as any, // eslint-disable-line @typescript-eslint/no-explicit-any
+      error: null,
+    });
     const supabase = buildSupabaseMock(GERENTE_UUID, 'GERENTE');
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mockCreateClient.mockResolvedValue(supabase as any);
@@ -98,6 +110,10 @@ describe('upsertTreinoAction — instrutorId derivation', () => {
   });
 
   it('RECEPCIONISTA: returns Acesso não autorizado', async () => {
+    mockGetUser.mockResolvedValue({
+      user: { id: RECEP_UUID, email: 'recep@test.com' } as any, // eslint-disable-line @typescript-eslint/no-explicit-any
+      error: null,
+    });
     const supabase = buildSupabaseMock(RECEP_UUID, 'RECEPCIONISTA');
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mockCreateClient.mockResolvedValue(supabase as any);
@@ -109,6 +125,10 @@ describe('upsertTreinoAction — instrutorId derivation', () => {
   });
 
   it('unauthenticated: returns Usuário não autenticado', async () => {
+    mockGetUser.mockResolvedValue({
+      user: null,
+      error: new Error('Unauthorized') as any, // eslint-disable-line @typescript-eslint/no-explicit-any
+    });
     const supabase = buildSupabaseMock(null, null);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mockCreateClient.mockResolvedValue(supabase as any);
@@ -130,6 +150,10 @@ describe('deleteTreinoAction — ownership check', () => {
   });
 
   it('INSTRUTOR who owns the treino: delete succeeds', async () => {
+    mockGetUser.mockResolvedValue({
+      user: { id: INSTRUTOR_UUID } as any, // eslint-disable-line @typescript-eslint/no-explicit-any
+      error: null,
+    });
     const supabase = buildSupabaseMock(INSTRUTOR_UUID, 'INSTRUTOR');
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mockCreateClient.mockResolvedValue(supabase as any);

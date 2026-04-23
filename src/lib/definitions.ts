@@ -26,6 +26,7 @@ export const AlunoBaseSchema = z.object({
   ultimoTreinoData: z.string().or(z.date()).optional().nullable(),
   xpToNextLevel: z.number().optional(),
   progressPerc: z.number().optional(),
+  dataVencimento: z.string().or(z.date()).optional().nullable(),
 });
 
 /** Esquema de Entidade Aluno (Garantido pelo Banco de Dados com ID) */

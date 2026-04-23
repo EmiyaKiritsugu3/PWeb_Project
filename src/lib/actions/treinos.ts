@@ -11,19 +11,16 @@ import {
   type TreinoBase,
   type HistoricoTreinoBase,
 } from '@/lib/definitions';
-import { createClient } from '@/utils/supabase/server';
+import { getUser, createClient } from '@/utils/supabase/server';
 import * as Sentry from '@sentry/nextjs';
 import { calculateTreinoRewards } from '@/services/gamificationService';
 
 export async function upsertTreinoAction(treinoData: TreinoBase | (TreinoBase & { id: string })) {
   try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    const { user, error: authError } = await getUser();
     if (authError || !user) return { success: false, error: 'Usuário não autenticado' };
 
+    const supabase = await createClient();
     const { data: funcData, error: roleError } = await supabase
       .from('funcionarios')
       .select('role')
@@ -141,13 +138,10 @@ export async function upsertTreinoAction(treinoData: TreinoBase | (TreinoBase & 
 
 export async function updateTreinoDayAction(treinoId: string, diaSemana: number | null) {
   try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    const { user, error: authError } = await getUser();
     if (authError || !user) return { success: false, error: 'Usuário não autenticado' };
 
+    const supabase = await createClient();
     const { data: funcData } = await supabase
       .from('funcionarios')
       .select('role')
@@ -178,17 +172,14 @@ export async function updateTreinoDayAction(treinoId: string, diaSemana: number 
     return { success: false, error: (error as Error).message };
   }
 }
-
 export async function deleteTreinoAction(treinoId: string) {
   try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    const { user, error: authError } = await getUser();
     if (authError || !user) return { success: false, error: 'Usuário não autenticado' };
 
+    const supabase = await createClient();
     const { data: funcData } = await supabase
+
       .from('funcionarios')
       .select('role')
       .eq('id', user.id)
@@ -223,12 +214,7 @@ export async function registrarHistoricoTreinoAction(
   historicoData: Omit<HistoricoTreinoBase, 'alunoId'>
 ) {
   try {
-    const { createClient: createSupabaseClient } = await import('@/utils/supabase/server');
-    const supabase = await createSupabaseClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    const { user, error: authError } = await getUser();
 
     if (authError || !user) {
       throw new Error('Usuário não autenticado');
