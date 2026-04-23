@@ -1,36 +1,28 @@
 # Current State — Five Star Academy
 
 **Last Updated**: 2026-04-22
-**Branch**: `feat/009-it5-e2e-payment-status` (T03 PR #83 open — awaiting CI)
-**Version**: 0.7.0 (main — T01 + T02 merged; T03 in review)
+**Branch**: `feat/arch-optimization-security` (PR #85 — Review in progress)
+**Version**: 1.1.0 (v4.1.0 Core)
 
 ## What Works Today
 
-| Feature                                     | Status     | Notes                                                                                                  |
-| ------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------ |
-| Admin login                                 | ✅ Working | Supabase Auth SSR                                                                                      |
-| Student login (Portal do Aluno)             | ✅ Working | Separate session                                                                                       |
-| Admin dashboard                             | ✅ Working | GERENTE + RECEPCIONISTA                                                                                |
-| Financial routes (`/financeiro`, `/planos`) | ✅ Working | GERENTE-only gate                                                                                      |
-| Student workout view                        | ✅ Working | `meus-treinos`                                                                                         |
-| AI workout generator                        | ✅ Working | Genkit + Gemini                                                                                        |
-| Student enrollment                          | ✅ Working | Admin creates aluno                                                                                    |
-| Gamification (XP, streaks)                  | ✅ Working | Hook `use-workout-tracker`                                                                             |
-| Prisma migrations                           | ✅ Tracked | `prisma/migrations/`                                                                                   |
-| ESLint quality gate                         | ✅ Done    | 0 errors                                                                                               |
-| TypeScript typecheck                        | ✅ Clean   | 0 errors (strict mode)                                                                                 |
-| AI workout feedback (US06)                  | ✅ Done    | `WorkoutSession.tsx` — Genkit call + try/catch fallback + feedback card                                |
-| Unit tests                                  | ✅ Passing | 40/40 (Vitest — 7 files; includes auth + recharts smoke tests)                                         |
-| Ops documentation                           | ✅ Done    | Runbook, SLOs, threat model                                                                            |
-| Process documentation                       | ✅ Done    | RFC + Postmortem templates                                                                             |
-| Local E2E stack                             | ✅ Done    | `supabase start` (Docker)                                                                              |
-| E2E seed script                             | ✅ Done    | `prisma/seed-e2e.ts` (7 fixtures: 4 staff+aluno + 1 treino + INADIMPLENTE aluno + plano + matrícula)   |
-| Playwright E2E suite                        | ✅ Done    | 20 scenarios (19 It4+It5 auth + payment-status write-path)                                             |
-| CI E2E job                                  | ⏳ Pending | PR #83 in CI (awaiting green)                                                                          |
-| Sentry error tracking                       | ✅ Active  | DSN + auth token set in Vercel; source maps uploaded on every build                                    |
-| Structured logging                          | ✅ Done    | `src/lib/logger.ts` (Logger wrapper, Sentry-aware)                                                     |
-| INSTRUTOR auth hardening                    | ✅ Merged  | PR #81 — `instrutorId` server-derived, ownership guards, `requireAnyRole` gate on `/dashboard/treinos` |
-| recharts 3 upgrade                          | ✅ Merged  | PR #82 — `TooltipContentProps`/`DefaultLegendContentProps` types; dashboard-charts smoke test          |
+| Feature                                     | Status     | Notes                                                     |
+| ------------------------------------------- | ---------- | --------------------------------------------------------- |
+| React 19 Engine                             | ✅ Active  | Optimized for Next.js 15.5                                |
+| SSR Caching (getUser)                       | ✅ Active  | Native `React.cache()` for high-performance auth checks   |
+| Row Level Security (RLS)                    | ✅ Active  | 100% table coverage in Supabase                           |
+| Admin login                                 | ✅ Working | Supabase Auth SSR                                         |
+| Student login (Portal do Aluno)             | ✅ Working | Separate session                                          |
+| Admin dashboard                             | ✅ Working | GERENTE + RECEPCIONISTA                                   |
+| Financial routes (`/financeiro`, `/planos`) | ✅ Working | GERENTE-only gate                                         |
+| Student workout view                        | ✅ Working | `meus-treinos`                                            |
+| AI workout generator                        | ✅ Working | Genkit + Gemini                                           |
+| Student enrollment                          | ✅ Working | Admin creates aluno                                       |
+| Gamification (XP, streaks)                  | ✅ Working | Hook `use-workout-tracker`                                |
+| Unit tests                                  | ✅ Passing | 54/54 (Vitest — 9 files; 100% green on R19)               |
+| Playwright E2E suite                        | ✅ Done    | 20 scenarios (Verified local build + CI sync)             |
+| Sentry error tracking                       | ✅ Active  | **v10.49.0** — Deep PII scrubbing enabled                 |
+| Knowledge Graph                             | ✅ Active  | **Graphify** + **Socraticode** integrated into AI session |
 
 ## It5 Progress — Deliverables
 
