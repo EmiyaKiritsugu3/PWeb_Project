@@ -399,19 +399,21 @@ export default function TreinosManagementClient({ initialAlunos }: { initialAlun
     }
     setIsGenerating(true);
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Genkit streaming API types incomplete; SDK v1.31 does not export StreamingCallable<T>
-      const { stream, output } = (streamWorkoutPlan as any).stream(data);
-      for await (const chunk of stream) {
-        if (chunk) {
-          setPlanoGerado(chunk as WorkoutGeneratorOutput);
-        }
+      // Usar a chamada direta do flow em vez de stream para maior estabilidade em produção
+      const result = await streamWorkoutPlan(data);
+      if (result) {
+        setPlanoGerado(result as WorkoutGeneratorOutput);
+        toast({ title: 'Plano Gerado!' });
+      } else {
+        throw new Error('A IA não retornou um resultado válido.');
       }
-      const finalResult = await output;
-      setPlanoGerado(finalResult);
-      toast({ title: 'Plano Gerado!' });
     } catch (error) {
       Logger.error('Erro na geração de treino:', error);
-      toast({ title: 'Erro da IA', variant: 'destructive' });
+      toast({
+        title: 'Erro da IA',
+        description: 'Não foi possível gerar o treino. Tente novamente em instantes.',
+        variant: 'destructive',
+      });
     } finally {
       setIsGenerating(false);
     }
