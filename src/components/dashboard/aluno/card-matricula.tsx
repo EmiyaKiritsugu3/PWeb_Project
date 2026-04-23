@@ -27,9 +27,8 @@ export function CardMatricula({ aluno }: { aluno: Aluno | null }) {
 
   const config = statusConfig[aluno.statusMatricula] || statusConfig.INATIVA;
 
-  // In a real scenario, this date should come from the student's payload
-  const dataVencimento = new Date();
-  dataVencimento.setDate(dataVencimento.getDate() + 15);
+  // Usa a data de vencimento injetada pelo servidor ou uma data fallback segura
+  const dataVencimento = aluno.dataVencimento ? new Date(aluno.dataVencimento) : null;
 
   return (
     <Card glass className={cn('overflow-hidden', config.glow)}>
@@ -47,7 +46,9 @@ export function CardMatricula({ aluno }: { aluno: Aluno | null }) {
         </div>
         <div className="text-right">
           <p className="text-xs text-muted-foreground uppercase">Vencimento</p>
-          <p className="font-bold text-white/90">{dataVencimento.toLocaleDateString('pt-BR')}</p>
+          <p className="font-bold text-white/90">
+            {dataVencimento ? dataVencimento.toLocaleDateString('pt-BR') : '--/--/----'}
+          </p>
         </div>
       </CardContent>
     </Card>

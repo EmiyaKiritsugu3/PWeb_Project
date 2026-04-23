@@ -1,15 +1,11 @@
-import { createClient } from '@/utils/supabase/server';
+import { getUser } from '@/utils/supabase/server';
 import { prisma } from '@/lib/prisma';
 import AlunoDashboardClient from './dashboard-client';
 import { redirect } from 'next/navigation';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
 
 export default async function AlunoDashboardPage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
+  const { user, error } = await getUser();
 
   if (error || !user) {
     redirect('/aluno/login');
@@ -24,11 +20,13 @@ export default async function AlunoDashboardPage() {
       fotoUrl: true,
       nivel: true,
       exp: true,
+      statusMatricula: true,
       streakDiasSeguidos: true,
       treinosNoMes: true,
       ultimoTreinoData: true,
       Matriculas: {
         where: { status: 'ATIVA' },
+        orderBy: { dataVencimento: 'desc' },
         take: 1,
         select: { id: true, status: true, dataVencimento: true, planoId: true },
       },
@@ -78,12 +76,17 @@ export default async function AlunoDashboardPage() {
     },
   });
 
-  // 3. Serializar objetos e injetar DTOs Calculados (Evitar erros de Symbol/Date)
-  // [PID-SENTINEL] Defensive XP Serialization
+  // 3. Serializar objetos e injetar DTOs Calculados
   const xp = aluno.exp ?? 0;
   const nivel = aluno.nivel ?? 1;
-  const xpToNextLevel = Math.max(nivel * 1500, 1500); // Floor at 1500 to avoid div by zero
+  const xpToNextLevel = Math.max(nivel * 1500, 1500);
   const progressPerc = Math.min(Math.round((xp / xpToNextLevel) * 100) || 0, 100);
+
+  // Integrar data de vencimento real da Comunidade 11 (Financeiro)
+  const ativaMatricula = aluno.Matriculas[0];
+  const dataVencimento = ativaMatricula?.dataVencimento
+    ? ativaMatricula.dataVencimento.toISOString()
+    : null;
 
   const serializedAluno = {
     ...JSON.parse(JSON.stringify(aluno)),
@@ -91,6 +94,7 @@ export default async function AlunoDashboardPage() {
     progressPerc,
     exp: xp,
     nivel: nivel,
+    dataVencimento, // Injetado para o CardMatricula
   };
 
   const serializedTreino = treinoDoDia ? JSON.parse(JSON.stringify(treinoDoDia)) : null;
