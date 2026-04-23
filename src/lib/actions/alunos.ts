@@ -5,17 +5,13 @@ import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { AlunoSchema, AlunoBaseSchema } from '@/lib/definitions';
 import type { AlunoBase } from '@/lib/definitions';
-import { createClient } from '@/utils/supabase/server';
+import { getUser } from '@/utils/supabase/server';
 import * as Sentry from '@sentry/nextjs';
 import { calculateTreinoRewards } from '@/services/gamificationService';
 
 export async function finalizarTreinoAction(treinoId: string, durationMinutes: number = 60) {
   try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    const { user, error: authError } = await getUser();
 
     if (authError || !user) {
       throw new Error('Usuário não autenticado');
@@ -82,11 +78,7 @@ export async function createAlunoAction(
     Pick<AlunoBase, 'nomeCompleto' | 'cpf' | 'email' | 'telefone' | 'statusMatricula'>
 ) {
   try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    const { user, error: authError } = await getUser();
     if (authError || !user) throw new Error('Usuário não autenticado');
 
     // Validação Zod usando o BaseSchema (formulário não tem ID)
@@ -120,11 +112,7 @@ export async function createAlunoAction(
 
 export async function updateAlunoAction(id: string, data: Partial<AlunoBase>) {
   try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    const { user, error: authError } = await getUser();
     if (authError || !user) throw new Error('Usuário não autenticado');
 
     // Validação Zod parcial baseada no BaseSchema
@@ -157,11 +145,7 @@ export async function updateAlunoAction(id: string, data: Partial<AlunoBase>) {
 
 export async function deleteAlunoAction(id: string) {
   try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    const { user, error: authError } = await getUser();
     if (authError || !user) throw new Error('Usuário não autenticado');
 
     await prisma.aluno.delete({
@@ -178,11 +162,7 @@ export async function deleteAlunoAction(id: string) {
 
 export async function createMatriculaAction(alunoId: string, planoId: string) {
   try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    const { user, error: authError } = await getUser();
     if (authError || !user) throw new Error('Usuário não autenticado');
 
     const plano = await prisma.plano.findUnique({
