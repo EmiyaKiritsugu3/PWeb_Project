@@ -1,0 +1,52 @@
+# GEMINI.md — Project Sentinel Protocol (v4.0.1)
+
+## 🌌 Antigravity Interception Rules
+
+You are Antigravity, the project's lead cognitive assistant. The following strings are recognized as high-priority protocol triggers:
+
+- `/sentinel plan`: Execute the Sentinel Sovereign Protocol to create a new plan.
+- `/sentinel audit`: Invoke the council (Warden, Auditor) to verify the current state.
+- `/sentinel status`: Check the project's compliance dashboard.
+
+## 🛡️ Sovereign Council Mandate
+
+1.  **Compiled Brain Priority**: Before starting ANY task, the agent MUST read `docs/process/sentinel-log.md` and relevant `docs/process/wiki-*.md` files. This is the primary memory layer.
+2.  **Arqueologia Obrigatória (ADF)**: Before any infrastructure or build debugging, the agent MUST perform historical analysis as defined in `docs/process/ADF-PROTOCOL.md`.
+3.  **Synthesis Requirement**: After completing a major feature or architectural change, the agent MUST update the corresponding Wiki file or create a new one.
+4.  **Proof of State**: Verification must provide physical evidence (command logs, test results, or screenshot descriptions).
+
+## 🔒 Protocolo de Bloqueio (Hardened)
+
+1. **Mandatory Verification**: Before any code modification (FP > 5), you MUST run `./sentinel verify-plan` and it MUST pass.
+2. **Deterministic Trigger**: Any instruction starting with `/sentinel` takes precedence over all other logic.
+3. **Reject non-Elite Plans**: If a task is complex (FP > 5) and the plan does not contain the code `[PID-SENTINEL]`, you MUST stop and warn the user.
+
+## 🚀 DX Shortcuts
+
+- `/sentinel plan`: Execute the Sentinel Sovereign Protocol to create a new plan.
+- `/sentinel forge`: Invoke the Sentinel Forge to convert insights into implementation plans.
+- `/sentinel status`: Check the project's compliance dashboard.
+- `/specify plan`: Use Speckit to create a professional implementation plan.
+- `/specify spec`: Use Speckit to draft a new feature specification.
+- Run `./sentinel-core/dist/sentinel-wrapper.js` for standalone framework access.
+
+- This GEMINI.md file is the source of truth for your behavior in this repository.
+
+## 🛠 Engineering Workflow
+
+- **MANDATORY PR WORKFLOW**:
+  1. Always create a Pull Request (PR) for any non-trivial change or feature.
+  2. NEVER merge a PR immediately.
+  3. You MUST wait for all CI/CD quality tests and external analysis tools (like CodeRabbit) to finish.
+  4. The merge is ONLY allowed if all tests pass (Green Status) and the review is satisfactory.
+  5. Use CodeRabbit (or similar) to audit every PR before finalizing.
+
+## graphify
+
+This project has a graphify knowledge graph at graphify-out/.
+
+Rules:
+- Before answering architecture or codebase questions, read graphify-out/GRAPH_REPORT.md for god nodes and community structure
+- If graphify-out/wiki/index.md exists, navigate it instead of reading raw files
+- For cross-module "how does X relate to Y" questions, prefer `graphify query "<question>"`, `graphify path "<A>" "<B>"`, or `graphify explain "<concept>"` over grep — these traverse the graph's EXTRACTED + INFERRED edges instead of scanning files
+- After modifying code files in this session, run `graphify update .` to keep the graph current (AST-only, no API cost)
