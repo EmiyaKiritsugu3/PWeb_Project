@@ -8,7 +8,7 @@ import { Trophy, TrendingUp, Zap, Target, Award } from 'lucide-react';
 import type { Treino, Aluno, Exercicio } from '@/lib/definitions';
 import { Logger } from '@/lib/logger';
 import { finalizarTreinoAction } from '@/lib/actions/alunos';
-import { useToast } from '@/hooks/use-toast';
+import { useAppNotification } from '@/hooks/use-app-notification';
 import { CircularProgress } from '@/components/ui/circular-progress';
 import { useI18n } from '@/components/providers/i18n-provider';
 
@@ -23,7 +23,7 @@ interface AlunoDashboardClientProps {
 }
 
 export default function AlunoDashboardClient({ aluno, initialTreino }: AlunoDashboardClientProps) {
-  const { toast } = useToast();
+  const notify = useAppNotification();
   const { t } = useI18n();
 
   const [feedback, setFeedback] = useState<{ title: string; message: string } | null>(null);
@@ -57,26 +57,19 @@ export default function AlunoDashboardClient({ aluno, initialTreino }: AlunoDash
         setFeedback(aiResult);
       } catch (aiError) {
         Logger.error('AI Feedback Error:', aiError);
-        toast({
-          title: 'Feedback indisponível',
-          description: 'Sincronizando treino sem o comentário da IA.',
-        });
+        notify.success('Feedback indisponível', 'Sincronizando treino sem o comentário da IA.');
       }
 
       // Main Sincronization Action
       const result = await finalizarTreinoAction(initialTreino.id);
       if (result.success) {
-        toast({
-          title: 'Treino Sincronizado!',
-          description: '+500 XP adicinados ao seu perfil.',
-          className: 'glass-card border-cyan-500/50',
-        });
+        notify.success('Treino Sincronizado!', '+500 XP adicinados ao seu perfil.');
       } else {
-        toast({ title: 'Erro de conexão', variant: 'destructive' });
+        notify.error('Erro de conexão');
       }
     } catch (error) {
       Logger.error('Action Error:', error);
-      toast({ title: 'Erro ao salvar treino', variant: 'destructive' });
+      notify.error('Erro ao salvar treino');
     } finally {
       setIsFeedbackLoading(false);
     }

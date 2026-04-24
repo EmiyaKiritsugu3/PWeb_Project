@@ -21,7 +21,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/hooks/use-toast';
+import { useAppNotification } from '@/hooks/use-app-notification';
 import { registrarPagamentoAction } from '@/lib/actions/financeiro';
 
 interface AlunoFinanceiro {
@@ -36,7 +36,7 @@ export default function FinanceiroClient({
 }: {
   initialInadimplentes: AlunoFinanceiro[];
 }) {
-  const { toast } = useToast();
+  const notify = useAppNotification();
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [selectedAluno, setSelectedAluno] = useState<AlunoFinanceiro | null>(null);
   const [isPending, setIsPending] = useState(false);
@@ -54,17 +54,12 @@ export default function FinanceiroClient({
     setIsPending(false);
 
     if (result.success) {
-      toast({
-        title: 'Pagamento Registrado!',
-        description: `A matrícula de ${selectedAluno.nomeCompleto} foi reativada.`,
-        className: 'bg-accent text-accent-foreground',
-      });
+      notify.success(
+        'Pagamento Registrado!',
+        `A matrícula de ${selectedAluno.nomeCompleto} foi reativada.`
+      );
     } else {
-      toast({
-        title: 'Erro ao registrar pagamento',
-        description: result.error || 'Ocorreu um erro inesperado.',
-        variant: 'destructive',
-      });
+      notify.error('Erro ao registrar pagamento', result.error || 'Ocorreu um erro inesperado.');
     }
 
     setIsAlertOpen(false);
@@ -76,7 +71,7 @@ export default function FinanceiroClient({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Nome</TableHead>
+            <TableHead>Aluno</TableHead>
             <TableHead>Email</TableHead>
             <TableHead>Status</TableHead>
             <TableHead className="text-right">Ações</TableHead>
@@ -88,15 +83,10 @@ export default function FinanceiroClient({
               <TableCell className="font-medium">{aluno.nomeCompleto}</TableCell>
               <TableCell>{aluno.email}</TableCell>
               <TableCell>
-                <Badge variant="destructive">{aluno.statusMatricula}</Badge>
+                <Badge variant="destructive">Inadimplente</Badge>
               </TableCell>
               <TableCell className="text-right">
-                <Button
-                  size="sm"
-                  className="bg-accent hover:bg-accent/90 text-accent-foreground"
-                  onClick={() => handleOpenAlert(aluno)}
-                  disabled={isPending}
-                >
+                <Button variant="outline" size="sm" onClick={() => handleOpenAlert(aluno)}>
                   Registrar Pagamento
                 </Button>
               </TableCell>
@@ -104,8 +94,8 @@ export default function FinanceiroClient({
           ))}
           {initialInadimplentes.length === 0 && (
             <TableRow>
-              <TableCell colSpan={4} className="h-24 text-center">
-                Nenhum aluno inadimplente.
+              <TableCell colSpan={4} className="text-center py-10 text-muted-foreground">
+                Não há alunos inadimplentes no momento.
               </TableCell>
             </TableRow>
           )}
@@ -115,24 +105,17 @@ export default function FinanceiroClient({
       <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Confirmar Pagamento?</AlertDialogTitle>
+            <AlertDialogTitle>Confirmar Pagamento</AlertDialogTitle>
             <AlertDialogDescription>
-              Você confirma o recebimento do pagamento da matrícula de{' '}
-              <span className="font-bold">{selectedAluno?.nomeCompleto}</span>? Esta ação irá
-              reativar a matrícula do aluno e estender o vencimento por 30 dias.
+              Você confirma o recebimento do pagamento de{' '}
+              <strong>{selectedAluno?.nomeCompleto}</strong>? Esta ação reativará a matrícula e
+              permitirá o acesso ao sistema.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={isPending}>Cancelar</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={(e) => {
-                e.preventDefault();
-                handleRegisterPayment();
-              }}
-              className="bg-accent hover:bg-accent/90"
-              disabled={isPending}
-            >
-              {isPending ? 'Processando...' : 'Confirmar e Reativar'}
+            <AlertDialogAction onClick={handleRegisterPayment} disabled={isPending}>
+              {isPending ? 'Processando...' : 'Confirmar'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
