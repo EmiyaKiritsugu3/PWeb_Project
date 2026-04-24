@@ -27,4 +27,4 @@ The error was masked by TypeScript errors (`unknown` types). Solving the types r
 - **Sequential Priority**: TSC -> Infra -> Build -> UI.
 
 ---
-Related: [[ADF-PROTOCOL]] | [[wiki-sentry-nextjs-15]]
+Related: [ADF-PROTOCOL](./ADF-PROTOCOL.md) | [Next.js 15 Build Fix](./../../superpowers/plans/2026-04-24-fix-nextjs-build-html-error.md)

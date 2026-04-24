@@ -6,9 +6,9 @@
 
 **Architecture:**
 
-1.  **Decommission Legacy Instrumentation:** Remove `instrumentation-client.ts` and align Sentry configs to the mandatory `sentry.{client|server|edge}.config.ts` pattern.
+1.  **Decommission Legacy Instrumentation:** Remove deprecated `sentry.client.config.ts` pattern and align Sentry configs to the mandatory `instrumentation-client.ts` pattern.
 2.  **App Router Isolation:** Strictly limit `<html>` and `<body>` tags to root `layout.tsx` and `global-error.tsx`, ensuring no `next/document` imports exist.
-3.  **Correct Plugin Integration:** Use `withSentryConfig` in `next.config.ts` to ensure build-time instrumentation is App Router aware.
+3.  **Correct Plugin Integration:** Use `withSentryConfig` in `next.config.ts` with correct v10 options to ensure build-time instrumentation is App Router aware.
 
 **Tech Stack:** Next.js 15.5.15, Sentry SDK v10, TypeScript.
 
@@ -18,22 +18,21 @@
 
 **Files:**
 
-- Create/Modify: `sentry.client.config.ts`
+- Create/Modify: `instrumentation-client.ts`
 - Modify: `sentry.server.config.ts`
 - Modify: `sentry.edge.config.ts`
-- Delete: `instrumentation-client.ts`
 
 - [ ] **Step 1: Standardize Client Config**
-      Ensure the client config is robust and explicitly defined.
+      Ensure the client config follows the `instrumentation-client.ts` convention for Next.js 15.
 
 ```typescript
 import * as Sentry from '@sentry/nextjs';
 
 Sentry.init({
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
-  tracesSampleRate: 1.0,
+  tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
   debug: false,
-  replaysOnErrorSampleRate: 1.0,
+  replaysOnErrorSampleRate: process.env.NODE_ENV === 'production' ? 0.5 : 1.0,
   replaysSessionSampleRate: 0.1,
   integrations: [
     Sentry.replayIntegration({
@@ -42,6 +41,8 @@ Sentry.init({
     }),
   ],
 });
+
+export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
 ```
 
 - [ ] **Step 2: Standardize Server Config**
@@ -51,27 +52,9 @@ import * as Sentry from '@sentry/nextjs';
 
 Sentry.init({
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
-  tracesSampleRate: 1.0,
+  tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
   debug: false,
 });
-```
-
-- [ ] **Step 3: Standardize Edge Config**
-
-```typescript
-import * as Sentry from '@sentry/nextjs';
-
-Sentry.init({
-  dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
-  tracesSampleRate: 1.0,
-  debug: false,
-});
-```
-
-- [ ] **Step 4: Cleanup legacy files**
-
-```bash
-rm instrumentation-client.ts 2>/dev/null
 ```
 
 ---
@@ -84,9 +67,11 @@ rm instrumentation-client.ts 2>/dev/null
 - Modify: `next.config.ts`
 
 - [ ] **Step 1: Configure instrumentation.ts**
-      Use lazy async imports for configs.
+      Use lazy async imports for configs and capture request errors.
 
 ```typescript
+import * as Sentry from '@sentry/nextjs';
+
 export async function register() {
   if (process.env.NEXT_RUNTIME === 'nodejs') {
     await import('./sentry.server.config');
@@ -96,6 +81,8 @@ export async function register() {
     await import('./sentry.edge.config');
   }
 }
+
+export const onRequestError = Sentry.captureRequestError;
 ```
 
 - [ ] **Step 2: Update next.config.ts with withSentryConfig**
@@ -110,21 +97,13 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withSentryConfig(
-  nextConfig,
-  {
-    silent: true,
-    org: 'five-star-academy',
-    project: 'smartmanagementesystem',
-  },
-  {
-    widenClientFileUpload: true,
-    transpileClientSDK: true,
-    tunnelRoute: '/monitoring',
-    hideSourceMaps: true,
-    disableLogger: true,
-  }
-);
+export default withSentryConfig(nextConfig, {
+  silent: true,
+  org: 'five-star-academy',
+  project: 'smartmanagementesystem',
+  widenClientFileUpload: true,
+  tunnelRoute: '/monitoring',
+});
 ```
 
 ---
@@ -165,45 +144,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 }
 ```
 
-- [ ] **Step 2: Simplify Global Error**
-
-```tsx
-'use client';
-
-import * as Sentry from '@sentry/nextjs';
-import { useEffect } from 'react';
-
-export default function GlobalError({
-  error,
-  reset,
-}: {
-  error: Error & { digest?: string };
-  reset: () => void;
-}) {
-  useEffect(() => {
-    Sentry.captureException(error);
-  }, [error]);
-
-  return (
-    <html lang="pt-BR">
-      <body>
-        <div className="min-h-screen flex items-center justify-center p-4 bg-background">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold mb-4">Algo deu errado no sistema!</h2>
-            <button
-              onClick={() => reset()}
-              className="px-4 py-2 bg-primary text-primary-foreground rounded-md"
-            >
-              Tentar novamente
-            </button>
-          </div>
-        </div>
-      </body>
-    </html>
-  );
-}
-```
-
 ---
 
 ### Task 4: Clean Build & Validation [PID-SENTINEL]
@@ -219,6 +159,3 @@ rm -rf .next tsconfig.tsbuildinfo
 ```bash
 npm run build
 ```
-
-- [ ] **Step 3: Verification**
-      Confirm that the build completes and `/404` is generated without `<Html>` errors.
