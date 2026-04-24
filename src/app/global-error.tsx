@@ -19,7 +19,7 @@ export default function GlobalError({
       <body>
         <div className="min-h-screen flex items-center justify-center p-4 bg-background">
           <div className="text-center">
-            <h2 className="text-2xl font-bold mb-4">Algo deu errado no sistema!</h2>
+            <h2 className="text-2xl font-bold mb-4 text-foreground">Algo deu errado no sistema!</h2>
             <button
               onClick={() => reset()}
               className="px-4 py-2 bg-primary text-primary-foreground rounded-md transition-colors hover:bg-primary/90"

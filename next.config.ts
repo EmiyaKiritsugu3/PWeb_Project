@@ -5,6 +5,12 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [{ protocol: 'https', hostname: 'picsum.photos' }],
   },
+  webpack: (config) => {
+    config.watchOptions = {
+      ignored: ['**/node_modules', '**/graphify-out/**', '**/.genkit/**', '**/scripts/**'],
+    };
+    return config;
+  },
 };
 
 export default withSentryConfig(nextConfig, {
