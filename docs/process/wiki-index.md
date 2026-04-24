@@ -17,6 +17,7 @@ Planos atômicos que quebram as Specs em tarefas de execução.
 Onde registramos o aprendizado e mudanças de rumo.
 - [[docs/process/sentinel-log]]: Diário de decisões e incidentes críticos.
 - [[docs/process/ADF-PROTOCOL]]: Protocolo de resiliência e depuração.
+- [[docs/process/TECHNICAL-DEBT]]: Ledger de dívidas técnicas e caminhos de resolução.
 
 ### 4. Verificação (Evidence)
 Provas de que o sistema está saudável.
