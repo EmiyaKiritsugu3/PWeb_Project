@@ -10,6 +10,7 @@ import { Logger } from '@/lib/logger';
 import { finalizarTreinoAction } from '@/lib/actions/alunos';
 import { useToast } from '@/hooks/use-toast';
 import { CircularProgress } from '@/components/ui/circular-progress';
+import { useI18n } from '@/components/providers/i18n-provider';
 
 import { ExercicioViewer } from '@/components/dashboard/aluno/exercicio-viewer';
 import { CardMatricula } from '@/components/dashboard/aluno/card-matricula';
@@ -23,6 +24,7 @@ interface AlunoDashboardClientProps {
 
 export default function AlunoDashboardClient({ aluno, initialTreino }: AlunoDashboardClientProps) {
   const { toast } = useToast();
+  const { t } = useI18n();
 
   const [feedback, setFeedback] = useState<{ title: string; message: string } | null>(null);
   const [isFeedbackLoading, setIsFeedbackLoading] = useState(false);
@@ -103,7 +105,7 @@ export default function AlunoDashboardClient({ aluno, initialTreino }: AlunoDash
             data-testid="dashboard-welcome"
             className="text-4xl md:text-6xl font-black headline tracking-tighter text-white"
           >
-            FALA,{' '}
+            {t('common.welcome').toUpperCase()},{' '}
             <span className="text-cyan-400">{aluno.nomeCompleto.split(' ')[0].toUpperCase()}!</span>
           </h1>
 
@@ -139,7 +141,7 @@ export default function AlunoDashboardClient({ aluno, initialTreino }: AlunoDash
             >
               <div className="text-center">
                 <p className="text-[10px] uppercase text-zinc-400 font-bold tracking-widest">
-                  Treinos/Mês
+                  {t('dashboard.workoutsThisMonth')}
                 </p>
                 <p className="text-2xl font-mono font-bold tracking-tight text-cyan-400">
                   {aluno.treinosNoMes}
@@ -215,10 +217,11 @@ export default function AlunoDashboardClient({ aluno, initialTreino }: AlunoDash
                 />
                 <div className="mt-6">
                   <h3 className="text-3xl font-mono font-bold tracking-tight text-white">
-                    NÍVEL {aluno.nivel}
+                    {t('dashboard.level').toUpperCase()} {aluno.nivel}
                   </h3>
                   <p className="text-sm text-zinc-400 font-bold mt-1" data-testid="xp-display">
-                    {aluno.exp} / {xpToNextLevel} <span className="text-cyan-400">XP</span>
+                    {aluno.exp} / {xpToNextLevel}{' '}
+                    <span className="text-cyan-400">{t('dashboard.xp')}</span>
                   </p>
                 </div>
                 <div className="w-full h-[1px] bg-white/10 my-6" />

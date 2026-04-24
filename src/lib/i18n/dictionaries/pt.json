@@ -1,0 +1,29 @@
+{
+  "common": {
+    "loading": "Carregando...",
+    "logout": "Sair",
+    "profile": "Meu Perfil",
+    "todayWorkout": "Meu Treino de Hoje",
+    "myWorkouts": "Meus Treinos",
+    "welcome": "Olá",
+    "student": "Aluno(a)"
+  },
+  "dashboard": {
+    "title": "Painel do Aluno",
+    "level": "Nível",
+    "xp": "XP",
+    "streak": "dias seguidos",
+    "workoutsThisMonth": "treinos no mês",
+    "startWorkout": "Começar Treino",
+    "resumeWorkout": "Continuar Treino",
+    "noWorkoutToday": "Nenhum treino agendado para hoje."
+  },
+  "workouts": {
+    "title": "Meus Treinos",
+    "history": "Histórico",
+    "exercises": "exercícios",
+    "sets": "séries",
+    "reps": "reps",
+    "weight": "carga"
+  }
+}

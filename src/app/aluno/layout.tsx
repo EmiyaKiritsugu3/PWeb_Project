@@ -13,11 +13,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Dumbbell, LogOut, User as UserIcon, LayoutDashboard, FolderKanban } from 'lucide-react';
+import {
+  Dumbbell,
+  LogOut,
+  User as UserIcon,
+  LayoutDashboard,
+  FolderKanban,
+  Languages,
+} from 'lucide-react';
 import { useAuth } from '@/components/providers/auth-provider';
+import { I18nProvider, useI18n } from '@/components/providers/i18n-provider';
 
 function AlunoLayoutContent({ children }: { children: React.ReactNode }) {
   const { user, isUserLoading, signOut } = useAuth();
+  const { language, setLanguage, t } = useI18n();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -35,12 +44,12 @@ function AlunoLayoutContent({ children }: { children: React.ReactNode }) {
   const navLinks = [
     {
       href: '/aluno/dashboard',
-      label: 'Meu Treino de Hoje',
+      label: t('common.todayWorkout'),
       icon: <LayoutDashboard className="mr-2 h-4 w-4" />,
     },
     {
       href: '/aluno/meus-treinos',
-      label: 'Meus Treinos',
+      label: t('common.myWorkouts'),
       icon: <FolderKanban className="mr-2 h-4 w-4" />,
     },
   ];
@@ -50,7 +59,7 @@ function AlunoLayoutContent({ children }: { children: React.ReactNode }) {
       <div className="flex h-screen w-full items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-4">
           <Dumbbell className="h-12 w-12 animate-pulse text-primary" />
-          <p className="text-muted-foreground">Carregando...</p>
+          <p className="text-muted-foreground">{t('common.loading')}</p>
         </div>
       </div>
     );
@@ -63,7 +72,7 @@ function AlunoLayoutContent({ children }: { children: React.ReactNode }) {
 
   if (user) {
     const displayName =
-      user.user_metadata?.full_name || user.user_metadata?.nomeCompleto || 'Aluno(a)';
+      user.user_metadata?.full_name || user.user_metadata?.nomeCompleto || t('common.student');
     const photoURL =
       user.user_metadata?.avatar_url ||
       user.user_metadata?.fotoUrl ||
@@ -74,7 +83,7 @@ function AlunoLayoutContent({ children }: { children: React.ReactNode }) {
         <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-sm md:px-6">
           <Link href="/" className="flex items-center gap-2">
             <Dumbbell className="h-6 w-6 text-primary" />
-            <span className="font-bold">Academia Five Star</span>
+            <span className="font-bold">Five Star Academy</span>
           </Link>
 
           <nav className="hidden md:flex items-center gap-2 ml-6">
@@ -90,8 +99,31 @@ function AlunoLayoutContent({ children }: { children: React.ReactNode }) {
           </nav>
 
           <div className="flex w-full items-center justify-end gap-4 md:ml-auto">
+            {/* Seletor de Idioma */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-9 w-9">
+                  <Languages className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem
+                  onClick={() => setLanguage('pt')}
+                  className={language === 'pt' ? 'bg-secondary' : ''}
+                >
+                  Português (BR)
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => setLanguage('en')}
+                  className={language === 'en' ? 'bg-secondary' : ''}
+                >
+                  English (US)
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
             <span className="hidden text-sm text-muted-foreground md:inline-block">
-              Olá, {displayName}!
+              {t('common.welcome')}, {displayName}!
             </span>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -123,12 +155,12 @@ function AlunoLayoutContent({ children }: { children: React.ReactNode }) {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem disabled>
                   <UserIcon className="mr-2 h-4 w-4" />
-                  <span>Meu Perfil</span>
+                  <span>{t('common.profile')}</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout}>
                   <LogOut className="mr-2 h-4 w-4" />
-                  <span>Sair</span>
+                  <span>{t('common.logout')}</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -148,5 +180,9 @@ function AlunoLayoutContent({ children }: { children: React.ReactNode }) {
 }
 
 export default function AlunoLayout({ children }: { children: React.ReactNode }) {
-  return <AlunoLayoutContent>{children}</AlunoLayoutContent>;
+  return (
+    <I18nProvider>
+      <AlunoLayoutContent>{children}</AlunoLayoutContent>
+    </I18nProvider>
+  );
 }
