@@ -6,14 +6,15 @@
     "todayWorkout": "Today's Workout",
     "myWorkouts": "My Workouts",
     "welcome": "Hi",
-    "student": "Student"
+    "student": "Student",
+    "selectLanguage": "Select language"
   },
   "dashboard": {
     "title": "Student Dashboard",
     "level": "Level",
     "xp": "XP",
-    "streak": "day streak",
-    "workoutsThisMonth": "workouts this month",
+    "streak": "{count} day streak",
+    "workoutsThisMonth": "{count} workouts this month",
     "startWorkout": "Start Workout",
     "resumeWorkout": "Resume Workout",
     "noWorkoutToday": "No workout scheduled for today."

@@ -126,7 +126,7 @@ export default function AlunoDashboardClient({ aluno, initialTreino }: AlunoDash
                   Streak
                 </p>
                 <p className="text-2xl font-mono font-bold tracking-tight text-orange-500">
-                  {aluno.streakDiasSeguidos}🔥
+                  {t('dashboard.streak', { count: aluno.streakDiasSeguidos })}🔥
                 </p>
               </div>
             </Card>
@@ -141,7 +141,7 @@ export default function AlunoDashboardClient({ aluno, initialTreino }: AlunoDash
             >
               <div className="text-center">
                 <p className="text-[10px] uppercase text-zinc-400 font-bold tracking-widest">
-                  {t('dashboard.workoutsThisMonth')}
+                  {t('dashboard.workoutsThisMonth', { count: '' }).replace(': ', '').trim()}
                 </p>
                 <p className="text-2xl font-mono font-bold tracking-tight text-cyan-400">
                   {aluno.treinosNoMes}

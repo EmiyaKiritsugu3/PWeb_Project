@@ -6,14 +6,15 @@
     "todayWorkout": "Meu Treino de Hoje",
     "myWorkouts": "Meus Treinos",
     "welcome": "Olá",
-    "student": "Aluno(a)"
+    "student": "Aluno(a)",
+    "selectLanguage": "Selecionar idioma"
   },
   "dashboard": {
     "title": "Painel do Aluno",
     "level": "Nível",
     "xp": "XP",
-    "streak": "dias seguidos",
-    "workoutsThisMonth": "treinos no mês",
+    "streak": "{count} dias seguidos",
+    "workoutsThisMonth": "{count} treinos no mês",
     "startWorkout": "Começar Treino",
     "resumeWorkout": "Continuar Treino",
     "noWorkoutToday": "Nenhum treino agendado para hoje."

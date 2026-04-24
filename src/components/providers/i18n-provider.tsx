@@ -9,7 +9,7 @@ type Language = 'pt' | 'en';
 interface I18nContextProps {
   language: Language;
   setLanguage: (lang: Language) => void;
-  t: (path: string) => string;
+  t: (path: string, params?: Record<string, string | number>) => string;
 }
 
 const dictionaries: Record<Language, unknown> = { pt, en };
@@ -32,7 +32,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem('app-language', lang);
   };
 
-  const t = (path: string): string => {
+  const t = (path: string, params?: Record<string, string | number>): string => {
     const keys = path.split('.');
     let value: unknown = dictionaries[language];
 
@@ -40,11 +40,20 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
       if (value && typeof value === 'object' && key in (value as Record<string, unknown>)) {
         value = (value as Record<string, unknown>)[key];
       } else {
-        return path; // Fallback to path if not found
+        return path;
       }
     }
 
-    return typeof value === 'string' ? value : path;
+    if (typeof value !== 'string') return path;
+
+    let translated = value;
+    if (params) {
+      Object.entries(params).forEach(([key, val]) => {
+        translated = translated.replace(`{${key}}`, String(val));
+      });
+    }
+
+    return translated;
   };
 
   return (
