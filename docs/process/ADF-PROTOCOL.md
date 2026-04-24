@@ -2,13 +2,18 @@
 
 Este protocolo é obrigatório para o diagnóstico de erros monumentais de infraestrutura ou build que persistam por mais de 3 tentativas de correção manual.
 
-## 1. Arqueologia Obrigatória (History-First)
-Antes de qualquer modificação, o agente DEVE correlacionar o sintoma com o histórico recente.
+## 1. Deliberação e Auditoria (Passo Zero)
+Antes de qualquer ação ou diagnóstico, o agente DEVE:
+- **Tool Audit**: Listar todas as ferramentas disponíveis e selecionar as mais adequadas (ex: `context7` para documentação, `graphify` para arquitetura).
+- **Sequential Thinking**: Iniciar uma sessão de pensamento sequencial para mapear hipóteses, listar incertezas e planejar a árvore de decisão.
+
+## 2. Arqueologia Obrigatória (History-First)
+Com base na deliberação inicial, correlacionar o sintoma com o histórico recente.
 - **Ação**: `git log -n 5 --name-only` e leitura de `.nanostack/journal/`.
 - **Objetivo**: Identificar mudanças de "Paradigma de Versão" ou "Estrutura de Raiz".
 
-## 2. Hierarquia de Sanidade (The Stack)
-A depuração deve seguir esta ordem rigorosa de baixo para cima:
+## 3. Hierarquia de Sanidade (The Stack)
+A depuração deve seguir esta ordem rigorosa de baixo para cima, validando cada degrau com pensamento crítico:
 1.  **INFRA**: A raiz segue o padrão da versão atual do framework?
 2.  **ESTÁTICA**: O `tsc --noEmit` está verde? (Não depure renderização com TSC quebrado).
 3.  **ENGINE**: O build nativo completa com um layout minimalista?
