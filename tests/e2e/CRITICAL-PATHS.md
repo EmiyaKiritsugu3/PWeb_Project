@@ -1,8 +1,12 @@
 # E2E Critical Paths
 
-**Suite**: Playwright — `tests/e2e/specs/`
-**Browser**: Chromium (headless)
-**Total scenarios**: 20
+## 🚀 Pipeline de Deploy (Production Ready)
+
+1. **Pre-Flight**: `npm run pre-flight` (TSC + Lint + Testes unitários).
+2. **Build Test**: `npm run build` (Next.js 15 App Router).
+3. **Infrastructure Audit**: Validar arquivos `sentry.client.config.ts`, `sentry.server.config.ts`, `sentry.edge.config.ts`.
+4. **E2E Tests**: `npm run e2e` (Playwright).
+5. **Merge**: Somente após todos os checks (Green Status).
 
 ## Coverage Table
 
@@ -56,7 +60,7 @@ Required secret: `SUPABASE_LOCAL_ANON_KEY` (see RUNBOOK.md for the value).
 
 | Situation                          | Problem                                                                                                  | Fix                                                                                                                           | Why                                                                                                   |
 | ---------------------------------- | -------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| Shadcn `<Select>` aluno trigger    | `getByRole('combobox', { name: /escolha um aluno/i })` fails if Select value changes                     | `.filter({ hasText: /escolha um aluno/i })`                                                                                   | Shadcn `SelectTrigger` renders the chosen value as its text — accessible name changes after selection |
+| Shadcn \<Select\> aluno trigger    | `getByRole('combobox', { name: /escolha um aluno/i })` fails if Select value changes                     | `.filter({ hasText: /escolha um aluno/i })`                                                                                   | Shadcn `SelectTrigger` renders the chosen value as its text — accessible name changes after selection |
 | Strict mode with enrollment alunos | `getByRole('option', { name: 'Aluno E2E' })` matches all `e2e+timestamp` alunos                          | Add `{ exact: true }`                                                                                                         | Accumulated enrollment alunos share the prefix; strict mode throws on multiple matches                |
 | Custom Combobox (cmdk) trigger     | `getByRole('combobox', { name: /selecione/i })` returns 0 — button has no ARIA accessible name           | Scope to container: `locator('div.rounded-md.border.p-4').first().getByRole('combobox')`                                      | cmdk trigger button has no `aria-label`; must scope by DOM position instead                           |
 | cmdk option selection              | `.click()` on `getByRole('option')` doesn't reliably trigger `onPointerDown` in portals                  | Use `searchInput.press('ArrowDown')` + `searchInput.press('Enter')`                                                           | cmdk listens to `onPointerDown`, not `onClick`; keyboard nav is more reliable in portals              |
