@@ -13,7 +13,8 @@ export async function requireAnyRole(allowedRoles: Role[]): Promise<void> {
 
   if (authError || !user) {
     if (authError) {
-      Logger.error(`[auth] Supabase getUser error: ${authError.message}`, authError);
+      const message = authError instanceof Error ? authError.message : 'Erro no getUser';
+      Logger.error(`[auth] Supabase getUser error: ${message}`, authError);
     }
     redirect('/login');
     return;
@@ -27,7 +28,8 @@ export async function requireAnyRole(allowedRoles: Role[]): Promise<void> {
     .maybeSingle();
 
   if (error) {
-    Logger.error(`[auth] DB error fetching role: ${error.message}`, error);
+    const message = error instanceof Error ? error.message : 'Erro ao buscar role';
+    Logger.error(`[auth] DB error fetching role: ${message}`, error);
     redirect('/dashboard');
     return;
   }
