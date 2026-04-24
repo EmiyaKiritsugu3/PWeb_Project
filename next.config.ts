@@ -7,7 +7,13 @@ const nextConfig: NextConfig = {
   },
   webpack: (config) => {
     config.watchOptions = {
-      ignored: ['**/node_modules', '**/graphify-out/**', '**/.genkit/**', '**/scripts/**'],
+      ignored: [
+        '**/node_modules',
+        '**/graphify-out/**',
+        '**/.genkit/**',
+        '**/scripts/**',
+        '**/docs/**',
+      ],
     };
     return config;
   },
