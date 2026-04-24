@@ -1,0 +1,30 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "logout": "Sign Out",
+    "profile": "My Profile",
+    "todayWorkout": "Today's Workout",
+    "myWorkouts": "My Workouts",
+    "welcome": "Hi",
+    "student": "Student",
+    "selectLanguage": "Select language"
+  },
+  "dashboard": {
+    "title": "Student Dashboard",
+    "level": "Level",
+    "xp": "XP",
+    "streak": "{count} day streak",
+    "workoutsThisMonth": "{count} workouts this month",
+    "startWorkout": "Start Workout",
+    "resumeWorkout": "Resume Workout",
+    "noWorkoutToday": "No workout scheduled for today."
+  },
+  "workouts": {
+    "title": "My Workouts",
+    "history": "History",
+    "exercises": "exercises",
+    "sets": "sets",
+    "reps": "reps",
+    "weight": "weight"
+  }
+}

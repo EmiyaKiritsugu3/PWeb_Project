@@ -143,3 +143,7 @@ sentinel-core/
 # Graphify
 graphify-out/
 
+
+# Nanostack artifacts
+.nanostack/
+qa/
