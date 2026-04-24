@@ -32,7 +32,13 @@ Para evitar regressões e perda de propósito, cada alteração deve seguir a ca
 3.  **SÍNTESE**: Após a conclusão, o aprendizado (positivo ou negativo) DEVE ser registrado no `sentinel-log.md`.
 4.  **INDEXAÇÃO**: Novos documentos críticos devem ser linkados no `wiki-index.md`.
 
-## 5. Governança de Raiz (Next.js 15 Special)
+## 5. Protocolo de Epifania (The Learning Loop)
+No encerramento de tarefas complexas ou resoluções de bugs críticos, o agente DEVE processar o aprendizado:
+1.  **Filtro A (Contextual/Temporário)**: É um bug de biblioteca? -> Registrar em `TECHNICAL-DEBT.md`.
+2.  **Filtro B (Projeto/Arquitetura)**: É uma nova regra de projeto? -> Registrar em `sentinel-log.md`.
+3.  **Filtro C (Comportamento/Global)**: É uma falha no método de raciocínio da IA? -> Invocar `save_memory` e adicionar a `GEMINI.md`.
+
+## 6. Governança de Raiz (Next.js 15 Special)
 - Proibido arquivos de instrumentação customizados (ex: `instrumentation-client.ts`).
 - Sentry deve usar obrigatoriamente os 3 arquivos de config + `withSentryConfig`.
 - Tags `<html>` e `<body>` são reservadas para arquivos de layout raiz ou erro global.

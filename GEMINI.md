@@ -20,8 +20,9 @@ You are Antigravity, the project's lead cognitive assistant. The following strin
 
 1. **Mandatory Verification**: Antes de qualquer código (FP > 5), o comando `./sentinel verify-plan` DEVE passar.
 2. **Mandatory Deliberation**: Para tarefas complexas (FP > 5) ou erros de build, é OBRIGATÓRIO o uso inicial de `sequential-thinking` e `tool_audit`.
-3. **Deterministic Trigger**: Instruções com `/sentinel` precedem qualquer outra lógica.
-4. **Reject non-Elite Plans**: Planos complexos sem o código `[PID-SENTINEL]` serão rejeitados.
+3. **Mandato de Encerramento (Epiphany Protocol)**: Ao reportar a conclusão de uma Sprint ou de uma depuração crítica, o agente DEVE categorizar os aprendizados nos Filtros de Epifania (A, B ou C) e executar as ferramentas apropriadas (`write_file` para logs locais ou `invoke_agent: save_memory` para regras globais) ANTES de solicitar a aprovação final do usuário.
+4. **Deterministic Trigger**: Instruções com `/sentinel` precedem qualquer outra lógica.
+5. **Reject non-Elite Plans**: Planos complexos sem o código `[PID-SENTINEL]` serão rejeitados.
 
 ## 🚀 DX Shortcuts
 
