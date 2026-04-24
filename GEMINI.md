@@ -10,10 +10,11 @@ You are Antigravity, the project's lead cognitive assistant. The following strin
 
 ## 🛡️ Sovereign Council Mandate
 
-1.  **Compiled Brain Priority**: Before starting ANY task, the agent MUST read `docs/process/sentinel-log.md` and relevant `docs/process/wiki-*.md` files. This is the primary memory layer.
-2.  **Arqueologia Obrigatória (ADF)**: Before any infrastructure or build debugging, the agent MUST perform historical analysis as defined in `docs/process/ADF-PROTOCOL.md`.
-3.  **Synthesis Requirement**: After completing a major feature or architectural change, the agent MUST update the corresponding Wiki file or create a new one.
-4.  **Proof of State**: Verification must provide physical evidence (command logs, test results, or screenshot descriptions).
+1.  **Compiled Brain Priority**: Antes de começar QUALQUER tarefa, o agente DEVE ler `docs/process/wiki-index.md` e o `sentinel-log.md`. Esta é a fonte de verdade.
+2.  **Arqueologia Obrigatória (ADF)**: Antes de qualquer depuração de infraestrutura, deve-se realizar a análise histórica conforme `docs/process/ADF-PROTOCOL.md`.
+3.  **Traceability Mandate**: Cada nova funcionalidade ou correção deve ser explicitamente linkada à sua Spec de origem e Plano de Execução no `wiki-index.md`.
+4.  **Synthesis Requirement**: Após completar uma mudança arquitetural, o agente DEVE atualizar o `sentinel-log.md`.
+5.  **Proof of State**: Verificações devem fornecer evidências físicas (logs, prints ou resultados de teste).
 
 ## 🔒 Protocolo de Bloqueio (Hardened)
 

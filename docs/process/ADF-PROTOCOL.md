@@ -25,7 +25,14 @@ Se o build falhar na fase de renderização, o agente DEVE:
 - Se o erro persistir: O problema é **CONFIG/DEPENDÊNCIA**.
 - Se o erro sumir: O problema é **LÓGICA/UI**.
 
-## 4. Governança de Raiz (Next.js 15 Special)
+## 4. Matriz de Rastreabilidade (Traceability Chain)
+Para evitar regressões e perda de propósito, cada alteração deve seguir a cadeia de custódia:
+1.  **REFERÊNCIA**: Todo Plano de Implementação DEVE iniciar citando a Spec de origem.
+2.  **IDENTIDADE**: Commits e arquivos de plano DEVEM conter a tag `[PID-SENTINEL]`.
+3.  **SÍNTESE**: Após a conclusão, o aprendizado (positivo ou negativo) DEVE ser registrado no `sentinel-log.md`.
+4.  **INDEXAÇÃO**: Novos documentos críticos devem ser linkados no `wiki-index.md`.
+
+## 5. Governança de Raiz (Next.js 15 Special)
 - Proibido arquivos de instrumentação customizados (ex: `instrumentation-client.ts`).
 - Sentry deve usar obrigatoriamente os 3 arquivos de config + `withSentryConfig`.
 - Tags `<html>` e `<body>` são reservadas para arquivos de layout raiz ou erro global.
