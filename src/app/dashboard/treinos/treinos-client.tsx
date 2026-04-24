@@ -384,7 +384,8 @@ export default function TreinosManagementClient({ initialAlunos }: { initialAlun
         throw new Error(res.error);
       }
     } catch (error: unknown) {
-      notify.error('Erro ao salvar', error.message, error);
+      const message = error instanceof Error ? error.message : 'Erro inesperado';
+      notify.error('Erro ao salvar', message, error);
     }
   };
 
@@ -437,7 +438,8 @@ export default function TreinosManagementClient({ initialAlunos }: { initialAlun
       notify.success('Plano Atribuído!');
       setPlanoGerado(null);
     } catch (error: unknown) {
-      notify.error('Erro ao salvar plano', error.message, error);
+      const message = error instanceof Error ? error.message : 'Erro ao salvar plano';
+      notify.error('Erro ao salvar plano', message, error);
     }
   };
 

@@ -83,11 +83,8 @@ export default function AlunoLoginPage() {
       notify.success('Login bem-sucedido!');
       router.push('/aluno/dashboard');
     } catch (error: unknown) {
-      notify.error(
-        'Erro de autenticação',
-        error instanceof Error ? error.message : 'Erro desconhecido',
-        error
-      );
+      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      notify.error('Erro de autenticação', errorMessage, error);
     } finally {
       setIsLoading(false);
     }

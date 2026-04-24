@@ -213,4 +213,46 @@ describe('requireAnyRole', () => {
     await requireAnyRole(['INSTRUTOR', 'GERENTE']);
     expect(mockRedirect).toHaveBeenCalledWith('/dashboard');
   });
+
+  it('logs a fallback message when auth error message is missing', async () => {
+    const loggerSpy = vi.spyOn(Logger, 'error').mockImplementation(() => undefined);
+    const authError = { code: '500' }; // No message property
+    mockGetUser.mockResolvedValue({
+      user: null,
+      error: authError as any /* eslint-disable-line @typescript-eslint/no-explicit-any */,
+    });
+
+    await requireAnyRole(['GERENTE']);
+    expect(loggerSpy).toHaveBeenCalledWith(
+      '[auth] Supabase getUser error: Erro no getUser',
+      authError
+    );
+  });
+
+  it('logs a fallback message when DB error message is missing', async () => {
+    const loggerSpy = vi.spyOn(Logger, 'error').mockImplementation(() => undefined);
+    mockGetUser.mockResolvedValue({
+      user: { id: 'user-1' } as any /* eslint-disable-line @typescript-eslint/no-explicit-any */,
+      error: null,
+    });
+    const dbError = { code: 'PGRST116' }; // No message property
+    const supabase = {
+      from: vi.fn().mockReturnValue({
+        select: vi.fn().mockReturnValue({
+          eq: vi.fn().mockReturnValue({
+            maybeSingle: vi.fn().mockResolvedValue({ data: null, error: dbError }),
+          }),
+        }),
+      }),
+    };
+    mockCreateClient.mockResolvedValue(
+      supabase as any /* eslint-disable-line @typescript-eslint/no-explicit-any */
+    );
+
+    await requireAnyRole(['GERENTE']);
+    expect(loggerSpy).toHaveBeenCalledWith(
+      '[auth] DB error fetching role: Erro ao buscar role',
+      dbError
+    );
+  });
 });
