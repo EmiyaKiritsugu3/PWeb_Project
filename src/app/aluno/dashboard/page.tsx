@@ -11,8 +11,8 @@ export default async function AlunoDashboardPage() {
     redirect('/aluno/login');
   }
 
-  // 1. Buscar Aluno no PostgreSQL usando o email do Supabase Auth
-  const aluno = await prisma.aluno.findUnique({
+  // 1. Iniciar buscas em paralelo para evitar Waterfall
+  const alunoPromise = prisma.aluno.findUnique({
     where: { email: user.email },
     select: {
       id: true,
@@ -33,6 +33,8 @@ export default async function AlunoDashboardPage() {
     },
   });
 
+  const [aluno] = await Promise.all([alunoPromise]);
+
   if (!aluno) {
     return (
       <div className="flex h-[80vh] items-center justify-center">
@@ -42,7 +44,7 @@ export default async function AlunoDashboardPage() {
           </CardHeader>
           <CardContent className="space-y-2">
             <p>Seu perfil de aluno não foi encontrado no novo sistema.</p>
-            <p className="text-sm text-muted-foreground">
+            <p>
               Por favor, procure o administrador da academia para vincular seu email ({user.email}).
             </p>
           </CardContent>
@@ -51,14 +53,9 @@ export default async function AlunoDashboardPage() {
     );
   }
 
-  // 2. Buscar Treino do Dia
-  const today = new Date().getDay(); // 0-6 (Dom-Sab)
-
-  const treinoDoDia = await prisma.treino.findFirst({
-    where: {
-      alunoId: aluno.id,
-      diaSemana: today,
-    },
+  const today = new Date().getDay();
+  const treinoPromise = prisma.treino.findFirst({
+    where: { alunoId: aluno.id, diaSemana: today },
     select: {
       id: true,
       objetivo: true,
@@ -76,27 +73,10 @@ export default async function AlunoDashboardPage() {
     },
   });
 
-  // 3. Serializar objetos e injetar DTOs Calculados
-  const xp = aluno.exp ?? 0;
-  const nivel = aluno.nivel ?? 1;
-  const xpToNextLevel = Math.max(nivel * 1500, 1500);
-  const progressPerc = Math.min(Math.round((xp / xpToNextLevel) * 100) || 0, 100);
+  const [treinoDoDia] = await Promise.all([treinoPromise]);
 
-  // Integrar data de vencimento real da Comunidade 11 (Financeiro)
-  const ativaMatricula = aluno.Matriculas[0];
-  const dataVencimento = ativaMatricula?.dataVencimento
-    ? ativaMatricula.dataVencimento.toISOString()
-    : null;
-
-  const serializedAluno = {
-    ...JSON.parse(JSON.stringify(aluno)),
-    xpToNextLevel,
-    progressPerc,
-    exp: xp,
-    nivel: nivel,
-    dataVencimento, // Injetado para o CardMatricula
-  };
-
+  // 2. Serializar objetos de forma eficiente
+  const serializedAluno = JSON.parse(JSON.stringify(aluno));
   const serializedTreino = treinoDoDia ? JSON.parse(JSON.stringify(treinoDoDia)) : null;
 
   return <AlunoDashboardClient aluno={serializedAluno} initialTreino={serializedTreino} />;

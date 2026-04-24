@@ -17,7 +17,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { PlusCircle, Trash2, Pencil, FileSignature, User, Play } from 'lucide-react';
 import type { Treino, HistoricoTreino } from '@/lib/definitions';
-import { useToast } from '@/hooks/use-toast';
+import { useAppNotification } from '@/hooks/use-app-notification';
 import { WorkoutSession } from '@/components/WorkoutSession';
 import { streamWorkoutPlan } from '@/ai/flows/workout-generator-flow';
 import { type WorkoutGeneratorInput } from '@/ai/schemas';
@@ -50,7 +50,7 @@ export default function MeusTreinosClient({
   initialTreinos: Treino[];
   userId: string;
 }) {
-  const { toast } = useToast();
+  const notify = useAppNotification();
   const router = useRouter();
   const [meusTreinos, setMeusTreinos] = useState<Treino[]>(initialTreinos);
 
@@ -78,10 +78,7 @@ export default function MeusTreinosClient({
       });
 
       if (res.success) {
-        toast({
-          title: editingTreino ? 'Treino atualizado!' : 'Novo treino salvo!',
-          className: 'bg-accent text-accent-foreground',
-        });
+        notify.success(editingTreino ? 'Treino atualizado!' : 'Novo treino salvo!');
         if (editingTreino) {
           setMeusTreinos((prev) =>
             prev.map((t) => (t.id === editingTreino.id ? { ...t, ...treinoData } : t))
@@ -94,8 +91,8 @@ export default function MeusTreinosClient({
       } else {
         throw new Error(res.error);
       }
-    } catch (_error) {
-      toast({ title: 'Erro ao salvar', variant: 'destructive' });
+    } catch (error) {
+      notify.error('Erro ao salvar', undefined, error);
     }
   };
 
@@ -109,24 +106,20 @@ export default function MeusTreinosClient({
     const novoDia = dia === 'nenhum' ? null : parseInt(dia, 10);
 
     if (novoDia !== null && meusTreinos.some((t) => t.diaSemana === novoDia && t.id !== treinoId)) {
-      toast({
-        title: 'Dia já ocupado',
-        description: 'Já existe outro treino agendado para este dia.',
-        variant: 'destructive',
-      });
+      notify.error('Dia já ocupado', 'Já existe outro treino agendado para este dia.');
       return;
     }
 
     try {
       const res = await updateTreinoDayAction(treinoId, novoDia);
       if (res.success) {
-        toast({ title: 'Agenda atualizada!' });
+        notify.success('Agenda atualizada!');
         setMeusTreinos(
           meusTreinos.map((t) => (t.id === treinoId ? { ...t, diaSemana: novoDia } : t))
         );
       }
-    } catch (_error) {
-      toast({ title: 'Erro ao atualizar agenda', variant: 'destructive' });
+    } catch (error) {
+      notify.error('Erro ao atualizar agenda', undefined, error);
     }
   };
 
@@ -141,11 +134,11 @@ export default function MeusTreinosClient({
     try {
       const res = await deleteTreinoAction(deletingTreino.id);
       if (res.success) {
-        toast({ title: 'Treino excluído!', variant: 'destructive' });
+        notify.success('Treino excluído!');
         setMeusTreinos(meusTreinos.filter((t) => t.id !== deletingTreino.id));
       }
-    } catch (_error) {
-      toast({ title: 'Erro ao excluir', variant: 'destructive' });
+    } catch (error) {
+      notify.error('Erro ao excluir', undefined, error);
     }
 
     setIsAlertOpen(false);
@@ -202,18 +195,14 @@ export default function MeusTreinosClient({
           }
         }
 
-        toast({
-          title: 'Plano Pessoal Gerado!',
-          description: `${result.planName} foi criado com sucesso.`,
-          duration: 5000,
-        });
+        notify.success('Plano Pessoal Gerado!', `${result.planName} foi criado com sucesso.`);
       } else {
         Logger.error('Resultado inesperado da IA:', result);
         throw new Error('Formato de retorno inválido.');
       }
     } catch (error) {
       Logger.error('Erro completo ao gerar plano:', error);
-      toast({ title: 'Erro da IA', description: (error as Error).message, variant: 'destructive' });
+      notify.error('Erro da IA', (error as Error).message, error);
     } finally {
       setIsGenerating(false);
     }
@@ -308,18 +297,14 @@ export default function MeusTreinosClient({
     try {
       const res = await registrarHistoricoTreinoAction(historico);
       if (res.success) {
-        toast({
-          title: 'Treino Finalizado!',
-          description: 'Seu progresso e XP foram salvos!',
-          className: 'bg-green-600 text-white',
-        });
+        notify.success('Treino Finalizado!', 'Seu progresso e XP foram salvos!');
         // Do NOT close the session here — WorkoutSession transitions to its own
         // completion screen and fetches AI feedback. onCancel closes it.
       } else {
         throw new Error(res.error);
       }
-    } catch (_error) {
-      toast({ title: 'Erro ao salvar histórico', variant: 'destructive' });
+    } catch (error) {
+      notify.error('Erro ao salvar histórico', undefined, error);
     }
   };
 

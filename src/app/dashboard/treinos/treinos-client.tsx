@@ -25,7 +25,7 @@ import { Button } from '@/components/ui/button';
 import { PlusCircle, Save, Trash2, Wand2, BrainCircuit, UserCheck, Dumbbell } from 'lucide-react';
 import { Logger } from '@/lib/logger';
 import type { Aluno, Exercicio } from '@/lib/definitions';
-import { useToast } from '@/hooks/use-toast';
+import { useAppNotification } from '@/hooks/use-app-notification';
 import { Combobox } from '@/components/ui/combobox';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { streamWorkoutPlan } from '@/ai/flows/workout-generator-flow';
@@ -317,7 +317,7 @@ function PlanoGeradoParaEdicao({
 }
 
 export default function TreinosManagementClient({ initialAlunos }: { initialAlunos: Aluno[] }) {
-  const { toast } = useToast();
+  const notify = useAppNotification();
   const [selectedAlunoId, setSelectedAlunoId] = useState<string | null>(null);
   const [objetivo, setObjetivo] = useState('');
   const [exercicios, setExercicios] = useState<Partial<Exercicio>[]>([]);
@@ -364,11 +364,7 @@ export default function TreinosManagementClient({ initialAlunos }: { initialAlun
       exercicios.length === 0 ||
       exercicios.some((e) => !e.nomeExercicio)
     ) {
-      toast({
-        title: 'Erro ao salvar',
-        description: 'Verifique os campos obrigatórios.',
-        variant: 'destructive',
-      });
+      notify.error('Erro ao salvar', 'Verifique os campos obrigatórios.');
       return;
     }
 
@@ -381,20 +377,20 @@ export default function TreinosManagementClient({ initialAlunos }: { initialAlun
       });
 
       if (res.success) {
-        toast({ title: 'Treino Salvo!', className: 'bg-accent text-accent-foreground' });
+        notify.success('Treino Salvo!');
         setObjetivo('');
         setExercicios([]);
       } else {
         throw new Error(res.error);
       }
-    } catch (_error) {
-      toast({ title: 'Erro ao salvar', variant: 'destructive' });
+    } catch (error: unknown) {
+      notify.error('Erro ao salvar', error.message, error);
     }
   };
 
   const handleGenerateWorkout = async (data: WorkoutGeneratorInput) => {
     if (!selectedAluno) {
-      toast({ title: 'Selecione um aluno primeiro!', variant: 'destructive' });
+      notify.error('Selecione um aluno primeiro!');
       return;
     }
     setIsGenerating(true);
@@ -403,17 +399,17 @@ export default function TreinosManagementClient({ initialAlunos }: { initialAlun
       const result = await streamWorkoutPlan(data);
       if (result) {
         setPlanoGerado(result as WorkoutGeneratorOutput);
-        toast({ title: 'Plano Gerado!' });
+        notify.success('Plano Gerado!');
       } else {
         throw new Error('A IA não retornou um resultado válido.');
       }
-    } catch (error) {
+    } catch (error: unknown) {
       Logger.error('Erro na geração de treino:', error);
-      toast({
-        title: 'Erro da IA',
-        description: 'Não foi possível gerar o treino. Tente novamente em instantes.',
-        variant: 'destructive',
-      });
+      notify.error(
+        'Erro da IA',
+        'Não foi possível gerar o treino. Tente novamente em instantes.',
+        error
+      );
     } finally {
       setIsGenerating(false);
     }
@@ -438,10 +434,10 @@ export default function TreinosManagementClient({ initialAlunos }: { initialAlun
           diaSemana: workout.diaSugerido,
         });
       }
-      toast({ title: 'Plano Atribuído!', className: 'bg-accent text-accent-foreground' });
+      notify.success('Plano Atribuído!');
       setPlanoGerado(null);
-    } catch (_error) {
-      toast({ title: 'Erro ao salvar plano', variant: 'destructive' });
+    } catch (error: unknown) {
+      notify.error('Erro ao salvar plano', error.message, error);
     }
   };
 

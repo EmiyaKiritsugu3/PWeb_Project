@@ -22,7 +22,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { useToast } from '@/hooks/use-toast';
+import { useAppNotification } from '@/hooks/use-app-notification';
 import {
   createAlunoAction,
   updateAlunoAction,
@@ -46,7 +46,7 @@ export function AlunosClient({ initialAlunos, planos }: AlunosClientProps) {
   const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false);
   const [deletingAluno, setDeletingAluno] = useState<Aluno | null>(null);
 
-  const { toast } = useToast();
+  const notify = useAppNotification();
 
   const openFormForNew = () => {
     setEditingAluno(null);
@@ -77,19 +77,15 @@ export function AlunosClient({ initialAlunos, planos }: AlunosClientProps) {
     }
 
     if (result.success) {
-      toast({
-        title: editingAluno ? 'Aluno atualizado!' : 'Aluno cadastrado!',
-        description: `${data.nomeCompleto} foi salvo com sucesso.`,
-      });
+      notify.success(
+        editingAluno ? 'Aluno atualizado!' : 'Aluno cadastrado!',
+        `${data.nomeCompleto} foi salvo com sucesso.`
+      );
       setIsFormOpen(false);
       setEditingAluno(null);
       router.refresh();
     } else {
-      toast({
-        title: 'Erro ao salvar',
-        description: result.error,
-        variant: 'destructive',
-      });
+      notify.error('Erro ao salvar', result.error);
     }
   };
 
@@ -98,18 +94,10 @@ export function AlunosClient({ initialAlunos, planos }: AlunosClientProps) {
 
     const result = await deleteAlunoAction(deletingAluno.id);
     if (result.success) {
-      toast({
-        title: 'Aluno excluído!',
-        description: `${deletingAluno.nomeCompleto} foi removido do sistema.`,
-        variant: 'destructive',
-      });
+      notify.success('Aluno excluído!', `${deletingAluno.nomeCompleto} foi removido do sistema.`);
       router.refresh();
     } else {
-      toast({
-        title: 'Erro ao excluir',
-        description: result.error,
-        variant: 'destructive',
-      });
+      notify.error('Erro ao excluir', result.error);
     }
 
     setIsDeleteAlertOpen(false);
@@ -119,19 +107,15 @@ export function AlunosClient({ initialAlunos, planos }: AlunosClientProps) {
   const handleMatriculaSubmit = async (aluno: Aluno, plano: Plano) => {
     const result = await createMatriculaAction(aluno.id, plano.id);
     if (result.success) {
-      toast({
-        title: 'Matrícula realizada!',
-        description: `${aluno.nomeCompleto} foi matriculado(a) no ${plano.nome}.`,
-      });
+      notify.success(
+        'Matrícula realizada!',
+        `${aluno.nomeCompleto} foi matriculado(a) no ${plano.nome}.`
+      );
       setIsMatriculaFormOpen(false);
       setMatriculaAluno(null);
       router.refresh();
     } else {
-      toast({
-        title: 'Erro na matrícula',
-        description: result.error,
-        variant: 'destructive',
-      });
+      notify.error('Erro na matrícula', result.error);
     }
   };
 
@@ -150,42 +134,6 @@ export function AlunosClient({ initialAlunos, planos }: AlunosClientProps) {
         </Button>
       </div>
 
-      <FormAluno
-        isOpen={isFormOpen}
-        onOpenChange={setIsFormOpen}
-        onSubmit={handleFormSubmit}
-        aluno={editingAluno || undefined}
-      />
-
-      <FormMatricula
-        isOpen={isMatriculaFormOpen}
-        onOpenChange={setIsMatriculaFormOpen}
-        aluno={matriculaAluno}
-        planos={planos}
-        onSubmit={handleMatriculaSubmit}
-      />
-
-      <AlertDialog open={isDeleteAlertOpen} onOpenChange={setIsDeleteAlertOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Essa ação não pode ser desfeita. Isso excluirá permanentemente o aluno{' '}
-              <span className="font-bold">{deletingAluno?.nomeCompleto}</span> do sistema.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDeleteAluno}
-              className="bg-destructive hover:bg-destructive/90"
-            >
-              Excluir
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
       <DataTable
         columns={columns({
           onEdit: openFormForEdit,
@@ -194,6 +142,43 @@ export function AlunosClient({ initialAlunos, planos }: AlunosClientProps) {
         })}
         data={initialAlunos}
       />
+
+      <FormAluno
+        isOpen={isFormOpen}
+        onOpenChange={setIsFormOpen}
+        onSubmit={handleFormSubmit}
+        aluno={editingAluno ?? undefined}
+      />
+
+      <FormMatricula
+        isOpen={isMatriculaFormOpen}
+        onOpenChange={setIsMatriculaFormOpen}
+        onSubmit={handleMatriculaSubmit}
+        aluno={matriculaAluno}
+        planos={planos}
+      />
+
+      <AlertDialog open={isDeleteAlertOpen} onOpenChange={setIsDeleteAlertOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta ação não pode ser desfeita. Isso excluirá permanentemente o aluno
+              <strong> {deletingAluno?.nomeCompleto} </strong> e removerá todos os seus dados do
+              sistema.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteAluno}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

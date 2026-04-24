@@ -7,8 +7,9 @@ config({ path: path.join(process.cwd(), '.env.local') });
 
 export default defineConfig({
   schema: path.join(process.cwd(), 'prisma', 'schema.prisma'),
-  url: process.env.DATABASE_URL,
-  directUrl: process.env.DIRECT_URL,
+  datasource: {
+    url: process.env.DATABASE_URL,
+  },
   migrations: {
     seed: 'tsx prisma/seed.ts',
   },

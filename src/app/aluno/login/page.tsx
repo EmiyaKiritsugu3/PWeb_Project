@@ -13,7 +13,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { useToast } from '@/hooks/use-toast';
+import { useAppNotification } from '@/hooks/use-app-notification';
 import {
   Card,
   CardContent,
@@ -37,7 +37,7 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 export default function AlunoLoginPage() {
-  const { toast } = useToast();
+  const notify = useAppNotification();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const supabase = createClient();
@@ -73,27 +73,21 @@ export default function AlunoLoginPage() {
 
           if (signUpError) throw signUpError;
 
-          toast({
-            title: 'Conta criada no Supabase!',
-            description: 'Agora você pode acessar o sistema.',
-          });
+          notify.success('Conta criada no Supabase!', 'Agora você pode acessar o sistema.');
           router.push('/aluno/dashboard');
           return;
         }
         throw error;
       }
 
-      toast({
-        title: 'Login bem-sucedido!',
-        className: 'bg-accent text-accent-foreground',
-      });
+      notify.success('Login bem-sucedido!');
       router.push('/aluno/dashboard');
-    } catch (error) {
-      toast({
-        title: 'Erro de autenticação',
-        description: error instanceof Error ? error.message : 'Erro desconhecido',
-        variant: 'destructive',
-      });
+    } catch (error: unknown) {
+      notify.error(
+        'Erro de autenticação',
+        error instanceof Error ? error.message : 'Erro desconhecido',
+        error
+      );
     } finally {
       setIsLoading(false);
     }
