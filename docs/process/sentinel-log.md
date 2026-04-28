@@ -28,3 +28,19 @@ The error was masked by TypeScript errors (`unknown` types). Solving the types r
 
 ---
 Related: [ADF-PROTOCOL](./ADF-PROTOCOL.md) | [Next.js 15 Build Fix](./../../superpowers/plans/2026-04-24-fix-nextjs-build-html-error.md)
+
+## [2026-04-27] Tarefa: Integração ODBC e ORM (AtividadesBD)
+
+**Status**: COMPLETED
+**Contexto**: Exercício acadêmico de administração de banco de dados integrado ao ecossistema do projeto.
+
+### 🔍 Aprendizados Técnicos (Protocolo de Epifania)
+- **Filtro B (Regra de Projeto)**: O `.gitignore` na raiz com a regra `/scripts/` bloqueia recursivamente qualquer subpasta com esse nome (ex: `database/.../scripts/`).
+  - **Ação**: Utilizar `git add -f` para arquivos de resposta acadêmica que residam em pastas "bloqueadas".
+- **Filtro C (Universal/UX)**: Documentação técnica longa exige links de acesso rápido (clicáveis) tanto no topo (Sumário) quanto no rodapé (Contexto de Execução). Redundância de links reduz o atrito de navegação do revisor (professor).
+
+### 🛡️ Proof of State
+- **Issue #96**: Criada e vinculada.
+- **Commits**: 8 commits atômicos realizados e enviados.
+- **Scripts**: Validados e funcionais via `pg` driver e `PrismaClient`.
+
