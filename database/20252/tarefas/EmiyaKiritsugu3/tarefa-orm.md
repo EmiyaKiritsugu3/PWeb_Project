@@ -68,8 +68,8 @@ services:
 
 ### Questão 4 (Acesso Direto)
 
-O script `odbc-example.ts` demonstra a inserção, atualização e listagem usando SQL puro.
+O script [odbc-example.ts](https://github.com/EmiyaKiritsugu3/PWeb_Project/blob/main/database/20252/tarefas/EmiyaKiritsugu3/scripts/odbc-example.ts) demonstra a inserção, atualização e listagem usando SQL puro.
 
 ### Questão 5 (Acesso via ORM)
 
-O script `orm-example.ts` demonstra as mesmas operações utilizando os métodos do Prisma.
+O script [orm-example.ts](https://github.com/EmiyaKiritsugu3/PWeb_Project/blob/main/database/20252/tarefas/EmiyaKiritsugu3/scripts/orm-example.ts) demonstra as mesmas operações utilizando os métodos do Prisma.
