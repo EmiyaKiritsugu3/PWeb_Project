@@ -152,8 +152,8 @@ npm run e2e         # Playwright — 15/15 cenários (requer Docker + supabase s
 ## 👨‍🎓 Informações do Aluno (Tarefa)
 
 - **Nome:** José Inamar de Medeiros Júnior
-- **Matrícula:** 20220000000 (Placeholder - Favor preencher com sua matrícula real)
-- **Email:** inamarjr@gmail.com
+- **Matrícula:** 20200018540
+- **Email:** inamarjunior2@gmail.com
 
 ---
 

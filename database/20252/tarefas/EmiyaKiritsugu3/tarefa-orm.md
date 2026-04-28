@@ -5,8 +5,8 @@ Esta página documenta a resolução da tarefa sobre conectividade de banco de d
 ## 👨‍🎓 Informações do Aluno
 
 - **Nome:** José Inamar de Medeiros Júnior
-- **Matrícula:** 20220000000 (Placeholder)
-- **Email:** inamarjr@gmail.com
+- **Matrícula:** 20200018540
+- **Email:** inamarjunior2@gmail.com
 
 ---
 
