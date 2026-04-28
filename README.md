@@ -145,6 +145,15 @@ npm run e2e         # Playwright — 15/15 cenários (requer Docker + supabase s
 - [Modelo de Dados](./docs/doc-modelos.md)
 - [Estado Atual](./docs/CURRENT-STATE.md)
 - [Milestones](./docs/pdr/MILESTONES.md)
+- [Tarefa - ODBC e ORM](./database/20252/tarefas/EmiyaKiritsugu3/tarefa-orm.md)
+
+---
+
+## 👨‍🎓 Informações do Aluno (Tarefa)
+
+- **Nome:** José Inamar de Medeiros Júnior
+- **Matrícula:** 20220000000 (Placeholder - Favor preencher com sua matrícula real)
+- **Email:** inamarjr@gmail.com
 
 ---
 
