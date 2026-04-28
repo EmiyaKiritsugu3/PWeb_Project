@@ -12,9 +12,9 @@ Esta página documenta a resolução da tarefa sobre conectividade de banco de d
 
 ## 🔗 Links Úteis
 
-- Script DDL/DML: [atividades-bd.sql](https://github.com/EmiyaKiritsugu3/PWeb_Project/blob/main/database/20252/tarefas/EmiyaKiritsugu3/scripts/atividades-bd.sql)
-- Programa de Conexão Direta: [odbc-example.ts](https://github.com/EmiyaKiritsugu3/PWeb_Project/blob/main/database/20252/tarefas/EmiyaKiritsugu3/scripts/odbc-example.ts)
-- Programa ORM (Prisma): [orm-example.ts](https://github.com/EmiyaKiritsugu3/PWeb_Project/blob/main/database/20252/tarefas/EmiyaKiritsugu3/scripts/orm-example.ts)
+- [📄 Script DDL/DML (AtividadesBD)](https://github.com/EmiyaKiritsugu3/PWeb_Project/blob/main/database/20252/tarefas/EmiyaKiritsugu3/scripts/atividades-bd.sql)
+- [💻 Programa de Conexão (Direta/ODBC-like)](https://github.com/EmiyaKiritsugu3/PWeb_Project/blob/main/database/20252/tarefas/EmiyaKiritsugu3/scripts/odbc-example.ts)
+- [🛠️ Programa ORM (Prisma)](https://github.com/EmiyaKiritsugu3/PWeb_Project/blob/main/database/20252/tarefas/EmiyaKiritsugu3/scripts/orm-example.ts)
 
 ---
 
