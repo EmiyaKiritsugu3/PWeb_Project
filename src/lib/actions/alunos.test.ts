@@ -1,9 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { createAlunoAction, updateAlunoAction, deleteAlunoAction } from './alunos';
 import { prisma } from '@/lib/prisma';
 import { getUser } from '@/utils/supabase/server';
 import { revalidatePath } from 'next/cache';
-import type { Aluno, AlunoBase } from '@/lib/definitions';
 
 // Mocking dependencies
 vi.mock('@/lib/prisma', () => ({
@@ -36,9 +36,7 @@ describe('alunos actions (CRUD Unit Tests)', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(getUser).mockResolvedValue(
-      mockAdmin as unknown as { user: { email: string }; error: null }
-    );
+    vi.mocked(getUser).mockResolvedValue(mockAdmin as any);
   });
 
   describe('createAlunoAction', () => {
@@ -61,7 +59,7 @@ describe('alunos actions (CRUD Unit Tests)', () => {
         treinosNoMes: 0,
       };
 
-      vi.mocked(prisma.aluno.create).mockResolvedValue(mockCreatedAluno as unknown as Aluno);
+      vi.mocked(prisma.aluno.create).mockResolvedValue(mockCreatedAluno as any);
 
       const result = await createAlunoAction(inputData);
 
@@ -72,14 +70,8 @@ describe('alunos actions (CRUD Unit Tests)', () => {
     });
 
     it('should return error if unauthorized', async () => {
-      vi.mocked(getUser).mockResolvedValue({ user: null, error: null } as unknown as {
-        user: null;
-        error: null;
-      });
-      const result = await createAlunoAction(
-        {} as unknown as AlunoBase &
-          Pick<AlunoBase, 'nomeCompleto' | 'cpf' | 'email' | 'telefone' | 'statusMatricula'>
-      );
+      vi.mocked(getUser).mockResolvedValue({ user: null, error: null } as any);
+      const result = await createAlunoAction({} as any);
       expect(result.success).toBe(false);
       expect(result.error).toBe('Usuário não autenticado');
     });
@@ -98,7 +90,7 @@ describe('alunos actions (CRUD Unit Tests)', () => {
         dataCadastro: new Date(),
       };
 
-      vi.mocked(prisma.aluno.update).mockResolvedValue(mockUpdatedAluno as unknown as Aluno);
+      vi.mocked(prisma.aluno.update).mockResolvedValue(mockUpdatedAluno as any);
 
       const result = await updateAlunoAction(validId, updateData);
 
