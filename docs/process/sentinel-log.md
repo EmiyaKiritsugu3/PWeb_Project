@@ -44,3 +44,24 @@ Related: [ADF-PROTOCOL](./ADF-PROTOCOL.md) | [Next.js 15 Build Fix](./../../supe
 - **Commits**: 8 commits atômicos realizados e enviados.
 - **Scripts**: Validados e funcionais via `pg` driver e `PrismaClient`.
 
+---
+
+## [2026-05-06] Incident: Vercel 504 Gateway Timeout (Middleware)
+
+**Status**: RESOLVED
+**Impact**: High (Site unreachable in production)
+**Symptoms**: `MIDDLEWARE_INVOCATION_TIMEOUT` error on Vercel.
+
+### 🔍 Analysis (RCA)
+Latency accumulation. The middleware performed up to 3 sequential Supabase queries (`auth.getUser` -> `funcionario.id` -> `funcionario.role`). The Brasil/USA cross-region latency exceeded the 5-10s Edge Runtime limit.
+
+### 💡 Key Learning (Filtro B - Regra de Projeto)
+**Mandato de Round-trip Mínimo**: Middleware em Next.js 15 deve realizar no máximo UMA query externa se o banco não estiver na mesma região do Edge.
+**Ação**: Consolidar checagem de existência e permissão em um único `.select('role')`.
+
+### 🛡️ Proof of State
+- **PR #99**: Criado e enviado.
+- **Deploy**: Realizado via Vercel CLI com sucesso.
+- **Verification**: `npm run typecheck` e testes de auth passando.
+
+
