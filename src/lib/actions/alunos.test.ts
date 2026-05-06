@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { createAlunoAction, updateAlunoAction, deleteAlunoAction } from './alunos';
 import { prisma } from '@/lib/prisma';
@@ -36,7 +35,9 @@ describe('alunos actions (CRUD Unit Tests)', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(getUser).mockResolvedValue(mockAdmin as any);
+    vi.mocked(getUser).mockResolvedValue(
+      mockAdmin as unknown as Awaited<ReturnType<typeof getUser>>
+    );
   });
 
   describe('createAlunoAction', () => {
@@ -59,7 +60,9 @@ describe('alunos actions (CRUD Unit Tests)', () => {
         treinosNoMes: 0,
       };
 
-      vi.mocked(prisma.aluno.create).mockResolvedValue(mockCreatedAluno as any);
+      vi.mocked(prisma.aluno.create).mockResolvedValue(
+        mockCreatedAluno as unknown as Awaited<ReturnType<typeof prisma.aluno.create>>
+      );
 
       const result = await createAlunoAction(inputData);
 
@@ -70,8 +73,10 @@ describe('alunos actions (CRUD Unit Tests)', () => {
     });
 
     it('should return error if unauthorized', async () => {
-      vi.mocked(getUser).mockResolvedValue({ user: null, error: null } as any);
-      const result = await createAlunoAction({} as any);
+      vi.mocked(getUser).mockResolvedValue({ user: null, error: null } as unknown as Awaited<
+        ReturnType<typeof getUser>
+      >);
+      const result = await createAlunoAction({} as Parameters<typeof createAlunoAction>[0]);
       expect(result.success).toBe(false);
       expect(result.error).toBe('Usuário não autenticado');
     });
@@ -90,7 +95,9 @@ describe('alunos actions (CRUD Unit Tests)', () => {
         dataCadastro: new Date(),
       };
 
-      vi.mocked(prisma.aluno.update).mockResolvedValue(mockUpdatedAluno as any);
+      vi.mocked(prisma.aluno.update).mockResolvedValue(
+        mockUpdatedAluno as unknown as Awaited<ReturnType<typeof prisma.aluno.update>>
+      );
 
       const result = await updateAlunoAction(validId, updateData);
 
@@ -100,6 +107,16 @@ describe('alunos actions (CRUD Unit Tests)', () => {
         where: { id: validId },
         data: expect.objectContaining({ nomeCompleto: 'José Inamar Silva' }),
       });
+    });
+
+    it('should return error if unauthorized', async () => {
+      vi.mocked(getUser).mockResolvedValue({ user: null, error: null } as unknown as Awaited<
+        ReturnType<typeof getUser>
+      >);
+      const result = await updateAlunoAction(validId, { nomeCompleto: 'Novo Nome' });
+      expect(result.success).toBe(false);
+      expect(result.error).toBe('Usuário não autenticado');
+      expect(prisma.aluno.update).not.toHaveBeenCalled();
     });
   });
 
@@ -112,6 +129,17 @@ describe('alunos actions (CRUD Unit Tests)', () => {
         where: { id: validId },
       });
       expect(revalidatePath).toHaveBeenCalledWith('/dashboard/alunos');
+    });
+
+    it('should return error if unauthorized', async () => {
+      vi.mocked(getUser).mockResolvedValue({ user: null, error: null } as unknown as Awaited<
+        ReturnType<typeof getUser>
+      >);
+      const result = await deleteAlunoAction(validId);
+      expect(result.success).toBe(false);
+      expect(result.error).toBe('Usuário não autenticado');
+      expect(prisma.aluno.delete).not.toHaveBeenCalled();
+      expect(revalidatePath).not.toHaveBeenCalled();
     });
   });
 });
