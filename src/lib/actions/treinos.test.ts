@@ -14,10 +14,29 @@ vi.mock('@/lib/prisma', () => ({
       delete: vi.fn(),
       findUnique: vi.fn(),
     },
+    aluno: {
+      findUnique: vi.fn(),
+      update: vi.fn(),
+    },
+    historicoTreino: {
+      create: vi.fn(),
+    },
+    $transaction: vi.fn((callback) => callback(prismaMockTx)),
   },
 }));
 
-import { upsertTreinoAction, updateTreinoDayAction, deleteTreinoAction } from './treinos';
+// Fake transaction object matching the mocked methods
+const prismaMockTx = {
+  historicoTreino: { create: vi.fn() },
+  aluno: { update: vi.fn() },
+};
+
+import {
+  upsertTreinoAction,
+  updateTreinoDayAction,
+  deleteTreinoAction,
+  registrarHistoricoTreinoAction,
+} from './treinos';
 import { createClient, getUser } from '@/utils/supabase/server';
 import { prisma } from '@/lib/prisma';
 
@@ -242,5 +261,102 @@ describe('updateTreinoDayAction — ownership check', () => {
 
     expect(result).toEqual({ success: true });
     expect(mockTreino.update).toHaveBeenCalled();
+  });
+});
+
+// ─── registrarHistoricoTreinoAction ──────────────────────────────────────────
+
+describe('registrarHistoricoTreinoAction', () => {
+  const ALUNO_ID = '00000000-0000-0000-0000-000000000004';
+
+  const BASE_HISTORICO = {
+    treinoId: TREINO_UUID,
+    duracaoMinutos: 60,
+    dataExecucao: new Date().toISOString(),
+    exercicios: [
+      {
+        exercicioId: '00000000-0000-0000-0000-000000000010',
+        nomeExercicio: 'Supino',
+        seriesExecutadas: [
+          { serieNumero: 1, peso: 20, repeticoesFeitas: 10, concluido: true },
+          { serieNumero: 2, peso: 20, repeticoesFeitas: 10, concluido: true },
+        ],
+      },
+    ],
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+
+    // Default mocks
+    mockGetUser.mockResolvedValue({
+      user: { id: ALUNO_ID, email: 'aluno@test.com' } as any, // eslint-disable-line @typescript-eslint/no-explicit-any
+      error: null,
+    });
+
+    vi.mocked(prisma.aluno.findUnique).mockResolvedValue({
+      id: ALUNO_ID,
+      exp: 0,
+      nivel: 1,
+      streakDiasSeguidos: 0,
+      treinosNoMes: 0,
+      ultimoTreinoData: null,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any);
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    vi.mocked(prismaMockTx.historicoTreino.create).mockResolvedValue({ id: 'hist-1' } as any);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    vi.mocked(prismaMockTx.aluno.update).mockResolvedValue({ id: ALUNO_ID } as any);
+  });
+
+  it('deve registrar histórico e aplicar gamificação no aluno via transação', async () => {
+    const result = await registrarHistoricoTreinoAction(BASE_HISTORICO);
+
+    expect(result.success).toBe(true);
+    expect(prisma.$transaction).toHaveBeenCalled();
+    expect(prismaMockTx.historicoTreino.create).toHaveBeenCalled();
+    expect(prismaMockTx.aluno.update).toHaveBeenCalledWith({
+      where: { id: ALUNO_ID },
+      data: expect.objectContaining({
+        exp: 120, // 100 base + 2 * 10 (séries)
+        nivel: 1,
+        streakDiasSeguidos: 1,
+        treinosNoMes: 1,
+        ultimoTreinoData: expect.any(Date),
+      }),
+    });
+  });
+
+  it('deve retornar erro se validação Zod falhar (ex: array de exercicios vazio se exigido)', async () => {
+    const payloadInvalido = { ...BASE_HISTORICO, duracaoMinutos: -5 }; // Minutos inválidos
+    const result = await registrarHistoricoTreinoAction(payloadInvalido);
+
+    expect(result.success).toBe(false);
+    expect(result.error).toBe('Dados do histórico inválidos');
+    expect(prisma.$transaction).not.toHaveBeenCalled();
+  });
+
+  it('deve retornar erro de não autenticado se usuário não estiver logado', async () => {
+    mockGetUser.mockResolvedValue({
+      user: null,
+      error: new Error('Unauthorized') as any, // eslint-disable-line @typescript-eslint/no-explicit-any
+    });
+
+    const result = await registrarHistoricoTreinoAction(BASE_HISTORICO);
+
+    expect(result.success).toBe(false);
+    expect(result.error).toBe('Usuário não autenticado');
+  });
+
+  it('deve retornar erro genérico se a transação falhar e o erro for capturado pelo Sentry', async () => {
+    vi.mocked(prisma.$transaction).mockRejectedValueOnce(new Error('Transaction Failed'));
+
+    const result = await registrarHistoricoTreinoAction(BASE_HISTORICO);
+
+    expect(result.success).toBe(false);
+    expect(result.error).toBe('Erro ao registrar treino. Tente novamente.');
+    const { captureException } = await import('@sentry/nextjs');
+    expect(captureException).toHaveBeenCalled();
   });
 });

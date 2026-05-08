@@ -45,13 +45,15 @@ export const updateSession = async (request: NextRequest) => {
   }
 
   if (user && isProtectedRoute) {
+    // Single query to fetch role - if null, user is not a 'funcionario' (ALUNO)
     const { data: funcionarioProfile } = await supabase
       .from('funcionarios')
-      .select('id')
+      .select('role')
       .eq('id', user.id)
       .maybeSingle();
 
     const isFuncionario = !!funcionarioProfile;
+    const userRole = funcionarioProfile?.role;
 
     if (isFuncionario && isAlunoRoute) {
       const dashboardUrl = request.nextUrl.clone();
@@ -68,13 +70,7 @@ export const updateSession = async (request: NextRequest) => {
     const isFinancialRoute = FINANCIAL_ROUTES.some((r) => pathname.startsWith(r));
 
     if (isFuncionario && isFinancialRoute) {
-      const { data: roleData, error } = await supabase
-        .from('funcionarios')
-        .select('role')
-        .eq('id', user.id)
-        .maybeSingle();
-
-      if (error || roleData?.role !== 'GERENTE') {
+      if (userRole !== 'GERENTE') {
         const dashboardUrl = request.nextUrl.clone();
         dashboardUrl.pathname = '/dashboard';
         return NextResponse.redirect(dashboardUrl);
