@@ -11,6 +11,10 @@
     "google-developer-knowledge": {
       "command": "npx",
       "args": ["-y", "mcp-remote", "https://developerknowledge.googleapis.com/mcp"]
+    },
+    "supabase": {
+      "command": "https://mcp.supabase.com/mcp",
+      "args": []
     }
   },
   "hooks": {
