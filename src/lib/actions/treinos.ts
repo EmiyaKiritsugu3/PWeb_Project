@@ -217,11 +217,11 @@ export async function registrarHistoricoTreinoAction(
     const { user, error: authError } = await getUser();
 
     if (authError || !user) {
-      throw new Error('Usuário não autenticado');
+      return { success: false, error: 'Usuário não autenticado' };
     }
 
-    // Validação Zod: Para registro de histórico vindo do app, usamos o BaseSchema (o ID será gerado no DB)
-    const validatedData = HistoricoTreinoBaseSchema.parse(historicoData);
+    // Validação Zod: Para registro de histórico vindo do app, o alunoId vem da session
+    const validatedData = HistoricoTreinoBaseSchema.omit({ alunoId: true }).parse(historicoData);
 
     // Buscar aluno pelo email
     const aluno = await prisma.aluno.findUnique({
