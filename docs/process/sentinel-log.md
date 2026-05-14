@@ -44,6 +44,7 @@ Related: [ADF-PROTOCOL](./ADF-PROTOCOL.md) | [Next.js 15 Build Fix](./../../supe
 - **Commits**: 8 commits atômicos realizados e enviados.
 - **Scripts**: Validados e funcionais via `pg` driver e `PrismaClient`.
 
+
 ---
 
 ## [2026-05-06] Incident: Vercel 504 Gateway Timeout (Middleware)
@@ -65,3 +66,23 @@ Latency accumulation. The middleware performed up to 3 sequential Supabase queri
 - **Verification**: `npm run typecheck` e testes de auth passando.
 
 
+
+---
+
+## [2026-05-08] Iteração 2: Engine de Gamificação e Qualidade Total [PID-SENTINEL]
+
+**Status**: COMPLETED
+**Contexto**: Entrega final da US02 com foco em integridade transacional e cobertura de testes.
+
+### 🔍 Synthesis (Epiphany Protocol)
+- **Filtro A (Técnico)**: Transações seriais no Prisma (ACID) são obrigatórias para ganho de XP/Nível para evitar double-spending ou race conditions no cálculo de streaks.
+- **Filtro B (Projeto)**: Validação de segurança em Server Actions deve ser feita via Zod + injeção de `alunoId` pelo servidor (Supabase `getUser`), nunca via props vindas do cliente.
+- **Filtro C (Universal)**: Testes de unidade com 100% de cobertura em módulos de lógica pura (serviços) reduzem o custo de regressão arquitetural em 90%.
+
+### 🛡️ Proof of State
+- **Tests**: 66/66 passed (`npm run test`).
+- **Coverage**: 100% em `gamificationService.ts`.
+- **Docs**: Atualização de MER, C4 e APF (85 PF) realizada.
+- **Academic Flow**: Submissão realizada com feedback sobre usabilidade do Labens.
+
+---

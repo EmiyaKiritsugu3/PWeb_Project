@@ -66,7 +66,7 @@ export function WorkoutSession({ treino, onFinish, onCancel }: WorkoutSessionPro
     setExercicioAtualIndex(0);
     setCompleted(false);
     setFeedback(null);
-  }, [treino.id]);
+  }, [treino]);
 
   const exercicioAtual = exerciciosEmSessao[exercicioAtualIndex];
 

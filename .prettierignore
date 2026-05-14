@@ -5,4 +5,6 @@ package-lock.json
 prisma/migrations/
 public/
 docs/.obsidian/
+eng-software-2/
+supabase/.temp/
 
