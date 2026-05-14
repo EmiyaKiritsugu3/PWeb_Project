@@ -146,6 +146,8 @@
     "retry-request": "^8.0.0",
     "@types/pg": "8.11.11",
     "@hono/node-server": "1.19.14",
-    "react-is": "^19.0.0"
+    "react-is": "^19.0.0",
+    "@opentelemetry/auto-instrumentations-node": "0.75.0",
+    "@opentelemetry/sdk-node": "0.218.0"
   }
 }
