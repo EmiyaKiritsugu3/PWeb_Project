@@ -86,3 +86,24 @@ Latency accumulation. The middleware performed up to 3 sequential Supabase queri
 - **Academic Flow**: Submissão realizada com feedback sobre usabilidade do Labens.
 
 ---
+
+## [2026-05-14] Security Audit: npm Vulnerabilities & CI Sanity [PR #100]
+
+**Status**: COMPLETED
+**Context**: Quality Gates no CI do PR #100 falhavam com 17 vulnerabilidades `npm audit`.
+
+### 🔍 Analysis (RCA)
+As 17 vulnerabilidades se dividiam em dois grupos:
+1. **Grupo A (15/17)**: Corrigíveis via `npm audit fix` — `next.js`, `fast-uri`, `fast-xml-builder`, `hono`, `@protobufjs/utf8`, `postcss`, `uuid`.
+2. **Grupo B (2/17)**: `@opentelemetry/auto-instrumentations-node@0.49.2` e `@opentelemetry/sdk-node@0.52.1`, ambos com GHSA-q7rr (Prometheus crash), não corrigíveis via audit fix pois o `@genkit-ai/google-cloud@1.34.0` ainda os pinava em versões vulneráveis.
+
+### 💡 Key Learning (Epiphany Protocol)
+- **Filtro A (Técnico)**: `npm audit fix` não consegue corrigir vulnerabilidades aninhadas em dependências transitórias que o upstream não atualizou. `npm overrides` é a única saída.
+- **Filtro B (Projeto)**: SonarQube no CI e SonarCloud automático não podem coexistir — causa conflito "You are running CI analysis while Automatic Analysis is enabled".
+- **Filtro C (Universal)**: Vulnerabilidades de `next@postcss` (moderate) são aceitáveis via `--audit-level=high` quando o patch upstream não existe.
+
+### 🛡️ Proof of State
+- **PR**: #100 criado, aprovado e mergeado.
+- **Commits**: 3 commits atômicos (audit fix + overrides, prettierignore, plan doc).
+- **Verification**: `npm audit --audit-level=high` → exit 0. Quality Gates, Tests, E2E todos verdes.
+- **Docs**: CHANGELOG.md v1.2.0 atualizado.

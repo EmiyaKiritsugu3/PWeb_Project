@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] — 2026-05-14 — Security Hardening & Audit Pipeline Fix
+
+### Added
+
+- **npm Audit zeroing**: Resolved all 17 `npm audit` vulnerabilities (13 HIGH, 4 MODERATE) across the dependency tree, including `next.js`, `protobufjs`, `hono`, `fast-uri`, `fast-xml-builder`, `uuid`, `postcss`, and `@opentelemetry/*` packages.
+- **OpenTelemetry overrides**: Forced `@opentelemetry/sdk-node@0.218.0` and `@opentelemetry/auto-instrumentations-node@0.75.0` via `overrides` in `package.json` to fix GHSA-q7rr (Prometheus exporter crash), upstream of genkit's pinned versions.
+- **`eng-software-2/` in `.prettierignore`**: Academic docs excluded from format checks to unblock CI pipeline.
+
+### Changed
+
+- **CI Workflow**: Removed duplicate SonarQube scan step — SonarCloud automatic analysis already covers `main` and PRs.
+
+### Fixed
+
+- **`.gemini/settings.json`**: Supabase MCP entry aligned to `npx` + `mcp-remote` pattern, consistent with other MCP servers.
+- **`docs/process/sentinel-log.md`**: Added missing `---` separator before `2026-05-08` entry.
+
+---
+
 ## [1.1.0] — 2026-04-22 — Performance & Security Modernization
 
 ### Added
