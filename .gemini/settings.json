@@ -13,8 +13,8 @@
       "args": ["-y", "mcp-remote", "https://developerknowledge.googleapis.com/mcp"]
     },
     "supabase": {
-      "command": "https://mcp.supabase.com/mcp",
-      "args": []
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://mcp.supabase.com/mcp"]
     }
   },
   "hooks": {
