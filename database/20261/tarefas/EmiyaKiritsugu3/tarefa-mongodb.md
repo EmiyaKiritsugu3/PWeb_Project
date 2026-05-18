@@ -73,7 +73,8 @@ services:
 ### Subindo o Servidor
 
 ```bash
-docker compose up -d
+# A partir da raiz do projeto:
+docker compose -f database/20261/tarefas/EmiyaKiritsugu3/scripts/docker-compose.yml up -d
 ```
 
 ### Verificando a Conexão

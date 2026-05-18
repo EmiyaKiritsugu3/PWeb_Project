@@ -114,6 +114,10 @@ walkthrough.md
 
 # Dev scripts (not part of the build)
 scripts/
+
+# Academic task scripts (force-tracked via exception)
+!database/**/tarefas/**/scripts/
+
 sentinel
 
 # Local IDE / cloud environment config
