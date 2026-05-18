@@ -146,6 +146,7 @@ npm run e2e         # Playwright — 15/15 cenários (requer Docker + supabase s
 - [Estado Atual](./docs/CURRENT-STATE.md)
 - [Milestones](./docs/pdr/MILESTONES.md)
 - [Tarefa - ODBC e ORM](./database/20252/tarefas/EmiyaKiritsugu3/tarefa-orm.md)
+- [Tarefa - MongoDB](./database/20261/tarefas/EmiyaKiritsugu3/tarefa-mongodb.md)
 
 ---
 
