@@ -90,7 +90,7 @@
     "genkit": "^1.32.0",
     "inquirer": "^13.4.1",
     "lodash": "^4.18.1",
-    "lucide-react": "^0.475.0",
+    "lucide-react": "^1.16.0",
     "motion": "^12.38.0",
     "next": "^15.5.15",
     "patch-package": "^8.0.1",
