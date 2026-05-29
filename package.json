@@ -101,7 +101,7 @@
     "react-hook-form": "^7.72.1",
     "react-timer-hook": "^4.0.5",
     "recharts": "^3.8.1",
-    "tailwind-merge": "^2.6.1",
+    "tailwind-merge": "^3.6.0",
     "zod": "^3.25.76"
   },
   "devDependencies": {
