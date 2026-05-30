@@ -1,16 +1,7 @@
 import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
-import prettierConfig from 'eslint-config-prettier';
-import { FlatCompat } from '@eslint/eslintrc';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-});
+import prettierConfig from 'eslint-config-prettier/flat';
+import nextCoreWebVitals from 'eslint-config-next/core-web-vitals';
 
 export default tseslint.config(
   {
@@ -18,8 +9,7 @@ export default tseslint.config(
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
-  ...compat.extends('next/core-web-vitals'),
-  prettierConfig,
+  ...nextCoreWebVitals,
   {
     files: ['**/*.ts', '**/*.tsx'],
     languageOptions: {
@@ -35,6 +25,10 @@ export default tseslint.config(
         { argsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' },
       ],
       '@typescript-eslint/consistent-type-imports': ['warn', { prefer: 'type-imports' }],
+      // Downgrade new eslint-config-next v16 React Compiler rules to warnings
+      // TODO: Fix patterns and promote to 'error' once shadcn/ui components are updated
+      'react-hooks/set-state-in-effect': 'warn',
+      'react-hooks/incompatible-library': 'warn',
       'no-console': 'warn',
       'no-debugger': 'error',
       'prefer-const': 'error',

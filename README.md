@@ -5,6 +5,8 @@
 [![Supabase](https://img.shields.io/badge/Supabase-Database-green?style=for-the-badge&logo=supabase)](https://supabase.com/)
 [![Prisma](https://img.shields.io/badge/Prisma-ORM-2D3748?style=for-the-badge&logo=prisma)](https://www.prisma.io/)
 [![Genkit](https://img.shields.io/badge/Genkit-AI-orange?style=for-the-badge&logo=googlecloud)](https://firebase.google.com/docs/genkit)
+[![SonarCloud](https://img.shields.io/badge/SonarCloud-Quality_Gate-blue?style=for-the-badge&logo=sonarcloud)](https://sonarcloud.io/project/overview?id=EmiyaKiritsugu3_PWeb_Project)
+[![CI](https://img.shields.io/github/actions/workflow/status/EmiyaKiritsugu3/PWeb_Project/ci.yml?branch=main&style=for-the-badge&logo=github)](https://github.com/EmiyaKiritsugu3/PWeb_Project/actions)
 
 Um sistema de gestão **full-stack** moderno para academias, combinando ferramentas administrativas robustas com uma experiência de aluno gamificada e potencializada por **Inteligência Artificial Generativa**.
 
@@ -75,7 +77,7 @@ O projeto inclui o **Sentinel**, um sistema operacional de desenvolvimento alime
 
 ### Pré-requisitos
 
-- Node.js 20+
+- Node.js 22+
 - Docker (necessário para o stack E2E local via Supabase CLI)
 - npm
 
@@ -130,11 +132,17 @@ Acesse `http://localhost:3001` para ver a aplicação em execução.
 ### 4. Quality Gates
 
 ```bash
-npm run typecheck   # TypeScript strict — 0 erros
-npm run lint        # ESLint — 0 erros
-npm run test        # Vitest — 18/18 testes
-npm run e2e         # Playwright — 15/15 cenários (requer Docker + supabase start)
+npm run typecheck      # TypeScript strict — 0 erros
+npm run lint # ESLint — 0 erros (Native flat config + ESLint 9)
+npm run format:check   # Prettier — formatação consistente
+npm run test           # Vitest — 66/66 testes (10 suites)
+npm run e2e            # Playwright — 20 cenários (requer Docker + supabase start)
+npm run test:coverage  # Testes + relatório de cobertura (enviado ao SonarCloud)
 ```
+
+> **Integração Contínua:** O pipeline CI ([`.github/workflows/ci.yml`](./.github/workflows/ci.yml)) executa todos os quality gates em cada PR.
+> Para PRs do **Dependabot**, testes e E2E são pulados para agilizar — apenas `npm ci` + `npm audit` rodam.
+> **SonarCloud** analisa cobertura automaticamente via `sonarqube-scan-action` com `coverage/lcov.info`.
 
 ---
 
