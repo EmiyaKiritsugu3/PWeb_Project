@@ -34,7 +34,7 @@ import {
   type WorkoutGeneratorInput,
   type WorkoutGeneratorOutput,
 } from '@/ai/schemas';
-import { upsertTreinoAction } from '@/lib/actions/treinos';
+import { batchUpsertTreinoAction, upsertTreinoAction } from '@/lib/actions/treinos';
 
 type WorkoutPlan = WorkoutGeneratorOutput;
 type WorkoutExercise = WorkoutPlan['workouts'][0]['exercicios'][0];
@@ -419,22 +419,23 @@ export default function TreinosManagementClient({ initialAlunos }: { initialAlun
   const handleSavePlanoGerado = async (planoEditado: WorkoutPlan) => {
     if (!selectedAluno) return;
     try {
-      for (const workout of planoEditado.workouts) {
-        await upsertTreinoAction({
-          alunoId: selectedAluno.id,
-          objetivo: workout.nome,
-          exercicios: workout.exercicios.map((ex) => ({
-            nomeExercicio: ex.nomeExercicio,
-            series: ex.series,
-            repeticoes: ex.repeticoes,
-            observacoes: ex.observacoes,
-            descricao:
-              flatExerciciosOptions.find((opt) => opt.value === ex.nomeExercicio)?.description ||
-              '',
-          })),
-          diaSemana: workout.diaSugerido,
-        });
-      }
+      const treinos = planoEditado.workouts.map((workout) => ({
+        alunoId: selectedAluno.id,
+        objetivo: workout.nome,
+        exercicios: workout.exercicios.map((ex) => ({
+          nomeExercicio: ex.nomeExercicio,
+          series: ex.series,
+          repeticoes: ex.repeticoes,
+          observacoes: ex.observacoes,
+          descricao:
+            flatExerciciosOptions.find((opt) => opt.value === ex.nomeExercicio)?.description || '',
+        })),
+        diaSemana: workout.diaSugerido,
+      }));
+
+      const result = await batchUpsertTreinoAction(treinos);
+      if (!result.success) throw new Error(result.error);
+
       notify.success('Plano Atribuído!');
       setPlanoGerado(null);
     } catch (error: unknown) {
