@@ -15,25 +15,36 @@ import { getUser, createClient } from '@/utils/supabase/server';
 import * as Sentry from '@sentry/nextjs';
 import { calculateTreinoRewards } from '@/services/gamificationService';
 
+/**
+ * Shared auth+role extraction. Returns the caller's role and derived instrutorId
+ * or an error response that the caller should return immediately.
+ */
+async function getAuthRole() {
+  const { user, error: authError } = await getUser();
+  if (authError || !user) return { error: 'Usuário não autenticado' as const };
+
+  const supabase = await createClient();
+  const { data: funcData, error: roleError } = await supabase
+    .from('funcionarios')
+    .select('role')
+    .eq('id', user.id)
+    .maybeSingle();
+
+  if (roleError) return { error: 'Erro ao verificar permissões' as const };
+  if (funcData?.role === 'RECEPCIONISTA') return { error: 'Acesso não autorizado' as const };
+
+  return {
+    user,
+    role: funcData?.role ?? null,
+    derivedInstrutorId: funcData?.role === 'INSTRUTOR' ? user.id : null,
+  };
+}
+
 export async function upsertTreinoAction(treinoData: TreinoBase | (TreinoBase & { id: string })) {
   try {
-    const { user, error: authError } = await getUser();
-    if (authError || !user) return { success: false, error: 'Usuário não autenticado' };
-
-    const supabase = await createClient();
-    const { data: funcData, error: roleError } = await supabase
-      .from('funcionarios')
-      .select('role')
-      .eq('id', user.id)
-      .maybeSingle();
-
-    if (roleError) return { success: false, error: 'Erro ao verificar permissões' };
-
-    // RECEPCIONISTA is explicitly blocked; ALUNO (not in funcionarios) gets null instrutorId
-    if (funcData?.role === 'RECEPCIONISTA') {
-      return { success: false, error: 'Acesso não autorizado' };
-    }
-    const derivedInstrutorId = funcData?.role === 'INSTRUTOR' ? user.id : null;
+    const auth = await getAuthRole();
+    if ('error' in auth) return { success: false, error: auth.error };
+    const { user, role, derivedInstrutorId } = auth;
 
     // Validação flexível: se tiver ID, valida como Entity; se não, como Base.
     let validatedData;
@@ -44,7 +55,7 @@ export async function upsertTreinoAction(treinoData: TreinoBase | (TreinoBase & 
     }
 
     const { objetivo, exercicios, diaSemana } = validatedData;
-    const alunoId = funcData === null ? user.id : validatedData.alunoId;
+    const alunoId = role === null ? user.id : validatedData.alunoId;
     const id =
       'id' in validatedData ? (validatedData as TreinoBase & { id: string }).id : undefined;
 
@@ -58,7 +69,7 @@ export async function upsertTreinoAction(treinoData: TreinoBase | (TreinoBase & 
       if (!existingTreino) return { success: false, error: 'Treino não encontrado' };
 
       const isOwner =
-        funcData?.role === 'GERENTE' ||
+        role === 'GERENTE' ||
         existingTreino.instrutorId === user.id ||
         existingTreino.alunoId === user.id;
 
@@ -68,12 +79,11 @@ export async function upsertTreinoAction(treinoData: TreinoBase | (TreinoBase & 
       await prisma.$transaction(async (tx) => {
         // Preserve ownership fields unless caller is authorized to reassign them.
         // Only GERENTE can reassign a treino to a different aluno.
-        const nextAlunoId = funcData?.role === 'GERENTE' ? alunoId : existingTreino.alunoId;
+        const nextAlunoId = role === 'GERENTE' ? alunoId : existingTreino.alunoId;
 
         // If caller is an INSTRUTOR, they become the new instructor for this treino.
         // Otherwise (GERENTE/ALUNO), we preserve the existing instrutorId.
-        const nextInstrutorId =
-          funcData?.role === 'INSTRUTOR' ? user.id : existingTreino.instrutorId;
+        const nextInstrutorId = role === 'INSTRUTOR' ? user.id : existingTreino.instrutorId;
 
         // Validation: If alunoId changed, ensure the target student exists
         if (nextAlunoId !== existingTreino.alunoId) {
@@ -125,6 +135,54 @@ export async function upsertTreinoAction(treinoData: TreinoBase | (TreinoBase & 
     }
 
     revalidatePath('/aluno/meus-treinos');
+    revalidatePath('/dashboard/treinos');
+    return { success: true };
+  } catch (error) {
+    Sentry.captureException(error);
+    if (error instanceof Error && error.name === 'ZodError') {
+      return { success: false, error: 'Dados do treino inválidos' };
+    }
+    return { success: false, error: error instanceof Error ? error.message : 'Erro desconhecido' };
+  }
+}
+
+/**
+ * Batch version of upsertTreinoAction. Authenticates and authorises once,
+ * then creates all workouts in a single Prisma transaction.
+ * Eliminates the N+1 auth+DB roundtrip when saving a generated plan.
+ */
+export async function batchUpsertTreinoAction(
+  treinos: TreinoBase[]
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const auth = await getAuthRole();
+    if ('error' in auth) return { success: false, error: auth.error };
+    const { derivedInstrutorId } = auth;
+
+    const validated = treinos.map((t) => TreinoBaseSchema.parse({ ...t, alunoId: t.alunoId }));
+
+    await prisma.$transaction(
+      validated.map((data) =>
+        prisma.treino.create({
+          data: {
+            objetivo: data.objetivo,
+            diaSemana: data.diaSemana,
+            alunoId: data.alunoId,
+            instrutorId: derivedInstrutorId,
+            Exercicios: {
+              create: data.exercicios.map((ex) => ({
+                nomeExercicio: ex.nomeExercicio,
+                series: ex.series,
+                repeticoes: ex.repeticoes,
+                observacoes: ex.observacoes || '',
+                descricao: ex.descricao || '',
+              })),
+            },
+          },
+        })
+      )
+    );
+
     revalidatePath('/dashboard/treinos');
     return { success: true };
   } catch (error) {

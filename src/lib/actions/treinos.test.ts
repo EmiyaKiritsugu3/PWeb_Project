@@ -21,7 +21,13 @@ vi.mock('@/lib/prisma', () => ({
     historicoTreino: {
       create: vi.fn(),
     },
-    $transaction: vi.fn((callback) => callback(prismaMockTx)),
+    $transaction: vi.fn((arg: unknown) => {
+      // Array of promises pattern (batchUpsertTreinoAction)
+      if (Array.isArray(arg))
+        return Promise.all(arg.map((fn) => (typeof fn === 'function' ? fn(prismaMockTx) : fn)));
+      // Callback pattern (upsertTreinoAction update, registrarHistoricoTreinoAction)
+      return (arg as (tx: typeof prismaMockTx) => Promise<unknown>)(prismaMockTx);
+    }),
   },
 }));
 
@@ -33,6 +39,7 @@ const prismaMockTx = {
 
 import {
   upsertTreinoAction,
+  batchUpsertTreinoAction,
   updateTreinoDayAction,
   deleteTreinoAction,
   registrarHistoricoTreinoAction,
@@ -155,6 +162,95 @@ describe('upsertTreinoAction — instrutorId derivation', () => {
     const result = await upsertTreinoAction(BASE_PAYLOAD);
 
     expect(result).toEqual({ success: false, error: 'Usuário não autenticado' });
+    expect(mockTreino.create).not.toHaveBeenCalled();
+  });
+});
+
+// ─── batchUpsertTreinoAction — N+1 elimination ────────────────────────────
+
+describe('batchUpsertTreinoAction', () => {
+  const MULTI_WORKOUT = [BASE_PAYLOAD, { ...BASE_PAYLOAD, objetivo: 'Força', diaSemana: 3 }];
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mockTreino.create.mockResolvedValue({ id: TREINO_UUID } as any);
+  });
+
+  it('INSTRUTOR: creates all workouts in a single transaction', async () => {
+    mockGetUser.mockResolvedValue({
+      user: { id: INSTRUTOR_UUID, email: 'inst@test.com' } as any, // eslint-disable-line @typescript-eslint/no-explicit-any
+      error: null,
+    });
+    const supabase = buildSupabaseMock(INSTRUTOR_UUID, 'INSTRUTOR');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mockCreateClient.mockResolvedValue(supabase as any);
+
+    const result = await batchUpsertTreinoAction(MULTI_WORKOUT);
+
+    expect(result).toEqual({ success: true });
+    // Called once with an array of promises — 2 workouts = 2 creates
+    expect(prisma.$transaction).toHaveBeenCalledWith(expect.any(Array));
+    expect(mockTreino.create).toHaveBeenCalledTimes(2);
+  });
+
+  it('GERENTE: creates workouts with null instrutorId', async () => {
+    mockGetUser.mockResolvedValue({
+      user: { id: GERENTE_UUID, email: 'gerente@test.com' } as any, // eslint-disable-line @typescript-eslint/no-explicit-any
+      error: null,
+    });
+    const supabase = buildSupabaseMock(GERENTE_UUID, 'GERENTE');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mockCreateClient.mockResolvedValue(supabase as any);
+
+    await batchUpsertTreinoAction(MULTI_WORKOUT);
+
+    expect(mockTreino.create).toHaveBeenCalledWith(
+      expect.objectContaining({ data: expect.objectContaining({ instrutorId: null }) })
+    );
+  });
+
+  it('RECEPCIONISTA: returns Acesso não autorizado', async () => {
+    mockGetUser.mockResolvedValue({
+      user: { id: RECEP_UUID, email: 'recep@test.com' } as any, // eslint-disable-line @typescript-eslint/no-explicit-any
+      error: null,
+    });
+    const supabase = buildSupabaseMock(RECEP_UUID, 'RECEPCIONISTA');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mockCreateClient.mockResolvedValue(supabase as any);
+
+    const result = await batchUpsertTreinoAction(MULTI_WORKOUT);
+
+    expect(result).toEqual({ success: false, error: 'Acesso não autorizado' });
+    expect(mockTreino.create).not.toHaveBeenCalled();
+  });
+
+  it('unauthenticated: returns auth error', async () => {
+    mockGetUser.mockResolvedValue({
+      user: null,
+      error: new Error('Unauthorized') as any, // eslint-disable-line @typescript-eslint/no-explicit-any
+    });
+
+    const result = await batchUpsertTreinoAction(MULTI_WORKOUT);
+
+    expect(result).toEqual({ success: false, error: 'Usuário não autenticado' });
+    expect(mockTreino.create).not.toHaveBeenCalled();
+  });
+
+  it('rejects invalid workout data before hitting DB', async () => {
+    mockGetUser.mockResolvedValue({
+      user: { id: INSTRUTOR_UUID } as any, // eslint-disable-line @typescript-eslint/no-explicit-any
+      error: null,
+    });
+    const supabase = buildSupabaseMock(INSTRUTOR_UUID, 'INSTRUTOR');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mockCreateClient.mockResolvedValue(supabase as any);
+
+    const invalid = [{ ...BASE_PAYLOAD, objetivo: '' }];
+
+    const result = await batchUpsertTreinoAction(invalid);
+
+    expect(result.success).toBe(false);
     expect(mockTreino.create).not.toHaveBeenCalled();
   });
 });
