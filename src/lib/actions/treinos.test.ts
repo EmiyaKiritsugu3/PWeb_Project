@@ -26,7 +26,7 @@ vi.mock('@/lib/prisma', () => ({
       if (Array.isArray(arg))
         return Promise.all(arg.map((fn) => (typeof fn === 'function' ? fn(prismaMockTx) : fn)));
       // Callback pattern (upsertTreinoAction update, registrarHistoricoTreinoAction)
-      return arg(prismaMockTx);
+      return (arg as (tx: typeof prismaMockTx) => Promise<unknown>)(prismaMockTx);
     }),
   },
 }));
