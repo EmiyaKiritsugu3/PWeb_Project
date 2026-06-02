@@ -165,7 +165,7 @@ export async function batchUpsertTreinoAction(
   try {
     const auth = await getAuthRole();
     if ('error' in auth) return { success: false, error: auth.error };
-    const { derivedInstrutorId } = auth;
+    const { user, role, derivedInstrutorId } = auth;
 
     const validated = treinos.map((t) => TreinoBaseSchema.parse({ ...t, alunoId: t.alunoId }));
 
@@ -175,7 +175,7 @@ export async function batchUpsertTreinoAction(
           data: {
             objetivo: data.objetivo,
             diaSemana: data.diaSemana,
-            alunoId: data.alunoId,
+            alunoId: role === null ? user.id : data.alunoId,
             instrutorId: derivedInstrutorId,
             Exercicios: {
               create: data.exercicios.map((ex) => ({
@@ -191,6 +191,7 @@ export async function batchUpsertTreinoAction(
       )
     );
 
+    revalidatePath('/aluno/meus-treinos');
     revalidatePath('/dashboard/treinos');
     return { success: true };
   } catch (error) {
