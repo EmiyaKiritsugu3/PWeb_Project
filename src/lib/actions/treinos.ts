@@ -40,6 +40,96 @@ async function getAuthRole() {
   };
 }
 
+async function performTreinoUpsert(
+  validatedData: TreinoBase & { id?: string },
+  user: { id: string },
+  role: string | null,
+  derivedInstrutorId: string | null
+) {
+  const { objetivo, exercicios, diaSemana } = validatedData;
+  const alunoId = role === null ? user.id : validatedData.alunoId;
+  const id = 'id' in validatedData ? (validatedData as TreinoBase & { id: string }).id : undefined;
+
+  if (id) {
+    // 1. Authorization check before update
+    const existingTreino = await prisma.treino.findUnique({
+      where: { id },
+      select: { instrutorId: true, alunoId: true },
+    });
+
+    if (!existingTreino) return { success: false, error: 'Treino não encontrado' } as const;
+
+    const isOwner =
+      role === 'GERENTE' ||
+      existingTreino.instrutorId === user.id ||
+      existingTreino.alunoId === user.id;
+
+    if (!isOwner) return { success: false, error: 'Acesso não autorizado para edição' } as const;
+
+    // 2. Atomic Update Flow
+    await prisma.$transaction(async (tx) => {
+      // Preserve ownership fields unless caller is authorized to reassign them.
+      // Only GERENTE can reassign a treino to a different aluno.
+      const nextAlunoId = role === 'GERENTE' ? alunoId : existingTreino.alunoId;
+
+      // If caller is an INSTRUTOR, they become the new instructor for this treino.
+      // Otherwise (GERENTE/ALUNO), we preserve the existing instrutorId.
+      const nextInstrutorId = role === 'INSTRUTOR' ? user.id : existingTreino.instrutorId;
+
+      // Validation: If alunoId changed, ensure the target student exists
+      if (nextAlunoId !== existingTreino.alunoId) {
+        const studentExists = await tx.aluno.findUnique({ where: { id: nextAlunoId } });
+        if (!studentExists) throw new Error('Aluno de destino não encontrado.');
+      }
+
+      await tx.treino.update({
+        where: { id },
+        data: {
+          objetivo,
+          diaSemana,
+          alunoId: nextAlunoId,
+          instrutorId: nextInstrutorId,
+        },
+      });
+
+      await tx.exercicio.deleteMany({ where: { treinoId: id } });
+      await tx.exercicio.createMany({
+        data: exercicios.map((ex) => ({
+          treinoId: id,
+          nomeExercicio: ex.nomeExercicio,
+          series: ex.series,
+          repeticoes: ex.repeticoes,
+          observacoes: ex.observacoes || '',
+          descricao: ex.descricao || '',
+        })),
+      });
+    });
+  } else {
+    // CREATE flow
+    await prisma.treino.create({
+      data: {
+        objetivo,
+        diaSemana,
+        alunoId,
+        instrutorId: derivedInstrutorId,
+        Exercicios: {
+          create: exercicios.map((ex) => ({
+            nomeExercicio: ex.nomeExercicio,
+            series: ex.series,
+            repeticoes: ex.repeticoes,
+            observacoes: ex.observacoes || '',
+            descricao: ex.descricao || '',
+          })),
+        },
+      },
+    });
+  }
+
+  revalidatePath('/aluno/meus-treinos');
+  revalidatePath('/dashboard/treinos');
+  return { success: true } as const;
+}
+
 export async function upsertTreinoAction(treinoData: TreinoBase | (TreinoBase & { id: string })) {
   try {
     const auth = await getAuthRole();
@@ -54,89 +144,7 @@ export async function upsertTreinoAction(treinoData: TreinoBase | (TreinoBase & 
       validatedData = TreinoBaseSchema.parse(treinoData);
     }
 
-    const { objetivo, exercicios, diaSemana } = validatedData;
-    const alunoId = role === null ? user.id : validatedData.alunoId;
-    const id =
-      'id' in validatedData ? (validatedData as TreinoBase & { id: string }).id : undefined;
-
-    if (id) {
-      // 1. Authorization check before update
-      const existingTreino = await prisma.treino.findUnique({
-        where: { id },
-        select: { instrutorId: true, alunoId: true },
-      });
-
-      if (!existingTreino) return { success: false, error: 'Treino não encontrado' };
-
-      const isOwner =
-        role === 'GERENTE' ||
-        existingTreino.instrutorId === user.id ||
-        existingTreino.alunoId === user.id;
-
-      if (!isOwner) return { success: false, error: 'Acesso não autorizado para edição' };
-
-      // 2. Atomic Update Flow
-      await prisma.$transaction(async (tx) => {
-        // Preserve ownership fields unless caller is authorized to reassign them.
-        // Only GERENTE can reassign a treino to a different aluno.
-        const nextAlunoId = role === 'GERENTE' ? alunoId : existingTreino.alunoId;
-
-        // If caller is an INSTRUTOR, they become the new instructor for this treino.
-        // Otherwise (GERENTE/ALUNO), we preserve the existing instrutorId.
-        const nextInstrutorId = role === 'INSTRUTOR' ? user.id : existingTreino.instrutorId;
-
-        // Validation: If alunoId changed, ensure the target student exists
-        if (nextAlunoId !== existingTreino.alunoId) {
-          const studentExists = await tx.aluno.findUnique({ where: { id: nextAlunoId } });
-          if (!studentExists) throw new Error('Aluno de destino não encontrado.');
-        }
-
-        await tx.treino.update({
-          where: { id },
-          data: {
-            objetivo,
-            diaSemana,
-            alunoId: nextAlunoId,
-            instrutorId: nextInstrutorId,
-          },
-        });
-
-        await tx.exercicio.deleteMany({ where: { treinoId: id } });
-        await tx.exercicio.createMany({
-          data: exercicios.map((ex) => ({
-            treinoId: id,
-            nomeExercicio: ex.nomeExercicio,
-            series: ex.series,
-            repeticoes: ex.repeticoes,
-            observacoes: ex.observacoes || '',
-            descricao: ex.descricao || '',
-          })),
-        });
-      });
-    } else {
-      // CREATE flow
-      await prisma.treino.create({
-        data: {
-          objetivo,
-          diaSemana,
-          alunoId,
-          instrutorId: derivedInstrutorId,
-          Exercicios: {
-            create: exercicios.map((ex) => ({
-              nomeExercicio: ex.nomeExercicio,
-              series: ex.series,
-              repeticoes: ex.repeticoes,
-              observacoes: ex.observacoes || '',
-              descricao: ex.descricao || '',
-            })),
-          },
-        },
-      });
-    }
-
-    revalidatePath('/aluno/meus-treinos');
-    revalidatePath('/dashboard/treinos');
-    return { success: true };
+    return await performTreinoUpsert(validatedData, user, role, derivedInstrutorId);
   } catch (error) {
     Sentry.captureException(error);
     if (error instanceof Error && error.name === 'ZodError') {

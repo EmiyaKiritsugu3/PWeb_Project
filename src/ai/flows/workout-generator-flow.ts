@@ -49,7 +49,7 @@ export const streamWorkoutPlan = ai.defineFlow(
     6.  **Grupo Muscular:** Use o nome exato do grupo.
     `;
 
-    const responseStream = await ai.generateStream({
+    const responseStream = ai.generateStream({
       model: googleAI.model('gemini-2.5-flash'),
       prompt: promptText,
       output: { schema: WorkoutGeneratorAIOutputSchema },
