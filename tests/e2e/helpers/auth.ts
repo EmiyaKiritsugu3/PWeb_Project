@@ -1,21 +1,23 @@
 import { expect, type Page } from '@playwright/test';
 
+const E2E_PASSWORD = process.env.E2E_DEFAULT_PASSWORD || 'Test1234!';
+
 const CREDENTIALS = {
   GERENTE: {
     email: 'gerente@test.com',
-    password: 'Test1234!',
+    password: E2E_PASSWORD,
     loginPath: '/login',
     redirect: '/dashboard',
   },
   RECEPCIONISTA: {
     email: 'recep@test.com',
-    password: 'Test1234!',
+    password: E2E_PASSWORD,
     loginPath: '/login',
     redirect: '/dashboard',
   },
   INSTRUTOR: {
     email: 'instrutor@test.com',
-    password: 'Test1234!',
+    password: E2E_PASSWORD,
     loginPath: '/login',
     redirect: '/dashboard',
   },
@@ -25,7 +27,7 @@ const CREDENTIALS = {
   // /aluno/dashboard → /aluno/login redirect chain before the browser sends the cookie.
   ALUNO: {
     email: 'aluno@test.com',
-    password: 'Test1234!',
+    password: E2E_PASSWORD,
     loginPath: '/aluno/login',
     redirect: '/aluno/dashboard',
   },

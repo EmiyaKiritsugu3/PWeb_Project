@@ -33,6 +33,39 @@ type ExercicioEmSessao = {
   seriesExecutadas: SerieExecutada[];
 };
 
+function FeedbackCard({
+  feedback,
+  isLoadingFeedback,
+}: {
+  feedback: WorkoutFeedbackOutput | null;
+  isLoadingFeedback: boolean;
+}) {
+  if (isLoadingFeedback) {
+    return (
+      <div className="flex items-center justify-center gap-2 text-muted-foreground py-8">
+        <Sparkles className="h-5 w-5 animate-pulse" />
+        <span>Gerando seu feedback personalizado...</span>
+      </div>
+    );
+  }
+
+  if (!feedback) return null;
+
+  return (
+    <Card data-testid="workout-feedback-card" className="bg-primary/5 border-primary/20">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 text-lg text-primary">
+          <Sparkles className="h-5 w-5" />
+          {feedback.title}
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p className="text-sm text-muted-foreground">{feedback.message}</p>
+      </CardContent>
+    </Card>
+  );
+}
+
 function initExercicios(treino: Treino): ExercicioEmSessao[] {
   return treino.exercicios.map((ex) => ({
     exercicioOriginal: ex,
@@ -182,24 +215,7 @@ export function WorkoutSession({ treino, onFinish, onCancel }: WorkoutSessionPro
           <CardDescription>Excelente trabalho. Veja seu feedback abaixo.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {isLoadingFeedback ? (
-            <div className="flex items-center justify-center gap-2 text-muted-foreground py-8">
-              <Sparkles className="h-5 w-5 animate-pulse" />
-              <span>Gerando seu feedback personalizado...</span>
-            </div>
-          ) : feedback ? (
-            <Card data-testid="workout-feedback-card" className="bg-primary/5 border-primary/20">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-lg text-primary">
-                  <Sparkles className="h-5 w-5" />
-                  {feedback.title}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">{feedback.message}</p>
-              </CardContent>
-            </Card>
-          ) : null}
+          <FeedbackCard feedback={feedback} isLoadingFeedback={isLoadingFeedback} />
         </CardContent>
         <CardFooter className="justify-center">
           <Button onClick={onCancel}>Fechar Treino</Button>

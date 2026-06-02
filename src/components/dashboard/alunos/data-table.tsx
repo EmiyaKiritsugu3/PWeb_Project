@@ -64,6 +64,94 @@ export function DataTable<TData, TValue>({
 
   const searchValue = (table.getColumn(searchColumn)?.getFilterValue() as string) ?? '';
 
+  const renderMobileCards = () => {
+    if (isLoading) {
+      return Array.from({ length: 3 }).map((_, i) => (
+        <Card key={`skeleton-${i}`} className="bg-card/30 backdrop-blur-md border-primary/10">
+          <CardContent className="p-4">
+            <Skeleton className="h-24 w-full" />
+          </CardContent>
+        </Card>
+      ));
+    }
+
+    if (table.getRowModel().rows?.length) {
+      return table.getRowModel().rows.map((row) => {
+        const actionsCell = getActionsCell(row);
+        return (
+          <Card
+            key={row.id}
+            className="bg-card/30 backdrop-blur-md border-primary/10 hover:border-primary/40 hover:shadow-[0_0_15px_rgba(234,88,12,0.1)] transition-all duration-300"
+          >
+            <CardContent className="flex items-center justify-between p-4">
+              <div className="flex items-center gap-4">
+                {row.getVisibleCells().map((cell) => {
+                  const columnId = cell.column.id;
+                  if (
+                    columnId === 'fotoUrl' ||
+                    columnId === 'nomeCompleto' ||
+                    columnId === 'statusMatricula'
+                  ) {
+                    return (
+                      <React.Fragment key={cell.id}>
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </React.Fragment>
+                    );
+                  }
+                  return null;
+                })}
+              </div>
+              {actionsCell &&
+                flexRender(actionsCell.column.columnDef.cell, actionsCell.getContext())}
+            </CardContent>
+          </Card>
+        );
+      });
+    }
+
+    return (
+      <Card className="bg-card/30 backdrop-blur-md border-primary/10">
+        <CardContent className="flex h-24 items-center justify-center p-6 text-center text-muted-foreground">
+          Nenhum aluno encontrado.
+        </CardContent>
+      </Card>
+    );
+  };
+
+  const renderTableBody = () => {
+    if (isLoading) {
+      return Array.from({ length: 5 }).map((_, i) => (
+        <TableRow key={`skeleton-row-${i}`}>
+          {columns.map((column, j) => (
+            <TableCell key={`skeleton-col-${j}`}>
+              <Skeleton className="h-6 w-full" />
+            </TableCell>
+          ))}
+        </TableRow>
+      ));
+    }
+
+    if (table.getRowModel().rows?.length) {
+      return table.getRowModel().rows.map((row) => (
+        <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
+          {row.getVisibleCells().map((cell) => (
+            <TableCell key={cell.id}>
+              {flexRender(cell.column.columnDef.cell, cell.getContext())}
+            </TableCell>
+          ))}
+        </TableRow>
+      ));
+    }
+
+    return (
+      <TableRow>
+        <TableCell colSpan={columns.length} className="h-24 text-center">
+          Nenhum aluno encontrado.
+        </TableCell>
+      </TableRow>
+    );
+  };
+
   return (
     <div>
       <div className="flex items-center pb-4">
@@ -75,55 +163,7 @@ export function DataTable<TData, TValue>({
         />
       </div>
 
-      <div className="grid gap-4 md:hidden">
-        {isLoading ? (
-          Array.from({ length: 3 }).map((_, i) => (
-            <Card key={i} className="bg-card/30 backdrop-blur-md border-primary/10">
-              <CardContent className="p-4">
-                <Skeleton className="h-24 w-full" />
-              </CardContent>
-            </Card>
-          ))
-        ) : table.getRowModel().rows?.length ? (
-          table.getRowModel().rows.map((row) => {
-            const actionsCell = getActionsCell(row);
-            return (
-              <Card
-                key={row.id}
-                className="bg-card/30 backdrop-blur-md border-primary/10 hover:border-primary/40 hover:shadow-[0_0_15px_rgba(234,88,12,0.1)] transition-all duration-300"
-              >
-                <CardContent className="flex items-center justify-between p-4">
-                  <div className="flex items-center gap-4">
-                    {row.getVisibleCells().map((cell) => {
-                      const columnId = cell.column.id;
-                      if (
-                        columnId === 'fotoUrl' ||
-                        columnId === 'nomeCompleto' ||
-                        columnId === 'statusMatricula'
-                      ) {
-                        return (
-                          <React.Fragment key={cell.id}>
-                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                          </React.Fragment>
-                        );
-                      }
-                      return null;
-                    })}
-                  </div>
-                  {actionsCell &&
-                    flexRender(actionsCell.column.columnDef.cell, actionsCell.getContext())}
-                </CardContent>
-              </Card>
-            );
-          })
-        ) : (
-          <Card className="bg-card/30 backdrop-blur-md border-primary/10">
-            <CardContent className="flex h-24 items-center justify-center p-6 text-center text-muted-foreground">
-              Nenhum aluno encontrado.
-            </CardContent>
-          </Card>
-        )}
-      </div>
+      <div className="grid gap-4 md:hidden">{renderMobileCards()}</div>
 
       <div className="hidden rounded-xl border border-primary/10 bg-card/20 backdrop-blur-lg shadow-[0_0_20px_rgba(234,88,12,0.05)] md:block overflow-hidden">
         <Table>
@@ -153,35 +193,7 @@ export function DataTable<TData, TValue>({
               </TableRow>
             ))}
           </TableHeader>
-          <TableBody>
-            {isLoading ? (
-              Array.from({ length: 5 }).map((_, i) => (
-                <TableRow key={i}>
-                  {columns.map((column, j) => (
-                    <TableCell key={j}>
-                      <Skeleton className="h-6 w-full" />
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
-                  Nenhum aluno encontrado.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
+          <TableBody>{renderTableBody()}</TableBody>
         </Table>
       </div>
 

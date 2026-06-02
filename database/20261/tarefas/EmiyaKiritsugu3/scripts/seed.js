@@ -2,16 +2,19 @@
 // seed.js — Script de povoamento inicial do MongoDB (AtividadesProj)
 // ============================================================================
 // Uso:
-//   mongosh "mongodb://app_atividades:app123@localhost:27017/AtividadesProj?authSource=AtividadesProj" seed.js
+//   MONGO_URI="mongodb://app_atividades:MONGO_PASSWORD@localhost:27017/AtividadesProj?authSource=AtividadesProj" node seed.js
 // ou via Node.js:
 //   node seed.js
 // ============================================================================
 
 const { MongoClient } = require("mongodb");
 
-const URI =
-  process.env.MONGO_URI ||
-  "mongodb://app_atividades:app123@localhost:27017/AtividadesProj?authSource=AtividadesProj";
+const MONGO_URI = process.env.MONGO_URI;
+if (!MONGO_URI) {
+  console.error("FATAL: MONGO_URI environment variable is required.");
+  process.exit(1);
+}
+const URI = MONGO_URI;
 
 async function seed() {
   const client = new MongoClient(URI);

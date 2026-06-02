@@ -2,18 +2,18 @@
 
 export const db = {
   async insert(table: string, data: unknown): Promise<unknown> {
-    return Promise.resolve(data);
+    return data;
   },
 
   async findById(table: string, id: string): Promise<unknown> {
-    return Promise.resolve({ id });
+    return { id };
   },
 
   async update(table: string, id: string, data: unknown): Promise<unknown> {
-    return Promise.resolve({ id, ...(data as Record<string, unknown>) });
+    return { id, ...(data as Record<string, unknown>) };
   },
 
   async delete(_table: string, _id: string): Promise<boolean> {
-    return Promise.resolve(true);
+    return true;
   },
 };

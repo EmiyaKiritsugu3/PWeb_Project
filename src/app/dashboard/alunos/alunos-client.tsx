@@ -164,7 +164,7 @@ export function AlunosClient({ initialAlunos, planos }: AlunosClientProps) {
             <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
             <AlertDialogDescription>
               Esta ação não pode ser desfeita. Isso excluirá permanentemente o aluno
-              <strong> {deletingAluno?.nomeCompleto} </strong> e removerá todos os seus dados do
+              <strong>{deletingAluno?.nomeCompleto}</strong> e removerá todos os seus dados do
               sistema.
             </AlertDialogDescription>
           </AlertDialogHeader>
