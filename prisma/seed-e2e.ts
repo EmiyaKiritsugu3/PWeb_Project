@@ -23,6 +23,8 @@ if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
 }
 const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
+const E2E_PASSWORD = process.env.E2E_DEFAULT_PASSWORD || 'Test1234!';
+
 const supabase = createClient(supabaseUrl, serviceRoleKey, {
   auth: { autoRefreshToken: false, persistSession: false },
 });
@@ -44,28 +46,28 @@ export const E2E_USERS = {
   gerente: {
     id: '00000000-0000-0000-0000-000000000001',
     email: 'gerente@test.com',
-    password: 'Test1234!',
+    password: E2E_PASSWORD,
     role: Role.GERENTE,
     nomeCompleto: 'Gerente E2E',
   },
   recepcionista: {
     id: '00000000-0000-0000-0000-000000000002',
     email: 'recep@test.com',
-    password: 'Test1234!',
+    password: E2E_PASSWORD,
     role: Role.RECEPCIONISTA,
     nomeCompleto: 'Recepcionista E2E',
   },
   instrutor: {
     id: '00000000-0000-0000-0000-000000000003',
     email: 'instrutor@test.com',
-    password: 'Test1234!',
+    password: E2E_PASSWORD,
     role: Role.INSTRUTOR,
     nomeCompleto: 'Instrutor E2E',
   },
   aluno: {
     id: '00000000-0000-0000-0000-000000000004',
     email: 'aluno@test.com',
-    password: 'Test1234!',
+    password: E2E_PASSWORD,
     cpf: '000.000.000-04',
     nomeCompleto: 'Aluno E2E',
     telefone: '11999990004',
