@@ -56,6 +56,15 @@ export function Combobox({
 
   const selectedLabel = flatOptions.find((option) => option.value === value)?.label;
 
+  const handleSelect = (currentValue: string) => {
+    const selectedOption = flatOptions.find(
+      (opt) => opt.label.toLowerCase() === currentValue.toLowerCase()
+    );
+    const finalValue = selectedOption ? selectedOption.value : '';
+    onChange(finalValue === value ? '' : finalValue);
+    setOpen(false);
+  };
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -93,15 +102,7 @@ export function Combobox({
                     key={option.value}
                     value={option.label}
                     keywords={option.keywords}
-                    onSelect={(currentValue) => {
-                      // Find the option value from the label
-                      const selectedOption = flatOptions.find(
-                        (opt) => opt.label.toLowerCase() === currentValue.toLowerCase()
-                      );
-                      const finalValue = selectedOption ? selectedOption.value : '';
-                      onChange(finalValue === value ? '' : finalValue);
-                      setOpen(false);
-                    }}
+                    onSelect={handleSelect}
                   >
                     <Check
                       className={cn(
