@@ -316,6 +316,32 @@ function PlanoGeradoParaEdicao({
   );
 }
 
+function buildExercicios(
+  exercicios: WorkoutExercise[],
+  options: Array<{ value: string; description?: string }>
+) {
+  return exercicios.map((ex) => ({
+    nomeExercicio: ex.nomeExercicio,
+    series: ex.series,
+    repeticoes: ex.repeticoes,
+    observacoes: ex.observacoes,
+    descricao: options.find((opt) => opt.value === ex.nomeExercicio)?.description ?? '',
+  }));
+}
+
+function buildWorkoutTreinos(
+  planoEditado: WorkoutPlan,
+  selectedAluno: { id: string },
+  options: Array<{ value: string; description?: string }>
+) {
+  return planoEditado.workouts.map((workout) => ({
+    alunoId: selectedAluno.id,
+    objetivo: workout.nome,
+    exercicios: buildExercicios(workout.exercicios, options),
+    diaSemana: workout.diaSugerido,
+  }));
+}
+
 export default function TreinosManagementClient({ initialAlunos }: { initialAlunos: Aluno[] }) {
   const notify = useAppNotification();
   const [selectedAlunoId, setSelectedAlunoId] = useState<string | null>(null);
@@ -419,20 +445,7 @@ export default function TreinosManagementClient({ initialAlunos }: { initialAlun
   const handleSavePlanoGerado = async (planoEditado: WorkoutPlan) => {
     if (!selectedAluno) return;
     try {
-      const treinos = planoEditado.workouts.map((workout) => ({
-        alunoId: selectedAluno.id,
-        objetivo: workout.nome,
-        exercicios: workout.exercicios.map((ex) => ({
-          nomeExercicio: ex.nomeExercicio,
-          series: ex.series,
-          repeticoes: ex.repeticoes,
-          observacoes: ex.observacoes,
-          descricao:
-            flatExerciciosOptions.find((opt) => opt.value === ex.nomeExercicio)?.description || '',
-        })),
-        diaSemana: workout.diaSugerido,
-      }));
-
+      const treinos = buildWorkoutTreinos(planoEditado, selectedAluno, flatExerciciosOptions);
       const result = await batchUpsertTreinoAction(treinos);
       if (!result.success) throw new Error(result.error);
 
