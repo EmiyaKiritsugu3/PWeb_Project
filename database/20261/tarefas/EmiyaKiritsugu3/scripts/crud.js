@@ -13,9 +13,12 @@
 
 const { MongoClient } = require("mongodb");
 
-const URI =
-  process.env.MONGO_URI ||
-  "mongodb://app_atividades:app123@localhost:27017/AtividadesProj?authSource=AtividadesProj";
+const MONGO_URI = process.env.MONGO_URI;
+if (!MONGO_URI) {
+  console.error("FATAL: MONGO_URI environment variable is required.");
+  process.exit(1);
+}
+const URI = MONGO_URI;
 
 async function run() {
   const client = new MongoClient(URI);
