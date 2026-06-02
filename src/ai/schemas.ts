@@ -60,4 +60,3 @@ export type WorkoutGeneratorAIOutput = z.infer<typeof WorkoutGeneratorAIOutputSc
 // Neste caso, a estrutura é a mesma da saída da IA, mas o tipo é exportado separadamente
 // para clareza de que estes são os dados validados.
 
-export type WorkoutGeneratorOutput = WorkoutGeneratorAIOutput;

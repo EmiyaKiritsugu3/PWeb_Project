@@ -5,7 +5,7 @@ import * as Sentry from '@sentry/nextjs';
  * Centralizes all system logs and integrates with Sentry for error tracking.
  */
 export class Logger {
-  private static isProduction = process.env.NODE_ENV === 'production';
+  private static readonly isProduction = process.env.NODE_ENV === 'production';
 
   static info(message: string, context?: unknown) {
     if (!this.isProduction) {

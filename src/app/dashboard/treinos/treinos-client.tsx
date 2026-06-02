@@ -32,11 +32,11 @@ import { streamWorkoutPlan } from '@/ai/flows/workout-generator-flow';
 import {
   WorkoutGeneratorInputSchema,
   type WorkoutGeneratorInput,
-  type WorkoutGeneratorOutput,
+  type WorkoutGeneratorAIOutput,
 } from '@/ai/schemas';
 import { batchUpsertTreinoAction, upsertTreinoAction } from '@/lib/actions/treinos';
 
-type WorkoutPlan = WorkoutGeneratorOutput;
+type WorkoutPlan = WorkoutGeneratorAIOutput;
 type WorkoutExercise = WorkoutPlan['workouts'][0]['exercicios'][0];
 
 const exerciciosOptions = EXERCICIOS_POR_GRUPO.map((grupo) => ({
@@ -243,7 +243,10 @@ function PlanoGeradoParaEdicao({
         </div>
 
         {planoEditado.workouts.map((treino, treinoIndex) => (
-          <div key={treinoIndex} className="border p-4 rounded-md space-y-4 bg-muted/30">
+          <div
+            key={`${treino.nome}-${treinoIndex}`}
+            className="border p-4 rounded-md space-y-4 bg-muted/30"
+          >
             <div className="space-y-2">
               <Label>Nome do Treino</Label>
               <Input
@@ -255,7 +258,7 @@ function PlanoGeradoParaEdicao({
             <div className="space-y-4">
               {treino.exercicios.map((exercicio, exIndex) => (
                 <div
-                  key={exIndex}
+                  key={`${exercicio.nomeExercicio}-${exIndex}`}
                   className="grid grid-cols-1 md:grid-cols-[1fr_auto_auto_1fr] items-end gap-3"
                 >
                   <div className="grid gap-2">
@@ -425,7 +428,7 @@ export default function TreinosManagementClient({ initialAlunos }: { initialAlun
       // Usar a chamada direta do flow em vez de stream para maior estabilidade em produção
       const result = await streamWorkoutPlan(data);
       if (result) {
-        setPlanoGerado(result as WorkoutGeneratorOutput);
+        setPlanoGerado(result as WorkoutGeneratorAIOutput);
         notify.success('Plano Gerado!');
       } else {
         throw new Error('A IA não retornou um resultado válido.');

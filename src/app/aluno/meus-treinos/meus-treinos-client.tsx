@@ -153,7 +153,7 @@ export default function MeusTreinosClient({
       const result = await streamWorkoutPlan(data);
       Logger.info('Resultado da IA retornado:', result);
 
-      if (result && result.workouts) {
+      if (result?.workouts) {
         for (const workout of result.workouts) {
           const novosExercicios = workout.exercicios.map((ex) => {
             const exercicioMaster = EXERCICIOS_POR_GRUPO.flatMap((g) => g.exercicios).find(

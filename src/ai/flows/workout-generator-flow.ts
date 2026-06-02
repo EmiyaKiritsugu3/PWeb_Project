@@ -7,7 +7,7 @@ import {
   WorkoutGeneratorInputSchema,
   WorkoutGeneratorAIOutputSchema,
   type WorkoutGeneratorInput,
-  type WorkoutGeneratorOutput,
+  type WorkoutGeneratorAIOutput,
 } from '@/ai/schemas';
 
 // Transforma a lista de exercícios disponíveis em uma string formatada para o prompt.
@@ -57,7 +57,7 @@ export const streamWorkoutPlan = ai.defineFlow(
 
     for await (const chunk of responseStream.stream) {
       if (chunk?.output) {
-        sendChunk(chunk.output as WorkoutGeneratorOutput);
+        sendChunk(chunk.output as WorkoutGeneratorAIOutput);
       }
     }
 
@@ -72,11 +72,11 @@ export const streamWorkoutPlan = ai.defineFlow(
 // Manter a função anterior caso o front-end precise do modo normal
 export async function generateWorkoutPlan(
   input: WorkoutGeneratorInput
-): Promise<WorkoutGeneratorOutput> {
+): Promise<WorkoutGeneratorAIOutput> {
   const { output } = await ai.generate({
     model: googleAI.model('gemini-2.5-flash'),
     prompt: `Você é um personal trainer de elite... (usando versão não-streaming para ${input.objetivo})`,
     output: { schema: WorkoutGeneratorAIOutputSchema },
   });
-  return output as WorkoutGeneratorOutput;
+  return output as WorkoutGeneratorAIOutput;
 }

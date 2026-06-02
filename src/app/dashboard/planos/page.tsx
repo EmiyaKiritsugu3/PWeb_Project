@@ -23,7 +23,7 @@ function PlanosSkeleton() {
       </div>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {Array.from({ length: 4 }).map((_, i) => (
-          <Skeleton key={i} className="h-44 rounded-xl" />
+          <Skeleton key={`skeleton-${i}`} className="h-44 rounded-xl" />
         ))}
       </div>
     </div>

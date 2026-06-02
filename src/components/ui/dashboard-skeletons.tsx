@@ -15,7 +15,10 @@ export function TableSkeleton() {
           <PremiumSkeleton className="h-4 w-1/4" />
         </div>
         {[...Array(5)].map((_, i) => (
-          <div key={i} className="border-b border-white/10 h-16 flex items-center px-4 gap-4">
+          <div
+            key={`skeleton-row-${i}`}
+            className="border-b border-white/10 h-16 flex items-center px-4 gap-4"
+          >
             <PremiumSkeleton className="h-4 w-1/4" />
             <PremiumSkeleton className="h-4 w-1/4" />
             <PremiumSkeleton className="h-6 w-20 rounded-full" />
