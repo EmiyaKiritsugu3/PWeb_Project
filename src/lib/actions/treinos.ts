@@ -14,6 +14,7 @@ import {
 import { getUser, createClient } from '@/utils/supabase/server';
 import * as Sentry from '@sentry/nextjs';
 import { calculateTreinoRewards } from '@/services/gamificationService';
+import { getErrorMessage } from '@/lib/error';
 
 /**
  * Shared auth+role extraction. Returns the caller's role and derived instrutorId
@@ -236,7 +237,7 @@ export async function updateTreinoDayAction(treinoId: string, diaSemana: number 
     return { success: true };
   } catch (error) {
     Sentry.captureException(error);
-    return { success: false, error: (error as Error).message };
+    return { success: false, error: getErrorMessage(error) };
   }
 }
 export async function deleteTreinoAction(treinoId: string) {
@@ -273,7 +274,7 @@ export async function deleteTreinoAction(treinoId: string) {
     return { success: true };
   } catch (error) {
     Sentry.captureException(error);
-    return { success: false, error: (error as Error).message };
+    return { success: false, error: getErrorMessage(error) };
   }
 }
 

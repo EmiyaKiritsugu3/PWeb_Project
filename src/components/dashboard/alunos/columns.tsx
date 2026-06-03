@@ -121,7 +121,7 @@ export const columns = ({ onEdit, onDelete, onNewMatricula }: ColumnsProps): Col
     header: 'Nome',
     enableSorting: true,
     cell: ({ row }) => {
-      const nome = row.getValue('nomeCompleto') as string;
+      const nome = row.getValue('nomeCompleto');
       const email = row.original.email;
       return (
         <div className="flex flex-col gap-0.5">
@@ -141,7 +141,7 @@ export const columns = ({ onEdit, onDelete, onNewMatricula }: ColumnsProps): Col
     header: 'Data de Cadastro',
     enableSorting: true,
     cell: ({ row }) => {
-      const date = row.getValue('dataCadastro') as string;
+      const date = row.getValue('dataCadastro');
       if (!date) return null;
       try {
         return format(new Date(date), 'dd/MM/yyyy');
@@ -155,7 +155,7 @@ export const columns = ({ onEdit, onDelete, onNewMatricula }: ColumnsProps): Col
     header: 'Status',
     enableSorting: true,
     cell: ({ row }) => {
-      const status = row.getValue('statusMatricula') as Aluno['statusMatricula'];
+      const status = row.getValue('statusMatricula');
       return (
         <Badge variant={getStatusVariant(status)} className="text-xs">
           {status}
