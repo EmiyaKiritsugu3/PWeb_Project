@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { PlanoSchema, PlanoBaseSchema } from '@/lib/definitions';
 import { createClient } from '@/utils/supabase/server';
-import { getErrorMessage } from '@/lib/error';
+import { getErrorMessage, getZodError } from '@/lib/error';
 
 async function assertAuthenticated() {
   const supabase = await createClient();
@@ -32,11 +32,11 @@ export async function createPlanoAction(data: unknown) {
     revalidatePath('/dashboard/planos');
     return { success: true, data: PlanoSchema.parse(plano) };
   } catch (error: unknown) {
-    const err = error as Error & { name?: string; flatten?: () => { fieldErrors: unknown } };
-    if (err.name === 'ZodError' && err.flatten) {
-      return { success: false, error: 'Dados inválidos', details: err.flatten().fieldErrors };
+    const zodError = getZodError(error);
+    if (zodError) {
+      return { success: false, error: 'Dados inválidos', details: zodError.fieldErrors };
     }
-    return { success: false, error: err.message };
+    return { success: false, error: getErrorMessage(error) };
   }
 }
 
@@ -57,11 +57,11 @@ export async function updatePlanoAction(id: string, data: unknown) {
     revalidatePath('/dashboard/planos');
     return { success: true, data: PlanoSchema.parse(plano) };
   } catch (error: unknown) {
-    const err = error as Error & { name?: string; flatten?: () => { fieldErrors: unknown } };
-    if (err.name === 'ZodError' && err.flatten) {
-      return { success: false, error: 'Dados inválidos', details: err.flatten().fieldErrors };
+    const zodError = getZodError(error);
+    if (zodError) {
+      return { success: false, error: 'Dados inválidos', details: zodError.fieldErrors };
     }
-    return { success: false, error: err.message };
+    return { success: false, error: getErrorMessage(error) };
   }
 }
 
