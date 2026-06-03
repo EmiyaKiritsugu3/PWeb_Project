@@ -4,7 +4,7 @@
  * Extracted from Server Actions for testability and consistency.
  */
 
-export interface AlunoGamificationData {
+interface AlunoGamificationData {
   exp: number;
   nivel: number;
   streakDiasSeguidos: number;
@@ -12,7 +12,7 @@ export interface AlunoGamificationData {
   ultimoTreinoData: Date | null;
 }
 
-export interface GamificationResult {
+interface GamificationResult {
   novaExp: number;
   novoNivel: number;
   novoStreak: number;

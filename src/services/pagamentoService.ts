@@ -3,7 +3,7 @@
  * Encapsulates the business logic for registering payments and re-activating student enrollments.
  */
 
-export interface PaymentResult {
+interface PaymentResult {
   success: boolean;
   error?: string;
 }
