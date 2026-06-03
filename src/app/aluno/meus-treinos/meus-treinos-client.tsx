@@ -11,6 +11,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { EXERCICIOS_POR_GRUPO, DIAS_DA_SEMANA } from '@/lib/constants';
+import { getErrorMessage } from '@/lib/error';
 import { Logger } from '@/lib/logger';
 import * as Sentry from '@sentry/nextjs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -202,7 +203,7 @@ export default function MeusTreinosClient({
       }
     } catch (error) {
       Logger.error('Erro completo ao gerar plano:', error);
-      notify.error('Erro da IA', (error as Error).message, error);
+      notify.error('Erro da IA', getErrorMessage(error), error);
     } finally {
       setIsGenerating(false);
     }

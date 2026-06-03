@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { PlanoSchema, PlanoBaseSchema } from '@/lib/definitions';
 import { createClient } from '@/utils/supabase/server';
+import { getErrorMessage } from '@/lib/error';
 
 async function assertAuthenticated() {
   const supabase = await createClient();
@@ -71,6 +72,6 @@ export async function deletePlanoAction(id: string) {
     revalidatePath('/dashboard/planos');
     return { success: true };
   } catch (error: unknown) {
-    return { success: false, error: (error as Error).message };
+    return { success: false, error: getErrorMessage(error) };
   }
 }
