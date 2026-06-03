@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import * as Sentry from '@sentry/nextjs';
 import { processPayment } from '@/services/pagamentoService';
+import { getErrorMessage } from '@/lib/error';
 
 export async function registrarPagamentoAction(alunoId: string) {
   try {
@@ -18,6 +19,6 @@ export async function registrarPagamentoAction(alunoId: string) {
     return result;
   } catch (error) {
     Sentry.captureException(error);
-    return { success: false, error: (error as Error).message };
+    return { success: false, error: getErrorMessage(error) };
   }
 }
