@@ -57,7 +57,7 @@ export const streamWorkoutPlan = ai.defineFlow(
 
     for await (const chunk of responseStream.stream) {
       if (chunk?.output) {
-        sendChunk(chunk.output as WorkoutGeneratorAIOutput);
+        sendChunk(chunk.output);
       }
     }
 
@@ -78,5 +78,5 @@ export async function generateWorkoutPlan(
     prompt: `Você é um personal trainer de elite... (usando versão não-streaming para ${input.objetivo})`,
     output: { schema: WorkoutGeneratorAIOutputSchema },
   });
-  return output as WorkoutGeneratorAIOutput;
+  return output;
 }
