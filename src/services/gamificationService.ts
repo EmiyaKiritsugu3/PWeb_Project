@@ -19,6 +19,10 @@ interface GamificationResult {
   novosTreinosNoMes: number;
 }
 
+const BASE_XP_PER_WORKOUT = 100;
+const XP_PER_COMPLETED_SERIE = 10;
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
 export function calculateTreinoRewards(
   aluno: AlunoGamificationData,
   completedSeriesCount: number,
@@ -49,8 +53,8 @@ export function calculateTreinoRewards(
   }
 
   // 1. Base Rewards
-  novaExp += 100; // 100 XP base per workout
-  novaExp += completedSeriesCount * 10; // 10 XP per completed series
+  novaExp += BASE_XP_PER_WORKOUT;
+  novaExp += completedSeriesCount * XP_PER_COMPLETED_SERIE;
 
   // 2. Monthly count logic (Compare YYYY-MM to avoid year-boundary bugs)
   const mesAtualKey = hojeStr.slice(0, 7); // "YYYY-MM"
@@ -64,7 +68,7 @@ export function calculateTreinoRewards(
 
   // 3. Streak Logic
   // Derive "yesterday" using absolute timestamp to avoid local TZ arithmetic issues
-  const ontemStr = formatSP(new Date(today.getTime() - 86400000));
+  const ontemStr = formatSP(new Date(today.getTime() - MS_PER_DAY));
 
   if (dataUltimoTreino === ontemStr) {
     novoStreak += 1;

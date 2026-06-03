@@ -26,9 +26,11 @@ interface PlanosClientProps {
   initialPlanos: Plano[];
 }
 
+const DAYS_PER_MONTH = 30;
+
 function formatDuration(dias: number) {
-  if (dias === 30) return 'mês';
-  if (dias % 30 === 0) return `${dias / 30} meses`;
+  if (dias === DAYS_PER_MONTH) return 'mês';
+  if (dias % DAYS_PER_MONTH === 0) return `${dias / DAYS_PER_MONTH} meses`;
   return `${dias} dias`;
 }
 
