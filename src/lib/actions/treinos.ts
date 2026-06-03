@@ -14,7 +14,7 @@ import {
 import { getUser, createClient } from '@/utils/supabase/server';
 import * as Sentry from '@sentry/nextjs';
 import { calculateTreinoRewards } from '@/services/gamificationService';
-import { getErrorMessage } from '@/lib/error';
+import { handleActionError } from '@/lib/error';
 
 /**
  * Shared auth+role extraction. Returns the caller's role and derived instrutorId
@@ -148,18 +148,10 @@ export async function upsertTreinoAction(treinoData: TreinoBase | (TreinoBase & 
     return await performTreinoUpsert(validatedData, user, role, derivedInstrutorId);
   } catch (error) {
     Sentry.captureException(error);
-    if (error instanceof Error && error.name === 'ZodError') {
-      return { success: false, error: 'Dados do treino inválidos' };
-    }
-    return { success: false, error: error instanceof Error ? error.message : 'Erro desconhecido' };
+    return handleActionError(error);
   }
 }
 
-/**
- * Batch version of upsertTreinoAction. Authenticates and authorises once,
- * then creates all workouts in a single Prisma transaction.
- * Eliminates the N+1 auth+DB roundtrip when saving a generated plan.
- */
 export async function batchUpsertTreinoAction(
   treinos: TreinoBase[]
 ): Promise<{ success: boolean; error?: string }> {
@@ -197,10 +189,7 @@ export async function batchUpsertTreinoAction(
     return { success: true };
   } catch (error) {
     Sentry.captureException(error);
-    if (error instanceof Error && error.name === 'ZodError') {
-      return { success: false, error: 'Dados do treino inválidos' };
-    }
-    return { success: false, error: error instanceof Error ? error.message : 'Erro desconhecido' };
+    return handleActionError(error);
   }
 }
 
@@ -237,7 +226,7 @@ export async function updateTreinoDayAction(treinoId: string, diaSemana: number 
     return { success: true };
   } catch (error) {
     Sentry.captureException(error);
-    return { success: false, error: getErrorMessage(error) };
+    return handleActionError(error);
   }
 }
 export async function deleteTreinoAction(treinoId: string) {
@@ -274,7 +263,7 @@ export async function deleteTreinoAction(treinoId: string) {
     return { success: true };
   } catch (error) {
     Sentry.captureException(error);
-    return { success: false, error: getErrorMessage(error) };
+    return handleActionError(error);
   }
 }
 

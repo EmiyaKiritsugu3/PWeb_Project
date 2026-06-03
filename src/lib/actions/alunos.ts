@@ -8,6 +8,7 @@ import type { AlunoBase } from '@/lib/definitions';
 import { getUser } from '@/utils/supabase/server';
 import * as Sentry from '@sentry/nextjs';
 import { calculateTreinoRewards } from '@/services/gamificationService';
+import { handleActionError } from '@/lib/error';
 
 export async function finalizarTreinoAction(treinoId: string, durationMinutes: number = 60) {
   try {
@@ -69,7 +70,7 @@ export async function finalizarTreinoAction(treinoId: string, durationMinutes: n
     return { success: true, data: historico };
   } catch (error) {
     Sentry.captureException(error);
-    return { success: false, error: error instanceof Error ? error.message : 'Erro desconhecido' };
+    return handleActionError(error);
   }
 }
 
@@ -103,10 +104,7 @@ export async function createAlunoAction(
     return { success: true, data: AlunoSchema.parse(aluno) };
   } catch (error) {
     Sentry.captureException(error);
-    if (error instanceof Error && error.name === 'ZodError') {
-      return { success: false, error: 'Dados inválidos' };
-    }
-    return { success: false, error: error instanceof Error ? error.message : 'Erro desconhecido' };
+    return handleActionError(error);
   }
 }
 
@@ -136,10 +134,7 @@ export async function updateAlunoAction(id: string, data: Partial<AlunoBase>) {
     return { success: true, data: AlunoSchema.parse(updated) };
   } catch (error) {
     Sentry.captureException(error);
-    if (error instanceof Error && error.name === 'ZodError') {
-      return { success: false, error: 'Dados inválidos' };
-    }
-    return { success: false, error: error instanceof Error ? error.message : 'Erro desconhecido' };
+    return handleActionError(error);
   }
 }
 
@@ -156,7 +151,7 @@ export async function deleteAlunoAction(id: string) {
     return { success: true };
   } catch (error) {
     Sentry.captureException(error);
-    return { success: false, error: error instanceof Error ? error.message : 'Erro desconhecido' };
+    return handleActionError(error);
   }
 }
 
@@ -201,6 +196,6 @@ export async function createMatriculaAction(alunoId: string, planoId: string) {
     return { success: true, data: matricula };
   } catch (error) {
     Sentry.captureException(error);
-    return { success: false, error: error instanceof Error ? error.message : 'Erro desconhecido' };
+    return handleActionError(error);
   }
 }

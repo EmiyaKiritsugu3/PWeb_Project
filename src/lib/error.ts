@@ -23,3 +23,10 @@ export function getErrorMessage(error: unknown): string {
   if (typeof error === 'string') return error;
   return 'Erro desconhecido';
 }
+
+export function handleActionError(error: unknown) {
+  if (error instanceof Error && error.name === 'ZodError') {
+    return { success: false as const, error: 'Dados inválidos' };
+  }
+  return { success: false as const, error: getErrorMessage(error) };
+}
