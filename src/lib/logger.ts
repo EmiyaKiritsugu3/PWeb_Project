@@ -17,7 +17,8 @@ export class Logger {
       category: 'log',
       message,
       level: 'info',
-      data: context as Record<string, unknown>,
+      data:
+        typeof context === 'object' && context !== null ? (context as Record<string, unknown>) : {},
     });
   }
 
@@ -28,7 +29,8 @@ export class Logger {
       category: 'log',
       message,
       level: 'warning',
-      data: context as Record<string, unknown>,
+      data:
+        typeof context === 'object' && context !== null ? (context as Record<string, unknown>) : {},
     });
   }
 
@@ -38,7 +40,12 @@ export class Logger {
 
     if (error instanceof Error) {
       Sentry.captureException(error, {
-        extra: { logMessage: message, ...(error as unknown as Record<string, unknown>) },
+        extra: {
+          logMessage: message,
+          ...(typeof error === 'object' && error !== null
+            ? (error as Record<string, unknown>)
+            : {}),
+        },
       });
     } else {
       Sentry.captureMessage(message, {
