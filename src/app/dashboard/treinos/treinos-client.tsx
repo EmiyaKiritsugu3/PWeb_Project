@@ -213,9 +213,9 @@ function PlanoGeradoParaEdicao({
     const exercicio = novoPlano.workouts[treinoIndex].exercicios[exIndex];
 
     if (field === 'series') {
-      exercicio[field] = typeof value === 'string' ? parseInt(value, 10) || 0 : (value as number);
+      exercicio[field] = typeof value === 'string' ? parseInt(value, 10) || 0 : value;
     } else {
-      (exercicio as Record<string, unknown>)[field] = value;
+      Object.assign(exercicio, { [field]: value });
     }
 
     setPlanoEditado(novoPlano);
@@ -401,7 +401,15 @@ export default function TreinosManagementClient({ initialAlunos }: { initialAlun
       const res = await upsertTreinoAction({
         alunoId: selectedAlunoId,
         objetivo,
-        exercicios: exercicios as Exercicio[],
+        exercicios: exercicios.map(
+          ({ id: _id, nomeExercicio, series, repeticoes, observacoes, descricao }) => ({
+            nomeExercicio: nomeExercicio ?? '',
+            series: series ?? 0,
+            repeticoes: repeticoes ?? '',
+            observacoes: observacoes ?? null,
+            descricao: descricao ?? null,
+          })
+        ),
         diaSemana: null,
       });
 
@@ -428,7 +436,7 @@ export default function TreinosManagementClient({ initialAlunos }: { initialAlun
       // Usar a chamada direta do flow em vez de stream para maior estabilidade em produção
       const result = await streamWorkoutPlan(data);
       if (result) {
-        setPlanoGerado(result as WorkoutGeneratorAIOutput);
+        setPlanoGerado(result);
         notify.success('Plano Gerado!');
       } else {
         throw new Error('A IA não retornou um resultado válido.');
