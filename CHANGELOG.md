@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] — 2026-06-03 — Code Quality Phase 2 (PR #118)
+
+### Fixed
+
+- **dummyDb generic type params**: 4 methods (`insert`, `findById`, `update`, `delete`) now accept `<T = unknown>` — resolves root cause of 3 HIGH type issues in `alunoService.ts` where `Promise<unknown>` propagated through all callers.
+- **columns.tsx row.getValue() safety**: 3 calls (`nomeCompleto`, `dataCadastro`, `statusMatricula`) now pass explicit type params instead of returning `unknown`.
+- **workout-generator-flow.ts Genkit output types**: 2 unsafe `as unknown` casts replaced with `as WorkoutGeneratorAIOutput` schema type; missing null guard added on streaming output.
+- **i18n-provider.tsx locale persistence**: Fixed bug where `'pt-BR'` (saved by legacy code) never matched the `Language` union type (`'pt' | 'en'`), silently falling back to default. Now normalizes via `.toLowerCase()` + `startsWith()`.
+- **error.ts handleActionError**: Added optional `customMessage` param — when ZodError and custom message provided, uses it instead of hardcoded `'Dados inválidos'`.
+- **logger.ts unsafe type casts**: 3 `as Record<string, unknown>` casts replaced with `toRecord()` private helper using 3-level safe fallback chain (`structuredClone` → `JSON.parse/stringify` → `Object.entries`).
+- **placeholder-images.ts**: Removed empty file and orphan `placeholder-images.json` (dead code, zero imports).
+- **data.ts constant names**: `STREAK_MULTIPLIER` → `GROWTH_BASE_FACTOR`, `BONUS_THRESHOLD` → `GROWTH_INCREMENT` — semantic naming matching actual financial projection domain.
+
+### Tests
+
+- 71/71 vitest tests passing (baseline maintained).
+- TypeScript: zero new errors (8 pre-existing errors in untouched `alunos-client.tsx` and `alunos.test.ts`).
+
 ## [1.3.1] — 2026-05-29 — ESLint FlatCompat Migration
 
 ### Fixed

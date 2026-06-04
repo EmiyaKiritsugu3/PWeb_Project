@@ -122,7 +122,7 @@ export function DataTable<TData, TValue>({
     if (isLoading) {
       return Array.from({ length: 5 }).map((_, i) => (
         <TableRow key={`skeleton-row-${i}`}>
-          {columns.map((column, j) => (
+          {columns.map((_column, j) => (
             <TableCell key={`skeleton-col-${j}`}>
               <Skeleton className="h-6 w-full" />
             </TableCell>

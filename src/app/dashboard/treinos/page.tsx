@@ -20,7 +20,7 @@ export default async function TreinosPage() {
     telefone: a.telefone || '',
     dataNascimento: a.dataNascimento?.toISOString() || '',
     dataCadastro: a.dataCadastro.toISOString(),
-    statusMatricula: a.statusMatricula as 'ATIVA' | 'INADIMPLENTE' | 'INATIVA',
+    statusMatricula: a.statusMatricula,
     fotoUrl: a.fotoUrl || '',
     nivel: a.nivel,
     exp: a.exp,

@@ -66,8 +66,7 @@ describe('alunos actions (CRUD Unit Tests)', () => {
 
       const result = await createAlunoAction(inputData);
 
-      expect(result.success).toBe(true);
-      expect(result.data?.id).toBe(validId);
+      expect(result).toMatchObject({ success: true, data: { id: validId } });
       expect(prisma.aluno.create).toHaveBeenCalled();
       expect(revalidatePath).toHaveBeenCalledWith('/dashboard/alunos');
     });
@@ -77,8 +76,7 @@ describe('alunos actions (CRUD Unit Tests)', () => {
         ReturnType<typeof getUser>
       >);
       const result = await createAlunoAction({} as Parameters<typeof createAlunoAction>[0]);
-      expect(result.success).toBe(false);
-      expect(result.error).toBe('Usuário não autenticado');
+      expect(result).toEqual({ success: false, error: 'Usuário não autenticado' });
     });
   });
 
@@ -101,8 +99,10 @@ describe('alunos actions (CRUD Unit Tests)', () => {
 
       const result = await updateAlunoAction(validId, updateData);
 
-      expect(result.success).toBe(true);
-      expect(result.data?.nomeCompleto).toBe('José Inamar Silva');
+      expect(result).toMatchObject({
+        success: true,
+        data: { nomeCompleto: 'José Inamar Silva' },
+      });
       expect(prisma.aluno.update).toHaveBeenCalledWith({
         where: { id: validId },
         data: expect.objectContaining({ nomeCompleto: 'José Inamar Silva' }),
@@ -114,8 +114,7 @@ describe('alunos actions (CRUD Unit Tests)', () => {
         ReturnType<typeof getUser>
       >);
       const result = await updateAlunoAction(validId, { nomeCompleto: 'Novo Nome' });
-      expect(result.success).toBe(false);
-      expect(result.error).toBe('Usuário não autenticado');
+      expect(result).toEqual({ success: false, error: 'Usuário não autenticado' });
       expect(prisma.aluno.update).not.toHaveBeenCalled();
     });
   });
@@ -124,7 +123,7 @@ describe('alunos actions (CRUD Unit Tests)', () => {
     it('should delete an aluno successfully', async () => {
       const result = await deleteAlunoAction(validId);
 
-      expect(result.success).toBe(true);
+      expect(result).toEqual({ success: true });
       expect(prisma.aluno.delete).toHaveBeenCalledWith({
         where: { id: validId },
       });
@@ -136,8 +135,7 @@ describe('alunos actions (CRUD Unit Tests)', () => {
         ReturnType<typeof getUser>
       >);
       const result = await deleteAlunoAction(validId);
-      expect(result.success).toBe(false);
-      expect(result.error).toBe('Usuário não autenticado');
+      expect(result).toEqual({ success: false, error: 'Usuário não autenticado' });
       expect(prisma.aluno.delete).not.toHaveBeenCalled();
       expect(revalidatePath).not.toHaveBeenCalled();
     });

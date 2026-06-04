@@ -1,16 +1,16 @@
 // Simulated Database Client
 
 export const db = {
-  async insert(table: string, data: unknown): Promise<unknown> {
+  async insert<T = unknown>(_table: string, data: T): Promise<T> {
     return data;
   },
 
-  async findById(table: string, id: string): Promise<unknown> {
-    return { id };
+  async findById<T = unknown>(_table: string, id: string): Promise<T | null> {
+    return { id } as T;
   },
 
-  async update(table: string, id: string, data: unknown): Promise<unknown> {
-    return { id, ...(data as Record<string, unknown>) };
+  async update<T = unknown>(_table: string, id: string, data: Partial<T>): Promise<T> {
+    return { id, ...data } as T;
   },
 
   async delete(_table: string, _id: string): Promise<boolean> {

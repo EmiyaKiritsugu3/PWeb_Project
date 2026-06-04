@@ -21,10 +21,15 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
 
   // Load language from localStorage on mount
   useEffect(() => {
-    const savedLang = localStorage.getItem('app-language') as Language;
-    if (savedLang && (savedLang === 'pt' || savedLang === 'en')) {
-      setLanguageState(savedLang);
+    const raw = localStorage.getItem('app-language');
+    const normalized = raw?.toLowerCase() ?? '';
+    let savedLang: Language = 'pt';
+    if (normalized.startsWith('pt')) {
+      savedLang = 'pt';
+    } else if (normalized.startsWith('en')) {
+      savedLang = 'en';
     }
+    setLanguageState(savedLang);
   }, []);
 
   const setLanguage = (lang: Language) => {

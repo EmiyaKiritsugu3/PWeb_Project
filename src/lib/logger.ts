@@ -7,6 +7,37 @@ import * as Sentry from '@sentry/nextjs';
 export class Logger {
   private static readonly isProduction = process.env.NODE_ENV === 'production';
 
+  private static toRecord(value: unknown): Record<string, unknown> {
+    if (typeof value !== 'object' || value === null) return {};
+    // Handle Error objects whose non-enumerable properties (message, name, stack)
+    // would be lost with Object.entries alone
+    if (value instanceof Error) {
+      return {
+        message: value.message,
+        name: value.name,
+        stack: value.stack,
+        ...Object.fromEntries(
+          Object.entries(value).filter(([k]) => k !== 'message' && k !== 'name' && k !== 'stack')
+        ),
+      };
+    }
+    // Use structuredClone for plain objects, with fallback chain
+    try {
+      return structuredClone(value) as Record<string, unknown>;
+    } catch {
+      try {
+        return JSON.parse(JSON.stringify(value));
+      } catch {
+        return Object.fromEntries(
+          Object.entries(value as Record<string, unknown>).map(([k, v]) => [
+            k,
+            typeof v === 'object' ? String(v) : v,
+          ])
+        );
+      }
+    }
+  }
+
   static info(message: string, context?: unknown) {
     if (!this.isProduction) {
       // eslint-disable-next-line no-console
@@ -17,7 +48,7 @@ export class Logger {
       category: 'log',
       message,
       level: 'info',
-      data: context as Record<string, unknown>,
+      data: typeof context === 'object' && context !== null ? this.toRecord(context) : {},
     });
   }
 
@@ -28,7 +59,7 @@ export class Logger {
       category: 'log',
       message,
       level: 'warning',
-      data: context as Record<string, unknown>,
+      data: typeof context === 'object' && context !== null ? this.toRecord(context) : {},
     });
   }
 
@@ -38,7 +69,10 @@ export class Logger {
 
     if (error instanceof Error) {
       Sentry.captureException(error, {
-        extra: { logMessage: message, ...(error as unknown as Record<string, unknown>) },
+        extra: {
+          logMessage: message,
+          ...(typeof error === 'object' && error !== null ? this.toRecord(error) : {}),
+        },
       });
     } else {
       Sentry.captureMessage(message, {

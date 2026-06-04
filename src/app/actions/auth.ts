@@ -10,7 +10,7 @@ const loginSchema = z.object({
   password: z.string().min(6, 'A senha deve ter no mínimo 6 caracteres.'),
 });
 
-export async function login(prevState: { error: string } | undefined, formData: FormData) {
+export async function login(_prevState: { error: string } | undefined, formData: FormData) {
   const data = Object.fromEntries(formData);
   const result = loginSchema.safeParse(data);
 

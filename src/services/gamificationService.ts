@@ -4,7 +4,7 @@
  * Extracted from Server Actions for testability and consistency.
  */
 
-export interface AlunoGamificationData {
+interface AlunoGamificationData {
   exp: number;
   nivel: number;
   streakDiasSeguidos: number;
@@ -12,12 +12,18 @@ export interface AlunoGamificationData {
   ultimoTreinoData: Date | null;
 }
 
-export interface GamificationResult {
+interface GamificationResult {
   novaExp: number;
   novoNivel: number;
   novoStreak: number;
   novosTreinosNoMes: number;
 }
+
+const BASE_XP_PER_WORKOUT = 100;
+const XP_PER_COMPLETED_SERIE = 10;
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+const STREAK_BONUS_XP = 50;
+const LEVEL_UP_XP_PER_LEVEL = 1500;
 
 export function calculateTreinoRewards(
   aluno: AlunoGamificationData,
@@ -49,8 +55,8 @@ export function calculateTreinoRewards(
   }
 
   // 1. Base Rewards
-  novaExp += 100; // 100 XP base per workout
-  novaExp += completedSeriesCount * 10; // 10 XP per completed series
+  novaExp += BASE_XP_PER_WORKOUT;
+  novaExp += completedSeriesCount * XP_PER_COMPLETED_SERIE;
 
   // 2. Monthly count logic (Compare YYYY-MM to avoid year-boundary bugs)
   const mesAtualKey = hojeStr.slice(0, 7); // "YYYY-MM"
@@ -64,19 +70,19 @@ export function calculateTreinoRewards(
 
   // 3. Streak Logic
   // Derive "yesterday" using absolute timestamp to avoid local TZ arithmetic issues
-  const ontemStr = formatSP(new Date(today.getTime() - 86400000));
+  const ontemStr = formatSP(new Date(today.getTime() - MS_PER_DAY));
 
   if (dataUltimoTreino === ontemStr) {
     novoStreak += 1;
-    novaExp += 50; // Streak bonus
+    novaExp += STREAK_BONUS_XP; // Streak bonus
   } else {
     novoStreak = 1; // Reset or start streak
   }
 
   // 4. Level Up Logic (Progressive threshold: Level * 1500)
   // Loop until XP is below threshold to support multiple level gains
-  while (novaExp >= novoNivel * 1500) {
-    novaExp -= novoNivel * 1500;
+  while (novaExp >= novoNivel * LEVEL_UP_XP_PER_LEVEL) {
+    novaExp -= novoNivel * LEVEL_UP_XP_PER_LEVEL;
     novoNivel += 1;
   }
 

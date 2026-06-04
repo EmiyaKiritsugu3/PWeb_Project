@@ -208,12 +208,16 @@ async function seed(): Promise<void> {
   console.log('E2E seed complete.');
 }
 
-try {
-  await seed();
-} catch (err: unknown) {
-  console.error('Seed failed:', err);
-  process.exit(1);
-} finally {
-  await prisma.$disconnect();
-  await pool.end();
+async function main(): Promise<void> {
+  try {
+    await seed();
+  } catch (err: unknown) {
+    console.error('Seed failed:', err);
+    process.exit(1);
+  } finally {
+    await prisma.$disconnect();
+    await pool.end();
+  }
 }
+
+main();

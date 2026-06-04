@@ -213,9 +213,10 @@ function PlanoGeradoParaEdicao({
     const exercicio = novoPlano.workouts[treinoIndex].exercicios[exIndex];
 
     if (field === 'series') {
-      exercicio[field] = typeof value === 'string' ? parseInt(value, 10) || 0 : (value as number);
+      const parsed = typeof value === 'string' ? parseInt(value, 10) : value;
+      exercicio[field] = Number.isFinite(parsed) ? parsed : (undefined as unknown as number);
     } else {
-      (exercicio as Record<string, unknown>)[field] = value;
+      Object.assign(exercicio, { [field]: value });
     }
 
     setPlanoEditado(novoPlano);
@@ -381,6 +382,10 @@ export default function TreinosManagementClient({ initialAlunos }: { initialAlun
           const selectedOption = flatExerciciosOptions.find((opt) => opt.value === value);
           return { ...ex, nomeExercicio: value, descricao: selectedOption?.description || '' };
         }
+        if (field === 'series') {
+          const parsed = parseInt(String(value), 10);
+          return { ...ex, series: Number.isFinite(parsed) ? parsed : 0 };
+        }
         return { ...ex, [field]: value };
       })
     );
@@ -401,7 +406,15 @@ export default function TreinosManagementClient({ initialAlunos }: { initialAlun
       const res = await upsertTreinoAction({
         alunoId: selectedAlunoId,
         objetivo,
-        exercicios: exercicios as Exercicio[],
+        exercicios: exercicios.map(
+          ({ id: _id, nomeExercicio, series, repeticoes, observacoes, descricao }) => ({
+            nomeExercicio: nomeExercicio ?? '',
+            series: series || 0,
+            repeticoes: repeticoes ?? '',
+            observacoes: observacoes ?? null,
+            descricao: descricao ?? null,
+          })
+        ),
         diaSemana: null,
       });
 
@@ -428,7 +441,7 @@ export default function TreinosManagementClient({ initialAlunos }: { initialAlun
       // Usar a chamada direta do flow em vez de stream para maior estabilidade em produção
       const result = await streamWorkoutPlan(data);
       if (result) {
-        setPlanoGerado(result as WorkoutGeneratorAIOutput);
+        setPlanoGerado(result);
         notify.success('Plano Gerado!');
       } else {
         throw new Error('A IA não retornou um resultado válido.');
@@ -544,9 +557,14 @@ export default function TreinosManagementClient({ initialAlunos }: { initialAlun
                           type="number"
                           className="w-20"
                           value={exercicio.series || ''}
-                          onChange={(e) =>
-                            handleExercicioChange(exercicio.id!, 'series', parseInt(e.target.value))
-                          }
+                          onChange={(e) => {
+                            const parsed = parseInt(e.target.value, 10);
+                            handleExercicioChange(
+                              exercicio.id!,
+                              'series',
+                              Number.isFinite(parsed) ? parsed : 0
+                            );
+                          }}
                         />
                       </div>
                       <div className="grid gap-2">

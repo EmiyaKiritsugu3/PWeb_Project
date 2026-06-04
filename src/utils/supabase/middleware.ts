@@ -12,7 +12,7 @@ type AuthResult =
 
 async function getAuthForRoute(
   supabase: SupabaseClient,
-  pathname: string,
+  _pathname: string,
   request: NextRequest
 ): Promise<AuthResult> {
   const {

@@ -1,24 +1,24 @@
-# Estado Atual (2026-05-29)
+# Estado Atual (2026-06-03)
 
-## Estabilizado — ESLint FlatCompat Migration + Dependabot Sweep + CI Otimizado
+## Estabilizado — Code Quality Phase 2 (PR #118)
 
-**Última versão:** 1.3.1
+**Última versão:** 1.4.0
 **Branch principal:** `main`
-**CI:** Pipeline otimizado — Dependabot PRs pulam testes/E2E; PRs regulares rodam quality gates completos. Lint local funcional.
+**CI:** Pipeline otimizado — Dependabot PRs pulam testes/E2E; PRs regulares rodam quality gates completos.
 
 ### O que foi feito
 
-- **ESLint FlatCompat Migration**: `eslint.config.mjs` migrado de `FlatCompat` para flat config nativo do `eslint-config-next` v16. Resolvido `TypeError: Converting circular structure to JSON`. Removidos `@eslint/eslintrc`, `@eslint/config-array`, `@types/eslint` das devDependencies.
-- **Dependabot Sweep:** Todos os 6 PRs de dependências (#101 a #107) mergeados com sucesso, incluindo:
-  - `@types/node` 20→25
-  - `lucide-react` 0.475→1.16
-  - `react-day-picker` patch
-  - `tailwind-merge` 2→3
-  - `eslint-config-next` 15→16
-  - `qs` patch
-- **CI Otimizado** (PR #110): Testes vitest e E2E pulados para Dependabot; `paths-ignore` para docs-only.
-- **Cobertura SonarCloud**: Configurado `sonar.javascript.lcov.reportPaths` para upload de cobertura via `sonarqube-scan-action`.
+- **Code Quality Phase 2 (PR #118)**: 8 novas correções, 24 commits no total:
+  - **HIGH**: dummyDb genéricos (raiz de 3 issues), columns.tsx tipos explícitos, Genkit output com schema type, i18n locale persistence
+  - **MEDIUM**: error.ts customMessage, logger.ts toRecord helper
+  - **LOW**: placeholder-images removidos, constantes renomeadas
+- **Refactoring prévio (commits 1-16)**: `getErrorMessage` utility, `noUnusedLocals`/`noUnusedParameters` ativados, SonarQube blocker/critical/major resolvidos, redundant assertions removidos, magic numbers → named constants, DRY error handling extraído.
+
+### Testes
+
+- **71/71** vitest tests passando (10 suites)
+- TypeScript: zero novos erros tipados (8 erros pré-existentes em arquivos não tocados)
 
 ### Pendências Técnicas
 
-- **react-hooks/set-state-in-effect**: Regra nova do eslint-config-next v16 sinaliza `setState` dentro de `useEffect` (6 ocorrências). Downgradado para `warn`. Refatorar para `useSyncExternalStore` ou padrões de initializer quando conveniente.
+- **alunos-client.tsx + alunos.test.ts**: 8 erros de typecheck pré-existentes — discriminated union narrowing em `handleActionError` retorno (`.error`/`.data` não acessíveis sem type guard). Não faziam parte do escopo do PR #118.
