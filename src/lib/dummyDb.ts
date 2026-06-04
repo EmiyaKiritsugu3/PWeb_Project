@@ -6,7 +6,7 @@ export const db = {
   },
 
   async findById<T = unknown>(_table: string, id: string): Promise<T | null> {
-    return { id } as T | null;
+    return { id } as T;
   },
 
   async update<T = unknown>(_table: string, id: string, data: Partial<T>): Promise<T> {

@@ -3,13 +3,8 @@
 import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
-import {
-  AlunoSchema,
-  AlunoBaseSchema,
-  MatriculaSchema,
-  HistoricoTreinoSchema,
-} from '@/lib/definitions';
-import type { Aluno, AlunoBase, Matricula, HistoricoTreino } from '@/lib/definitions';
+import { AlunoSchema, AlunoBaseSchema, MatriculaSchema } from '@/lib/definitions';
+import type { Aluno, AlunoBase, Matricula } from '@/lib/definitions';
 import { getUser } from '@/utils/supabase/server';
 import * as Sentry from '@sentry/nextjs';
 import { calculateTreinoRewards } from '@/services/gamificationService';
@@ -18,7 +13,7 @@ import { handleActionError, type ActionResult } from '@/lib/error';
 export async function finalizarTreinoAction(
   treinoId: string,
   durationMinutes: number = 60
-): Promise<ActionResult<HistoricoTreino>> {
+): Promise<ActionResult> {
   try {
     const { user, error: authError } = await getUser();
 
@@ -29,7 +24,7 @@ export async function finalizarTreinoAction(
     const hoje = new Date();
 
     // Executa a operação gamificada numa Transação Serializável e Atômica
-    const historico = await prisma.$transaction(
+    await prisma.$transaction(
       async (tx) => {
         // 1. Lock a linha do aluno pela verificação!
         const aluno = await tx.aluno.findUnique({
@@ -41,7 +36,7 @@ export async function finalizarTreinoAction(
         }
 
         // 2. Criar Histórico de Treino
-        const novoHistorico = await tx.historicoTreino.create({
+        await tx.historicoTreino.create({
           data: {
             alunoId: aluno.id,
             treinoId: treinoId,
@@ -64,8 +59,6 @@ export async function finalizarTreinoAction(
             ultimoTreinoData: hoje,
           },
         });
-
-        return novoHistorico;
       },
       {
         isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
@@ -75,7 +68,7 @@ export async function finalizarTreinoAction(
     );
 
     revalidatePath('/aluno/dashboard');
-    return { success: true, data: HistoricoTreinoSchema.parse(historico) } as const;
+    return { success: true } satisfies ActionResult;
   } catch (error) {
     Sentry.captureException(error);
     return handleActionError(error);
