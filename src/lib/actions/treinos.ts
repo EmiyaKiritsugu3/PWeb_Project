@@ -349,9 +349,9 @@ export async function registrarHistoricoTreinoAction(
     return { success: true, data: result };
   } catch (error) {
     Sentry.captureException(error);
-    if (error instanceof Error && error.name === 'ZodError') {
-      return { success: false, error: 'Dados do histórico inválidos' };
-    }
-    return { success: false, error: 'Erro ao registrar treino. Tente novamente.' };
+    return handleActionError(error, {
+      zodMessage: 'Dados do histórico inválidos',
+      fallbackMessage: 'Erro ao registrar treino. Tente novamente.',
+    });
   }
 }
