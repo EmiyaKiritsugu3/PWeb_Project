@@ -57,7 +57,7 @@ export const streamWorkoutPlan = ai.defineFlow(
 
     for await (const chunk of responseStream.stream) {
       if (chunk?.output) {
-        sendChunk(chunk.output);
+        sendChunk(chunk.output as WorkoutGeneratorAIOutput);
       }
     }
 
@@ -65,7 +65,7 @@ export const streamWorkoutPlan = ai.defineFlow(
     if (!finalOutput?.output) {
       throw new Error('A IA não retornou um plano de treino válido.');
     }
-    return finalOutput.output;
+    return finalOutput.output as WorkoutGeneratorAIOutput;
   }
 );
 
@@ -78,5 +78,6 @@ export async function generateWorkoutPlan(
     prompt: `Você é um personal trainer de elite... (usando versão não-streaming para ${input.objetivo})`,
     output: { schema: WorkoutGeneratorAIOutputSchema },
   });
+  if (!output) throw new Error('A IA não retornou um plano de treino válido.');
   return output;
 }
