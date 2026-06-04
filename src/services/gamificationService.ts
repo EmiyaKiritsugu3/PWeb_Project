@@ -22,6 +22,8 @@ interface GamificationResult {
 const BASE_XP_PER_WORKOUT = 100;
 const XP_PER_COMPLETED_SERIE = 10;
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
+const STREAK_BONUS_XP = 50;
+const LEVEL_UP_XP_PER_LEVEL = 1500;
 
 export function calculateTreinoRewards(
   aluno: AlunoGamificationData,
@@ -72,15 +74,15 @@ export function calculateTreinoRewards(
 
   if (dataUltimoTreino === ontemStr) {
     novoStreak += 1;
-    novaExp += 50; // Streak bonus
+    novaExp += STREAK_BONUS_XP; // Streak bonus
   } else {
     novoStreak = 1; // Reset or start streak
   }
 
   // 4. Level Up Logic (Progressive threshold: Level * 1500)
   // Loop until XP is below threshold to support multiple level gains
-  while (novaExp >= novoNivel * 1500) {
-    novaExp -= novoNivel * 1500;
+  while (novaExp >= novoNivel * LEVEL_UP_XP_PER_LEVEL) {
+    novaExp -= novoNivel * LEVEL_UP_XP_PER_LEVEL;
     novoNivel += 1;
   }
 

@@ -213,7 +213,8 @@ function PlanoGeradoParaEdicao({
     const exercicio = novoPlano.workouts[treinoIndex].exercicios[exIndex];
 
     if (field === 'series') {
-      exercicio[field] = typeof value === 'string' ? parseInt(value, 10) || 0 : value;
+      const parsed = typeof value === 'string' ? parseInt(value, 10) : value;
+      exercicio[field] = Number.isFinite(parsed) ? parsed : (undefined as unknown as number);
     } else {
       Object.assign(exercicio, { [field]: value });
     }
@@ -381,6 +382,10 @@ export default function TreinosManagementClient({ initialAlunos }: { initialAlun
           const selectedOption = flatExerciciosOptions.find((opt) => opt.value === value);
           return { ...ex, nomeExercicio: value, descricao: selectedOption?.description || '' };
         }
+        if (field === 'series') {
+          const parsed = parseInt(String(value), 10);
+          return { ...ex, series: Number.isFinite(parsed) ? parsed : 0 };
+        }
         return { ...ex, [field]: value };
       })
     );
@@ -404,8 +409,8 @@ export default function TreinosManagementClient({ initialAlunos }: { initialAlun
         exercicios: exercicios.map(
           ({ id: _id, nomeExercicio, series, repeticoes, observacoes, descricao }) => ({
             nomeExercicio: nomeExercicio ?? '',
-            series: series ?? 0,
-            repeticoes: repeticoes ?? '',
+            series: series || 0,
+            repeticoes: repeticoes || undefined,
             observacoes: observacoes ?? null,
             descricao: descricao ?? null,
           })
@@ -552,9 +557,14 @@ export default function TreinosManagementClient({ initialAlunos }: { initialAlun
                           type="number"
                           className="w-20"
                           value={exercicio.series || ''}
-                          onChange={(e) =>
-                            handleExercicioChange(exercicio.id!, 'series', parseInt(e.target.value))
-                          }
+                          onChange={(e) => {
+                            const parsed = parseInt(e.target.value, 10);
+                            handleExercicioChange(
+                              exercicio.id!,
+                              'series',
+                              Number.isFinite(parsed) ? parsed : 0
+                            );
+                          }}
                         />
                       </div>
                       <div className="grid gap-2">
