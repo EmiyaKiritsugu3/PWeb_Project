@@ -410,7 +410,7 @@ export default function TreinosManagementClient({ initialAlunos }: { initialAlun
           ({ id: _id, nomeExercicio, series, repeticoes, observacoes, descricao }) => ({
             nomeExercicio: nomeExercicio ?? '',
             series: series || 0,
-            repeticoes: repeticoes || undefined,
+            repeticoes: repeticoes ?? '',
             observacoes: observacoes ?? null,
             descricao: descricao ?? null,
           })
