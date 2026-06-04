@@ -24,9 +24,12 @@ export function getErrorMessage(error: unknown): string {
   return 'Erro desconhecido';
 }
 
-export function handleActionError(error: unknown) {
+export function handleActionError(error: unknown, customMessage?: string) {
   if (error instanceof Error && error.name === 'ZodError') {
-    return { success: false as const, error: 'Dados inválidos' };
+    const zodMessage = getZodError(error)
+      ? (customMessage ?? 'Dados inválidos')
+      : 'Dados inválidos';
+    return { success: false as const, error: zodMessage };
   }
   return { success: false as const, error: getErrorMessage(error) };
 }
