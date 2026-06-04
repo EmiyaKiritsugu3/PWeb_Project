@@ -3,14 +3,22 @@
 import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
-import { AlunoSchema, AlunoBaseSchema } from '@/lib/definitions';
-import type { AlunoBase } from '@/lib/definitions';
+import {
+  AlunoSchema,
+  AlunoBaseSchema,
+  MatriculaSchema,
+  HistoricoTreinoSchema,
+} from '@/lib/definitions';
+import type { Aluno, AlunoBase, Matricula, HistoricoTreino } from '@/lib/definitions';
 import { getUser } from '@/utils/supabase/server';
 import * as Sentry from '@sentry/nextjs';
 import { calculateTreinoRewards } from '@/services/gamificationService';
-import { handleActionError } from '@/lib/error';
+import { handleActionError, type ActionResult } from '@/lib/error';
 
-export async function finalizarTreinoAction(treinoId: string, durationMinutes: number = 60) {
+export async function finalizarTreinoAction(
+  treinoId: string,
+  durationMinutes: number = 60
+): Promise<ActionResult<HistoricoTreino>> {
   try {
     const { user, error: authError } = await getUser();
 
@@ -67,7 +75,7 @@ export async function finalizarTreinoAction(treinoId: string, durationMinutes: n
     );
 
     revalidatePath('/aluno/dashboard');
-    return { success: true, data: historico };
+    return { success: true, data: HistoricoTreinoSchema.parse(historico) } as const;
   } catch (error) {
     Sentry.captureException(error);
     return handleActionError(error);
@@ -77,7 +85,7 @@ export async function finalizarTreinoAction(treinoId: string, durationMinutes: n
 export async function createAlunoAction(
   data: Partial<AlunoBase> &
     Pick<AlunoBase, 'nomeCompleto' | 'cpf' | 'email' | 'telefone' | 'statusMatricula'>
-) {
+): Promise<ActionResult<Aluno>> {
   try {
     const { user, error: authError } = await getUser();
     if (authError || !user) throw new Error('Usuário não autenticado');
@@ -101,14 +109,17 @@ export async function createAlunoAction(
 
     revalidatePath('/dashboard/alunos');
     // O retorno do Prisma inclui o ID, validado pelo AlunoSchema (Entity)
-    return { success: true, data: AlunoSchema.parse(aluno) };
+    return { success: true, data: AlunoSchema.parse(aluno) } satisfies ActionResult<Aluno>;
   } catch (error) {
     Sentry.captureException(error);
     return handleActionError(error);
   }
 }
 
-export async function updateAlunoAction(id: string, data: Partial<AlunoBase>) {
+export async function updateAlunoAction(
+  id: string,
+  data: Partial<AlunoBase>
+): Promise<ActionResult<Aluno>> {
   try {
     const { user, error: authError } = await getUser();
     if (authError || !user) throw new Error('Usuário não autenticado');
@@ -131,14 +142,14 @@ export async function updateAlunoAction(id: string, data: Partial<AlunoBase>) {
     });
 
     revalidatePath('/dashboard/alunos');
-    return { success: true, data: AlunoSchema.parse(updated) };
+    return { success: true, data: AlunoSchema.parse(updated) } satisfies ActionResult<Aluno>;
   } catch (error) {
     Sentry.captureException(error);
     return handleActionError(error);
   }
 }
 
-export async function deleteAlunoAction(id: string) {
+export async function deleteAlunoAction(id: string): Promise<ActionResult> {
   try {
     const { user, error: authError } = await getUser();
     if (authError || !user) throw new Error('Usuário não autenticado');
@@ -148,14 +159,17 @@ export async function deleteAlunoAction(id: string) {
     });
 
     revalidatePath('/dashboard/alunos');
-    return { success: true };
+    return { success: true } satisfies ActionResult;
   } catch (error) {
     Sentry.captureException(error);
     return handleActionError(error);
   }
 }
 
-export async function createMatriculaAction(alunoId: string, planoId: string) {
+export async function createMatriculaAction(
+  alunoId: string,
+  planoId: string
+): Promise<ActionResult<Matricula>> {
   try {
     const { user, error: authError } = await getUser();
     if (authError || !user) throw new Error('Usuário não autenticado');
@@ -193,7 +207,10 @@ export async function createMatriculaAction(alunoId: string, planoId: string) {
     });
 
     revalidatePath('/dashboard/alunos');
-    return { success: true, data: matricula };
+    return {
+      success: true,
+      data: MatriculaSchema.parse(matricula),
+    } satisfies ActionResult<Matricula>;
   } catch (error) {
     Sentry.captureException(error);
     return handleActionError(error);

@@ -29,6 +29,15 @@ export type HandleActionErrorOptions = {
   zodMessage?: string;
 };
 
+/**
+ * Discriminated-union return type for server actions.
+ * Use `ActionResult<T>` for actions that return data, or `ActionResult` for void.
+ * Enables `if (result.success)` narrowing to access `.data` or `.error` safely.
+ */
+export type ActionResult<T = void> = T extends void
+  ? { success: true } | { success: false; error: string }
+  : { success: true; data: T } | { success: false; error: string };
+
 export function handleActionError(
   error: unknown,
   options?: HandleActionErrorOptions | string
