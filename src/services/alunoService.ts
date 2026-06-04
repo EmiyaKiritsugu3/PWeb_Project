@@ -11,12 +11,12 @@ export interface Aluno {
 export async function createAluno(alunoData: Omit<Aluno, 'id'>): Promise<Aluno> {
   const id = randomUUID();
   const newAluno: Aluno = { ...alunoData, id };
-  const result = await db.insert('alunos', newAluno);
+  const result = await db.insert<Aluno>('alunos', newAluno);
   return result;
 }
 
 export async function getAluno(id: string): Promise<Aluno | null> {
-  const result = await db.findById('alunos', id);
+  const result = await db.findById<Aluno>('alunos', id);
   return result;
 }
 
@@ -24,7 +24,7 @@ export async function updateAluno(
   id: string,
   updateData: Partial<Omit<Aluno, 'id'>>
 ): Promise<Aluno> {
-  const result = await db.update('alunos', id, updateData);
+  const result = await db.update<Aluno>('alunos', id, updateData);
   return result;
 }
 
