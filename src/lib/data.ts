@@ -121,12 +121,12 @@ export async function getDashboardStats() {
     }
 
     // Projeção de Crescimento Validada
-    const STREAK_MULTIPLIER = 0.7;
-    const BONUS_THRESHOLD = 0.05;
+    const GROWTH_BASE_FACTOR = 0.7;
+    const GROWTH_INCREMENT = 0.05;
     const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'];
     const crescimentoAnual = meses.map((mes, idx) => ({
       mes,
-      alunos: Math.floor(totalAlunos * (STREAK_MULTIPLIER + idx * BONUS_THRESHOLD)),
+      alunos: Math.floor(totalAlunos * (GROWTH_BASE_FACTOR + idx * GROWTH_INCREMENT)),
     }));
 
     return DashboardStatsSchema.parse({
