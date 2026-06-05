@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.4.0] — 2026-06-03 — Code Quality Phase 2 (PR #118)
+## [1.4.0] — 2026-06-04 — Code Quality Phase 2 (PR #118)
 
 ### Fixed
 
@@ -18,10 +18,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **placeholder-images.ts**: Removed empty file and orphan `placeholder-images.json` (dead code, zero imports).
 - **data.ts constant names**: `STREAK_MULTIPLIER` → `GROWTH_BASE_FACTOR`, `BONUS_THRESHOLD` → `GROWTH_INCREMENT` — semantic naming matching actual financial projection domain.
 
+### Added (during PR review — follow-up fixes)
+
+- **error.ts `ActionResult<T>` discriminated union**: New `ActionResult<T = void>` conditional type for typed server-action return values. `if (result.success)` now correctly narrows `.data` / `.error` access in all consumers. Resolves 8 TS2339 (3 in `alunos-client.tsx`, 5 in `alunos.test.ts`).
+- **dummyDb.ts `findById` cast cleanup**: Redundant `as T | null` on line 9 simplified to `as T` (signature already declares `Promise<T | null>`).
+
+### Security
+
+- **Removed typosquatted `supabase` package**: Direct dep `supabase@^2.92.1` (unscoped) was flagged CRITICAL by npm advisory GHSA-x96m-c5fj-q75c as a typosquatted malware publication. Verified zero imports of `'supabase'` in `src/` — all Supabase usage is the legitimate scoped `@supabase/supabase-js` + `@supabase/ssr`. The dep was unused and malicious. Restores `npm audit --audit-level=high` to exit 0.
+
+### Fixed (during PR review — CI/workflow)
+
+- **prisma/seed-e2e.ts top-level await**: PR commit `9edd2f9` (SonarQube fixes) refactored the seed exit from a working `.catch().finally()` chain to `try { await seed(); }` at module top level. `tsx` CJS output rejects top-level await with: `ERROR: Top-level await is currently not supported with the "cjs" output format`. Wrapped in `async function main()` to preserve the PR's SonarCloud-friendly try/catch intent while restoring CJS compatibility. Unblocks the E2E Tests job.
+- **workout-generator-flow.ts streaming output regression**: An initial `ActionResult<HistoricoTreino>` annotation introduced `HistoricoTreinoSchema.parse(historico)`, which throws ZodError on every successful treino finalization because the Prisma `HistoricoTreino` model has no `exercicios[]` field (it uses a `SeriesExecutadas` relation table instead). Changed return type to `ActionResult` (void) and dropped the broken parse.
+
 ### Tests
 
-- 71/71 vitest tests passing (baseline maintained).
-- TypeScript: zero new errors (8 pre-existing errors in untouched `alunos-client.tsx` and `alunos.test.ts`).
+- **86/86** vitest tests passing across **13 suites** (baseline 71/71 grew by 15 new tests).
+- TypeScript: **0 errors** (the 8 pre-existing errors in `alunos-client.tsx` and `alunos.test.ts` are now resolved by `ActionResult<T>`).
+- CI: 13/13 checks pass on every push — Quality Gates, Tests & Coverage, SonarCloud Code Analysis, E2E Tests, Vercel, CodeQL, Semgrep (×2), GitGuardian, CodeRabbit, cubic, Analyze (JS/TS), Vercel Preview Comments.
 
 ## [1.3.1] — 2026-05-29 — ESLint FlatCompat Migration
 
