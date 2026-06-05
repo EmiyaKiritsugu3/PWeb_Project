@@ -11,3 +11,33 @@ updates:
     commit-message:
       prefix: chore
       include: scope
+    # Tiered auto-merge policy by semver bump. Patches auto-merge
+    # (label `autorenew` + repo-level "Allow auto-merge"); minors and
+    # majors require manual review. See repo branch-protection rules
+    # for the auto-merge wiring.
+    groups:
+      version-update:semver-patch:
+        patterns:
+          - '*'
+        update-types:
+          - 'patch'
+        labels:
+          - dependencies
+          - autorenew
+      version-update:semver-minor:
+        patterns:
+          - '*'
+        update-types:
+          - 'minor'
+        labels:
+          - dependencies
+          - no-automerge
+      version-update:semver-major:
+        patterns:
+          - '*'
+        update-types:
+          - 'major'
+        labels:
+          - dependencies
+          - major
+          - manual-approval-required
