@@ -9,6 +9,7 @@
 
 import { ai } from '@/ai/genkit';
 import { googleAI } from '@genkit-ai/google-genai';
+import * as Sentry from '@sentry/nextjs';
 import { z } from 'zod';
 
 // Schema de Entrada
@@ -95,7 +96,17 @@ const workoutFeedbackFlow = ai.defineFlow(
       };
     }
 
-    const { output } = await feedbackPrompt(input);
+    const { output } = await Sentry.startSpan(
+      { op: 'gen_ai.generate_content', name: 'workoutFeedbackFlow' },
+      async (span) => {
+        span.setAttribute('gen_ai.system', 'google_genai');
+        span.setAttribute('gen_ai.request.model', 'gemini-2.5-flash');
+        const r = await feedbackPrompt(input);
+        span.setAttribute('gen_ai.usage.input_tokens', r.usage?.inputTokens ?? 0);
+        span.setAttribute('gen_ai.usage.output_tokens', r.usage?.outputTokens ?? 0);
+        return r;
+      }
+    );
     if (output == null) throw new Error('workoutFeedbackFlow: output is null');
     return output;
   }

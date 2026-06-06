@@ -27,10 +27,13 @@ vi.mock('next/cache', () => ({
 
 vi.mock('next/headers', () => ({ headers: vi.fn().mockResolvedValue(new Headers()) }));
 
-vi.mock('@sentry/nextjs', () => ({
-  captureException: vi.fn(),
-  withServerActionInstrumentation: vi.fn((_name, _options, callback) => callback()),
-}));
+vi.mock('@sentry/nextjs', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    captureException: vi.fn(),
+  };
+});
 
 describe('alunos actions (CRUD Unit Tests)', () => {
   const mockAdmin = { user: { email: 'admin@nextgym.com' }, error: null };
