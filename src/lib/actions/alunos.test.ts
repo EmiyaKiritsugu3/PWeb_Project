@@ -28,7 +28,7 @@ vi.mock('next/cache', () => ({
 vi.mock('next/headers', () => ({ headers: vi.fn().mockResolvedValue(new Headers()) }));
 
 vi.mock('@sentry/nextjs', async (importOriginal) => {
-  const actual = await importOriginal();
+  const actual = (await importOriginal()) as Record<string, unknown>;
   return {
     ...actual,
     captureException: vi.fn(),
