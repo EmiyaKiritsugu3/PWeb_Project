@@ -38,7 +38,7 @@ async function getAuthForRoute(
 }
 
 export const updateSession = async (request: NextRequest) => {
-  let supabaseResponse = NextResponse.next({
+  const supabaseResponse = NextResponse.next({
     request: {
       headers: request.headers,
     },
@@ -49,14 +49,11 @@ export const updateSession = async (request: NextRequest) => {
       getAll() {
         return request.cookies.getAll();
       },
-      setAll(cookiesToSet) {
-        cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
-        supabaseResponse = NextResponse.next({
-          request,
-        });
+      setAll(cookiesToSet, headers) {
         cookiesToSet.forEach(({ name, value, options }) =>
           supabaseResponse.cookies.set(name, value, options)
         );
+        Object.entries(headers).forEach(([k, v]) => supabaseResponse.headers.set(k, v));
       },
     },
   });
