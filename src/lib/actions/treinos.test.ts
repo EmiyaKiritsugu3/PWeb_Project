@@ -1,7 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 vi.mock('next/cache', () => ({ revalidatePath: vi.fn() }));
-vi.mock('@sentry/nextjs', () => ({ captureException: vi.fn() }));
+vi.mock('next/headers', () => ({ headers: vi.fn().mockResolvedValue(new Headers()) }));
+vi.mock('@sentry/nextjs', () => ({
+  captureException: vi.fn(),
+  withServerActionInstrumentation: vi.fn((_name, _options, callback) => callback()),
+}));
 vi.mock('@/utils/supabase/server', () => ({
   createClient: vi.fn(),
   getUser: vi.fn(),

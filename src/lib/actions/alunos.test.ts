@@ -25,8 +25,11 @@ vi.mock('next/cache', () => ({
   revalidatePath: vi.fn(),
 }));
 
+vi.mock('next/headers', () => ({ headers: vi.fn().mockResolvedValue(new Headers()) }));
+
 vi.mock('@sentry/nextjs', () => ({
   captureException: vi.fn(),
+  withServerActionInstrumentation: vi.fn((_name, _options, callback) => callback()),
 }));
 
 describe('alunos actions (CRUD Unit Tests)', () => {
