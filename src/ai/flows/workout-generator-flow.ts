@@ -57,10 +57,7 @@ export const streamWorkoutPlan = ai.defineFlow(
 
     for await (const chunk of responseStream.stream) {
       if (chunk?.output) {
-        const parsed = WorkoutGeneratorAIOutputSchema.safeParse(chunk.output);
-        if (parsed.success) {
-          sendChunk(parsed.data);
-        }
+        sendChunk(chunk.output);
       }
     }
 
