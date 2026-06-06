@@ -58,11 +58,11 @@ const mockCreateClient = vi.mocked(createClient);
 const mockGetUser = vi.mocked(getUser);
 const mockTreino = vi.mocked(prisma.treino);
 
-const INSTRUTOR_UUID = '00000000-0000-0000-0000-000000000003';
-const GERENTE_UUID = '00000000-0000-0000-0000-000000000001';
-const RECEP_UUID = '00000000-0000-0000-0000-000000000002';
-const ALUNO_UUID = '00000000-0000-0000-0000-000000000004';
-const TREINO_UUID = '00000000-0000-0000-0000-000000000099';
+const INSTRUTOR_UUID = '550e8400-e29b-41d4-a716-000000000003';
+const GERENTE_UUID = '550e8400-e29b-41d4-a716-000000000001';
+const RECEP_UUID = '550e8400-e29b-41d4-a716-000000000002';
+const ALUNO_UUID = '550e8400-e29b-41d4-a716-000000000004';
+const TREINO_UUID = '550e8400-e29b-41d4-a716-000000000099';
 
 const BASE_PAYLOAD = {
   alunoId: ALUNO_UUID,
@@ -289,7 +289,7 @@ describe('deleteTreinoAction — ownership check', () => {
   });
 
   it('INSTRUTOR who does NOT own the treino: returns Acesso não autorizado', async () => {
-    const OTHER_INSTRUTOR = '00000000-0000-0000-0000-000000000099';
+    const OTHER_INSTRUTOR = '550e8400-e29b-41d4-a716-000000000099';
     const supabase = buildSupabaseMock(INSTRUTOR_UUID, 'INSTRUTOR');
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mockCreateClient.mockResolvedValue(supabase as any);
@@ -340,7 +340,7 @@ describe('updateTreinoDayAction — ownership check', () => {
   });
 
   it('INSTRUTOR who does NOT own the treino: returns Acesso não autorizado', async () => {
-    const OTHER_INSTRUTOR = '00000000-0000-0000-0000-000000000099';
+    const OTHER_INSTRUTOR = '550e8400-e29b-41d4-a716-000000000099';
     const supabase = buildSupabaseMock(INSTRUTOR_UUID, 'INSTRUTOR');
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mockCreateClient.mockResolvedValue(supabase as any);
@@ -370,7 +370,7 @@ describe('updateTreinoDayAction — ownership check', () => {
 // ─── registrarHistoricoTreinoAction ──────────────────────────────────────────
 
 describe('registrarHistoricoTreinoAction', () => {
-  const ALUNO_ID = '00000000-0000-0000-0000-000000000004';
+  const ALUNO_ID = '550e8400-e29b-41d4-a716-000000000004';
 
   const BASE_HISTORICO = {
     treinoId: TREINO_UUID,
@@ -378,7 +378,7 @@ describe('registrarHistoricoTreinoAction', () => {
     dataExecucao: new Date().toISOString(),
     exercicios: [
       {
-        exercicioId: '00000000-0000-0000-0000-000000000010',
+        exercicioId: '550e8400-e29b-41d4-a716-000000000010',
         nomeExercicio: 'Supino',
         seriesExecutadas: [
           { serieNumero: 1, peso: 20, repeticoesFeitas: 10, concluido: true },
