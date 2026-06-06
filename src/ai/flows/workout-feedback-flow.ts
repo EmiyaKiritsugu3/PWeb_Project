@@ -96,6 +96,7 @@ const workoutFeedbackFlow = ai.defineFlow(
     }
 
     const { output } = await feedbackPrompt(input);
-    return output!;
+    if (output == null) throw new Error('workoutFeedbackFlow: output is null');
+    return output;
   }
 );
