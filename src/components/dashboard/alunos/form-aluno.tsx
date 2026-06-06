@@ -33,12 +33,10 @@ import React, { useEffect } from 'react';
 
 const formSchema = z.object({
   nomeCompleto: z.string().min(3, { message: 'O nome deve ter no mínimo 3 caracteres.' }),
-  email: z.string().email({ message: 'Email inválido.' }),
-  cpf: z
-    .string()
-    .regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, {
-      message: 'CPF inválido. Use o formato xxx.xxx.xxx-xx.',
-    }),
+  email: z.email({ error: 'Email inválido.' }),
+  cpf: z.string().regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, {
+    message: 'CPF inválido. Use o formato xxx.xxx.xxx-xx.',
+  }),
   telefone: z.string().min(10, { message: 'Telefone inválido.' }),
   dataNascimento: z.string().refine((val) => !isNaN(Date.parse(val)), {
     message: 'Data de nascimento inválida.',

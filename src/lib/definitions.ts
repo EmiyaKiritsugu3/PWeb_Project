@@ -66,7 +66,7 @@ export const TreinoBaseSchema = z.object({
 
 export const TreinoSchema = TreinoBaseSchema.extend({
   id: z.uuid({ error: 'ID inválido' }),
-  instrutorId: z.string().uuid().optional().nullable(),
+  instrutorId: z.uuid().optional().nullable(),
   // Note: Here we update exercicios to be the Entity version if we are fetching from DB
   exercicios: z.array(ExercicioSchema).min(1),
 });
@@ -97,7 +97,7 @@ export const HistoricoTreinoBaseSchema = z.object({
   duracaoMinutos: z.coerce.number().int().min(1),
   exercicios: z.array(
     z.object({
-      exercicioId: z.string().uuid({ message: 'ID do exercício inválido' }),
+      exercicioId: z.uuid({ error: 'ID do exercício inválido' }),
       nomeExercicio: z.string(),
       seriesExecutadas: z.array(SerieExecutadaBaseSchema),
     })
@@ -108,7 +108,7 @@ export const HistoricoTreinoSchema = HistoricoTreinoBaseSchema.extend({
   id: z.uuid({ error: 'ID inválido' }),
   exercicios: z.array(
     z.object({
-      exercicioId: z.string().uuid(),
+      exercicioId: z.uuid(),
       nomeExercicio: z.string(),
       seriesExecutadas: z.array(SerieExecutadaSchema),
     })
@@ -135,7 +135,7 @@ export type Plano = z.infer<typeof PlanoSchema>;
 
 export const MatriculaBaseSchema = z.object({
   alunoId: z.uuid({ error: 'ID do aluno inválido' }),
-  planoId: z.string().uuid({ message: 'ID do plano inválido' }),
+  planoId: z.uuid({ error: 'ID do plano inválido' }),
   dataInicio: z.string().or(z.date()),
   dataVencimento: z.string().or(z.date()),
   status: z.enum(['ATIVA', 'VENCIDA']).default('ATIVA'),
@@ -149,7 +149,7 @@ export type MatriculaBase = z.infer<typeof MatriculaBaseSchema>;
 export type Matricula = z.infer<typeof MatriculaSchema>;
 
 export const PagamentoBaseSchema = z.object({
-  matriculaId: z.string().uuid({ message: 'ID da matrícula inválido' }),
+  matriculaId: z.uuid({ error: 'ID da matrícula inválido' }),
   alunoId: z.uuid({ error: 'ID do aluno inválido' }),
   valor: z.coerce.number().min(0),
   dataPagamento: z.string().or(z.date()),
