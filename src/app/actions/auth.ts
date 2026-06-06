@@ -3,11 +3,11 @@
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
 import { isRedirectError } from 'next/dist/client/components/redirect-error';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 
 const loginSchema = z.object({
-  email: z.string().email('Por favor, insira um e-mail válido.'),
-  password: z.string().min(6, 'A senha deve ter no mínimo 6 caracteres.'),
+  email: z.string().email({ message: 'Por favor, insira um e-mail válido.' }),
+  password: z.string().min(6, { message: 'A senha deve ter no mínimo 6 caracteres.' }),
 });
 
 export async function login(_prevState: { error: string } | undefined, formData: FormData) {
