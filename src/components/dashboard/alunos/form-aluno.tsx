@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import {
   Dialog,
   DialogContent,
@@ -32,12 +32,12 @@ import type { Aluno } from '@/lib/definitions';
 import React, { useEffect } from 'react';
 
 const formSchema = z.object({
-  nomeCompleto: z.string().min(3, 'O nome deve ter no mínimo 3 caracteres.'),
-  email: z.string().email('Email inválido.'),
-  cpf: z
-    .string()
-    .regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, 'CPF inválido. Use o formato xxx.xxx.xxx-xx.'),
-  telefone: z.string().min(10, 'Telefone inválido.'),
+  nomeCompleto: z.string().min(3, { message: 'O nome deve ter no mínimo 3 caracteres.' }),
+  email: z.email({ error: 'Email inválido.' }),
+  cpf: z.string().regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, {
+    message: 'CPF inválido. Use o formato xxx.xxx.xxx-xx.',
+  }),
+  telefone: z.string().min(10, { message: 'Telefone inválido.' }),
   dataNascimento: z.string().refine((val) => !isNaN(Date.parse(val)), {
     message: 'Data de nascimento inválida.',
   }),

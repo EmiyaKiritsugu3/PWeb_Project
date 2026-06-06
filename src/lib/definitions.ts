@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import { Role } from '@prisma/client';
 
 export { Role };
@@ -9,13 +9,13 @@ export const AlunoStatusEnum = z.enum(['ATIVA', 'INADIMPLENTE', 'INATIVA']);
 
 /** Esquema Base para Aluno (Campos de entrada e comum) */
 export const AlunoBaseSchema = z.object({
-  nomeCompleto: z.string().min(3, 'Nome deve ter pelo menos 3 caracteres'),
-  cpf: z.string().min(11, 'CPF deve ter pelo menos 11 dígitos'),
-  email: z.string().email('Email inválido'),
-  telefone: z.string().min(10, 'Telefone inválido'),
+  nomeCompleto: z.string().min(3, { message: 'Nome deve ter pelo menos 3 caracteres' }),
+  cpf: z.string().min(11, { message: 'CPF deve ter pelo menos 11 dígitos' }),
+  email: z.email({ error: 'Email inválido' }),
+  telefone: z.string().min(10, { message: 'Telefone inválido' }),
   dataNascimento: z.string().or(z.date()).optional().nullable(),
   dataCadastro: z.string().or(z.date()).optional(),
-  fotoUrl: z.string().url().optional().nullable(),
+  fotoUrl: z.url().optional().nullable(),
   biometriaHash: z.string().optional().nullable(),
   statusMatricula: AlunoStatusEnum.default('ATIVA'),
   // Campos de Gamificação
@@ -31,7 +31,7 @@ export const AlunoBaseSchema = z.object({
 
 /** Esquema de Entidade Aluno (Garantido pelo Banco de Dados com ID) */
 export const AlunoSchema = AlunoBaseSchema.extend({
-  id: z.string().uuid('ID inválido'), // IDs no Supabase/Prisma são UUIDs
+  id: z.uuid({ error: 'ID inválido' }), // IDs no Supabase/Prisma são UUIDs
 });
 
 export type AlunoBase = z.infer<typeof AlunoBaseSchema>;
@@ -40,33 +40,33 @@ export type Aluno = z.infer<typeof AlunoSchema>;
 // --- Schemas & Tipos: Treino & Exercício ---
 
 export const ExercicioBaseSchema = z.object({
-  nomeExercicio: z.string().min(2, 'Nome do exercício é obrigatório'),
-  series: z.coerce.number().int().min(1, 'Mínimo de 1 série'),
-  repeticoes: z.string().min(1, 'Repetições obrigatórias'),
+  nomeExercicio: z.string().min(2, { message: 'Nome do exercício é obrigatório' }),
+  series: z.coerce.number().int().min(1, { message: 'Mínimo de 1 série' }),
+  repeticoes: z.string().min(1, { message: 'Repetições obrigatórias' }),
   observacoes: z.string().optional().nullable(),
   descricao: z.string().optional().nullable(),
 });
 
 export const ExercicioSchema = ExercicioBaseSchema.extend({
-  id: z.string().uuid('ID inválido'),
+  id: z.uuid({ error: 'ID inválido' }),
 });
 
 export type ExercicioBase = z.infer<typeof ExercicioBaseSchema>;
 export type Exercicio = z.infer<typeof ExercicioSchema>;
 
 export const TreinoBaseSchema = z.object({
-  alunoId: z.string().uuid('ID do aluno inválido'),
+  alunoId: z.uuid({ error: 'ID do aluno inválido' }),
   // instrutorId is server-derived from session — not accepted from client
-  objetivo: z.string().min(3, 'Objetivo é obrigatório'),
+  objetivo: z.string().min(3, { message: 'Objetivo é obrigatório' }),
   dataCriacao: z.string().or(z.date()).optional(),
   /** Dia da semana (0 = Domingo, 1 = Segunda, ..., 6 = Sábado). Null se não estiver ativo. */
   diaSemana: z.coerce.number().int().min(0).max(6).nullable(),
-  exercicios: z.array(ExercicioBaseSchema).min(1, 'Adicione pelo menos um exercício'),
+  exercicios: z.array(ExercicioBaseSchema).min(1, { message: 'Adicione pelo menos um exercício' }),
 });
 
 export const TreinoSchema = TreinoBaseSchema.extend({
-  id: z.string().uuid('ID inválido'),
-  instrutorId: z.string().uuid().optional().nullable(),
+  id: z.uuid({ error: 'ID inválido' }),
+  instrutorId: z.uuid().optional().nullable(),
   // Note: Here we update exercicios to be the Entity version if we are fetching from DB
   exercicios: z.array(ExercicioSchema).min(1),
 });
@@ -84,20 +84,20 @@ export const SerieExecutadaBaseSchema = z.object({
 });
 
 export const SerieExecutadaSchema = SerieExecutadaBaseSchema.extend({
-  id: z.string().uuid('ID inválido'),
+  id: z.uuid({ error: 'ID inválido' }),
 });
 
 export type SerieExecutadaBase = z.infer<typeof SerieExecutadaBaseSchema>;
 export type SerieExecutada = z.infer<typeof SerieExecutadaSchema>;
 
 export const HistoricoTreinoBaseSchema = z.object({
-  alunoId: z.string().uuid('ID do aluno inválido'),
-  treinoId: z.string().uuid('ID do treino inválido'),
+  alunoId: z.uuid({ error: 'ID do aluno inválido' }),
+  treinoId: z.uuid({ error: 'ID do treino inválido' }),
   dataExecucao: z.string().or(z.date()),
   duracaoMinutos: z.coerce.number().int().min(1),
   exercicios: z.array(
     z.object({
-      exercicioId: z.string().uuid('ID do exercício inválido'),
+      exercicioId: z.uuid({ error: 'ID do exercício inválido' }),
       nomeExercicio: z.string(),
       seriesExecutadas: z.array(SerieExecutadaBaseSchema),
     })
@@ -105,10 +105,10 @@ export const HistoricoTreinoBaseSchema = z.object({
 });
 
 export const HistoricoTreinoSchema = HistoricoTreinoBaseSchema.extend({
-  id: z.string().uuid('ID inválido'),
+  id: z.uuid({ error: 'ID inválido' }),
   exercicios: z.array(
     z.object({
-      exercicioId: z.string().uuid(),
+      exercicioId: z.uuid(),
       nomeExercicio: z.string(),
       seriesExecutadas: z.array(SerieExecutadaSchema),
     })
@@ -121,43 +121,43 @@ export type HistoricoTreino = z.infer<typeof HistoricoTreinoSchema>;
 // --- Schemas & Tipos: Financeiro ---
 
 export const PlanoBaseSchema = z.object({
-  nome: z.string().min(2, 'Nome do plano é obrigatório'),
-  preco: z.coerce.number().min(0, 'Preço inválido'),
-  duracaoDias: z.coerce.number().int().positive('Duração deve ser positiva'),
+  nome: z.string().min(2, { message: 'Nome do plano é obrigatório' }),
+  preco: z.coerce.number().min(0, { message: 'Preço inválido' }),
+  duracaoDias: z.coerce.number().int().positive({ message: 'Duração deve ser positiva' }),
 });
 
 export const PlanoSchema = PlanoBaseSchema.extend({
-  id: z.string().uuid('ID inválido'),
+  id: z.uuid({ error: 'ID inválido' }),
 });
 
 export type PlanoBase = z.infer<typeof PlanoBaseSchema>;
 export type Plano = z.infer<typeof PlanoSchema>;
 
 export const MatriculaBaseSchema = z.object({
-  alunoId: z.string().uuid('ID do aluno inválido'),
-  planoId: z.string().uuid('ID do plano inválido'),
+  alunoId: z.uuid({ error: 'ID do aluno inválido' }),
+  planoId: z.uuid({ error: 'ID do plano inválido' }),
   dataInicio: z.string().or(z.date()),
   dataVencimento: z.string().or(z.date()),
   status: z.enum(['ATIVA', 'VENCIDA']).default('ATIVA'),
 });
 
 export const MatriculaSchema = MatriculaBaseSchema.extend({
-  id: z.string().uuid('ID inválido'),
+  id: z.uuid({ error: 'ID inválido' }),
 });
 
 export type MatriculaBase = z.infer<typeof MatriculaBaseSchema>;
 export type Matricula = z.infer<typeof MatriculaSchema>;
 
 export const PagamentoBaseSchema = z.object({
-  matriculaId: z.string().uuid('ID da matrícula inválido'),
-  alunoId: z.string().uuid('ID do aluno inválido'),
+  matriculaId: z.uuid({ error: 'ID da matrícula inválido' }),
+  alunoId: z.uuid({ error: 'ID do aluno inválido' }),
   valor: z.coerce.number().min(0),
   dataPagamento: z.string().or(z.date()),
   metodo: z.enum(['PIX', 'Dinheiro', 'Cartão']),
 });
 
 export const PagamentoSchema = PagamentoBaseSchema.extend({
-  id: z.string().uuid('ID inválido'),
+  id: z.uuid({ error: 'ID inválido' }),
 });
 
 export type PagamentoBase = z.infer<typeof PagamentoBaseSchema>;
