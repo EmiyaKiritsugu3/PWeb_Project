@@ -6,7 +6,11 @@ Sentry.init({
   debug: false,
   environment: process.env.NODE_ENV,
   enabled: !!process.env.NEXT_PUBLIC_SENTRY_DSN,
-  sendDefaultPii: false,
+  dataCollection: {
+    userInfo: false,
+    httpHeaders: { request: false, response: false },
+    cookies: false,
+  },
   beforeSend(event) {
     if (event.request?.headers) {
       delete event.request.headers['cookie'];
