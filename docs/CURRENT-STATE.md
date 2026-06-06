@@ -1,31 +1,27 @@
-# Estado Atual (2026-06-04)
+# Estado Atual (2026-06-06)
 
-## Estabilizado — Code Quality Phase 2 (PR #118 merged)
+## Estabilizado — Library Drift Audit (PRs #128, #130, #129, #131, #132 merged)
 
-**Última versão:** 1.4.0
+**Última versão:** 1.5.0
 **Branch principal:** `main`
-**CI:** Pipeline otimizado — Dependabot PRs pulam testes/E2E; PRs regulares rodam quality gates completos. 13/13 checks verdes.
+**CI:** 4/4 quality gates verdes (typecheck · lint · format:check · test). 13/13 CI checks pass.
 
 ### O que foi feito
 
-- **Code Quality Phase 2 (PR #118)**: 8 correções principais + 5 follow-ups durante review, 24+ commits squash-merged:
-  - **HIGH**: dummyDb genéricos (raiz de 3 issues), columns.tsx tipos explícitos, Genkit output com schema type, i18n locale persistence
-  - **MEDIUM**: error.ts customMessage + logger.ts toRecord helper
-  - **LOW**: placeholder-images removidos, constantes renomeadas
-- **Follow-up fixes (durante review)**:
-  - **error.ts `ActionResult<T>`**: novo discriminated union que resolve 8 TS2339 em `alunos-client.tsx` + `alunos.test.ts` (causa raiz: async-inferred return widening de `success: true` para `boolean`).
-  - **deps: remove typosquatted `supabase`**: GHSA-x96m-c5fj-q75c flagged `supabase@^2.92.1` (unscoped) como malware. Dep não usada (verificado zero imports). Audit volta a exit 0.
-  - **dummyDb `as T` cleanup**: cast redundante `T | null` simplificado.
-  - **prisma/seed-e2e.ts top-level await**: PR commit `9edd2f9` quebrou E2E ao trocar `.catch().finally()` por `try { await seed() }` no top-level. Wrap em `main()` para CJS compat.
-  - **workout-generator-flow.ts `HistoricoTreinoSchema.parse` regression**: meu primeiro commit adicionou `.parse()` que throws em todo sucesso. Schema exigia `exercicios[]` que não existe no model Prisma. Removido.
-- **Refactoring prévio (commits 1-16)**: `getErrorMessage` utility, `noUnusedLocals`/`noUnusedParameters` ativados, SonarQube blocker/critical/major resolvidos, redundant assertions removidos, magic numbers → named constants, DRY error handling extraído.
+- **PR #128 (CRITICAL fix)**: Supabase SSR 0.10 middleware `setAll` headers forwarding — CDN cache-bleed prevention. Bumped `@supabase/ssr` 0.10.2 → 0.10.3.
+- **PR #130**: 7-commit observability modernization. Genkit 1.36: removed `output!`, dropped stream-chunk `safeParse`, removed redundant `streamSchema`. Sentry 10.56: 11 server actions wrapped with `withServerActionInstrumentation`, `sendDefaultPii` → `dataCollection` migration, manual `Sentry.startSpan` for Genkit AI flows with `gen_ai.*` attributes.
+- **PR #129**: 2-commit Zod forward-compat. ~30 positional `message` → `{ message: '...' }` object form. 22 `z.string().email/uuid/url` → top-level `z.email/uuid/url`. Required `zod/v4` import (v3 lacks top-level format functions).
+- **PR #131 hotfix**: TS spread error in Sentry test mock — cast `importOriginal()` to `Record<string, unknown>`.
+- **PR #132 hotfix**: 6 treino test regressions from PR #129's v4-strict UUIDs — updated 10 literal UUIDs to v4-valid format.
+
+(2 hotfixes were required because PR #130's test mock + PR #129's zod v4 import both introduced regressions caught by F2 review and local test runs respectively.)
 
 ### Testes
 
-- **86/86** vitest tests passando (13 suites) — baseline 71/71 cresceu 15 testes via follow-ups
-- TypeScript: **0 erros** (8 erros pré-existentes em `alunos-client.tsx`/`alunos.test.ts` agora resolvidos pelo `ActionResult<T>`)
+- **101/101** vitest tests passing (14 suites) — baseline 86 + 15 new zod-migration smoke
+- TypeScript: **0 erros**
 - CI 13/13 verde: Quality Gates, Tests & Coverage, SonarCloud, E2E, Vercel, CodeQL, Semgrep ×2, GitGuardian, CodeRabbit, cubic, Analyze JS-TS, Vercel Preview
 
 ### Pendências Técnicas
 
-_Nenhuma pendência relacionada a este PR._ Issues pré-existentes em `treinos-client.tsx` (fallbacks `series: 0` / `repeticoes: ''`) e dependência Genkit pinning (1.31 vs 1.34) foram flagadas por reviewers mas são fora do escopo do PR #118 — candidatas a follow-up PRs.
+_Nenhuma pendência crítica._ Audits completed: Next.js 15.5 (no critical, all forward-compat work tracked for v16), Genkit 1.36 (3 MEDIUM fixed in #130, 3 LOW deferred), Sentry 10.56 (1 CRITICAL + 2 MAJOR fixed in #130), Zod 3.25+Supabase SSR 0.10 (1 CRITICAL + 2 MEDIUM + 1 LOW fixed across #128/#129, 2 LOW deferred). Out-of-scope items (Next 16, genkit zod v4, full audit beyond Context7) tracked in `.sisyphus/plans/library-drift-audit-2026-06-05.md` and `.sisyphus/evidence/audit-context7-2026-06-05.md`.
