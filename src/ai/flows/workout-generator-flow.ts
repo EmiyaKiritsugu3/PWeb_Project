@@ -24,7 +24,6 @@ export const streamWorkoutPlan = ai.defineFlow(
     name: 'streamWorkoutPlan',
     inputSchema: WorkoutGeneratorInputSchema,
     outputSchema: WorkoutGeneratorAIOutputSchema,
-    streamSchema: WorkoutGeneratorAIOutputSchema,
   },
   async (input, { sendChunk }) => {
     const promptText = `
