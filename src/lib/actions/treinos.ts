@@ -4,6 +4,7 @@ import { Prisma } from '@prisma/client';
 
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
+import { headers } from 'next/headers';
 import {
   TreinoSchema,
   TreinoBaseSchema,
@@ -132,226 +133,258 @@ async function performTreinoUpsert(
 }
 
 export async function upsertTreinoAction(treinoData: TreinoBase | (TreinoBase & { id: string })) {
-  try {
-    const auth = await getAuthRole();
-    if ('error' in auth) return { success: false, error: auth.error };
-    const { user, role, derivedInstrutorId } = auth;
+  return await Sentry.withServerActionInstrumentation(
+    'upsertTreinoAction',
+    { headers: await headers(), formData: undefined, recordResponse: true },
+    async () => {
+      try {
+        const auth = await getAuthRole();
+        if ('error' in auth) return { success: false, error: auth.error };
+        const { user, role, derivedInstrutorId } = auth;
 
-    // Validação flexível: se tiver ID, valida como Entity; se não, como Base.
-    let validatedData;
-    if ('id' in treinoData && treinoData.id) {
-      validatedData = TreinoSchema.parse(treinoData);
-    } else {
-      validatedData = TreinoBaseSchema.parse(treinoData);
+        // Validação flexível: se tiver ID, valida como Entity; se não, como Base.
+        let validatedData;
+        if ('id' in treinoData && treinoData.id) {
+          validatedData = TreinoSchema.parse(treinoData);
+        } else {
+          validatedData = TreinoBaseSchema.parse(treinoData);
+        }
+
+        return await performTreinoUpsert(validatedData, user, role, derivedInstrutorId);
+      } catch (error) {
+        Sentry.captureException(error);
+        return handleActionError(error);
+      }
     }
-
-    return await performTreinoUpsert(validatedData, user, role, derivedInstrutorId);
-  } catch (error) {
-    Sentry.captureException(error);
-    return handleActionError(error);
-  }
+  );
 }
 
 export async function batchUpsertTreinoAction(
   treinos: TreinoBase[]
 ): Promise<{ success: boolean; error?: string }> {
-  try {
-    const auth = await getAuthRole();
-    if ('error' in auth) return { success: false, error: auth.error };
-    const { user, role, derivedInstrutorId } = auth;
+  return await Sentry.withServerActionInstrumentation(
+    'batchUpsertTreinoAction',
+    { headers: await headers(), formData: undefined, recordResponse: true },
+    async () => {
+      try {
+        const auth = await getAuthRole();
+        if ('error' in auth) return { success: false, error: auth.error };
+        const { user, role, derivedInstrutorId } = auth;
 
-    const validated = treinos.map((t) => TreinoBaseSchema.parse({ ...t, alunoId: t.alunoId }));
+        const validated = treinos.map((t) => TreinoBaseSchema.parse({ ...t, alunoId: t.alunoId }));
 
-    await prisma.$transaction(
-      validated.map((data) =>
-        prisma.treino.create({
-          data: {
-            objetivo: data.objetivo,
-            diaSemana: data.diaSemana,
-            alunoId: role === null ? user.id : data.alunoId,
-            instrutorId: derivedInstrutorId,
-            Exercicios: {
-              create: data.exercicios.map((ex) => ({
-                nomeExercicio: ex.nomeExercicio,
-                series: ex.series,
-                repeticoes: ex.repeticoes,
-                observacoes: ex.observacoes || '',
-                descricao: ex.descricao || '',
-              })),
-            },
-          },
-        })
-      )
-    );
+        await prisma.$transaction(
+          validated.map((data) =>
+            prisma.treino.create({
+              data: {
+                objetivo: data.objetivo,
+                diaSemana: data.diaSemana,
+                alunoId: role === null ? user.id : data.alunoId,
+                instrutorId: derivedInstrutorId,
+                Exercicios: {
+                  create: data.exercicios.map((ex) => ({
+                    nomeExercicio: ex.nomeExercicio,
+                    series: ex.series,
+                    repeticoes: ex.repeticoes,
+                    observacoes: ex.observacoes || '',
+                    descricao: ex.descricao || '',
+                  })),
+                },
+              },
+            })
+          )
+        );
 
-    revalidatePath('/aluno/meus-treinos');
-    revalidatePath('/dashboard/treinos');
-    return { success: true };
-  } catch (error) {
-    Sentry.captureException(error);
-    return handleActionError(error);
-  }
+        revalidatePath('/aluno/meus-treinos');
+        revalidatePath('/dashboard/treinos');
+        return { success: true };
+      } catch (error) {
+        Sentry.captureException(error);
+        return handleActionError(error);
+      }
+    }
+  );
 }
 
 export async function updateTreinoDayAction(treinoId: string, diaSemana: number | null) {
-  try {
-    const { user, error: authError } = await getUser();
-    if (authError || !user) return { success: false, error: 'Usuário não autenticado' };
+  return await Sentry.withServerActionInstrumentation(
+    'updateTreinoDayAction',
+    { headers: await headers(), formData: undefined, recordResponse: true },
+    async () => {
+      try {
+        const { user, error: authError } = await getUser();
+        if (authError || !user) return { success: false, error: 'Usuário não autenticado' };
 
-    const supabase = await createClient();
-    const { data: funcData } = await supabase
-      .from('funcionarios')
-      .select('role')
-      .eq('id', user.id)
-      .maybeSingle();
+        const supabase = await createClient();
+        const { data: funcData } = await supabase
+          .from('funcionarios')
+          .select('role')
+          .eq('id', user.id)
+          .maybeSingle();
 
-    const treino = await prisma.treino.findUnique({
-      where: { id: treinoId },
-      select: { instrutorId: true, alunoId: true },
-    });
+        const treino = await prisma.treino.findUnique({
+          where: { id: treinoId },
+          select: { instrutorId: true, alunoId: true },
+        });
 
-    if (
-      funcData?.role !== 'GERENTE' &&
-      treino?.instrutorId !== user.id &&
-      treino?.alunoId !== user.id
-    ) {
-      return { success: false, error: 'Acesso não autorizado' };
+        if (
+          funcData?.role !== 'GERENTE' &&
+          treino?.instrutorId !== user.id &&
+          treino?.alunoId !== user.id
+        ) {
+          return { success: false, error: 'Acesso não autorizado' };
+        }
+
+        await prisma.treino.update({
+          where: { id: treinoId },
+          data: { diaSemana },
+        });
+        revalidatePath('/aluno/meus-treinos');
+        return { success: true };
+      } catch (error) {
+        Sentry.captureException(error);
+        return handleActionError(error);
+      }
     }
-
-    await prisma.treino.update({
-      where: { id: treinoId },
-      data: { diaSemana },
-    });
-    revalidatePath('/aluno/meus-treinos');
-    return { success: true };
-  } catch (error) {
-    Sentry.captureException(error);
-    return handleActionError(error);
-  }
+  );
 }
 export async function deleteTreinoAction(treinoId: string) {
-  try {
-    const { user, error: authError } = await getUser();
-    if (authError || !user) return { success: false, error: 'Usuário não autenticado' };
+  return await Sentry.withServerActionInstrumentation(
+    'deleteTreinoAction',
+    { headers: await headers(), formData: undefined, recordResponse: true },
+    async () => {
+      try {
+        const { user, error: authError } = await getUser();
+        if (authError || !user) return { success: false, error: 'Usuário não autenticado' };
 
-    const supabase = await createClient();
-    const { data: funcData } = await supabase
+        const supabase = await createClient();
+        const { data: funcData } = await supabase
 
-      .from('funcionarios')
-      .select('role')
-      .eq('id', user.id)
-      .maybeSingle();
+          .from('funcionarios')
+          .select('role')
+          .eq('id', user.id)
+          .maybeSingle();
 
-    const treino = await prisma.treino.findUnique({
-      where: { id: treinoId },
-      select: { instrutorId: true, alunoId: true },
-    });
+        const treino = await prisma.treino.findUnique({
+          where: { id: treinoId },
+          select: { instrutorId: true, alunoId: true },
+        });
 
-    if (
-      funcData?.role !== 'GERENTE' &&
-      treino?.instrutorId !== user.id &&
-      treino?.alunoId !== user.id
-    ) {
-      return { success: false, error: 'Acesso não autorizado' };
+        if (
+          funcData?.role !== 'GERENTE' &&
+          treino?.instrutorId !== user.id &&
+          treino?.alunoId !== user.id
+        ) {
+          return { success: false, error: 'Acesso não autorizado' };
+        }
+
+        await prisma.treino.delete({
+          where: { id: treinoId },
+        });
+        revalidatePath('/aluno/meus-treinos');
+        revalidatePath('/dashboard/treinos');
+        return { success: true };
+      } catch (error) {
+        Sentry.captureException(error);
+        return handleActionError(error);
+      }
     }
-
-    await prisma.treino.delete({
-      where: { id: treinoId },
-    });
-    revalidatePath('/aluno/meus-treinos');
-    revalidatePath('/dashboard/treinos');
-    return { success: true };
-  } catch (error) {
-    Sentry.captureException(error);
-    return handleActionError(error);
-  }
+  );
 }
 
 export async function registrarHistoricoTreinoAction(
   historicoData: Omit<HistoricoTreinoBase, 'alunoId'>
 ) {
-  try {
-    const { user, error: authError } = await getUser();
+  return await Sentry.withServerActionInstrumentation(
+    'registrarHistoricoTreinoAction',
+    { headers: await headers(), formData: undefined, recordResponse: true },
+    async () => {
+      try {
+        const { user, error: authError } = await getUser();
 
-    if (authError || !user) {
-      return { success: false, error: 'Usuário não autenticado' };
-    }
+        if (authError || !user) {
+          return { success: false, error: 'Usuário não autenticado' };
+        }
 
-    // Validação Zod: Para registro de histórico vindo do app, o alunoId vem da session
-    const validatedData = HistoricoTreinoBaseSchema.omit({ alunoId: true }).parse(historicoData);
-
-    // Buscar aluno pelo email
-    const aluno = await prisma.aluno.findUnique({
-      where: { email: user.email! },
-    });
-
-    if (!aluno) {
-      throw new Error('Perfil de aluno não encontrado');
-    }
-
-    const hoje = new Date();
-
-    // 1. Criar Histórico de Treino e Séries em uma transação
-    const result = await prisma.$transaction(
-      async (tx) => {
-        const historico = await tx.historicoTreino.create({
-          data: {
-            alunoId: aluno.id,
-            treinoId: validatedData.treinoId,
-            duracaoMinutos: validatedData.duracaoMinutos,
-            dataExecucao: new Date(validatedData.dataExecucao),
-            SeriesExecutadas: {
-              create: validatedData.exercicios.flatMap((ex) =>
-                ex.seriesExecutadas.map((serie) => ({
-                  exercicioId: ex.exercicioId,
-                  nomeExercicio: ex.nomeExercicio,
-                  serieNumero: serie.serieNumero,
-                  peso: serie.peso,
-                  repeticoesFeitas: serie.repeticoesFeitas,
-                  concluido: serie.concluido,
-                }))
-              ),
-            },
-          },
-        });
-
-        // 2. Lógica de Gamificação (Delegated to Service)
-        const totalSeriesConcluidas = validatedData.exercicios.reduce(
-          (acc, ex) => acc + ex.seriesExecutadas.filter((s) => s.concluido).length,
-          0
+        // Validação Zod: Para registro de histórico vindo do app, o alunoId vem da session
+        const validatedData = HistoricoTreinoBaseSchema.omit({ alunoId: true }).parse(
+          historicoData
         );
 
-        const rewards = calculateTreinoRewards(aluno, totalSeriesConcluidas, hoje);
-
-        // 3. Atualizar Aluno (Always persist calculated rewards)
-        await tx.aluno.update({
-          where: { id: aluno.id },
-          data: {
-            exp: rewards.novaExp,
-            nivel: rewards.novoNivel,
-            streakDiasSeguidos: rewards.novoStreak,
-            treinosNoMes: rewards.novosTreinosNoMes,
-            ultimoTreinoData: hoje,
-          },
+        // Buscar aluno pelo email
+        const aluno = await prisma.aluno.findUnique({
+          where: { email: user.email! },
         });
 
-        return historico;
-      },
-      {
-        isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
-        maxWait: 5000,
-        timeout: 10000,
-      }
-    );
+        if (!aluno) {
+          throw new Error('Perfil de aluno não encontrado');
+        }
 
-    revalidatePath('/aluno/dashboard');
-    revalidatePath('/aluno/meus-treinos');
-    return { success: true, data: result };
-  } catch (error) {
-    Sentry.captureException(error);
-    return handleActionError(error, {
-      zodMessage: 'Dados do histórico inválidos',
-      fallbackMessage: 'Erro ao registrar treino. Tente novamente.',
-    });
-  }
+        const hoje = new Date();
+
+        // 1. Criar Histórico de Treino e Séries em uma transação
+        const result = await prisma.$transaction(
+          async (tx) => {
+            const historico = await tx.historicoTreino.create({
+              data: {
+                alunoId: aluno.id,
+                treinoId: validatedData.treinoId,
+                duracaoMinutos: validatedData.duracaoMinutos,
+                dataExecucao: new Date(validatedData.dataExecucao),
+                SeriesExecutadas: {
+                  create: validatedData.exercicios.flatMap((ex) =>
+                    ex.seriesExecutadas.map((serie) => ({
+                      exercicioId: ex.exercicioId,
+                      nomeExercicio: ex.nomeExercicio,
+                      serieNumero: serie.serieNumero,
+                      peso: serie.peso,
+                      repeticoesFeitas: serie.repeticoesFeitas,
+                      concluido: serie.concluido,
+                    }))
+                  ),
+                },
+              },
+            });
+
+            // 2. Lógica de Gamificação (Delegated to Service)
+            const totalSeriesConcluidas = validatedData.exercicios.reduce(
+              (acc, ex) => acc + ex.seriesExecutadas.filter((s) => s.concluido).length,
+              0
+            );
+
+            const rewards = calculateTreinoRewards(aluno, totalSeriesConcluidas, hoje);
+
+            // 3. Atualizar Aluno (Always persist calculated rewards)
+            await tx.aluno.update({
+              where: { id: aluno.id },
+              data: {
+                exp: rewards.novaExp,
+                nivel: rewards.novoNivel,
+                streakDiasSeguidos: rewards.novoStreak,
+                treinosNoMes: rewards.novosTreinosNoMes,
+                ultimoTreinoData: hoje,
+              },
+            });
+
+            return historico;
+          },
+          {
+            isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+            maxWait: 5000,
+            timeout: 10000,
+          }
+        );
+
+        revalidatePath('/aluno/dashboard');
+        revalidatePath('/aluno/meus-treinos');
+        return { success: true, data: result };
+      } catch (error) {
+        Sentry.captureException(error);
+        return handleActionError(error, {
+          zodMessage: 'Dados do histórico inválidos',
+          fallbackMessage: 'Erro ao registrar treino. Tente novamente.',
+        });
+      }
+    }
+  );
 }

@@ -25,9 +25,15 @@ vi.mock('next/cache', () => ({
   revalidatePath: vi.fn(),
 }));
 
-vi.mock('@sentry/nextjs', () => ({
-  captureException: vi.fn(),
-}));
+vi.mock('next/headers', () => ({ headers: vi.fn().mockResolvedValue(new Headers()) }));
+
+vi.mock('@sentry/nextjs', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    captureException: vi.fn(),
+  };
+});
 
 describe('alunos actions (CRUD Unit Tests)', () => {
   const mockAdmin = { user: { email: 'admin@nextgym.com' }, error: null };

@@ -2,6 +2,7 @@
 
 import { ai } from '@/ai/genkit';
 import { googleAI } from '@genkit-ai/google-genai';
+import * as Sentry from '@sentry/nextjs';
 import { EXERCICIOS_POR_GRUPO } from '@/lib/constants';
 import {
   WorkoutGeneratorInputSchema,
@@ -24,7 +25,6 @@ export const streamWorkoutPlan = ai.defineFlow(
     name: 'streamWorkoutPlan',
     inputSchema: WorkoutGeneratorInputSchema,
     outputSchema: WorkoutGeneratorAIOutputSchema,
-    streamSchema: WorkoutGeneratorAIOutputSchema,
   },
   async (input, { sendChunk }) => {
     const promptText = `
@@ -49,30 +49,38 @@ export const streamWorkoutPlan = ai.defineFlow(
     6.  **Grupo Muscular:** Use o nome exato do grupo.
     `;
 
-    const responseStream = ai.generateStream({
-      model: googleAI.model('gemini-2.5-flash'),
-      prompt: promptText,
-      output: { schema: WorkoutGeneratorAIOutputSchema },
-    });
+    return await Sentry.startSpan(
+      { op: 'gen_ai.generate_content', name: 'streamWorkoutPlan' },
+      async (span) => {
+        span.setAttribute('gen_ai.system', 'google_genai');
+        span.setAttribute('gen_ai.request.model', 'gemini-2.5-flash');
 
-    for await (const chunk of responseStream.stream) {
-      if (chunk?.output) {
-        const parsed = WorkoutGeneratorAIOutputSchema.safeParse(chunk.output);
-        if (parsed.success) {
-          sendChunk(parsed.data);
+        const responseStream = ai.generateStream({
+          model: googleAI.model('gemini-2.5-flash'),
+          prompt: promptText,
+          output: { schema: WorkoutGeneratorAIOutputSchema },
+        });
+
+        for await (const chunk of responseStream.stream) {
+          if (chunk?.output) {
+            sendChunk(chunk.output);
+          }
         }
-      }
-    }
 
-    const finalOutput = await responseStream.response;
-    if (!finalOutput?.output) {
-      throw new Error('A IA não retornou um plano de treino válido.');
-    }
-    const parsedFinal = WorkoutGeneratorAIOutputSchema.safeParse(finalOutput.output);
-    if (!parsedFinal.success) {
-      throw new Error('A IA não retornou um plano de treino válido.');
-    }
-    return parsedFinal.data;
+        const finalOutput = await responseStream.response;
+        span.setAttribute('gen_ai.usage.input_tokens', finalOutput?.usage?.inputTokens ?? 0);
+        span.setAttribute('gen_ai.usage.output_tokens', finalOutput?.usage?.outputTokens ?? 0);
+
+        if (!finalOutput?.output) {
+          throw new Error('A IA não retornou um plano de treino válido.');
+        }
+        const parsedFinal = WorkoutGeneratorAIOutputSchema.safeParse(finalOutput.output);
+        if (!parsedFinal.success) {
+          throw new Error('A IA não retornou um plano de treino válido.');
+        }
+        return parsedFinal.data;
+      }
+    );
   }
 );
 
@@ -80,11 +88,21 @@ export const streamWorkoutPlan = ai.defineFlow(
 export async function generateWorkoutPlan(
   input: WorkoutGeneratorInput
 ): Promise<WorkoutGeneratorAIOutput> {
-  const { output } = await ai.generate({
-    model: googleAI.model('gemini-2.5-flash'),
-    prompt: `Você é um personal trainer de elite... (usando versão não-streaming para ${input.objetivo})`,
-    output: { schema: WorkoutGeneratorAIOutputSchema },
-  });
-  if (!output) throw new Error('A IA não retornou um plano de treino válido.');
-  return output;
+  return await Sentry.startSpan(
+    { op: 'gen_ai.generate_content', name: 'generateWorkoutPlan' },
+    async (span) => {
+      span.setAttribute('gen_ai.system', 'google_genai');
+      span.setAttribute('gen_ai.request.model', 'gemini-2.5-flash');
+
+      const r = await ai.generate({
+        model: googleAI.model('gemini-2.5-flash'),
+        prompt: `Você é um personal trainer de elite... (usando versão não-streaming para ${input.objetivo})`,
+        output: { schema: WorkoutGeneratorAIOutputSchema },
+      });
+      span.setAttribute('gen_ai.usage.input_tokens', r.usage?.inputTokens ?? 0);
+      span.setAttribute('gen_ai.usage.output_tokens', r.usage?.outputTokens ?? 0);
+      if (!r.output) throw new Error('A IA não retornou um plano de treino válido.');
+      return r.output;
+    }
+  );
 }
