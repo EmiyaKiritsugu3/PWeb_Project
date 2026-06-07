@@ -37,7 +37,13 @@ export type TestRole = keyof typeof CREDENTIALS;
 
 export async function loginAs(page: Page, role: TestRole): Promise<void> {
   const { email, password, loginPath, redirect: expectedPath } = CREDENTIALS[role];
+  // Clear any prior session to prevent auto-redirect from bypassing the login page.
+  // Without this, leftover cookies cause /aluno/login → /aluno/dashboard redirect,
+  // the email field never renders, and fill() times out.
+  // NOTE: logout() must run AFTER page.goto() because it calls page.evaluate() to
+  // clear localStorage/sessionStorage, which is inaccessible on about:blank.
   await page.goto(loginPath);
+  await logout(page);
   await page.getByLabel(/email/i).fill(email);
   await page.getByLabel(/senha|password/i).fill(password);
   await page.getByRole('button', { name: /entrar|login/i }).click();

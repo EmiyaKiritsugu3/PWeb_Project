@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Table,
   TableBody,
@@ -36,6 +37,7 @@ export default function FinanceiroClient({
 }: {
   initialInadimplentes: AlunoFinanceiro[];
 }) {
+  const router = useRouter();
   const notify = useAppNotification();
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [selectedAluno, setSelectedAluno] = useState<AlunoFinanceiro | null>(null);
@@ -58,6 +60,7 @@ export default function FinanceiroClient({
         'Pagamento Registrado!',
         `A matrícula de ${selectedAluno.nomeCompleto} foi reativada.`
       );
+      router.refresh();
     } else {
       notify.error('Erro ao registrar pagamento', result.error || 'Ocorreu um erro inesperado.');
     }
