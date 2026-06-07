@@ -155,6 +155,7 @@ jobs:
         env:
           NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
           NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY: ${{ env.SUPABASE_LOCAL_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ env.SUPABASE_LOCAL_SERVICE_ROLE_KEY }}
           DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:54322/postgres
           PLAYWRIGHT_BASE_URL: http://localhost:3333
         run: npm run e2e
