@@ -18,7 +18,7 @@ Este documento rastreia compromissos arquiteturais e infraestruturais assumidos 
 - **Causa**: Inconsistência entre o script de seed e as expectativas do teste Playwright.
 - **Impacto**: Médio. Mascara falhas reais de regressão no fluxo de pagamento.
 - **Caminho de Resolução**: Sincronizar `prisma/seed-e2e.ts` com os seletores do Playwright.
-- **Status**: ✅ Resolved (2026-06-06) — Playwright `globalSetup` agora invoca `prisma/seed-e2e.ts` automaticamente (elimina passo manual `npm run seed:e2e`), e `.env.test` foi renomeado para a convenção Supabase SSR 0.10+ (`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY`).
+- **Status**: ✅ Resolved (2026-06-06) — Playwright `globalSetup` agora invoca `prisma/seed-e2e.ts` automaticamente (elimina passo manual `npm run seed:e2e`), e a variável de ambiente em `.env.test` foi renomeada para a convenção Supabase SSR 0.10+ (`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY`).
 
 ---
 *Mandato: Uma dívida documentada é um custo gerenciado. Uma dívida oculta é um risco.*

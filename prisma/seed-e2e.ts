@@ -161,7 +161,12 @@ async function seed(): Promise<void> {
   // (pagamentoService.ts:60-73) doesn't bail out and skip the aluno status update.
   // Without this, the second test run in the same UTC day would see the prior
   // pagamento and return { success: true } without flipping statusMatricula to ATIVA.
-  await prisma.pagamento.deleteMany({ where: { alunoId: alunoInadimplenteId } });
+  await prisma.pagamento.deleteMany({
+    where: {
+      alunoId: alunoInadimplenteId,
+      matriculaId: matriculaE2eId,
+    },
+  });
 
   await prisma.aluno.upsert({
     where: { id: alunoInadimplenteId },
