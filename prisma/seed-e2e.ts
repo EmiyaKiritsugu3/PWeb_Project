@@ -157,6 +157,12 @@ async function seed(): Promise<void> {
   console.log('  Plano E2E upserted: Plano Mensal E2E');
 
   // No auth user needed — GERENTE is the actor; aluno only needs a Prisma record
+  // Clear any prior test pagamentos so the processPayment idempotency check
+  // (pagamentoService.ts:60-73) doesn't bail out and skip the aluno status update.
+  // Without this, the second test run in the same UTC day would see the prior
+  // pagamento and return { success: true } without flipping statusMatricula to ATIVA.
+  await prisma.pagamento.deleteMany({ where: { alunoId: alunoInadimplenteId } });
+
   await prisma.aluno.upsert({
     where: { id: alunoInadimplenteId },
     update: { statusMatricula: 'INADIMPLENTE' },
