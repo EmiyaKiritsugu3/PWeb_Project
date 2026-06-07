@@ -5,6 +5,48 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] — 2026-06-06 — Library Drift Audit (Context7)
+
+### Fixed
+
+- **CDN cache-bleed in Supabase middleware `setAll`** (PR #128, CRITICAL): `@supabase/ssr` 0.10 added a 2nd `headers: Record<string, string>` arg to `setAll` carrying cache-busting directives (`Cache-Control: private, no-cache, no-store, must-revalidate, max-age=0`, `Expires: 0`, `Pragma: no-cache`). Without forwarding these, Vercel/Cloudflare could cache one user's auth response and serve it to another (session bleeding between users). Fix: forward headers via `Object.entries(headers).forEach(([k, v]) => supabaseResponse.headers.set(k, v))` in `src/utils/supabase/middleware.ts`. Same pattern applied in `src/utils/supabase/server.ts` (LOW severity — Server Components mostly read-only, but Server Action writes can succeed and need header propagation). Redundant double-write to `request.cookies` removed (write to response only). Bumped `@supabase/ssr` 0.10.2 → 0.10.3 (tree-shake + cookie validation bugfixes).
+
+### Changed
+
+- **Genkit 1.36 modernization + Sentry 10.56 instrumentation** (PR #130, 7 atomic commits across 8 files):
+  - **Genkit 1.36**:
+    - Replaced `return output!` non-null assertion with explicit null guard throw in `src/ai/flows/workout-feedback-flow.ts` (1.36 canonical pattern: `if (output == null) throw new Error(...)`).
+    - Dropped per-chunk `safeParse` from the stream-chunk hot path in `src/ai/flows/workout-generator-flow.ts` (1.36 native constrained generation makes chunks schema-conformant; safeParse was redundant). Kept the final-output safeParse as defense-in-depth.
+    - Removed redundant `streamSchema: WorkoutGeneratorAIOutputSchema` from the flow definition (defaults to `outputSchema` when omitted).
+  - **Sentry 10.56**:
+    - Wrapped 11 server actions with `Sentry.withServerActionInstrumentation(name, { headers, formData, recordResponse: true }, fn)` across `src/lib/actions/treinos.ts` (5), `src/lib/actions/alunos.ts` (5), `src/lib/actions/financeiro.ts` (1). Closes distributed-tracing gap for Server Actions.
+    - Migrated `sendDefaultPii: false` → `dataCollection: { userInfo: false, httpHeaders: { request: false, response: false }, cookies: false, ipAddress: false }` in `sentry.server.config.ts` (Sentry 10.54 deprecation path).
+    - Manual `Sentry.startSpan` around `ai.generate()` in both flow files with `op: 'gen_ai.generate_content'` and `gen_ai.system` / `gen_ai.request.model` / `gen_ai.usage.{input,output}_tokens` attributes per Sentry AI Agent Monitoring schema. Manual path chosen over `@genkit-ai/observability` plugin to avoid new dependency.
+
+- **Zod forward-compat cleanup** (PR #129, 2 atomic commits across 3 files):
+  - Converted ~30 positional `z.X.method(N, 'msg')` → `z.X.method(N, { message: 'msg' })` object form in `src/lib/definitions.ts` + `src/app/actions/auth.ts` (forward-compat for Zod v4; works in v3.25 + v4).
+  - Replaced ~22 `z.string().email/uuid/url` → top-level `z.email/uuid/url` in `src/lib/definitions.ts`, `src/app/actions/auth.ts`, `src/components/dashboard/alunos/form-aluno.tsx`.
+  - Required changing imports to `zod/v4` (the default `'zod'` import is v3, which lacks top-level format functions). All schema shapes preserved (same fields, same constraints, same behavior in 3.25).
+
+### Tests
+
+- **Sentry test mock TS regression** (PR #131 hotfix): PR #130's `@sentry/nextjs` test mock used `await importOriginal()` + spread, which failed TypeScript TS2698 (spread on non-object). Fix: cast the import result to `Record<string, unknown>`.
+- **Treino test data v4-UUID regression** (PR #132 hotfix): 6 treino test regressions from PR #129's `zod/v4` import. Zod 4.0 enforces RFC 9562 UUID variant bits; test data used literal all-zeros UUIDs that v3 accepted but v4 rejects. Fix: replace 10 literal UUIDs in `src/lib/actions/treinos.test.ts` with v4-valid format (`550e8400-e29b-41d4-a716-NNNNNNNNNNNN`).
+- **101/101** vitest tests passing across **14 suites** (baseline 86 + 15 new zod-migration smoke).
+- TypeScript: **0 errors**.
+- CI: 13/13 checks pass on every push — Quality Gates, Tests & Coverage, SonarCloud, E2E, Vercel, CodeQL, Semgrep (×2), GitGuardian, CodeRabbit, cubic, Analyze (JS/TS), Vercel Preview.
+- All 4 quality gates green: `typecheck` · `lint` (0 errors, 9 pre-existing warnings) · `format:check` (13 markdown evidence files have a pre-existing prettier config gap — known LOW, not PR-introduced) · `test`.
+
+### Out of Scope (deferred to follow-up audits)
+
+- Next.js 16 migration (middleware→proxy, `cacheComponents`).
+- `getClaims()` SSR optimization.
+- `getAuthForRoute` N+1 → Prisma.
+- Full Zod v4 migration (gated on genkit unblocking — `@genkit-ai/core@1.32.0` pins `zod: ^3.23.8`).
+- `typedRoutes`, `superjson`, `generateMetadata` enablement.
+- `@genkit-ai/observability` plugin (requires new dep).
+- Architecture, security, and business-logic audit (out of Context7 scope).
+
 ## [Unreleased]
 
 ### Fixed
