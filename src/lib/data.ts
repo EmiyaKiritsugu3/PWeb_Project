@@ -20,8 +20,15 @@ export async function getAlunos(): Promise<Aluno[]> {
     const alunos = await prisma.aluno.findMany({
       orderBy: { nomeCompleto: 'asc' },
     });
-    // AlunoSchema agora exige ID obrigatório, o que o Prisma retorna
-    return alunos.map((aluno) => AlunoSchema.parse(aluno));
+    return alunos.reduce<Aluno[]>((acc, aluno) => {
+      const result = AlunoSchema.safeParse(aluno);
+      if (result.success) {
+        acc.push(result.data);
+      } else {
+        console.warn(`Skipping invalid aluno ${aluno.id}:`, result.error.issues);
+      }
+      return acc;
+    }, []);
   } catch (error) {
     Sentry.captureException(error);
     return [];

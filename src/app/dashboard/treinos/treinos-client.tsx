@@ -423,10 +423,12 @@ export default function TreinosManagementClient({ initialAlunos }: { initialAlun
         setObjetivo('');
         setExercicios([]);
       } else {
+        Logger.error('upsertTreinoAction failed:', res.error);
         throw new Error(res.error);
       }
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Erro inesperado';
+      Logger.error('handleSaveTreino error:', error);
       notify.error('Erro ao salvar', message, error);
     }
   };

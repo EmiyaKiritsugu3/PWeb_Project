@@ -47,6 +47,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `@genkit-ai/observability` plugin (requires new dep).
 - Architecture, security, and business-logic audit (out of Context7 scope).
 
+## [Unreleased]
+
+### Fixed
+
+- **E2E: auto-seed before Playwright runs (closes pre-existing debt entry in TECHNICAL-DEBT.md)**
+- **E2E: rename NEXT_PUBLIC_SUPABASE_ANON_KEY → NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY in .env.test to match Supabase SSR 0.10+ convention**
+
 ## [1.4.0] — 2026-06-04 — Code Quality Phase 2 (PR #118)
 
 ### Fixed

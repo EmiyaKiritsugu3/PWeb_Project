@@ -44,28 +44,28 @@ const prisma = new PrismaClient({ adapter });
 // Credentials MUST match tests/e2e/helpers/auth.ts
 export const E2E_USERS = {
   gerente: {
-    id: '00000000-0000-0000-0000-000000000001',
+    id: '550e8400-e29b-41d4-a716-000000000001',
     email: 'gerente@test.com',
     password: E2E_PASSWORD,
     role: Role.GERENTE,
     nomeCompleto: 'Gerente E2E',
   },
   recepcionista: {
-    id: '00000000-0000-0000-0000-000000000002',
+    id: '550e8400-e29b-41d4-a716-000000000002',
     email: 'recep@test.com',
     password: E2E_PASSWORD,
     role: Role.RECEPCIONISTA,
     nomeCompleto: 'Recepcionista E2E',
   },
   instrutor: {
-    id: '00000000-0000-0000-0000-000000000003',
+    id: '550e8400-e29b-41d4-a716-000000000003',
     email: 'instrutor@test.com',
     password: E2E_PASSWORD,
     role: Role.INSTRUTOR,
     nomeCompleto: 'Instrutor E2E',
   },
   aluno: {
-    id: '00000000-0000-0000-0000-000000000004',
+    id: '550e8400-e29b-41d4-a716-000000000004',
     email: 'aluno@test.com',
     password: E2E_PASSWORD,
     cpf: '000.000.000-04',
@@ -140,9 +140,9 @@ async function seed(): Promise<void> {
   console.log(`  Aluno upserted: ${E2E_USERS.aluno.nomeCompleto}`);
 
   // Seed Plano + INADIMPLENTE Aluno + Matricula (required for payment-status E2E)
-  const planoE2eId = '00000000-0000-0000-0000-000000000020';
-  const alunoInadimplenteId = '00000000-0000-0000-0000-000000000005';
-  const matriculaE2eId = '00000000-0000-0000-0000-000000000030';
+  const planoE2eId = '550e8400-e29b-41d4-a716-000000000020';
+  const alunoInadimplenteId = '550e8400-e29b-41d4-a716-000000000005';
+  const matriculaE2eId = '550e8400-e29b-41d4-a716-000000000030';
 
   await prisma.plano.upsert({
     where: { id: planoE2eId },
@@ -157,6 +157,17 @@ async function seed(): Promise<void> {
   console.log('  Plano E2E upserted: Plano Mensal E2E');
 
   // No auth user needed — GERENTE is the actor; aluno only needs a Prisma record
+  // Clear any prior test pagamentos so the processPayment idempotency check
+  // (pagamentoService.ts:60-73) doesn't bail out and skip the aluno status update.
+  // Without this, the second test run in the same UTC day would see the prior
+  // pagamento and return { success: true } without flipping statusMatricula to ATIVA.
+  await prisma.pagamento.deleteMany({
+    where: {
+      alunoId: alunoInadimplenteId,
+      matriculaId: matriculaE2eId,
+    },
+  });
+
   await prisma.aluno.upsert({
     where: { id: alunoInadimplenteId },
     update: { statusMatricula: 'INADIMPLENTE' },
@@ -185,7 +196,7 @@ async function seed(): Promise<void> {
   console.log('  Matricula E2E upserted: Plano Mensal E2E (VENCIDA)');
 
   // Seed 1 Treino for ALUNO (required for workout-session E2E)
-  const treinoE2eId = '00000000-0000-0000-0000-000000000010';
+  const treinoE2eId = '550e8400-e29b-41d4-a716-000000000010';
   await prisma.treino.upsert({
     where: { id: treinoE2eId },
     update: {},

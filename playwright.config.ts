@@ -7,6 +7,7 @@ dotenv.config({ path: '.env.test', override: true });
 export default defineConfig({
   testDir: './tests/e2e/specs',
   fullyParallel: false,
+  globalSetup: './tests/e2e/global-setup.ts',
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   workers: 1,
