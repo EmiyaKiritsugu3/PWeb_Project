@@ -24,7 +24,7 @@ import {
 import { useAuth } from '@/components/providers/auth-provider';
 import { I18nProvider, useI18n } from '@/components/providers/i18n-provider';
 
-function AlunoLayoutContent({ children }: { children: React.ReactNode }) {
+function AlunoLayoutContent({ children }: Readonly<{ children: React.ReactNode }>) {
   const { user, isUserLoading, signOut } = useAuth();
   const { language, setLanguage, t } = useI18n();
   const router = useRouter();
@@ -188,7 +188,7 @@ function AlunoLayoutContent({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function AlunoLayout({ children }: { children: React.ReactNode }) {
+export default function AlunoLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <I18nProvider>
       <AlunoLayoutContent>{children}</AlunoLayoutContent>

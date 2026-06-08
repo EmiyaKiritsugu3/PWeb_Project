@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description: 'Integrated Management System for Academia Five Star',
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="pt-BR" className="dark" suppressHydrationWarning>
       <body className="font-body antialiased selection:bg-primary/20 selection:text-primary">

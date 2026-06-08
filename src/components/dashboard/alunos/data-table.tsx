@@ -39,7 +39,7 @@ export function DataTable<TData, TValue>({
   isLoading,
   searchColumn = 'nomeCompleto',
   searchPlaceholder = 'Buscar por nome...',
-}: DataTableProps<TData, TValue>) {
+}: Readonly<DataTableProps<TData, TValue>>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
 
@@ -175,21 +175,22 @@ export function DataTable<TData, TValue>({
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   const canSort = header.column.getCanSort();
+                  const sortContent = canSort ? (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="-ml-3 h-8 data-[state=open]:bg-accent"
+                      onClick={header.column.getToggleSortingHandler()}
+                    >
+                      {flexRender(header.column.columnDef.header, header.getContext())}
+                      <ArrowUpDown className="ml-2 h-4 w-4" />
+                    </Button>
+                  ) : (
+                    flexRender(header.column.columnDef.header, header.getContext())
+                  );
                   return (
                     <TableHead key={header.id}>
-                      {header.isPlaceholder ? null : canSort ? (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="-ml-3 h-8 data-[state=open]:bg-accent"
-                          onClick={header.column.getToggleSortingHandler()}
-                        >
-                          {flexRender(header.column.columnDef.header, header.getContext())}
-                          <ArrowUpDown className="ml-2 h-4 w-4" />
-                        </Button>
-                      ) : (
-                        flexRender(header.column.columnDef.header, header.getContext())
-                      )}
+                      {header.isPlaceholder ? null : sortContent}
                     </TableHead>
                   );
                 })}

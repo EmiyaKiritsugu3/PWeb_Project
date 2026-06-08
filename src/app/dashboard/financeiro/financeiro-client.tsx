@@ -34,9 +34,9 @@ interface AlunoFinanceiro {
 
 export default function FinanceiroClient({
   initialInadimplentes,
-}: {
+}: Readonly<{
   initialInadimplentes: AlunoFinanceiro[];
-}) {
+}>) {
   const router = useRouter();
   const notify = useAppNotification();
   const [isAlertOpen, setIsAlertOpen] = useState(false);

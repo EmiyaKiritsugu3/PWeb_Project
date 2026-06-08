@@ -16,10 +16,10 @@ import { Logger } from '@/lib/logger';
 export default function TreinosError({
   error,
   reset,
-}: {
+}: Readonly<{
   error: Error & { digest?: string };
   reset: () => void;
-}) {
+}>) {
   useEffect(() => {
     Logger.error('Erro na seção de Treinos:', error);
   }, [error]);

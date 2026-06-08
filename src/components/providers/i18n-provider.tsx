@@ -16,7 +16,7 @@ const dictionaries: Record<Language, unknown> = { pt, en };
 
 const I18nContext = createContext<I18nContextProps | undefined>(undefined);
 
-export function I18nProvider({ children }: { children: React.ReactNode }) {
+export function I18nProvider({ children }: Readonly<{ children: React.ReactNode }>) {
   const [language, setLanguageState] = useState<Language>('pt');
 
   // Load language from localStorage on mount
@@ -24,9 +24,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
     const raw = localStorage.getItem('app-language');
     const normalized = raw?.toLowerCase() ?? '';
     let savedLang: Language = 'pt';
-    if (normalized.startsWith('pt')) {
-      savedLang = 'pt';
-    } else if (normalized.startsWith('en')) {
+    if (normalized.startsWith('en')) {
       savedLang = 'en';
     }
     setLanguageState(savedLang);

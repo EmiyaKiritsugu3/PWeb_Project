@@ -34,7 +34,7 @@ export function FormMatricula({
   aluno,
   planos,
   onSubmit,
-}: FormMatriculaProps) {
+}: Readonly<FormMatriculaProps>) {
   const [selectedPlanoId, setSelectedPlanoId] = useState<string>('');
 
   useEffect(() => {
