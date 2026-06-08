@@ -14,7 +14,9 @@ function MenubarGroup({ ...props }: React.ComponentProps<typeof MenubarPrimitive
   return <MenubarPrimitive.Group {...props} />;
 }
 
-function MenubarPortal({ ...props }: React.ComponentProps<typeof MenubarPrimitive.Portal>) {
+function MenubarPortal({
+  ...props
+}: Readonly<React.ComponentProps<typeof MenubarPrimitive.Portal>>) {
   return <MenubarPrimitive.Portal {...props} />;
 }
 
@@ -22,7 +24,7 @@ function MenubarRadioGroup({ ...props }: React.ComponentProps<typeof MenubarPrim
   return <MenubarPrimitive.RadioGroup {...props} />;
 }
 
-function MenubarSub({ ...props }: React.ComponentProps<typeof MenubarPrimitive.Sub>) {
+function MenubarSub({ ...props }: Readonly<React.ComponentProps<typeof MenubarPrimitive.Sub>>) {
   return <MenubarPrimitive.Sub data-slot="menubar-sub" {...props} />;
 }
 

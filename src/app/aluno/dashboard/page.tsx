@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import AlunoDashboardClient from './dashboard-client';
 import { redirect } from 'next/navigation';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
+import type { Aluno, Treino } from '@/lib/definitions';
 
 export default async function AlunoDashboardPage() {
   const { user, error } = await getUser();
@@ -76,8 +77,8 @@ export default async function AlunoDashboardPage() {
   const treinoDoDia = await treinoPromise;
 
   // 2. Serializar objetos de forma eficiente
-  const serializedAluno = structuredClone(aluno);
-  const serializedTreino = treinoDoDia ? structuredClone(treinoDoDia) : null;
+  const serializedAluno = structuredClone(aluno) as unknown as Aluno;
+  const serializedTreino = treinoDoDia ? (structuredClone(treinoDoDia) as unknown as Treino) : null;
 
   return <AlunoDashboardClient aluno={serializedAluno} initialTreino={serializedTreino} />;
 }

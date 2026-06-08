@@ -1,5 +1,5 @@
 import { db } from '@/lib/dummyDb';
-import { randomUUID } from 'crypto';
+import { randomUUID } from 'node:crypto';
 
 export interface Aluno {
   id: string;

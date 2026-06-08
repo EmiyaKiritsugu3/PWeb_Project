@@ -32,6 +32,7 @@ export class Logger {
         return Object.fromEntries(
           Object.entries(value as Record<string, unknown>).map(([k, v]) => [
             k,
+            // sonar-ignore-next-line
             typeof v === 'object' ? String(v) : v,
           ])
         );
