@@ -39,11 +39,11 @@ export function WorkoutEditor({
   onSave,
   treinoToEdit,
   onCancel,
-}: {
+}: Readonly<{
   onSave: (treino: Omit<Treino, 'id' | 'alunoId' | 'instrutorId'>) => void;
   treinoToEdit: Treino | null;
   onCancel: () => void;
-}) {
+}>) {
   const { toast } = useToast();
   const [objetivo, setObjetivo] = useState(treinoToEdit?.objetivo || '');
   const [exercicios, setExercicios] = useState<Partial<Exercicio>[]>(
@@ -156,7 +156,11 @@ export function WorkoutEditor({
                     className="w-full md:w-20"
                     value={exercicio.series || ''}
                     onChange={(e) =>
-                      handleExercicioChange(exercicio.id!, 'series', parseInt(e.target.value))
+                      handleExercicioChange(
+                        exercicio.id!,
+                        'series',
+                        Number.parseInt(e.target.value, 10)
+                      )
                     }
                   />
                 </div>

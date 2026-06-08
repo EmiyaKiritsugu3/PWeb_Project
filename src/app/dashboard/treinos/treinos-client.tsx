@@ -59,10 +59,10 @@ const flatExerciciosOptions = EXERCICIOS_POR_GRUPO.flatMap((g) =>
 function WorkoutGenerator({
   onGenerate,
   isGenerating,
-}: {
+}: Readonly<{
   onGenerate: (data: WorkoutGeneratorInput) => Promise<void>;
   isGenerating: boolean;
-}) {
+}>) {
   const form = useForm<WorkoutGeneratorInput>({
     resolver: zodResolver(WorkoutGeneratorInputSchema),
     defaultValues: {
@@ -148,8 +148,8 @@ function WorkoutGenerator({
                       max={7}
                       {...field}
                       onChange={(e) => {
-                        const value = parseInt(e.target.value, 10);
-                        field.onChange(isNaN(value) ? '' : value);
+                        const value = Number.parseInt(e.target.value, 10);
+                        field.onChange(Number.isNaN(value) ? '' : value);
                       }}
                     />
                   </FormControl>
@@ -195,12 +195,12 @@ function PlanoGeradoParaEdicao({
   aluno,
   onSave,
   onCancel,
-}: {
+}: Readonly<{
   plano: WorkoutPlan;
   aluno: Aluno;
   onSave: (planoEditado: WorkoutPlan) => Promise<void>;
   onCancel: () => void;
-}) {
+}>) {
   const [planoEditado, setPlanoEditado] = useState(plano);
 
   const handleExercicioChange = (
@@ -213,7 +213,7 @@ function PlanoGeradoParaEdicao({
     const exercicio = novoPlano.workouts[treinoIndex].exercicios[exIndex];
 
     if (field === 'series') {
-      const parsed = typeof value === 'string' ? parseInt(value, 10) : value;
+      const parsed = typeof value === 'string' ? Number.parseInt(value, 10) : value;
       exercicio[field] = Number.isFinite(parsed) ? parsed : (undefined as unknown as number);
     } else {
       Object.assign(exercicio, { [field]: value });
@@ -346,7 +346,9 @@ function buildWorkoutTreinos(
   }));
 }
 
-export default function TreinosManagementClient({ initialAlunos }: { initialAlunos: Aluno[] }) {
+export default function TreinosManagementClient({
+  initialAlunos,
+}: Readonly<{ initialAlunos: Aluno[] }>) {
   const notify = useAppNotification();
   const [selectedAlunoId, setSelectedAlunoId] = useState<string | null>(null);
   const [objetivo, setObjetivo] = useState('');
@@ -383,7 +385,7 @@ export default function TreinosManagementClient({ initialAlunos }: { initialAlun
           return { ...ex, nomeExercicio: value, descricao: selectedOption?.description || '' };
         }
         if (field === 'series') {
-          const parsed = parseInt(String(value), 10);
+          const parsed = Number.parseInt(String(value), 10);
           return { ...ex, series: Number.isFinite(parsed) ? parsed : 0 };
         }
         return { ...ex, [field]: value };
@@ -560,7 +562,7 @@ export default function TreinosManagementClient({ initialAlunos }: { initialAlun
                           className="w-20"
                           value={exercicio.series || ''}
                           onChange={(e) => {
-                            const parsed = parseInt(e.target.value, 10);
+                            const parsed = Number.parseInt(e.target.value, 10);
                             handleExercicioChange(
                               exercicio.id!,
                               'series',

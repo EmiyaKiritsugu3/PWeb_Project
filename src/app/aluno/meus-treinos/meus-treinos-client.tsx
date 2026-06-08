@@ -47,10 +47,10 @@ import { WorkoutEditor } from '@/components/dashboard/aluno/workout-editor';
 export default function MeusTreinosClient({
   initialTreinos,
   userId,
-}: {
+}: Readonly<{
   initialTreinos: Treino[];
   userId: string;
-}) {
+}>) {
   const notify = useAppNotification();
   const router = useRouter();
   const [meusTreinos, setMeusTreinos] = useState<Treino[]>(initialTreinos);
@@ -104,7 +104,7 @@ export default function MeusTreinosClient({
   };
 
   const handleDayChange = async (treinoId: string, dia: string) => {
-    const novoDia = dia === 'nenhum' ? null : parseInt(dia, 10);
+    const novoDia = dia === 'nenhum' ? null : Number.parseInt(dia, 10);
 
     if (novoDia !== null && meusTreinos.some((t) => t.diaSemana === novoDia && t.id !== treinoId)) {
       notify.error('Dia já ocupado', 'Já existe outro treino agendado para este dia.');

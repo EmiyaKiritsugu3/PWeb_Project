@@ -36,10 +36,10 @@ type ExercicioEmSessao = {
 function FeedbackCard({
   feedback,
   isLoadingFeedback,
-}: {
+}: Readonly<{
   feedback: WorkoutFeedbackOutput | null;
   isLoadingFeedback: boolean;
-}) {
+}>) {
   if (isLoadingFeedback) {
     return (
       <div className="flex items-center justify-center gap-2 text-muted-foreground py-8">
@@ -79,7 +79,7 @@ function initExercicios(treino: Treino): ExercicioEmSessao[] {
   }));
 }
 
-export function WorkoutSession({ treino, onFinish, onCancel }: WorkoutSessionProps) {
+export function WorkoutSession({ treino, onFinish, onCancel }: Readonly<WorkoutSessionProps>) {
   const [exerciciosEmSessao, setExerciciosEmSessao] = useState<ExercicioEmSessao[]>(() =>
     initExercicios(treino)
   );
@@ -114,7 +114,7 @@ export function WorkoutSession({ treino, onFinish, onCancel }: WorkoutSessionPro
     campo: 'peso' | 'repeticoesFeitas',
     valor: string
   ) => {
-    const valorNumerico = valor === '' ? null : parseInt(valor, 10);
+    const valorNumerico = valor === '' ? null : Number.parseInt(valor, 10);
 
     setExerciciosEmSessao(
       exerciciosEmSessao.map((ex, index) => {
