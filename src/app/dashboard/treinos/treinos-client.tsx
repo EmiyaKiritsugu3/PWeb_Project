@@ -1,8 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Select,
   SelectContent,
@@ -10,7 +8,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { EXERCICIOS_POR_GRUPO } from '@/lib/constants';
 import {
   Card,
   CardContent,
@@ -22,173 +19,20 @@ import {
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { PlusCircle, Save, Trash2, Wand2, BrainCircuit, UserCheck, Dumbbell } from 'lucide-react';
+import { PlusCircle, Save, UserCheck, Dumbbell } from 'lucide-react';
 import { Logger } from '@/lib/logger';
-import type { Aluno, Exercicio } from '@/lib/definitions';
+import type { Aluno } from '@/lib/definitions';
 import { useAppNotification } from '@/hooks/use-app-notification';
-import { Combobox } from '@/components/ui/combobox';
-import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
+import { flatExerciciosOptions } from '@/lib/exercise-options';
+import { useWorkoutExercises } from '@/hooks/use-workout-exercises';
+import { WorkoutExerciseRow } from '@/components/dashboard/aluno/workout-exercise-row';
 import { streamWorkoutPlan } from '@/ai/flows/workout-generator-flow';
-import {
-  WorkoutGeneratorInputSchema,
-  type WorkoutGeneratorInput,
-  type WorkoutGeneratorAIOutput,
-} from '@/ai/schemas';
+import { type WorkoutGeneratorInput, type WorkoutGeneratorAIOutput } from '@/ai/schemas';
+import { WorkoutGenerator } from '@/components/dashboard/aluno/workout-generator';
 import { batchUpsertTreinoAction, upsertTreinoAction } from '@/lib/actions/treinos';
 
 type WorkoutPlan = WorkoutGeneratorAIOutput;
 type WorkoutExercise = WorkoutPlan['workouts'][0]['exercicios'][0];
-
-const exerciciosOptions = EXERCICIOS_POR_GRUPO.map((grupo) => ({
-  label: grupo.grupo,
-  options: grupo.exercicios.map((ex) => ({
-    value: ex.nomeExercicio,
-    label: ex.nomeExercicio,
-    keywords: [grupo.grupo],
-  })),
-}));
-
-const flatExerciciosOptions = EXERCICIOS_POR_GRUPO.flatMap((g) =>
-  g.exercicios.map((ex) => ({
-    value: ex.nomeExercicio,
-    label: ex.nomeExercicio,
-    description: ex.descricao,
-  }))
-);
-
-function WorkoutGenerator({
-  onGenerate,
-  isGenerating,
-}: Readonly<{
-  onGenerate: (data: WorkoutGeneratorInput) => Promise<void>;
-  isGenerating: boolean;
-}>) {
-  const form = useForm<WorkoutGeneratorInput>({
-    resolver: zodResolver(WorkoutGeneratorInputSchema),
-    defaultValues: {
-      diasPorSemana: 3,
-      objetivo: 'Hipertrofia',
-      nivelExperiencia: 'Iniciante',
-      observacoesAdicionais: '',
-    },
-  });
-
-  return (
-    <Card className="bg-secondary border-primary/20">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Wand2 className="text-primary" />
-          Gerador de Plano Semanal com IA
-        </CardTitle>
-        <CardDescription>
-          Preencha os dados do aluno para que a IA crie uma divisão de treinos completa para a
-          semana.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Form {...form}>
-          <form
-            id="ai-generator-form"
-            onSubmit={form.handleSubmit(onGenerate)}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
-          >
-            <FormField
-              control={form.control}
-              name="objetivo"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Objetivo</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="Hipertrofia">Hipertrofia</SelectItem>
-                      <SelectItem value="Perda de Peso">Perda de Peso</SelectItem>
-                      <SelectItem value="Força">Força</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="nivelExperiencia"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nível de Experiência</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="Iniciante">Iniciante</SelectItem>
-                      <SelectItem value="Intermediário">Intermediário</SelectItem>
-                      <SelectItem value="Avançado">Avançado</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="diasPorSemana"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Dias/Semana</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      min={1}
-                      max={7}
-                      {...field}
-                      onChange={(e) => {
-                        const value = Number.parseInt(e.target.value, 10);
-                        field.onChange(Number.isNaN(value) ? '' : value);
-                      }}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <div className="sm:col-span-2 lg:col-span-1">
-              <FormField
-                control={form.control}
-                name="observacoesAdicionais"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Observações (Opcional)</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Ex: Lesão no joelho direito" {...field} />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-            </div>
-          </form>
-        </Form>
-      </CardContent>
-      <CardFooter>
-        <Button type="submit" form="ai-generator-form" disabled={isGenerating}>
-          {isGenerating ? (
-            <>
-              <BrainCircuit className="mr-2 h-4 w-4 animate-pulse" /> Gerando Plano...
-            </>
-          ) : (
-            <>
-              <Wand2 className="mr-2 h-4 w-4" /> Gerar Plano Semanal
-            </>
-          )}
-        </Button>
-      </CardFooter>
-    </Card>
-  );
-}
 
 function PlanoGeradoParaEdicao({
   plano,
@@ -258,50 +102,20 @@ function PlanoGeradoParaEdicao({
 
             <div className="space-y-4">
               {treino.exercicios.map((exercicio, exIndex) => (
-                <div
+                <WorkoutExerciseRow
                   key={`${exercicio.nomeExercicio}-${exIndex}`}
-                  className="grid grid-cols-1 md:grid-cols-[1fr_auto_auto_1fr] items-end gap-3"
-                >
-                  <div className="grid gap-2">
-                    <Label>Exercício</Label>
-                    <Input
-                      value={exercicio.nomeExercicio}
-                      onChange={(e) =>
-                        handleExercicioChange(treinoIndex, exIndex, 'nomeExercicio', e.target.value)
-                      }
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label>Séries</Label>
-                    <Input
-                      type="number"
-                      className="w-20"
-                      value={exercicio.series}
-                      onChange={(e) =>
-                        handleExercicioChange(treinoIndex, exIndex, 'series', e.target.value)
-                      }
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label>Reps</Label>
-                    <Input
-                      className="w-24"
-                      value={exercicio.repeticoes}
-                      onChange={(e) =>
-                        handleExercicioChange(treinoIndex, exIndex, 'repeticoes', e.target.value)
-                      }
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label>Observações</Label>
-                    <Input
-                      value={exercicio.observacoes}
-                      onChange={(e) =>
-                        handleExercicioChange(treinoIndex, exIndex, 'observacoes', e.target.value)
-                      }
-                    />
-                  </div>
-                </div>
+                  exercise={{ ...exercicio, id: `temp-${treinoIndex}-${exIndex}` }}
+                  index={exIndex}
+                  mode="input"
+                  onUpdate={(_id, field, value) =>
+                    handleExercicioChange(
+                      treinoIndex,
+                      exIndex,
+                      field as keyof WorkoutExercise,
+                      value
+                    )
+                  }
+                />
               ))}
             </div>
           </div>
@@ -351,55 +165,23 @@ export default function TreinosManagementClient({
 }: Readonly<{ initialAlunos: Aluno[] }>) {
   const notify = useAppNotification();
   const [selectedAlunoId, setSelectedAlunoId] = useState<string | null>(null);
-  const [objetivo, setObjetivo] = useState('');
-  const [exercicios, setExercicios] = useState<Partial<Exercicio>[]>([]);
+  const {
+    objetivo,
+    setObjetivo,
+    exercicios,
+    addObjective,
+    removeExercise,
+    updateExercise,
+    hasValidationErrors,
+    reset,
+  } = useWorkoutExercises();
   const [isGenerating, setIsGenerating] = useState(false);
   const [planoGerado, setPlanoGerado] = useState<WorkoutPlan | null>(null);
 
   const selectedAluno = initialAlunos.find((a) => a.id === selectedAlunoId);
 
-  const handleAddExercicio = () => {
-    setExercicios([
-      ...exercicios,
-      {
-        id: `${Date.now()}`,
-        nomeExercicio: '',
-        series: 3,
-        repeticoes: '10-12',
-        observacoes: '',
-        descricao: '',
-      },
-    ]);
-  };
-
-  const handleRemoveExercicio = (id: string) => {
-    setExercicios(exercicios.filter((ex) => ex.id !== id));
-  };
-
-  const handleExercicioChange = (id: string, field: keyof Exercicio, value: string | number) => {
-    setExercicios(
-      exercicios.map((ex) => {
-        if (ex.id !== id) return ex;
-        if (field === 'nomeExercicio' && typeof value === 'string') {
-          const selectedOption = flatExerciciosOptions.find((opt) => opt.value === value);
-          return { ...ex, nomeExercicio: value, descricao: selectedOption?.description || '' };
-        }
-        if (field === 'series') {
-          const parsed = Number.parseInt(String(value), 10);
-          return { ...ex, series: Number.isFinite(parsed) ? parsed : 0 };
-        }
-        return { ...ex, [field]: value };
-      })
-    );
-  };
-
   const handleSaveTreino = async () => {
-    if (
-      !selectedAlunoId ||
-      !objetivo ||
-      exercicios.length === 0 ||
-      exercicios.some((e) => !e.nomeExercicio)
-    ) {
+    if (!selectedAlunoId || hasValidationErrors()) {
       notify.error('Erro ao salvar', 'Verifique os campos obrigatórios.');
       return;
     }
@@ -422,8 +204,7 @@ export default function TreinosManagementClient({
 
       if (res.success) {
         notify.success('Treino Salvo!');
-        setObjetivo('');
-        setExercicios([]);
+        reset();
       } else {
         Logger.error('upsertTreinoAction failed:', res.error);
         throw new Error(res.error);
@@ -538,71 +319,16 @@ export default function TreinosManagementClient({
                 <div className="grid gap-4">
                   <h3 className="font-medium">Exercícios</h3>
                   {exercicios.map((exercicio, index) => (
-                    <div
-                      key={exercicio.id}
-                      className="grid grid-cols-1 md:grid-cols-[1fr_auto_auto_1fr_auto] items-end gap-3 rounded-md border p-4 bg-muted/20"
-                    >
-                      <div className="grid gap-2">
-                        {index === 0 && <Label className="md:hidden">Exercício</Label>}
-                        <Combobox
-                          options={exerciciosOptions}
-                          flatOptions={flatExerciciosOptions}
-                          value={exercicio.nomeExercicio}
-                          onChange={(value) =>
-                            handleExercicioChange(exercicio.id!, 'nomeExercicio', value)
-                          }
-                          placeholder="Selecione..."
-                          searchPlaceholder="Buscar..."
-                        />
-                      </div>
-                      <div className="grid gap-2">
-                        {index === 0 && <Label className="md:hidden">Séries</Label>}
-                        <Input
-                          type="number"
-                          className="w-20"
-                          value={exercicio.series || ''}
-                          onChange={(e) => {
-                            const parsed = Number.parseInt(e.target.value, 10);
-                            handleExercicioChange(
-                              exercicio.id!,
-                              'series',
-                              Number.isFinite(parsed) ? parsed : 0
-                            );
-                          }}
-                        />
-                      </div>
-                      <div className="grid gap-2">
-                        {index === 0 && <Label className="md:hidden">Reps</Label>}
-                        <Input
-                          placeholder="10-12"
-                          className="w-24"
-                          value={exercicio.repeticoes || ''}
-                          onChange={(e) =>
-                            handleExercicioChange(exercicio.id!, 'repeticoes', e.target.value)
-                          }
-                        />
-                      </div>
-                      <div className="grid gap-2">
-                        {index === 0 && <Label className="md:hidden">Obs</Label>}
-                        <Input
-                          placeholder="Opcional"
-                          value={exercicio.observacoes || ''}
-                          onChange={(e) =>
-                            handleExercicioChange(exercicio.id!, 'observacoes', e.target.value)
-                          }
-                        />
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        aria-label="Excluir exercício"
-                        onClick={() => handleRemoveExercicio(exercicio.id!)}
-                      >
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
+                    <div key={exercicio.id} className="rounded-md border p-4 bg-muted/20">
+                      <WorkoutExerciseRow
+                        exercise={exercicio}
+                        index={index}
+                        onUpdate={updateExercise}
+                        onRemove={removeExercise}
+                      />
                     </div>
                   ))}
-                  <Button variant="outline" onClick={handleAddExercicio}>
+                  <Button variant="outline" onClick={addObjective}>
                     <PlusCircle className="mr-2 h-4 w-4" /> Adicionar Exercício
                   </Button>
                 </div>
