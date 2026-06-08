@@ -51,6 +51,20 @@ jobs:
         if: github.event.pull_request == null || github.event.pull_request.user.login != 'dependabot[bot]'
         run: npm run typecheck
 
+  fallow:
+    name: Fallow - Codebase Intelligence
+    runs-on: ubuntu-latest
+    # Run on PRs and pushes, but don't block the pipeline initially
+    continue-on-error: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Full history for churn analysis
+
+      - name: Fallow - Codebase Intelligence
+        uses: fallow-rs/fallow@v2.89.0
+
   test:
     name: Tests & Coverage
     runs-on: ubuntu-latest
