@@ -99,7 +99,7 @@
     "react": "^19.2.7",
     "react-day-picker": "^10.0.1",
     "react-dom": "^19.2.7",
-    "react-hook-form": "^7.77.0",
+    "react-hook-form": "^7.78.0",
     "react-timer-hook": "^4.0.5",
     "recharts": "^3.8.1",
     "tailwind-merge": "^3.6.0",
