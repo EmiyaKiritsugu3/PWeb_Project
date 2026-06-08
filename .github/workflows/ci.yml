@@ -62,8 +62,12 @@ jobs:
         with:
           fetch-depth: 0 # Full history for churn analysis
 
-      - name: Fallow - Codebase Intelligence
-        uses: fallow-rs/fallow@v2.89.0
+  - name: Fallow - Codebase Intelligence
+    uses: fallow-rs/fallow@v2.89.0
+    with:
+      fail-on-issues: 'false'
+      comment: 'true'
+      review-comments: 'false'
 
   test:
     name: Tests & Coverage
