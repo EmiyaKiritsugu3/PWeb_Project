@@ -96,6 +96,65 @@ function handleFieldChange(
   onUpdate(id, field, value);
 }
 
+interface SeriesFieldProps {
+  exerciseId: string;
+  series: number | undefined | null;
+  onUpdate: (id: string, field: keyof Exercicio, value: string | number) => void;
+}
+
+function SeriesField({ exerciseId, series, onUpdate }: SeriesFieldProps) {
+  return (
+    <Input
+      type="number"
+      className="w-20"
+      value={series || ''}
+      onChange={(e) => handleSeriesChange(exerciseId, e.target.value, onUpdate)}
+    />
+  );
+}
+
+interface RepsFieldProps {
+  exerciseId: string;
+  repeticoes: string | undefined | null;
+  onUpdate: (id: string, field: keyof Exercicio, value: string | number) => void;
+}
+
+function RepsField({ exerciseId, repeticoes, onUpdate }: RepsFieldProps) {
+  return (
+    <Input
+      placeholder="10-12"
+      className="w-24"
+      value={repeticoes ?? ''}
+      onChange={(e) => handleFieldChange(exerciseId, 'repeticoes', e.target.value, onUpdate)}
+    />
+  );
+}
+
+interface ObsFieldProps {
+  exerciseId: string;
+  observacoes: string | undefined | null;
+  onUpdate: (id: string, field: keyof Exercicio, value: string | number) => void;
+}
+
+function ObsField({ exerciseId, observacoes, onUpdate }: ObsFieldProps) {
+  return (
+    <Input
+      placeholder="Opcional"
+      value={observacoes ?? ''}
+      onChange={(e) => handleFieldChange(exerciseId, 'observacoes', e.target.value, onUpdate)}
+    />
+  );
+}
+
+interface RemoveFieldProps {
+  exerciseId: string;
+  onRemove: (id: string) => void;
+}
+
+function RemoveField({ exerciseId, onRemove }: RemoveFieldProps) {
+  return <DeleteButton onClick={() => onRemove(exerciseId)} />;
+}
+
 export function WorkoutExerciseRow({
   exercise,
   index,
@@ -104,12 +163,13 @@ export function WorkoutExerciseRow({
   mode = 'combobox',
 }: WorkoutExerciseRowProps) {
   const showLabel = index === 0;
+  const exerciseId = exercise.id!;
 
   return (
     <div className={`grid ${gridCols(Boolean(onRemove))} items-end gap-3`}>
       <GridField showLabel={showLabel} label="Exercicio">
         <ExerciseNameField
-          exerciseId={exercise.id!}
+          exerciseId={exerciseId}
           value={exercise.nomeExercicio ?? ''}
           onUpdate={onUpdate}
           mode={mode}
@@ -117,32 +177,18 @@ export function WorkoutExerciseRow({
       </GridField>
 
       <GridField showLabel={showLabel} label="Series">
-        <Input
-          type="number"
-          className="w-20"
-          value={exercise.series || ''}
-          onChange={(e) => handleSeriesChange(exercise.id!, e.target.value, onUpdate)}
-        />
+        <SeriesField exerciseId={exerciseId} series={exercise.series} onUpdate={onUpdate} />
       </GridField>
 
       <GridField showLabel={showLabel} label="Reps">
-        <Input
-          placeholder="10-12"
-          className="w-24"
-          value={exercise.repeticoes ?? ''}
-          onChange={(e) => handleFieldChange(exercise.id!, 'repeticoes', e.target.value, onUpdate)}
-        />
+        <RepsField exerciseId={exerciseId} repeticoes={exercise.repeticoes} onUpdate={onUpdate} />
       </GridField>
 
       <GridField showLabel={showLabel} label="Obs">
-        <Input
-          placeholder="Opcional"
-          value={exercise.observacoes ?? ''}
-          onChange={(e) => handleFieldChange(exercise.id!, 'observacoes', e.target.value, onUpdate)}
-        />
+        <ObsField exerciseId={exerciseId} observacoes={exercise.observacoes} onUpdate={onUpdate} />
       </GridField>
 
-      {onRemove && <DeleteButton onClick={() => onRemove(exercise.id!)} />}
+      {onRemove && <RemoveField exerciseId={exerciseId} onRemove={onRemove} />}
     </div>
   );
 }

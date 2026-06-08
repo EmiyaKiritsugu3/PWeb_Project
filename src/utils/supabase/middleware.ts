@@ -37,6 +37,42 @@ async function getAuthForRoute(
   };
 }
 
+function isProtectedRoute(pathname: string) {
+  const isDashboardRoute = pathname.startsWith('/dashboard');
+  const isAlunoRoute = pathname.startsWith('/aluno') && !pathname.startsWith('/aluno/login');
+  return { isProtected: isDashboardRoute || isAlunoRoute, isDashboardRoute, isAlunoRoute };
+}
+
+function redirectRouteGuard(
+  pathname: string,
+  isFuncionario: boolean,
+  role: string | null,
+  request: NextRequest
+): NextResponse | null {
+  const { isAlunoRoute, isDashboardRoute } = isProtectedRoute(pathname);
+
+  if (isFuncionario && isAlunoRoute) {
+    const url = request.nextUrl.clone();
+    url.pathname = '/dashboard';
+    return NextResponse.redirect(url);
+  }
+
+  if (!isFuncionario && isDashboardRoute) {
+    const url = request.nextUrl.clone();
+    url.pathname = '/aluno';
+    return NextResponse.redirect(url);
+  }
+
+  const isFinancialRoute = FINANCIAL_ROUTES.some((r) => pathname.startsWith(r));
+  if (isFuncionario && isFinancialRoute && role !== 'GERENTE') {
+    const url = request.nextUrl.clone();
+    url.pathname = '/dashboard';
+    return NextResponse.redirect(url);
+  }
+
+  return null;
+}
+
 export const updateSession = async (request: NextRequest) => {
   const supabaseResponse = NextResponse.next({
     request: {
@@ -59,34 +95,14 @@ export const updateSession = async (request: NextRequest) => {
   });
 
   const pathname = request.nextUrl.pathname;
-  const isDashboardRoute = pathname.startsWith('/dashboard');
-  const isAlunoRoute = pathname.startsWith('/aluno') && !pathname.startsWith('/aluno/login');
-  const isProtectedRoute = isDashboardRoute || isAlunoRoute;
-
-  if (!isProtectedRoute) return supabaseResponse;
+  const { isProtected } = isProtectedRoute(pathname);
+  if (!isProtected) return supabaseResponse;
 
   const auth = await getAuthForRoute(supabase, pathname, request);
   if ('redirect' in auth) return auth.redirect;
 
-  const { isFuncionario, role } = auth;
-  if (isFuncionario && isAlunoRoute) {
-    const dashboardUrl = request.nextUrl.clone();
-    dashboardUrl.pathname = '/dashboard';
-    return NextResponse.redirect(dashboardUrl);
-  }
-
-  if (!isFuncionario && isDashboardRoute) {
-    const alunoUrl = request.nextUrl.clone();
-    alunoUrl.pathname = '/aluno';
-    return NextResponse.redirect(alunoUrl);
-  }
-
-  const isFinancialRoute = FINANCIAL_ROUTES.some((r) => pathname.startsWith(r));
-  if (isFuncionario && isFinancialRoute && role !== 'GERENTE') {
-    const dashboardUrl = request.nextUrl.clone();
-    dashboardUrl.pathname = '/dashboard';
-    return NextResponse.redirect(dashboardUrl);
-  }
+  const redirectResult = redirectRouteGuard(pathname, auth.isFuncionario, auth.role, request);
+  if (redirectResult) return redirectResult;
 
   return supabaseResponse;
 };

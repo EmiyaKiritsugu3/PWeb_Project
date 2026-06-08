@@ -68,11 +68,59 @@ function InfoField({ label, value }: { label: string; value: string }) {
   );
 }
 
-function AlunoProfileCard({ aluno }: { aluno: NonNullable<Aluno> }) {
-  const matriculaAtiva = aluno.Matriculas.find((m) => m.status === 'ATIVA');
-  const expNecessaria = aluno.nivel * 1500;
-  const xpPercent = Math.min(Math.round((aluno.exp / expNecessaria) * 100), 100);
+function XpProgressBar({ exp, nivel }: { exp: number; nivel: number }) {
+  const expNecessaria = nivel * 1500;
+  const xpPercent = Math.min(Math.round((exp / expNecessaria) * 100), 100);
 
+  return (
+    <div className="w-full space-y-1">
+      <div className="flex justify-between text-xs text-muted-foreground">
+        <span>{exp} XP</span>
+        <span>{expNecessaria} XP</span>
+      </div>
+      <div className="h-2 rounded-full bg-white/10 overflow-hidden">
+        <div
+          className="h-full bg-gradient-to-r from-primary to-blue-500 rounded-full transition-all"
+          style={{ width: `${xpPercent}%` }}
+        />
+      </div>
+    </div>
+  );
+}
+
+function ProfileDetailsSection({ aluno }: { aluno: NonNullable<Aluno> }) {
+  const matriculaAtiva = aluno.Matriculas.find((m) => m.status === 'ATIVA');
+
+  return (
+    <CardContent className="border-t border-white/5 pt-4 space-y-3">
+      <InfoField label="CPF" value={aluno.cpf} />
+      {aluno.telefone && <InfoField label="Telefone" value={aluno.telefone} />}
+      {aluno.dataNascimento && (
+        <InfoField
+          label="Nascimento"
+          value={format(new Date(aluno.dataNascimento), 'dd/MM/yyyy')}
+        />
+      )}
+      <InfoField label="Cadastro" value={format(new Date(aluno.dataCadastro), 'dd/MM/yyyy')} />
+      {matriculaAtiva && (
+        <div className="grid gap-1 text-sm">
+          <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+            Plano Atual
+          </span>
+          <span className="font-medium text-primary">{matriculaAtiva.Plano.nome}</span>
+          <span className="text-xs text-muted-foreground">
+            Vence em{' '}
+            {format(new Date(matriculaAtiva.dataVencimento), "dd 'de' MMMM 'de' yyyy", {
+              locale: ptBR,
+            })}
+          </span>
+        </div>
+      )}
+    </CardContent>
+  );
+}
+
+function AlunoProfileCard({ aluno }: { aluno: NonNullable<Aluno> }) {
   return (
     <Card className="glass-card border-white/5 lg:col-span-1">
       <CardContent className="pt-6 flex flex-col items-center text-center gap-4">
@@ -108,45 +156,10 @@ function AlunoProfileCard({ aluno }: { aluno: NonNullable<Aluno> }) {
           />
         </div>
 
-        <div className="w-full space-y-1">
-          <div className="flex justify-between text-xs text-muted-foreground">
-            <span>{aluno.exp} XP</span>
-            <span>{expNecessaria} XP</span>
-          </div>
-          <div className="h-2 rounded-full bg-white/10 overflow-hidden">
-            <div
-              className="h-full bg-gradient-to-r from-primary to-blue-500 rounded-full transition-all"
-              style={{ width: `${xpPercent}%` }}
-            />
-          </div>
-        </div>
+        <XpProgressBar exp={aluno.exp} nivel={aluno.nivel} />
       </CardContent>
 
-      <CardContent className="border-t border-white/5 pt-4 space-y-3">
-        <InfoField label="CPF" value={aluno.cpf} />
-        {aluno.telefone && <InfoField label="Telefone" value={aluno.telefone} />}
-        {aluno.dataNascimento && (
-          <InfoField
-            label="Nascimento"
-            value={format(new Date(aluno.dataNascimento), 'dd/MM/yyyy')}
-          />
-        )}
-        <InfoField label="Cadastro" value={format(new Date(aluno.dataCadastro), 'dd/MM/yyyy')} />
-        {matriculaAtiva && (
-          <div className="grid gap-1 text-sm">
-            <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
-              Plano Atual
-            </span>
-            <span className="font-medium text-primary">{matriculaAtiva.Plano.nome}</span>
-            <span className="text-xs text-muted-foreground">
-              Vence em{' '}
-              {format(new Date(matriculaAtiva.dataVencimento), "dd 'de' MMMM 'de' yyyy", {
-                locale: ptBR,
-              })}
-            </span>
-          </div>
-        )}
-      </CardContent>
+      <ProfileDetailsSection aluno={aluno} />
     </Card>
   );
 }

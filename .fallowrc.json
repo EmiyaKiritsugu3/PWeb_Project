@@ -1,0 +1,24 @@
+{
+  "$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/main/schema.json",
+  "ignorePatterns": ["src/components/ui/**"],
+  "ignoreExports": [{ "file": "src/components/ui/**", "exports": ["*"] }],
+  "rules": {
+    "unused-exports": "warn",
+    "unused-types": "off",
+    "unused-files": "off"
+  },
+  "duplicates": {
+    "mode": "mild",
+    "ignore": ["src/components/ui/**", "**/*.test.ts", "**/*.test.tsx"],
+    "threshold": 15
+  },
+  "health": {
+    "maxCyclomatic": 20,
+    "maxCognitive": 15,
+    "maxCrap": 30,
+    "ignore": ["src/components/ui/**"]
+  },
+  "audit": {
+    "gate": "new-only"
+  }
+}
