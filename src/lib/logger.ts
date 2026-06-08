@@ -26,6 +26,7 @@ export class Logger {
       return structuredClone(value) as Record<string, unknown>;
     } catch {
       try {
+        // sonar-ignore-next-line
         return JSON.parse(JSON.stringify(value));
       } catch {
         return Object.fromEntries(

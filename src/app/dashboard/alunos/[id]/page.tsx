@@ -30,7 +30,7 @@ const STATUS_VARIANT: Record<string, 'default' | 'destructive' | 'secondary'> = 
 
 function getInitials(name: string) {
   const parts = name.split(' ');
-  if (parts.length > 1) return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
+  if (parts.length > 1) return `${parts[0][0]}${parts.at(-1)![0]}`.toUpperCase();
   return name.substring(0, 2).toUpperCase();
 }
 
@@ -265,7 +265,7 @@ export default async function AlunoDetalhesPage({ params }: AlunoDetalhesPagePro
                         <div>
                           <p className="font-medium text-sm">{t.objetivo}</p>
                           <p className="text-xs text-muted-foreground">
-                            {t.diaSemana !== null ? dias[t.diaSemana] : 'Sem dia fixo'} •{' '}
+                            {t.diaSemana === null ? 'Sem dia fixo' : dias[t.diaSemana]} •{' '}
                             {t.Exercicios.length} exercício(s)
                           </p>
                         </div>

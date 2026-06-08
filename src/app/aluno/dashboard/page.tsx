@@ -33,7 +33,7 @@ export default async function AlunoDashboardPage() {
     },
   });
 
-  const [aluno] = await Promise.all([alunoPromise]);
+  const aluno = await alunoPromise;
 
   if (!aluno) {
     return (
@@ -73,11 +73,11 @@ export default async function AlunoDashboardPage() {
     },
   });
 
-  const [treinoDoDia] = await Promise.all([treinoPromise]);
+  const treinoDoDia = await treinoPromise;
 
   // 2. Serializar objetos de forma eficiente
-  const serializedAluno = JSON.parse(JSON.stringify(aluno));
-  const serializedTreino = treinoDoDia ? JSON.parse(JSON.stringify(treinoDoDia)) : null;
+  const serializedAluno = structuredClone(aluno);
+  const serializedTreino = treinoDoDia ? structuredClone(treinoDoDia) : null;
 
   return <AlunoDashboardClient aluno={serializedAluno} initialTreino={serializedTreino} />;
 }

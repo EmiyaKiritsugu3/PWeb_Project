@@ -7,7 +7,7 @@ import { Role } from '@/lib/definitions';
 
 async function PlanosDataWrapper() {
   const planos = await getPlanos();
-  const serialized = JSON.parse(JSON.stringify(planos));
+  const serialized = structuredClone(planos);
   return <PlanosClient initialPlanos={serialized} />;
 }
 
