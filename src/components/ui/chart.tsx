@@ -43,7 +43,7 @@ const ChartContainer = React.forwardRef<
   }
 >(({ id, className, children, config, ...props }, ref) => {
   const uniqueId = React.useId();
-  const chartId = `chart-${id || uniqueId.replace(/:/g, '')}`;
+  const chartId = `chart-${id || uniqueId.replaceAll(':', '')}`;
   const chartValue = React.useMemo(() => ({ config }), [config]);
 
   return (
@@ -167,7 +167,7 @@ const ChartTooltipContent = React.forwardRef<
           className
         )}
       >
-        {!nestLabel ? tooltipLabel : null}
+        {nestLabel ? null : tooltipLabel}
         <div className="grid gap-1.5">
           {payload.map((item, index) => {
             const key = `${nameKey || item.name || item.dataKey || 'value'}`;

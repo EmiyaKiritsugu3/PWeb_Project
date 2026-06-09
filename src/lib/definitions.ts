@@ -1,7 +1,5 @@
 import { z } from 'zod/v4';
-import { Role } from '@prisma/client';
-
-export { Role };
+export { Role } from '@prisma/client';
 
 // --- Schemas & Tipos: Aluno ---
 

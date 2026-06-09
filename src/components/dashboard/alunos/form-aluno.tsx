@@ -94,7 +94,7 @@ export function FormAluno({ isOpen, onOpenChange, onSubmit, aluno }: Readonly<Fo
 
   const formatCPF = (value: string) => {
     return value
-      .replace(/\D/g, '')
+      .replaceAll(/\D/g, '')
       .replace(/(\d{3})(\d)/, '$1.$2')
       .replace(/(\d{3})(\d)/, '$1.$2')
       .replace(/(\d{3})(\d{1,2})/, '$1-$2')
