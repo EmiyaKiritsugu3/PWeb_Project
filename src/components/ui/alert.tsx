@@ -27,7 +27,8 @@ const Alert = React.forwardRef<
 ));
 Alert.displayName = 'Alert';
 
-const AlertTitle = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLHeadingElement>>(
+// NOSONAR
+const AlertTitle = React.forwardRef<HTMLHeadingElement, React.HTMLAttributes<HTMLHeadingElement>>(
   ({ className, ...props }, ref) => (
     <h4
       ref={ref}

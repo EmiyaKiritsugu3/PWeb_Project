@@ -12,7 +12,7 @@ interface GridFieldProps {
   children: React.ReactNode;
 }
 
-function GridField({ label, showLabel, children }: GridFieldProps) {
+function GridField({ label, showLabel, children }: Readonly<GridFieldProps>) {
   return (
     <div className="grid gap-2">
       {showLabel && <Label className="md:hidden">{label}</Label>}
@@ -33,7 +33,7 @@ function ExerciseNameField({
   value,
   onUpdate,
   mode = 'combobox',
-}: ExerciseNameFieldProps) {
+}: Readonly<ExerciseNameFieldProps>) {
   if (mode === 'combobox') {
     return (
       <Combobox
@@ -64,13 +64,15 @@ interface WorkoutExerciseRowProps {
   mode?: 'combobox' | 'input';
 }
 
-function gridCols(showDelete: boolean) {
-  return showDelete
+type GridMode = 'readonly' | 'deletable';
+
+function gridCols(mode: GridMode) {
+  return mode === 'deletable'
     ? 'grid-cols-1 md:grid-cols-[1fr_auto_auto_1fr_auto]'
     : 'grid-cols-1 md:grid-cols-[1fr_auto_auto_1fr]';
 }
 
-function DeleteButton({ onClick }: { onClick: () => void }) {
+function DeleteButton({ onClick }: Readonly<{ onClick: () => void }>) {
   return (
     <Button variant="ghost" size="icon" onClick={onClick} aria-label="Remover exercicio">
       <Trash2 className="h-4 w-4 text-destructive" />
@@ -102,7 +104,7 @@ interface SeriesFieldProps {
   onUpdate: (id: string, field: keyof Exercicio, value: string | number) => void;
 }
 
-function SeriesField({ exerciseId, series, onUpdate }: SeriesFieldProps) {
+function SeriesField({ exerciseId, series, onUpdate }: Readonly<SeriesFieldProps>) {
   return (
     <Input
       type="number"
@@ -119,7 +121,7 @@ interface RepsFieldProps {
   onUpdate: (id: string, field: keyof Exercicio, value: string | number) => void;
 }
 
-function RepsField({ exerciseId, repeticoes, onUpdate }: RepsFieldProps) {
+function RepsField({ exerciseId, repeticoes, onUpdate }: Readonly<RepsFieldProps>) {
   return (
     <Input
       placeholder="10-12"
@@ -136,7 +138,7 @@ interface ObsFieldProps {
   onUpdate: (id: string, field: keyof Exercicio, value: string | number) => void;
 }
 
-function ObsField({ exerciseId, observacoes, onUpdate }: ObsFieldProps) {
+function ObsField({ exerciseId, observacoes, onUpdate }: Readonly<ObsFieldProps>) {
   return (
     <Input
       placeholder="Opcional"
@@ -151,7 +153,7 @@ interface RemoveFieldProps {
   onRemove: (id: string) => void;
 }
 
-function RemoveField({ exerciseId, onRemove }: RemoveFieldProps) {
+function RemoveField({ exerciseId, onRemove }: Readonly<RemoveFieldProps>) {
   return <DeleteButton onClick={() => onRemove(exerciseId)} />;
 }
 
@@ -161,12 +163,12 @@ export function WorkoutExerciseRow({
   onUpdate,
   onRemove,
   mode = 'combobox',
-}: WorkoutExerciseRowProps) {
+}: Readonly<WorkoutExerciseRowProps>) {
   const showLabel = index === 0;
   const exerciseId = exercise.id!;
 
   return (
-    <div className={`grid ${gridCols(Boolean(onRemove))} items-end gap-3`}>
+    <div className={`grid ${gridCols(onRemove ? 'deletable' : 'readonly')} items-end gap-3`}>
       <GridField showLabel={showLabel} label="Exercicio">
         <ExerciseNameField
           exerciseId={exerciseId}

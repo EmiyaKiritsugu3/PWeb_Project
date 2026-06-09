@@ -59,13 +59,13 @@ export function UserMenu({
   email,
   navLinks,
   onLogout,
-}: {
+}: Readonly<{
   displayName: string;
   photoURL: string;
   email?: string | null;
   navLinks: NavLink[];
   onLogout: () => void;
-}) {
+}>) {
   const { t } = useI18n();
 
   return (
@@ -120,14 +120,14 @@ export function AlunoHeader({
   photoURL,
   email,
   onLogout,
-}: {
+}: Readonly<{
   pathname: string;
   navLinks: NavLink[];
   displayName: string;
   photoURL: string;
   email?: string | null;
   onLogout: () => void;
-}) {
+}>) {
   const { t } = useI18n();
 
   return (

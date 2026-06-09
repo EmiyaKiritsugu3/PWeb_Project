@@ -32,7 +32,7 @@ interface DashboardNavProps {
   role: string;
 }
 
-export function DashboardNav({ role }: DashboardNavProps) {
+export function DashboardNav({ role }: Readonly<DashboardNavProps>) {
   const pathname = usePathname();
 
   const navItems =

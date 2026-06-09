@@ -43,11 +43,11 @@ function StatItem({
   icon,
   value,
   label,
-}: {
+}: Readonly<{
   icon: React.ReactNode;
   value: React.ReactNode;
   label: string;
-}) {
+}>) {
   return (
     <div className="flex flex-col items-center gap-1">
       {icon}
@@ -57,7 +57,7 @@ function StatItem({
   );
 }
 
-function InfoField({ label, value }: { label: string; value: string }) {
+function InfoField({ label, value }: Readonly<{ label: string; value: string }>) {
   return (
     <div className="grid gap-1 text-sm">
       <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
@@ -68,7 +68,7 @@ function InfoField({ label, value }: { label: string; value: string }) {
   );
 }
 
-function XpProgressBar({ exp, nivel }: { exp: number; nivel: number }) {
+function XpProgressBar({ exp, nivel }: Readonly<{ exp: number; nivel: number }>) {
   const expNecessaria = nivel * 1500;
   const xpPercent = Math.min(Math.round((exp / expNecessaria) * 100), 100);
 
@@ -88,7 +88,7 @@ function XpProgressBar({ exp, nivel }: { exp: number; nivel: number }) {
   );
 }
 
-function ProfileDetailsSection({ aluno }: { aluno: NonNullable<Aluno> }) {
+function ProfileDetailsSection({ aluno }: Readonly<{ aluno: NonNullable<Aluno> }>) {
   const matriculaAtiva = aluno.Matriculas.find((m) => m.status === 'ATIVA');
 
   return (
@@ -120,7 +120,7 @@ function ProfileDetailsSection({ aluno }: { aluno: NonNullable<Aluno> }) {
   );
 }
 
-function AlunoProfileCard({ aluno }: { aluno: NonNullable<Aluno> }) {
+function AlunoProfileCard({ aluno }: Readonly<{ aluno: NonNullable<Aluno> }>) {
   return (
     <Card className="glass-card border-white/5 lg:col-span-1">
       <CardContent className="pt-6 flex flex-col items-center text-center gap-4">
@@ -164,7 +164,9 @@ function AlunoProfileCard({ aluno }: { aluno: NonNullable<Aluno> }) {
   );
 }
 
-function MatriculasTable({ matriculas }: { matriculas: NonNullable<Aluno>['Matriculas'] }) {
+function MatriculasTable({
+  matriculas,
+}: Readonly<{ matriculas: NonNullable<Aluno>['Matriculas'] }>) {
   return (
     <Card className="glass-card border-white/5">
       <CardHeader>
@@ -207,7 +209,9 @@ function MatriculasTable({ matriculas }: { matriculas: NonNullable<Aluno>['Matri
   );
 }
 
-function PagamentosTable({ pagamentos }: { pagamentos: NonNullable<Aluno>['Pagamentos'] }) {
+function PagamentosTable({
+  pagamentos,
+}: Readonly<{ pagamentos: NonNullable<Aluno>['Pagamentos'] }>) {
   return (
     <Card className="glass-card border-white/5">
       <CardHeader>
@@ -246,7 +250,7 @@ function PagamentosTable({ pagamentos }: { pagamentos: NonNullable<Aluno>['Pagam
   );
 }
 
-function TreinosList({ treinos }: { treinos: NonNullable<Aluno>['Treinos'] }) {
+function TreinosList({ treinos }: Readonly<{ treinos: NonNullable<Aluno>['Treinos'] }>) {
   return (
     <Card className="glass-card border-white/5">
       <CardHeader>
@@ -288,7 +292,7 @@ interface AlunoDetalhesPageProps {
   params: Promise<{ id: string }>;
 }
 
-export default async function AlunoDetalhesPage({ params }: AlunoDetalhesPageProps) {
+export default async function AlunoDetalhesPage({ params }: Readonly<AlunoDetalhesPageProps>) {
   const { id } = await params;
   const aluno = await getAlunoDetalhes(id);
 
