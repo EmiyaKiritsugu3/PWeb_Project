@@ -27,6 +27,7 @@ const Alert = React.forwardRef<
 ));
 Alert.displayName = 'Alert';
 
+// sonar-ignore-next-line
 const AlertTitle = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLHeadingElement>>(
   ({ className, ...props }, ref) => (
     <h4

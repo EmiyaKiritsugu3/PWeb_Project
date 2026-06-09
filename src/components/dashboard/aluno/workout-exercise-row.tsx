@@ -64,8 +64,10 @@ interface WorkoutExerciseRowProps {
   mode?: 'combobox' | 'input';
 }
 
-function gridCols(showDelete: boolean) {
-  return showDelete
+type GridMode = 'readonly' | 'deletable';
+
+function gridCols(mode: GridMode) {
+  return mode === 'deletable'
     ? 'grid-cols-1 md:grid-cols-[1fr_auto_auto_1fr_auto]'
     : 'grid-cols-1 md:grid-cols-[1fr_auto_auto_1fr]';
 }
@@ -166,7 +168,7 @@ export function WorkoutExerciseRow({
   const exerciseId = exercise.id!;
 
   return (
-    <div className={`grid ${gridCols(Boolean(onRemove))} items-end gap-3`}>
+    <div className={`grid ${gridCols(onRemove ? 'deletable' : 'readonly')} items-end gap-3`}>
       <GridField showLabel={showLabel} label="Exercicio">
         <ExerciseNameField
           exerciseId={exerciseId}
