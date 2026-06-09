@@ -12,7 +12,7 @@ export type CalendarProps = React.ComponentProps<typeof DayPicker>;
 function CalendarChevron({
   orientation,
 }: Readonly<{
-  orientation?: 'left' | 'right' | 'up' | 'down';
+  orientation?: 'left' | 'right';
 }>) {
   return orientation === 'left' ? (
     <ChevronLeft className="h-4 w-4" />
