@@ -51,7 +51,7 @@ export function Combobox({
   searchPlaceholder = 'Search...',
   notFoundMessage = 'No option found.',
   className,
-}: ComboboxProps) {
+}: Readonly<ComboboxProps>) {
   const [open, setOpen] = React.useState(false);
 
   const selectedLabel = flatOptions.find((option) => option.value === value)?.label;

@@ -35,7 +35,7 @@ interface AlunosClientProps {
   planos: Plano[];
 }
 
-export function AlunosClient({ initialAlunos, planos }: AlunosClientProps) {
+export function AlunosClient({ initialAlunos, planos }: Readonly<AlunosClientProps>) {
   const router = useRouter();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingAluno, setEditingAluno] = useState<Aluno | null>(null);

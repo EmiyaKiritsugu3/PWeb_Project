@@ -3,7 +3,7 @@
  * Implements case-insensitive matching and circular reference protection.
  */
 
-const sensitiveKeys = [
+const sensitiveKeys = new Set([
   'cpf',
   'rg',
   'email',
@@ -15,7 +15,7 @@ const sensitiveKeys = [
   'matricula',
   'token',
   'secret',
-];
+]);
 
 /**
  * Deeply sanitizes an object by replacing sensitive keys with [SCRUBBED].
@@ -34,7 +34,7 @@ export const scrub = (obj: unknown, cache = new WeakSet()): unknown => {
 
   const newObj = { ...(obj as Record<string, unknown>) };
   for (const key in newObj) {
-    if (sensitiveKeys.includes(key.toLowerCase())) {
+    if (sensitiveKeys.has(key.toLowerCase())) {
       newObj[key] = '[SCRUBBED]';
     } else {
       newObj[key] = scrub(newObj[key], cache);

@@ -2,31 +2,92 @@
 
 import { useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
-  Dumbbell,
-  LogOut,
-  User as UserIcon,
-  LayoutDashboard,
-  FolderKanban,
-  Languages,
-} from 'lucide-react';
+import { Dumbbell, LayoutDashboard, FolderKanban } from 'lucide-react';
 import { useAuth } from '@/components/providers/auth-provider';
 import { I18nProvider, useI18n } from '@/components/providers/i18n-provider';
+import { AlunoHeader, type NavLink } from './aluno-header';
 
-function AlunoLayoutContent({ children }: { children: React.ReactNode }) {
+function resolveDisplayName(meta: Record<string, unknown> | undefined, fallback: string): string {
+  const m = meta as { full_name?: string; nomeCompleto?: string } | undefined;
+  return m?.full_name || m?.nomeCompleto || fallback;
+}
+
+function resolvePhotoURL(meta: Record<string, unknown> | undefined): string {
+  const m = meta as { avatar_url?: string; fotoUrl?: string } | undefined;
+  return m?.avatar_url || m?.fotoUrl || 'https://picsum.photos/seed/student/100/100';
+}
+
+function LoadingSpinner() {
+  const { t } = useI18n();
+  return (
+    <div className="flex h-screen w-full items-center justify-center bg-background">
+      <div className="flex flex-col items-center gap-4">
+        <Dumbbell className="h-12 w-12 animate-pulse text-primary" />
+        <p className="text-muted-foreground">{t('common.loading')}</p>
+      </div>
+    </div>
+  );
+}
+
+function LoginPage({ children }: Readonly<{ children: React.ReactNode }>) {
+  return <main>{children}</main>;
+}
+
+function FallbackSpinner() {
+  return (
+    <div className="flex h-screen w-full items-center justify-center bg-background">
+      <Dumbbell className="h-12 w-12 animate-pulse text-primary" />
+    </div>
+  );
+}
+
+function AuthenticatedLayout({
+  children,
+  pathname,
+  displayName,
+  photoURL,
+  email,
+  onLogout,
+}: Readonly<{
+  children: React.ReactNode;
+  pathname: string;
+  displayName: string;
+  photoURL: string;
+  email: string | null | undefined;
+  onLogout: () => void;
+}>) {
+  const { t } = useI18n();
+  const navLinks: NavLink[] = [
+    {
+      href: '/aluno/dashboard',
+      label: t('common.todayWorkout'),
+      icon: <LayoutDashboard className="mr-2 h-4 w-4" />,
+    },
+    {
+      href: '/aluno/meus-treinos',
+      label: t('common.myWorkouts'),
+      icon: <FolderKanban className="mr-2 h-4 w-4" />,
+    },
+  ];
+
+  return (
+    <div className="flex min-h-screen w-full flex-col bg-background">
+      <AlunoHeader
+        pathname={pathname}
+        navLinks={navLinks}
+        displayName={displayName}
+        photoURL={photoURL}
+        email={email}
+        onLogout={onLogout}
+      />
+      <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6 lg:p-8">{children}</main>
+    </div>
+  );
+}
+
+function AlunoLayoutContent({ children }: Readonly<{ children: React.ReactNode }>) {
   const { user, isUserLoading, signOut } = useAuth();
-  const { language, setLanguage, t } = useI18n();
+  const { t } = useI18n();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -41,150 +102,24 @@ function AlunoLayoutContent({ children }: { children: React.ReactNode }) {
     router.push('/aluno/login');
   };
 
-  const navLinks = [
-    {
-      href: '/aluno/dashboard',
-      label: t('common.todayWorkout'),
-      icon: <LayoutDashboard className="mr-2 h-4 w-4" />,
-    },
-    {
-      href: '/aluno/meus-treinos',
-      label: t('common.myWorkouts'),
-      icon: <FolderKanban className="mr-2 h-4 w-4" />,
-    },
-  ];
+  if (isUserLoading) return <LoadingSpinner />;
+  if (!user && pathname.endsWith('/login')) return <LoginPage>{children}</LoginPage>;
+  if (!user) return <FallbackSpinner />;
 
-  if (isUserLoading) {
-    return (
-      <div className="flex h-screen w-full items-center justify-center bg-background">
-        <div className="flex flex-col items-center gap-4">
-          <Dumbbell className="h-12 w-12 animate-pulse text-primary" />
-          <p className="text-muted-foreground">{t('common.loading')}</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Se o usuário não está logado e está na página de login, apenas renderize a página de login
-  if (!user && pathname.endsWith('/login')) {
-    return <main>{children}</main>;
-  }
-
-  if (user) {
-    const displayName =
-      user.user_metadata?.full_name || user.user_metadata?.nomeCompleto || t('common.student');
-    const photoURL =
-      user.user_metadata?.avatar_url ||
-      user.user_metadata?.fotoUrl ||
-      'https://picsum.photos/seed/student/100/100';
-
-    return (
-      <div className="flex min-h-screen w-full flex-col bg-background">
-        <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-sm md:px-6">
-          <Link href="/" className="flex items-center gap-2">
-            <Dumbbell className="h-6 w-6 text-primary" />
-            <span className="font-bold">Five Star Academy</span>
-          </Link>
-
-          <nav className="hidden md:flex items-center gap-2 ml-6">
-            {navLinks.map((link) => (
-              <Button
-                key={link.href}
-                variant={pathname === link.href ? 'secondary' : 'ghost'}
-                asChild
-              >
-                <Link href={link.href}>{link.label}</Link>
-              </Button>
-            ))}
-          </nav>
-
-          <div className="flex w-full items-center justify-end gap-4 md:ml-auto">
-            {/* Seletor de Idioma */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-9 w-9"
-                  aria-label={t('common.selectLanguage')}
-                >
-                  <Languages className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem
-                  onClick={() => setLanguage('pt')}
-                  className={language === 'pt' ? 'bg-secondary' : ''}
-                >
-                  Português (BR)
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => setLanguage('en')}
-                  className={language === 'en' ? 'bg-secondary' : ''}
-                >
-                  English (US)
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            <span className="hidden text-sm text-muted-foreground md:inline-block">
-              {t('common.welcome')}, {displayName}!
-            </span>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-9 w-9 rounded-full">
-                  <Avatar>
-                    <AvatarImage src={photoURL} alt="Aluno" data-ai-hint="person portrait" />
-                    <AvatarFallback>{user.email?.[0].toUpperCase()}</AvatarFallback>
-                  </Avatar>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56" align="end">
-                <DropdownMenuLabel>
-                  <p>{displayName}</p>
-                  <p className="text-xs font-normal text-muted-foreground">{user.email}</p>
-                </DropdownMenuLabel>
-
-                <div className="md:hidden">
-                  <DropdownMenuSeparator />
-                  {navLinks.map((link) => (
-                    <DropdownMenuItem key={link.href} asChild>
-                      <Link href={link.href}>
-                        {link.icon}
-                        <span>{link.label}</span>
-                      </Link>
-                    </DropdownMenuItem>
-                  ))}
-                </div>
-
-                <DropdownMenuSeparator />
-                <DropdownMenuItem disabled>
-                  <UserIcon className="mr-2 h-4 w-4" />
-                  <span>{t('common.profile')}</span>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleLogout}>
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>{t('common.logout')}</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        </header>
-        <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6 lg:p-8">{children}</main>
-      </div>
-    );
-  }
-
-  // Se o usuário não está logado e não está na página de login, pode-se mostrar um loader ou redirecionar
   return (
-    <div className="flex h-screen w-full items-center justify-center bg-background">
-      <Dumbbell className="h-12 w-12 animate-pulse text-primary" />
-    </div>
+    <AuthenticatedLayout
+      pathname={pathname}
+      displayName={resolveDisplayName(user.user_metadata, t('common.student'))}
+      photoURL={resolvePhotoURL(user.user_metadata)}
+      email={user.email}
+      onLogout={handleLogout}
+    >
+      {children}
+    </AuthenticatedLayout>
   );
 }
 
-export default function AlunoLayout({ children }: { children: React.ReactNode }) {
+export default function AlunoLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <I18nProvider>
       <AlunoLayoutContent>{children}</AlunoLayoutContent>

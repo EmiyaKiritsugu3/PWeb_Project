@@ -16,7 +16,11 @@ interface ExercicioViewerProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export function ExercicioViewer({ exercicio, isOpen, onOpenChange }: ExercicioViewerProps) {
+export function ExercicioViewer({
+  exercicio,
+  isOpen,
+  onOpenChange,
+}: Readonly<ExercicioViewerProps>) {
   if (!exercicio) return null;
 
   return (

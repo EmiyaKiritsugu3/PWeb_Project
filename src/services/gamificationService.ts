@@ -62,10 +62,10 @@ export function calculateTreinoRewards(
   const mesAtualKey = hojeStr.slice(0, 7); // "YYYY-MM"
   const mesUltimoTreinoKey = dataUltimoTreino ? dataUltimoTreino.slice(0, 7) : null;
 
-  if (mesAtualKey !== mesUltimoTreinoKey) {
-    treinosNoMes = 1;
-  } else {
+  if (mesAtualKey === mesUltimoTreinoKey) {
     treinosNoMes += 1;
+  } else {
+    treinosNoMes = 1;
   }
 
   // 3. Streak Logic

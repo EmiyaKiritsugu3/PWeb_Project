@@ -11,6 +11,7 @@ import {
   HistoricoTreinoBaseSchema,
   type TreinoBase,
   type HistoricoTreinoBase,
+  type SerieExecutadaBase,
 } from '@/lib/definitions';
 import { getUser, createClient } from '@/utils/supabase/server';
 import * as Sentry from '@sentry/nextjs';
@@ -292,6 +293,26 @@ export async function deleteTreinoAction(treinoId: string) {
   );
 }
 
+function mapSeriesToHistorico(exercicios: HistoricoTreinoBase['exercicios']) {
+  return exercicios.flatMap((ex) =>
+    ex.seriesExecutadas.map((serie: SerieExecutadaBase) => ({
+      exercicioId: ex.exercicioId,
+      nomeExercicio: ex.nomeExercicio,
+      serieNumero: serie.serieNumero,
+      peso: serie.peso,
+      repeticoesFeitas: serie.repeticoesFeitas,
+      concluido: serie.concluido,
+    }))
+  );
+}
+
+function countCompletedSeries(exercicios: HistoricoTreinoBase['exercicios']): number {
+  return exercicios.reduce(
+    (acc: number, ex) => acc + ex.seriesExecutadas.filter((s) => s.concluido).length,
+    0
+  );
+}
+
 export async function registrarHistoricoTreinoAction(
   historicoData: Omit<HistoricoTreinoBase, 'alunoId'>
 ) {
@@ -332,25 +353,13 @@ export async function registrarHistoricoTreinoAction(
                 duracaoMinutos: validatedData.duracaoMinutos,
                 dataExecucao: new Date(validatedData.dataExecucao),
                 SeriesExecutadas: {
-                  create: validatedData.exercicios.flatMap((ex) =>
-                    ex.seriesExecutadas.map((serie) => ({
-                      exercicioId: ex.exercicioId,
-                      nomeExercicio: ex.nomeExercicio,
-                      serieNumero: serie.serieNumero,
-                      peso: serie.peso,
-                      repeticoesFeitas: serie.repeticoesFeitas,
-                      concluido: serie.concluido,
-                    }))
-                  ),
+                  create: mapSeriesToHistorico(validatedData.exercicios),
                 },
               },
             });
 
             // 2. Lógica de Gamificação (Delegated to Service)
-            const totalSeriesConcluidas = validatedData.exercicios.reduce(
-              (acc, ex) => acc + ex.seriesExecutadas.filter((s) => s.concluido).length,
-              0
-            );
+            const totalSeriesConcluidas = countCompletedSeries(validatedData.exercicios);
 
             const rewards = calculateTreinoRewards(aluno, totalSeriesConcluidas, hoje);
 

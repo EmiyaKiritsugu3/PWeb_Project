@@ -12,7 +12,7 @@ interface DashboardChartsProps {
   data: ChartDataPoint[];
 }
 
-export function DashboardCharts({ data }: DashboardChartsProps) {
+export function DashboardCharts({ data }: Readonly<DashboardChartsProps>) {
   return (
     <Card className="glass-card overflow-hidden border-white/5 hover:border-primary/30 transition-all duration-500 glow-cyan">
       <CardHeader className="border-b border-white/5 bg-background/20 pb-4">

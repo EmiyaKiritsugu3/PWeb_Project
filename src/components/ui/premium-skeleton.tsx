@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
 
-function PremiumSkeleton({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+function PremiumSkeleton({ className, ...props }: Readonly<React.HTMLAttributes<HTMLDivElement>>) {
   return (
     <div
       className={cn(

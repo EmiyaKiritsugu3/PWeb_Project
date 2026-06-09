@@ -39,7 +39,7 @@ interface FormPlanoProps {
   plano?: Plano;
 }
 
-export function FormPlano({ isOpen, onOpenChange, onSubmit, plano }: FormPlanoProps) {
+export function FormPlano({ isOpen, onOpenChange, onSubmit, plano }: Readonly<FormPlanoProps>) {
   const form = useForm<PlanoFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: { nome: '', preco: 0, duracaoDias: 30 },

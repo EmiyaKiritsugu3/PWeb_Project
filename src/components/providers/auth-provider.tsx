@@ -27,7 +27,7 @@ export const AuthContext = createContext<AuthContextState | undefined>(undefined
 /**
  * SupabaseAuthProvider manages and provides user authentication state.
  */
-export const SupabaseAuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const SupabaseAuthProvider: React.FC<Readonly<{ children: ReactNode }>> = ({ children }) => {
   const [userAuthState, setUserAuthState] = useState<UserAuthState>({
     user: null,
     isUserLoading: true,

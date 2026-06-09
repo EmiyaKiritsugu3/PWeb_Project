@@ -27,7 +27,7 @@ export function CardTreino({
   onFinishTraining,
   isFeedbackLoading,
   onViewExercicio,
-}: CardTreinoProps) {
+}: Readonly<CardTreinoProps>) {
   const { checkedExercises, handleCheckChange } = useWorkoutTracker(treino);
 
   const handleFinishClick = () => {

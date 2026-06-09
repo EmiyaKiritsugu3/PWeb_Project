@@ -4,7 +4,7 @@ import { CheckCircle2, AlertCircle, Info, Calendar } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { Aluno } from '@/lib/definitions';
 
-export function CardMatricula({ aluno }: { aluno: Aluno | null }) {
+export function CardMatricula({ aluno }: Readonly<{ aluno: Aluno | null }>) {
   if (!aluno) return null;
 
   const statusConfig = {

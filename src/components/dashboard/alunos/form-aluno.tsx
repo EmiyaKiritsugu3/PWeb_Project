@@ -38,7 +38,7 @@ const formSchema = z.object({
     message: 'CPF inválido. Use o formato xxx.xxx.xxx-xx.',
   }),
   telefone: z.string().min(10, { message: 'Telefone inválido.' }),
-  dataNascimento: z.string().refine((val) => !isNaN(Date.parse(val)), {
+  dataNascimento: z.string().refine((val) => !Number.isNaN(Date.parse(val)), {
     message: 'Data de nascimento inválida.',
   }),
   statusMatricula: z.enum(['ATIVA', 'INADIMPLENTE', 'INATIVA']),
@@ -53,7 +53,7 @@ interface FormAlunoProps {
   aluno?: Aluno;
 }
 
-export function FormAluno({ isOpen, onOpenChange, onSubmit, aluno }: FormAlunoProps) {
+export function FormAluno({ isOpen, onOpenChange, onSubmit, aluno }: Readonly<FormAlunoProps>) {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {

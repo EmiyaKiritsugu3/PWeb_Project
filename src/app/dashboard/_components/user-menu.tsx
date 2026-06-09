@@ -19,7 +19,7 @@ interface UserMenuProps {
   photoURL: string;
 }
 
-export function UserMenu({ displayName, email, photoURL }: UserMenuProps) {
+export function UserMenu({ displayName, email, photoURL }: Readonly<UserMenuProps>) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

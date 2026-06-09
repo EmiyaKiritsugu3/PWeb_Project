@@ -34,7 +34,7 @@ function formatDuration(dias: number) {
   return `${dias} dias`;
 }
 
-export function PlanosClient({ initialPlanos }: PlanosClientProps) {
+export function PlanosClient({ initialPlanos }: Readonly<PlanosClientProps>) {
   const router = useRouter();
   const notify = useAppNotification();
 

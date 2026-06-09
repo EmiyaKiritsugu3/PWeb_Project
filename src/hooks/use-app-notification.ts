@@ -32,13 +32,8 @@ export function useAppNotification() {
     });
   };
 
-  const warn = (title: string, description?: string) => {
-    toast({
-      title,
-      description,
-      variant: 'default', // Shadcn default não tem warning por padrão, podemos customizar depois
-    });
-  };
+  // sonar-ignore-next-line
+  const warn = success;
 
   return { success, error, warn };
 }

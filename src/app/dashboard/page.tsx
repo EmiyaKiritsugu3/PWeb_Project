@@ -84,7 +84,7 @@ export default async function DashboardPage() {
 
             {/* Subtle bottom glow line */}
             <div
-              className={`absolute bottom-0 left-0 h-1 w-0 group-hover:w-full transition-all duration-700 bg-gradient-to-r ${kpi.color.replace('/20', '')}`}
+              className={`absolute bottom-0 left-0 h-1 w-0 group-hover:w-full transition-all duration-700 bg-gradient-to-r ${kpi.color.replaceAll('/20', '')}`}
             ></div>
           </Card>
         ))}

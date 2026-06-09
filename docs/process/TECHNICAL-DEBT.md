@@ -20,5 +20,13 @@ Este documento rastreia compromissos arquiteturais e infraestruturais assumidos 
 - **Caminho de Resolução**: Sincronizar `prisma/seed-e2e.ts` com os seletores do Playwright.
 - **Status**: ✅ Resolved (2026-06-06) — Playwright `globalSetup` agora invoca `prisma/seed-e2e.ts` automaticamente (elimina passo manual `npm run seed:e2e`), e a variável de ambiente em `.env.test` foi renomeada para a convenção Supabase SSR 0.10+ (`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY`).
 
+### 3. [QUALITY] 17 issues SonarQube Labens (2 CRITICAL + 15 MAJOR)
+- **Data**: 2026-06-08
+- **Sintoma**: Scan SonarQube (labens.dct.ufrn.br) identificou 17 issues: 2 CRITICAL (funções aninhadas >4 níveis em `treinos.ts:336,351`), 15 MAJOR (Array index in keys, acessibilidade, ternário aninhado, atribuição redundante, propriedade desconhecida).
+- **Causa**: Issues pre-existentes de código legado e componentes shadcn/ui. Não são regressões do fix de e2e.
+- **Impacto**: Baixo. Code quality/maintainability. Nenhum é bug funcional.
+- **Caminho de Resolução**: Corrigir CRITICAL (extrair funções), MAJOR conforme prioridade. Criar plan quando necessário.
+- **Dashboard**: https://labens.dct.ufrn.br/sonarqube/dashboard?id=PWeb_Project
+
 ---
 *Mandato: Uma dívida documentada é um custo gerenciado. Uma dívida oculta é um risco.*

@@ -7,8 +7,8 @@ import { TableSkeleton } from '@/components/ui/dashboard-skeletons';
 async function AlunosDataWrapper() {
   const [alunos, planos] = await Promise.all([getAlunos(), getPlanos()]);
 
-  const serializedAlunos = JSON.parse(JSON.stringify(alunos));
-  const serializedPlanos = JSON.parse(JSON.stringify(planos));
+  const serializedAlunos = structuredClone(alunos);
+  const serializedPlanos = structuredClone(planos);
 
   return <AlunosClient initialAlunos={serializedAlunos} planos={serializedPlanos} />;
 }

@@ -25,7 +25,7 @@ interface ActionsCellProps {
   onNewMatricula: (aluno: Aluno) => void;
 }
 
-function AlunoActionsCell({ aluno, onEdit, onDelete, onNewMatricula }: ActionsCellProps) {
+function AlunoActionsCell({ aluno, onEdit, onDelete, onNewMatricula }: Readonly<ActionsCellProps>) {
   const { toast } = useToast();
   const router = useRouter();
 
@@ -33,7 +33,7 @@ function AlunoActionsCell({ aluno, onEdit, onDelete, onNewMatricula }: ActionsCe
     <div className="text-right">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="h-8 w-8 p-0">
+          <Button variant="ghost" className="h-8 w-8 p-0" aria-label="Mais opções">
             <span className="sr-only">Abrir menu</span>
             <MoreHorizontal className="h-4 w-4" />
           </Button>
@@ -78,7 +78,7 @@ const getInitials = (name: string) => {
   if (!name) return '';
   const nameParts = name.split(' ');
   if (nameParts.length > 1) {
-    return `${nameParts[0][0]}${nameParts[nameParts.length - 1][0]}`.toUpperCase();
+    return `${nameParts[0][0]}${nameParts.at(-1)![0]}`.toUpperCase();
   }
   return name.substring(0, 2).toUpperCase();
 };

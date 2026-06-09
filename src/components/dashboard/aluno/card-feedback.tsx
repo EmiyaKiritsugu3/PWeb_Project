@@ -6,10 +6,10 @@ import { BrainCircuit, Sparkles } from 'lucide-react';
 export function CardFeedback({
   feedback,
   isLoading,
-}: {
+}: Readonly<{
   feedback: { title: string; message: string } | null;
   isLoading: boolean;
-}) {
+}>) {
   if (isLoading) {
     return (
       <Card glass className="border-cyan-500/20 glow-cyan">

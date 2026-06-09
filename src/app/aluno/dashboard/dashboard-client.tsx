@@ -22,7 +22,10 @@ interface AlunoDashboardClientProps {
   initialTreino: Treino | null;
 }
 
-export default function AlunoDashboardClient({ aluno, initialTreino }: AlunoDashboardClientProps) {
+export default function AlunoDashboardClient({
+  aluno,
+  initialTreino,
+}: Readonly<AlunoDashboardClientProps>) {
   const notify = useAppNotification();
   const { t } = useI18n();
 
@@ -134,7 +137,7 @@ export default function AlunoDashboardClient({ aluno, initialTreino }: AlunoDash
             >
               <div className="text-center">
                 <p className="text-[10px] uppercase text-zinc-400 font-bold tracking-widest">
-                  {t('dashboard.workoutsThisMonth', { count: '' }).replace(': ', '').trim()}
+                  {t('dashboard.workoutsThisMonth', { count: '' }).replaceAll(': ', '').trim()}
                 </p>
                 <p className="text-2xl font-mono font-bold tracking-tight text-cyan-400">
                   {aluno.treinosNoMes}

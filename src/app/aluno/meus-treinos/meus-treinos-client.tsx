@@ -10,18 +10,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { EXERCICIOS_POR_GRUPO, DIAS_DA_SEMANA } from '@/lib/constants';
-import { getErrorMessage } from '@/lib/error';
-import { Logger } from '@/lib/logger';
-import * as Sentry from '@sentry/nextjs';
+import { DIAS_DA_SEMANA } from '@/lib/constants';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { PlusCircle, Trash2, Pencil, FileSignature, User, Play } from 'lucide-react';
 import type { Treino, HistoricoTreino } from '@/lib/definitions';
 import { useAppNotification } from '@/hooks/use-app-notification';
 import { WorkoutSession } from '@/components/WorkoutSession';
-import { streamWorkoutPlan } from '@/ai/flows/workout-generator-flow';
-import { type WorkoutGeneratorInput } from '@/ai/schemas';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import {
@@ -34,12 +29,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import {
-  upsertTreinoAction,
-  updateTreinoDayAction,
-  deleteTreinoAction,
-  registrarHistoricoTreinoAction,
-} from '@/lib/actions/treinos';
+import { registrarHistoricoTreinoAction } from '@/lib/actions/treinos';
+import { useWorkoutCRUD } from '@/hooks/use-workout-crud';
+import { useWorkoutGeneration } from '@/hooks/use-workout-generation';
 
 import { WorkoutGenerator } from '@/components/dashboard/aluno/workout-generator';
 import { WorkoutEditor } from '@/components/dashboard/aluno/workout-editor';
@@ -47,167 +39,42 @@ import { WorkoutEditor } from '@/components/dashboard/aluno/workout-editor';
 export default function MeusTreinosClient({
   initialTreinos,
   userId,
-}: {
+}: Readonly<{
   initialTreinos: Treino[];
   userId: string;
-}) {
+}>) {
   const notify = useAppNotification();
   const router = useRouter();
-  const [meusTreinos, setMeusTreinos] = useState<Treino[]>(initialTreinos);
 
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [isFormVisible, setIsFormVisible] = useState(false);
-  const [editingTreino, setEditingTreino] = useState<Treino | null>(null);
-  const [isAlertOpen, setIsAlertOpen] = useState(false);
-  const [deletingTreino, setDeletingTreino] = useState<Treino | null>(null);
+  const {
+    meusTreinos,
+    isFormVisible,
+    setIsFormVisible,
+    editingTreino,
+    setEditingTreino,
+    isAlertOpen,
+    setIsAlertOpen,
+    deletingTreino,
+    handleSave,
+    handleEdit,
+    handleDayChange,
+    openDeleteAlert,
+    handleDelete,
+  } = useWorkoutCRUD({ initialTreinos, userId, router, notify });
+
+  const { isGenerating, handleGenerate } = useWorkoutGeneration({
+    userId,
+    meusTreinos,
+    notify,
+  });
+
   const [treinoEmSessao, setTreinoEmSessao] = useState<Treino | null>(null);
 
   const { treinosDoPersonal, treinosDoAluno } = useMemo(() => {
-    // Se tem um instrutor que não é o próprio aluno, é do Personal.
     const treinosDoPersonal = meusTreinos.filter((t) => t.instrutorId && t.instrutorId !== userId);
-    // Se não tem instrutor (criado por IA) ou se o instrutor foi definido como o próprio aluno (manual)
     const treinosDoAluno = meusTreinos.filter((t) => !t.instrutorId || t.instrutorId === userId);
     return { treinosDoPersonal, treinosDoAluno };
   }, [meusTreinos, userId]);
-
-  const handleSave = async (treinoData: Omit<Treino, 'id' | 'alunoId' | 'instrutorId'>) => {
-    try {
-      const res = await upsertTreinoAction({
-        ...treinoData,
-        ...(editingTreino ? { id: editingTreino.id } : {}),
-        alunoId: userId,
-      });
-
-      if (res.success) {
-        notify.success(editingTreino ? 'Treino atualizado!' : 'Novo treino salvo!');
-        if (editingTreino) {
-          setMeusTreinos((prev) =>
-            prev.map((t) => (t.id === editingTreino.id ? { ...t, ...treinoData } : t))
-          );
-        } else {
-          router.refresh();
-        }
-        setIsFormVisible(false);
-        setEditingTreino(null);
-      } else {
-        throw new Error(res.error);
-      }
-    } catch (error) {
-      notify.error('Erro ao salvar', undefined, error);
-    }
-  };
-
-  const handleEdit = (treino: Treino) => {
-    setEditingTreino(treino);
-    setIsFormVisible(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const handleDayChange = async (treinoId: string, dia: string) => {
-    const novoDia = dia === 'nenhum' ? null : parseInt(dia, 10);
-
-    if (novoDia !== null && meusTreinos.some((t) => t.diaSemana === novoDia && t.id !== treinoId)) {
-      notify.error('Dia já ocupado', 'Já existe outro treino agendado para este dia.');
-      return;
-    }
-
-    try {
-      const res = await updateTreinoDayAction(treinoId, novoDia);
-      if (res.success) {
-        notify.success('Agenda atualizada!');
-        setMeusTreinos(
-          meusTreinos.map((t) => (t.id === treinoId ? { ...t, diaSemana: novoDia } : t))
-        );
-      }
-    } catch (error) {
-      notify.error('Erro ao atualizar agenda', undefined, error);
-    }
-  };
-
-  const openDeleteAlert = (treino: Treino) => {
-    setDeletingTreino(treino);
-    setIsAlertOpen(true);
-  };
-
-  const handleDelete = async () => {
-    if (!deletingTreino) return;
-
-    try {
-      const res = await deleteTreinoAction(deletingTreino.id);
-      if (res.success) {
-        notify.success('Treino excluído!');
-        setMeusTreinos(meusTreinos.filter((t) => t.id !== deletingTreino.id));
-      }
-    } catch (error) {
-      notify.error('Erro ao excluir', undefined, error);
-    }
-
-    setIsAlertOpen(false);
-    setDeletingTreino(null);
-  };
-
-  const handleGenerate = async (data: WorkoutGeneratorInput) => {
-    setIsGenerating(true);
-    try {
-      Logger.info('Chamando a IA com dados:', data);
-      // Chama a Server Action (o proxy gerado pelo Next.js da Flow)
-      const result = await streamWorkoutPlan(data);
-      Logger.info('Resultado da IA retornado:', result);
-
-      if (result?.workouts) {
-        for (const workout of result.workouts) {
-          const novosExercicios = workout.exercicios.map((ex) => {
-            const exercicioMaster = EXERCICIOS_POR_GRUPO.flatMap((g) => g.exercicios).find(
-              (ez) => ez.nomeExercicio === ex.nomeExercicio
-            );
-
-            if (!exercicioMaster) {
-              Sentry.captureMessage(
-                `AI Hallucination: Exercise "${ex.nomeExercicio}" not found in constants.`,
-                {
-                  level: 'warning',
-                  extra: { workout: workout.nome, goal: data.objetivo },
-                }
-              );
-            }
-
-            return {
-              nomeExercicio: ex.nomeExercicio,
-              series: ex.series,
-              repeticoes: ex.repeticoes,
-              observacoes: ex.observacoes,
-              descricao: exercicioMaster?.descricao || '',
-            };
-          });
-
-          const diaSugerido = workout.diaSugerido;
-          const isDayOccupied = meusTreinos.some((t) => t.diaSemana === diaSugerido);
-
-          const res = await upsertTreinoAction({
-            alunoId: userId,
-            objetivo: workout.nome,
-            exercicios: novosExercicios,
-            diaSemana: isDayOccupied ? null : diaSugerido,
-          });
-
-          if (!res.success) {
-            Logger.error('Erro ao salvar treino no banco:', res.error);
-            throw new Error('Erro ao salvar no banco: ' + res.error);
-          }
-        }
-
-        notify.success('Plano Pessoal Gerado!', `${result.planName} foi criado com sucesso.`);
-      } else {
-        Logger.error('Resultado inesperado da IA:', result);
-        throw new Error('Formato de retorno inválido.');
-      }
-    } catch (error) {
-      Logger.error('Erro completo ao gerar plano:', error);
-      notify.error('Erro da IA', getErrorMessage(error), error);
-    } finally {
-      setIsGenerating(false);
-    }
-  };
 
   const getDiaLabel = (diaSemana: number | null) => {
     if (diaSemana === null) return null;
@@ -299,8 +166,6 @@ export default function MeusTreinosClient({
       const res = await registrarHistoricoTreinoAction(historico);
       if (res.success) {
         notify.success('Treino Finalizado!', 'Seu progresso e XP foram salvos!');
-        // Do NOT close the session here — WorkoutSession transitions to its own
-        // completion screen and fetches AI feedback. onCancel closes it.
       } else {
         throw new Error(res.error);
       }

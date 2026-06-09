@@ -25,10 +25,10 @@ import { WorkoutGeneratorInputSchema, type WorkoutGeneratorInput } from '@/ai/sc
 export function WorkoutGenerator({
   onGenerate,
   isGenerating,
-}: {
+}: Readonly<{
   onGenerate: (data: WorkoutGeneratorInput) => Promise<void>;
   isGenerating: boolean;
-}) {
+}>) {
   const form = useForm<WorkoutGeneratorInput>({
     resolver: zodResolver(WorkoutGeneratorInputSchema),
     defaultValues: {
@@ -113,8 +113,8 @@ export function WorkoutGenerator({
                       max={7}
                       {...field}
                       onChange={(e) => {
-                        const value = parseInt(e.target.value, 10);
-                        field.onChange(isNaN(value) ? '' : value);
+                        const value = Number.parseInt(e.target.value, 10);
+                        field.onChange(Number.isNaN(value) ? '' : value);
                       }}
                     />
                   </FormControl>
