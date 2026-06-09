@@ -27,7 +27,7 @@ function resolvePhotoURL(user: User) {
   );
 }
 
-function DashboardSidebar({ role }: { role: string }) {
+function DashboardSidebar({ role }: Readonly<{ role: string }>) {
   return (
     <Sidebar className="z-10 glass-sidebar border-r border-primary/10">
       <SidebarHeader className="border-b border-primary/5 pb-4">
@@ -59,11 +59,11 @@ function DashboardHeader({
   displayName,
   email,
   photoURL,
-}: {
+}: Readonly<{
   displayName: string;
   email: string;
   photoURL: string;
-}) {
+}>) {
   return (
     <header className="flex h-16 items-center justify-between gap-4 border-b border-white/5 bg-background/40 px-6 backdrop-blur-xl sticky top-0 z-10">
       <div className="flex items-center gap-4">
@@ -81,7 +81,9 @@ function DashboardHeader({
   );
 }
 
-export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default async function DashboardLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
   const supabase = await createClient();
   const {
     data: { user },
