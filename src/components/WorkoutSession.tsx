@@ -95,6 +95,7 @@ export function WorkoutSession({ treino, onFinish, onCancel }: Readonly<WorkoutS
 
   // Re-initialize only when treino ID changes (user switches to a different workout)
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setExerciciosEmSessao(initExercicios(treino));
     setExercicioAtualIndex(0);
     setCompleted(false);

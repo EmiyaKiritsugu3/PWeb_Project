@@ -248,7 +248,7 @@ describe('getDashboardStats', () => {
     expect(result.faturamentoMensal).toBe(0);
     expect(mockCaptureMessage).toHaveBeenCalledWith(
       'Aviso: Falha ao ler V_FaturamentoMensal. O banco pode estar vazio ou a view ausente.',
-      { extra: { viewError: 'Error: View missing' } }
+      { level: 'warning', extra: { viewError: 'Error: View missing' } }
     );
   });
 

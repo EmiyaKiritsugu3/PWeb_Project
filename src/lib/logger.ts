@@ -25,12 +25,11 @@ export class Logger {
     try {
       return structuredClone(value) as Record<string, unknown>;
     } catch {
-      return Object.fromEntries(
-        Object.entries(value as Record<string, unknown>).map(([k, v]) => [
-          k,
-          typeof v === 'object' ? '[Object]' : v,
-        ])
-      );
+      try {
+        return JSON.parse(JSON.stringify(value)) as Record<string, unknown>;
+      } catch {
+        return {};
+      }
     }
   }
 

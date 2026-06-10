@@ -125,7 +125,10 @@ export async function getDashboardStats() {
     } catch (_viewError) {
       Sentry.captureMessage(
         'Aviso: Falha ao ler V_FaturamentoMensal. O banco pode estar vazio ou a view ausente.',
-        { extra: { viewError: String(_viewError) } }
+        {
+          level: 'warning',
+          extra: { viewError: String(_viewError) },
+        }
       );
     }
 

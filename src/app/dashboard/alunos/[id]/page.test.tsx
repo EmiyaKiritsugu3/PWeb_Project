@@ -5,7 +5,10 @@ import type { ReactNode } from 'react';
 
 const mockNotFound = vi.fn();
 vi.mock('next/navigation', () => ({
-  notFound: () => mockNotFound(),
+  notFound: () => {
+    mockNotFound();
+    throw new Error('NEXT_NOT_FOUND');
+  },
 }));
 
 vi.mock('next/link', () => ({
@@ -193,11 +196,9 @@ describe('AlunoDetalhesPage', () => {
   it('calls notFound when aluno is null', async () => {
     mockGetAlunoDetalhes.mockResolvedValue(null);
 
-    try {
-      await AlunoDetalhesPage({ params: makeParams('not-found-id') });
-    } catch {
-      // expected notFound throw
-    }
+    await expect(AlunoDetalhesPage({ params: makeParams('not-found-id') })).rejects.toThrow(
+      'NEXT_NOT_FOUND'
+    );
 
     expect(mockNotFound).toHaveBeenCalled();
   });
