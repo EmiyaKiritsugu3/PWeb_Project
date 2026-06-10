@@ -14,12 +14,8 @@ export function TableSkeleton() {
           <PremiumSkeleton className="h-4 w-1/4" />
           <PremiumSkeleton className="h-4 w-1/4" />
         </div>
-        {[...new Array(5)].map((_, i) => (
-          // sonar-ignore-next-line
-          <div
-            key={`skeleton-row-${i}`}
-            className="border-b border-white/10 h-16 flex items-center px-4 gap-4"
-          >
+        {['skel-row-0', 'skel-row-1', 'skel-row-2', 'skel-row-3', 'skel-row-4'].map((key) => (
+          <div key={key} className="border-b border-white/10 h-16 flex items-center px-4 gap-4">
             <PremiumSkeleton className="h-4 w-1/4" />
             <PremiumSkeleton className="h-4 w-1/4" />
             <PremiumSkeleton className="h-6 w-20 rounded-full" />

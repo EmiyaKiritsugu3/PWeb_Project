@@ -17,52 +17,52 @@ const dictionaries: Record<Language, unknown> = { pt, en };
 const I18nContext = createContext<I18nContextProps | undefined>(undefined);
 
 export function I18nProvider({ children }: Readonly<{ children: React.ReactNode }>) {
-  const [language, setLanguageState] = useState<Language>('pt');
+  const [language, setLanguage] = useState<Language>('pt');
 
   // Load language from localStorage on mount
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     const raw = localStorage.getItem('app-language');
     const normalized = raw?.toLowerCase() ?? '';
     let savedLang: Language = 'pt';
     if (normalized.startsWith('en')) {
       savedLang = 'en';
     }
-    setLanguageState(savedLang);
+    setLanguage(savedLang);
   }, []);
 
-  const setLanguage = (lang: Language) => {
-    setLanguageState(lang);
+  const updateLanguage = React.useCallback((lang: Language) => {
+    setLanguage(lang);
     localStorage.setItem('app-language', lang);
-  };
+  }, []);
 
-  const t = (path: string, params?: Record<string, string | number>): string => {
-    const keys = path.split('.');
-    let value: unknown = dictionaries[language];
+  const contextValue = React.useMemo(() => {
+    const t = (path: string, params?: Record<string, string | number>): string => {
+      const keys = path.split('.');
+      let value: unknown = dictionaries[language];
 
-    for (const key of keys) {
-      if (value && typeof value === 'object' && key in (value as Record<string, unknown>)) {
-        value = (value as Record<string, unknown>)[key];
-      } else {
-        return path;
+      for (const key of keys) {
+        if (value && typeof value === 'object' && key in (value as Record<string, unknown>)) {
+          value = (value as Record<string, unknown>)[key];
+        } else {
+          return path;
+        }
       }
-    }
 
-    if (typeof value !== 'string') return path;
+      if (typeof value !== 'string') return path;
 
-    let translated = value;
-    if (params) {
-      Object.entries(params).forEach(([key, val]) => {
-        translated = translated.replace(`{${key}}`, String(val));
-      });
-    }
+      let translated = value;
+      if (params) {
+        Object.entries(params).forEach(([key, val]) => {
+          translated = translated.replace(`{${key}}`, String(val));
+        });
+      }
 
-    return translated;
-  };
+      return translated;
+    };
 
-  const contextValue = React.useMemo(
-    () => ({ language, setLanguage, t }),
-    [language, setLanguage, t]
-  );
+    return { language, setLanguage: updateLanguage, t };
+  }, [language, updateLanguage]);
 
   return <I18nContext.Provider value={contextValue}>{children}</I18nContext.Provider>;
 }

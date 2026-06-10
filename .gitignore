@@ -114,6 +114,7 @@ walkthrough.md
 
 # Dev scripts (not part of the build)
 scripts/
+!scripts/sonar-labens.sh
 
 # Academic task scripts (force-tracked via exception)
 !database/**/tarefas/**/scripts/
@@ -151,3 +152,4 @@ graphify-out/
 # Nanostack artifacts
 .nanostack/
 qa/
+.sisyphus/evidence/

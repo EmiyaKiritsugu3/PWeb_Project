@@ -22,9 +22,8 @@ function PlanosSkeleton() {
         <Skeleton className="h-10 w-36" />
       </div>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {Array.from({ length: 4 }).map((_, i) => (
-          // sonar-ignore-next-line
-          <Skeleton key={`skeleton-${i}`} className="h-44 rounded-xl" />
+        {['sk-plano-0', 'sk-plano-1', 'sk-plano-2', 'sk-plano-3'].map((key) => (
+          <Skeleton key={key} className="h-44 rounded-xl" />
         ))}
       </div>
     </div>

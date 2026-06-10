@@ -5,7 +5,14 @@ import * as React from 'react';
 vi.mock('@radix-ui/react-slider', () => {
   const Root = React.forwardRef<HTMLDivElement, React.ComponentPropsWithoutRef<'div'>>(
     ({ children, ...props }, ref) => (
-      <div ref={ref} role="slider" {...props}>
+      <div
+        ref={ref}
+        role="slider"
+        aria-valuenow={0}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        {...props}
+      >
         {children}
       </div>
     )

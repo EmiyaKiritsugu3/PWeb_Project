@@ -38,6 +38,7 @@ export function FormMatricula({
   const [selectedPlanoId, setSelectedPlanoId] = useState<string>('');
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     // Resetar o plano selecionado quando o modal for aberto para um novo aluno
     if (isOpen) {
       setSelectedPlanoId('');

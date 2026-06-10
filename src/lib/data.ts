@@ -25,7 +25,7 @@ export async function getAlunos(): Promise<Aluno[]> {
       if (result.success) {
         acc.push(result.data);
       } else {
-        console.warn(`Skipping invalid aluno ${aluno.id}:`, result.error.issues);
+        Sentry.captureMessage(`Skipping invalid aluno ${aluno.id}`, 'warning');
       }
       return acc;
     }, []);
@@ -124,7 +124,8 @@ export async function getDashboardStats() {
       // sonar-ignore-next-line
     } catch (_viewError) {
       Sentry.captureMessage(
-        'Aviso: Falha ao ler V_FaturamentoMensal. O banco pode estar vazio ou a view ausente.'
+        'Aviso: Falha ao ler V_FaturamentoMensal. O banco pode estar vazio ou a view ausente.',
+        { extra: { viewError: String(_viewError) } }
       );
     }
 
