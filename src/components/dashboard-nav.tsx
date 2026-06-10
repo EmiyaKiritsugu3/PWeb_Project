@@ -87,7 +87,7 @@ export function DashboardNavBottom() {
   return (
     <SidebarMenu>
       <SidebarMenuItem>
-        <SidebarMenuButton tooltip="Configurações">
+        <SidebarMenuButton title="Configurações">
           <Settings />
           <span>Configurações</span>
         </SidebarMenuButton>
