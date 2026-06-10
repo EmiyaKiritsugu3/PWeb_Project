@@ -56,7 +56,11 @@ export async function login(_prevState: { error: string } | undefined, formData:
 }
 
 export async function logout() {
-  const supabase = await createClient();
-  await supabase.auth.signOut();
+  try {
+    const supabase = await createClient();
+    await supabase.auth.signOut();
+  } catch (err: unknown) {
+    if (isRedirectError(err)) throw err;
+  }
   redirect('/login');
 }
