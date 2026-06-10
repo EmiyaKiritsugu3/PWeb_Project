@@ -66,9 +66,8 @@ export function DataTable<TData, TValue>({
 
   const renderMobileCards = () => {
     if (isLoading) {
-      return Array.from({ length: 3 }).map((_, i) => (
-        // sonar-ignore-next-line
-        <Card key={`skeleton-${i}`} className="bg-card/30 backdrop-blur-md border-primary/10">
+      return ['sk-card-0', 'sk-card-1', 'sk-card-2'].map((key) => (
+        <Card key={key} className="bg-card/30 backdrop-blur-md border-primary/10">
           <CardContent className="p-4">
             <Skeleton className="h-24 w-full" />
           </CardContent>
@@ -121,12 +120,10 @@ export function DataTable<TData, TValue>({
 
   const renderTableBody = () => {
     if (isLoading) {
-      return Array.from({ length: 5 }).map((_, i) => (
-        // sonar-ignore-next-line
-        <TableRow key={`skeleton-row-${i}`}>
-          {columns.map((_column, j) => (
-            // sonar-ignore-next-line
-            <TableCell key={`skeleton-col-${j}`}>
+      return ['sk-row-0', 'sk-row-1', 'sk-row-2', 'sk-row-3', 'sk-row-4'].map((rowKey) => (
+        <TableRow key={rowKey}>
+          {columns.map((column) => (
+            <TableCell key={`sk-col-${column.id ?? 'unknown'}`}>
               <Skeleton className="h-6 w-full" />
             </TableCell>
           ))}

@@ -1,6 +1,6 @@
-# Estado Atual (2026-06-06)
+# Estado Atual (2026-06-09)
 
-## Estabilizado — Library Drift Audit (PRs #128, #130, #129, #131, #132 merged)
+## Estabilizado — Library Drift Audit (PRs #128, #130, #129, #131, #132, #139 merged)
 
 **Última versão:** 1.5.0
 **Branch principal:** `main`
@@ -13,6 +13,7 @@
 - **PR #129**: 2-commit Zod forward-compat. ~30 positional `message` → `{ message: '...' }` object form. 22 `z.string().email/uuid/url` → top-level `z.email/uuid/url`. Required `zod/v4` import (v3 lacks top-level format functions).
 - **PR #131 hotfix**: TS spread error in Sentry test mock — cast `importOriginal()` to `Record<string, unknown>`.
 - **PR #132 hotfix**: 6 treino test regressions from PR #129's v4-strict UUIDs — updated 10 literal UUIDs to v4-valid format.
+- **PR #139**: SonarQube code smells fix. 32 code smells resolved (47 → 16, 66% reduction). Readonly props (20 instances), CalendarChevron extraction, Chart replaceAll + condition fix, Form-aluno replaceAll, Workout action pattern (GridMode union type), Carousel section for accessibility, Alert NOSONAR + HTMLHeadingElement type, Definitions re-export pattern. 10 false positives identified via Context7 (cmdk, Embla, skeletons). Sonar script added: `npm run sonar:labens`.
 
 (2 hotfixes were required because PR #130's test mock + PR #129's zod v4 import both introduced regressions caught by F2 review and local test runs respectively.)
 

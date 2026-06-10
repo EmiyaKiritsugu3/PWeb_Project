@@ -31,7 +31,8 @@
     "protocol:plan": "tsx scripts/sentinel-cli.ts plan",
     "sentinel": "tsx scripts/sentinel-cli.ts",
     "db:check": "tsx scripts/check-db.ts",
-    "db:create-user": "tsx scripts/create-test-user.ts"
+    "db:create-user": "tsx scripts/create-test-user.ts",
+    "sonar:labens": "./scripts/sonar-labens.sh"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
