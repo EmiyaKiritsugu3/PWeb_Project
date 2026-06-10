@@ -3,6 +3,7 @@
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
 import { isRedirectError } from 'next/dist/client/components/redirect-error';
+import * as Sentry from '@sentry/nextjs';
 import { z } from 'zod/v4';
 
 const loginSchema = z.object({
@@ -56,7 +57,12 @@ export async function login(_prevState: { error: string } | undefined, formData:
 }
 
 export async function logout() {
-  const supabase = await createClient();
-  await supabase.auth.signOut();
+  try {
+    const supabase = await createClient();
+    await supabase.auth.signOut();
+  } catch (err: unknown) {
+    if (isRedirectError(err)) throw err;
+    Sentry.captureException(err, { tags: { action: 'logout' }, level: 'warning' });
+  }
   redirect('/login');
 }
