@@ -1,22 +1,8 @@
 {
-  "active_plan": "/home/emiyakiritsugu/Projetos_Antigravity/PWeb_Project/.sisyphus/plans/pr118-correction-optimization.md",
-  "started_at": "2026-06-04T01:25:46.597Z",
-  "session_ids": [
-    "ses_1776758b8ffe0IKUMawLYpvPQw",
-    "ses_16fc27358ffeNfun8Qdh7fDluf",
-    "ses_16fc259c1ffeUtNcUJmLcWbkvA",
-    "ses_16fc23e3dffeJ6WOz1M0iDykXL",
-    "ses_16fc225bcffe8abQwLq23BbDq2",
-    "ses_16fa87119ffe70sEei10acP95M",
-    "ses_16fa2e3f1ffe8viXu177SRNzjC",
-    "ses_16fa213a6ffeMyoy60MLCpUBRz",
-    "ses_16fa173bfffeerYy4m153uWUfJ",
-    "ses_16fa10d14ffe4dXS00EPOklz5M",
-    "ses_16fa09c45ffe6T4ncs74X2Hm0y",
-    "ses_16fa008ebffeHZQKKVydt0uUhc",
-    "ses_16f9f8481ffenZzCAX6sheyvdu"
-  ],
-  "plan_name": "pr118-correction-optimization",
+  "active_plan": null,
+  "started_at": null,
+  "session_ids": [],
+  "plan_name": null,
   "agent": "atlas",
   "task_sessions": {}
 }

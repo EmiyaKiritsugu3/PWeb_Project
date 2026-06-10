@@ -21,7 +21,14 @@ vi.mock('@radix-ui/react-select', () => {
     HTMLButtonElement,
     React.ButtonHTMLAttributes<HTMLButtonElement>
   >(({ children, ...props }, ref) => (
-    <button ref={ref} data-testid="select-trigger" role="combobox" {...props}>
+    <button
+      ref={ref}
+      data-testid="select-trigger"
+      role="combobox"
+      aria-controls=""
+      aria-expanded="false"
+      {...props}
+    >
       {children}
     </button>
   ));
@@ -44,7 +51,14 @@ vi.mock('@radix-ui/react-select', () => {
     HTMLDivElement,
     React.HTMLAttributes<HTMLDivElement> & { value: string }
   >(({ children, value: itemValue, ...props }, ref) => (
-    <div ref={ref} data-testid="select-item" data-value={itemValue} role="option" {...props}>
+    <div
+      ref={ref}
+      data-testid="select-item"
+      data-value={itemValue}
+      role="option"
+      aria-selected="false"
+      {...props}
+    >
       {children}
     </div>
   ));

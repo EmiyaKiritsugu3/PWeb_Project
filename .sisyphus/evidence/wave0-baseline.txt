@@ -1,8 +1,0 @@
-> vitest run
- RUN  v4.1.6 /home/emiyakiritsugu/Projetos_Antigravity/PWeb_Project
- Test Files  10 passed (10)
-      Tests  71 passed (71)
-   Start at  22:26:33
-   Duration  1.27s (transform 812ms, setup 698ms, import 1.40s, tests 212ms, environment 7.15s)
-(node:165263) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
-(Use `node --trace-deprecation ...` to show where the warning was created)

@@ -1,3 +1,0 @@
-src/lib/data.ts:124:    const STREAK_MULTIPLIER = 0.7;
-src/lib/data.ts:125:    const BONUS_THRESHOLD = 0.05;
-src/lib/data.ts:129:      alunos: Math.floor(totalAlunos * (STREAK_MULTIPLIER + idx * BONUS_THRESHOLD)),
