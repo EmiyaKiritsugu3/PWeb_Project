@@ -22,10 +22,10 @@ SonarQube flagged `String.raw` usage as a code smell. The fix changed the regex 
 
 ### Error
 
-```
+````typescript
 ⨯ Next.js can't recognize the exported `config` field in route "/src/middleware":
 Unsupported node type "TaggedTemplateExpression" at "config.matcher[0]".
-```
+```typescript
 
 ### Root Cause
 
@@ -72,44 +72,48 @@ Revert middleware.ts to use plain string instead of String.raw, fixing the Verce
   matcher: [
     String.raw`/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)`,
   ],
-  ```
+````
 
-  **After**:
+**After**:
 
-  ```typescript
-  matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
-  ],
-  ```
+```typescript
+matcher: [
+  '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+],
+```
 
-  **Must NOT do**:
-  - Do NOT change the regex pattern itself
-  - Do NOT modify other files
+**Must NOT do**:
 
-  **References**:
-  - `src/middleware.ts:17` — the problematic line
-  - Next.js docs: middleware config matcher must be string literals
+- Do NOT change the regex pattern itself
+- Do NOT modify other files
 
-  **Acceptance Criteria**:
-  - [ ] `npm run build` passes (exit 0)
-  - [ ] No `String.raw` in middleware.ts
+**References**:
 
-  **QA Scenarios**:
+- `src/middleware.ts:17` — the problematic line
+- Next.js docs: middleware config matcher must be string literals
 
-  ```
-  Scenario: Build passes
-    Tool: Bash
-    Steps:
-      1. Run: npm run build
-      2. Verify exit code 0
-      3. Verify no "TaggedTemplateExpression" error
-    Expected: Build completes successfully
-    Evidence: .sisyphus/evidence/task-1-build-pass.txt
-  ```
+**Acceptance Criteria**:
 
-  **Commit**: YES
-  - Message: `fix(middleware): revert String.raw to plain string for Next.js compatibility`
-  - Files: `src/middleware.ts`
+- [ ] `npm run build` passes (exit 0)
+- [ ] No `String.raw` in middleware.ts
+
+**QA Scenarios**:
+
+```
+Scenario: Build passes
+  Tool: Bash
+  Steps:
+    1. Run: npm run build
+    2. Verify exit code 0
+    3. Verify no "TaggedTemplateExpression" error
+  Expected: Build completes successfully
+  Evidence: .sisyphus/evidence/task-1-build-pass.txt
+```
+
+**Commit**: YES
+
+- Message: `fix(middleware): revert String.raw to plain string for Next.js compatibility`
+- Files: `src/middleware.ts`
 
 ---
 
@@ -117,13 +121,14 @@ Revert middleware.ts to use plain string instead of String.raw, fixing the Verce
 
 ### Verification Commands
 
-```bash
+````bash
 npm run build  # Expected: exit 0
 npm test  # Expected: 101/101 pass
-```
+```bash
 
 ### Final Checklist
 
 - [ ] Build passes
 - [ ] No String.raw in middleware.ts
 - [ ] Vercel deployment succeeds
+````

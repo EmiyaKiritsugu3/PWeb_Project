@@ -133,9 +133,9 @@ Acesse `http://localhost:3001` para ver a aplicação em execução.
 
 ```bash
 npm run typecheck      # TypeScript strict — 0 erros
-npm run lint # ESLint — 0 erros (Native flat config + ESLint 9)
+npm run lint           # ESLint — 0 erros (Native flat config + ESLint 9)
 npm run format:check   # Prettier — formatação consistente
-npm run test           # Vitest — 86/86 testes (13 suites)
+npm run test           # Vitest — 1070 testes (80+ suites)
 npm run e2e            # Playwright — 20 cenários (requer Docker + supabase start)
 npm run test:coverage  # Testes + relatório de cobertura (enviado ao SonarCloud)
 ```

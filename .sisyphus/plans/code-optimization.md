@@ -6,7 +6,7 @@
 >
 > **Deliverables**:
 >
-> - Remove 3 unused npm packages (lodash, framer-motion, motion)
+> - Remove 2 unused npm packages (lodash, framer-motion)
 > - Create 3 shared modules (exercise-options.ts, use-workout-exercises.ts, workout-exercise-row.tsx)
 > - Delete 133 lines of duplicated inline WorkoutGenerator
 > - Refactor 4 large components by extracting custom hooks
@@ -34,7 +34,8 @@ Create a detailed plan for code correction and optimization based on Fallow anal
 
 **Research Findings**:
 
-- lodash, framer-motion, motion confirmed NOT imported anywhere in codebase
+- lodash, framer-motion confirmed NOT imported anywhere in codebase
+- motion IS used in `src/app/aluno/dashboard/dashboard-client.tsx` (imported as `motion/react`)
 - @genkit-ai/next, @opentelemetry/\*, patch-package ARE needed
 - WorkoutGenerator in treinos-client (L59-191) is 95% identical to workout-generator.tsx
 - Exercise row UI duplicated 3 times across treinos-client, workout-editor
@@ -45,7 +46,7 @@ Create a detailed plan for code correction and optimization based on Fallow anal
 
 **Identified Gaps** (addressed):
 
-- Test baseline: 101/101 tests passing (verified)
+- Test baseline: 1070/1070 tests passing (verified)
 - 5 large components: paths already mapped (meus-treinos-client, treinos-client, dashboard-client, [id]/page, WorkoutSession)
 - workout-editor.tsx: included in Tier 2 (shared extraction)
 - 49 functions: explicitly DEFERRED (mostly shadcn/ui and complex UI)
@@ -71,14 +72,14 @@ Eliminate code duplication in workout components and remove unused dependencies 
 ### Definition of Done
 
 - [ ] `npm run pre-flight` passes (typecheck + lint + format + test)
-- [ ] All 101 tests pass
+- [ ] All 1070 tests pass
 - [ ] Zero ESLint errors
 - [ ] Bundle size reduced (3 packages removed)
 - [ ] No duplicated exercise form code
 
 ### Must Have
 
-- All 101 tests passing
+- All 1070 tests passing
 - Zero functional changes
 - Each commit independently revertable
 - Quality gates after each wave
@@ -118,7 +119,7 @@ Evidence saved to `.sisyphus/evidence/task-{N}-{scenario-slug}.{ext}`.
 
 ### Parallel Execution Waves
 
-```
+````bash
 Wave 1 (Start Immediately — quick wins):
 ├── Task 1: Remove unused dependencies [quick]
 
@@ -140,7 +141,7 @@ Wave FINAL (After ALL tasks — 4 parallel reviews):
 ├── Task F3: Real manual QA (unspecified-high)
 └── Task F4: Scope fidelity check (deep)
 → Present results → Get explicit user okay
-```
+```bash
 
 ### Dependency Matrix
 
@@ -170,7 +171,7 @@ Wave FINAL (After ALL tasks — 4 parallel reviews):
 - [x] 1. **Remove Unused Dependencies [quick]**
 
   **What to do**:
-  Remove 3 confirmed unused npm packages: `lodash`, `framer-motion`, `motion`. Run `npm uninstall lodash framer-motion motion`. Verify no import or require references exist in `src/` after removal. Update `package-lock.json` via the uninstall.
+  Remove 3 confirmed unused npm packages: `lodash`, `framer-motion`, `motion`. Run `npm uninstall lodash framer-motion`. Verify no import or require references exist in `src/` after removal. Update `package-lock.json` via the uninstall.
 
   **Must NOT do**:
   - Do NOT remove any other packages (especially NOT `@genkit-ai/next`, `@opentelemetry/*`, `patch-package`)
@@ -188,262 +189,255 @@ Wave FINAL (After ALL tasks — 4 parallel reviews):
   - **Blocked By**: None
 
   **References**:
-  - `package.json` — dependencies section (remove entries for lodash, framer-motion, motion)
+  - `package.json` — dependencies section (remove entries for lodash, framer-motion)
   - `package-lock.json` — auto-updated by npm uninstall
   - Project-wide: `grep -r "from 'lodash'" src/` → 0 results (verified in Context)
   - Project-wide: `grep -r "from 'framer-motion'" src/` → 0 results (verified in Context)
-  - Project-wide: `grep -r "from 'motion'" src/` → 0 results (verified in Context)
+  - Project-wide: `grep -r "from 'motion/react'" src/` → 1 result in `dashboard-client.tsx` (motion IS used)
 
   **Acceptance Criteria**:
   - [ ] `npm ls lodash` returns "not found" or empty
   - [ ] `npm ls framer-motion` returns "not found" or empty
-  - [ ] `npm ls motion` returns "not found" or empty
   - [ ] `npx tsc --noEmit` passes (exit 0)
-  - [ ] `npm test` passes (101/101 tests)
+  - [ ] `npm test` passes (1070/1070 tests)
   - [ ] No ESLint errors
 
   **QA Scenarios**:
 
-  ```
-  Scenario: Verify packages removed cleanly
-    Tool: Bash
-    Steps:
-      1. Run `npm ls lodash framer-motion motion 2>&1`
-      2. Verify output contains "empty" or "not found" for all 3
-      3. Run `npx tsc --noEmit`
-      4. Verify exit code 0
-      5. Run `npm test`
-      6. Verify all 101 tests pass
-    Expected Result: All 3 packages removed, typecheck passes, all tests pass
-    Evidence: .sisyphus/evidence/task-1-deps-removed.txt
-  ```
+````
 
-  **Commit**:
-  - Message: `chore(deps): remove unused lodash, framer-motion, motion`
-  - Files: `package.json`, `package-lock.json`
-  - Pre-commit: `npx tsc --noEmit && npm test`
+Scenario: Verify packages removed cleanly
+Tool: Bash
+Steps: 1. Run `npm ls lodash framer-motion 2>&1` 2. Verify output contains "empty" or "not found" for all 3 3. Run `npx tsc --noEmit` 4. Verify exit code 0 5. Run `npm test` 6. Verify all 1070 tests pass
+Expected Result: All 3 packages removed, typecheck passes, all tests pass
+Evidence: .sisyphus/evidence/task-1-deps-removed.txt
+
+```
+
+**Commit**:
+- Message: `chore(deps): remove unused lodash, framer-motion`
+- Files: `package.json`, `package-lock.json`
+- Pre-commit: `npx tsc --noEmit && npm test`
 
 ---
 
 - [x] 2. **Create exercise-options.ts [quick]**
 
-  **What to do**:
-  Create new file `src/lib/exercise-options.ts` that exports shared exercise constants. Consolidate duplicated definitions from `treinos-client.tsx` (L42-57) and `workout-editor.tsx` (L19-36). Exports must be:
-  - `exerciciosOptions` — grouped combobox options derived from `EXERCICIOS_POR_GRUPO`
-  - `flatExerciciosOptions` — flat array with `{ value, label, description }`
-  - `exercicioDescriptionsMap` — `Map<string, string>` for O(1) description lookup
-  - `DEFAULT_EXERCISE` — default partial `Exercicio` object `{ id: '', nomeExercicio: '', series: 3, repeticoes: '10-12', observacoes: '', descricao: '' }`
+**What to do**:
+Create new file `src/lib/exercise-options.ts` that exports shared exercise constants. Consolidate duplicated definitions from `treinos-client.tsx` (L42-57) and `workout-editor.tsx` (L19-36). Exports must be:
+- `exerciciosOptions` — grouped combobox options derived from `EXERCICIOS_POR_GRUPO`
+- `flatExerciciosOptions` — flat array with `{ value, label, description }`
+- `exercicioDescriptionsMap` — `Map<string, string>` for O(1) description lookup
+- `DEFAULT_EXERCISE` — default partial `Exercicio` object `{ id: '', nomeExercicio: '', series: 3, repeticoes: '10-12', observacoes: '', descricao: '' }`
 
-  Import `EXERCICIOS_POR_GRUPO` from `@/lib/constants` and `Exercicio` type from `@/lib/definitions`.
+Import `EXERCICIOS_POR_GRUPO` from `@/lib/constants` and `Exercicio` type from `@/lib/definitions`.
 
-  **Must NOT do**:
-  - Do NOT modify any existing files (consumers updated in later tasks)
-  - Do NOT add any new npm dependencies
-  - Do NOT include anything beyond exercise option definitions
+**Must NOT do**:
+- Do NOT modify any existing files (consumers updated in later tasks)
+- Do NOT add any new npm dependencies
+- Do NOT include anything beyond exercise option definitions
 
-  **Agent Profile**:
-  - **Category**: `quick`
-  - **Skills**: [`git-master`]
+**Agent Profile**:
+- **Category**: `quick`
+- **Skills**: [`git-master`]
 
-  **Parallelization**:
-  - **Can Run In Parallel**: YES (with Tasks 3, 4, 5)
-  - **Parallel Group**: Wave 2
-  - **Blocks**: Tasks 3, 4, 6, 7
-  - **Blocked By**: Task 1
+**Parallelization**:
+- **Can Run In Parallel**: YES (with Tasks 3, 4, 5)
+- **Parallel Group**: Wave 2
+- **Blocks**: Tasks 3, 4, 6, 7
+- **Blocked By**: Task 1
 
-  **References**:
-  - `src/app/dashboard/treinos/treinos-client.tsx` L42-57 — `exerciciosOptions` and `flatExerciciosOptions` definitions (use as primary source)
-  - `src/components/dashboard/aluno/workout-editor.tsx` L19-36 — duplicate definitions of same variables + `exercicioDescriptionsMap` (L26-28)
-  - `src/lib/constants.ts` — source of `EXERCICIOS_POR_GRUPO`
-  - `src/lib/definitions.ts` — `Exercicio` type
+**References**:
+- `src/app/dashboard/treinos/treinos-client.tsx` L42-57 — `exerciciosOptions` and `flatExerciciosOptions` definitions (use as primary source)
+- `src/components/dashboard/aluno/workout-editor.tsx` L19-36 — duplicate definitions of same variables + `exercicioDescriptionsMap` (L26-28)
+- `src/lib/constants.ts` — source of `EXERCICIOS_POR_GRUPO`
+- `src/lib/definitions.ts` — `Exercicio` type
 
-  **Acceptance Criteria**:
-  - [ ] File exists at `src/lib/exercise-options.ts`
-  - [ ] Exports `exerciciosOptions`, `flatExerciciosOptions`, `exercicioDescriptionsMap`, `DEFAULT_EXERCISE`
-  - [ ] `npx tsc --noEmit` passes
-  - [ ] `npm test` passes (101/101)
-  - [ ] No new ESLint errors
+**Acceptance Criteria**:
+- [ ] File exists at `src/lib/exercise-options.ts`
+- [ ] Exports `exerciciosOptions`, `flatExerciciosOptions`, `exercicioDescriptionsMap`, `DEFAULT_EXERCISE`
+- [ ] `npx tsc --noEmit` passes
+- [ ] `npm test` passes (101/101)
+- [ ] No new ESLint errors
 
-  **QA Scenarios**:
+**QA Scenarios**:
 
-  ```
-  Scenario: Verify new module exports and types
-    Tool: Bash
-    Steps:
-      1. Run `npx tsc --noEmit --strict src/lib/exercise-options.ts` or full typecheck
-      2. Verify file exports all 4 symbols
-      3. Run `npm run lint -- src/lib/exercise-options.ts`
-      4. Run `npm test`
-    Expected Result: Typecheck passes, lint clean, all tests pass
-    Evidence: .sisyphus/evidence/task-2-exercise-options-exports.txt
-  ```
+```
 
-  **Commit**:
-  - Message: `refactor(workout): extract shared exercise utilities`
-  - Files: `src/lib/exercise-options.ts`
-  - Pre-commit: `npm run pre-flight`
+Scenario: Verify new module exports and types
+Tool: Bash
+Steps: 1. Run `npx tsc --noEmit --strict src/lib/exercise-options.ts` or full typecheck 2. Verify file exports all 4 symbols 3. Run `npm run lint -- src/lib/exercise-options.ts` 4. Run `npm test`
+Expected Result: Typecheck passes, lint clean, all tests pass
+Evidence: .sisyphus/evidence/task-2-exercise-options-exports.txt
+
+```
+
+**Commit**:
+- Message: `refactor(workout): extract shared exercise utilities`
+- Files: `src/lib/exercise-options.ts`
+- Pre-commit: `npm run pre-flight`
 
 ---
 
 - [x] 3. **Create useWorkoutExercises hook [deep]**
 
-  **What to do**:
-  Create new file `src/hooks/use-workout-exercises.ts` that extracts duplicated exercise state management. This hook encapsulates:
-  - `objetivo` / `setObjetivo` state
-  - `exercicios` / `setExercicios` state (array of `Partial<Exercicio>`)
-  - `addObjective()` — appends a new empty exercise via `DEFAULT_EXERCISE`
-  - `removeExercise(id)` — removes exercise by id
-  - `updateExercise(id, field, value)` — updates a field; for `nomeExercicio` uses `exercicioDescriptionsMap.get()` for O(1) description lookup; for `series` uses `Number.parseInt` with `Number.isFinite` safety
-  - `hasValidationErrors` — returns true if `!objetivo || exercicios.length === 0 || exercicios.some(e => !e.nomeExercicio)`
-  - `reset()` — clears both `objetivo` and `exercicios`
+**What to do**:
+Create new file `src/hooks/use-workout-exercises.ts` that extracts duplicated exercise state management. This hook encapsulates:
+- `objetivo` / `setObjetivo` state
+- `exercicios` / `setExercicios` state (array of `Partial<Exercicio>`)
+- `addObjective()` — appends a new empty exercise via `DEFAULT_EXERCISE`
+- `removeExercise(id)` — removes exercise by id
+- `updateExercise(id, field, value)` — updates a field; for `nomeExercicio` uses `exercicioDescriptionsMap.get()` for O(1) description lookup; for `series` uses `Number.parseInt` with `Number.isFinite` safety
+- `hasValidationErrors` — returns true if `!objetivo || exercicios.length === 0 || exercicios.some(e => !e.nomeExercicio)`
+- `reset()` — clears both `objetivo` and `exercicios`
 
-  Accepts optional `initialObjetivo?: string` and `initialExercicios?: Partial<Exercicio>[]` params for edit modes. Uses `useCallback` for stable function references.
+Accepts optional `initialObjetivo?: string` and `initialExercicios?: Partial<Exercicio>[]` params for edit modes. Uses `useCallback` for stable function references.
 
-  **Must NOT do**:
-  - Do NOT modify any existing components (consumers updated in Tasks 6, 7, 9)
-  - Do NOT add any new npm dependencies
-  - Do NOT handle form submission (consumers keep their own save logic)
-  - Do NOT handle toast/notification (consumers keep their own notification)
+**Must NOT do**:
+- Do NOT modify any existing components (consumers updated in Tasks 6, 7, 9)
+- Do NOT add any new npm dependencies
+- Do NOT handle form submission (consumers keep their own save logic)
+- Do NOT handle toast/notification (consumers keep their own notification)
 
-  **Agent Profile**:
-  - **Category**: `deep`
-  - **Skills**: [`git-master`]
+**Agent Profile**:
+- **Category**: `deep`
+- **Skills**: [`git-master`]
 
-  **Parallelization**:
-  - **Can Run In Parallel**: YES (with Tasks 2, 4, 5)
-  - **Parallel Group**: Wave 2
-  - **Blocks**: Tasks 6, 7, 9
-  - **Blocked By**: Tasks 1, 2
+**Parallelization**:
+- **Can Run In Parallel**: YES (with Tasks 2, 4, 5)
+- **Parallel Group**: Wave 2
+- **Blocks**: Tasks 6, 7, 9
+- **Blocked By**: Tasks 1, 2
 
-  **References**:
-  - `src/app/dashboard/treinos/treinos-client.tsx` L354-394 — `handleAddExercicio`, `handleRemoveExercicio`, `handleExercicioChange` (Map-based approach with `parseInt` safety, use as canonical)
-  - `src/components/dashboard/aluno/workout-editor.tsx` L48-87 — duplicate `handleAddExercicio`, `handleRemoveExercicio`, `handleExercicioChange` (Map-based approach without parseInt safety on series)
-  - `src/lib/exercise-options.ts` — import `exercicioDescriptionsMap`, `DEFAULT_EXERCISE` (created in Task 2)
-  - `src/lib/definitions.ts` — `Exercicio` type
+**References**:
+- `src/app/dashboard/treinos/treinos-client.tsx` L354-394 — `handleAddExercicio`, `handleRemoveExercicio`, `handleExercicioChange` (Map-based approach with `parseInt` safety, use as canonical)
+- `src/components/dashboard/aluno/workout-editor.tsx` L48-87 — duplicate `handleAddExercicio`, `handleRemoveExercicio`, `handleExercicioChange` (Map-based approach without parseInt safety on series)
+- `src/lib/exercise-options.ts` — import `exercicioDescriptionsMap`, `DEFAULT_EXERCISE` (created in Task 2)
+- `src/lib/definitions.ts` — `Exercicio` type
 
-  **Acceptance Criteria**:
-  - [ ] File exists at `src/hooks/use-workout-exercises.ts`
-  - [ ] Exports `useWorkoutExercises` function
-  - [ ] Returns: `{ objetivo, setObjetivo, exercicios, addObjective, removeExercise, updateExercise, hasValidationErrors, reset }`
-  - [ ] `updateExercise` uses `exercicioDescriptionsMap.get()` (O(1)) not `Array.find()` (O(n))
-  - [ ] `updateExercise` for `series` uses `Number.parseInt` + `Number.isFinite` guard
-  - [ ] `npx tsc --noEmit` passes
-  - [ ] `npm test` passes (101/101)
+**Acceptance Criteria**:
+- [ ] File exists at `src/hooks/use-workout-exercises.ts`
+- [ ] Exports `useWorkoutExercises` function
+- [ ] Returns: `{ objetivo, setObjetivo, exercicios, addObjective, removeExercise, updateExercise, hasValidationErrors, reset }`
+- [ ] `updateExercise` uses `exercicioDescriptionsMap.get()` (O(1)) not `Array.find()` (O(n))
+- [ ] `updateExercise` for `series` uses `Number.parseInt` + `Number.isFinite` guard
+- [ ] `npx tsc --noEmit` passes
+- [ ] `npm test` passes (101/101)
 
-  **QA Scenarios**:
+**QA Scenarios**:
 
-  ```
-  Scenario: Verify hook types and behavior
-    Tool: Bash
-    Steps:
-      1. Run `npx tsc --noEmit`
-      2. Run `npm run lint -- src/hooks/use-workout-exercises.ts`
-      3. Verify file exports function with correct return type shape
-      4. Verify Map-based lookup (grep for `exercicioDescriptionsMap.get`)
-      5. Verify parseInt safety (grep for `Number.isFinite`)
-      6. Run `npm test`
-    Expected Result: Typecheck clean, lint clean, Map-based O(1) confirmed, parseInt safety confirmed, all tests pass
-    Evidence: .sisyphus/evidence/task-3-hook-behavior.txt
+```
 
-  Scenario: Verify no O(n) find() calls in hook
-    Tool: Grep
-    Steps:
-      1. Grep `src/hooks/use-workout-exercises.ts` for `.find(` pattern
-      2. Verify zero matches
-    Expected Result: No Array.find() calls — only Map.get() for description lookup
-    Evidence: .sisyphus/evidence/task-3-no-find-calls.txt
-  ```
+Scenario: Verify hook types and behavior
+Tool: Bash
+Steps: 1. Run `npx tsc --noEmit` 2. Run `npm run lint -- src/hooks/use-workout-exercises.ts` 3. Verify file exports function with correct return type shape 4. Verify Map-based lookup (grep for `exercicioDescriptionsMap.get`) 5. Verify parseInt safety (grep for `Number.isFinite`) 6. Run `npm test`
+Expected Result: Typecheck clean, lint clean, Map-based O(1) confirmed, parseInt safety confirmed, all tests pass
+Evidence: .sisyphus/evidence/task-3-hook-behavior.txt
 
-  **Commit**:
-  - Message: `refactor(workout): extract useWorkoutExercises hook`
-  - Files: `src/hooks/use-workout-exercises.ts`
-  - Pre-commit: `npm run pre-flight`
+Scenario: Verify no O(n) find() calls in hook
+Tool: Grep
+Steps: 1. Grep `src/hooks/use-workout-exercises.ts` for `.find(` pattern 2. Verify zero matches
+Expected Result: No Array.find() calls — only Map.get() for description lookup
+Evidence: .sisyphus/evidence/task-3-no-find-calls.txt
+
+````
+
+**Commit**:
+- Message: `refactor(workout): extract useWorkoutExercises hook`
+- Files: `src/hooks/use-workout-exercises.ts`
+- Pre-commit: `npm run pre-flight`
 
 ---
 
 - [x] 4. **Create WorkoutExerciseRow component [deep]**
 
-  **What to do**:
-  Create new file `src/components/dashboard/aluno/workout-exercise-row.tsx` that replaces triplicated exercise row UI across treinos-client (L540-604), workout-editor (L133-197), and PlanoGeradoParaEdicao (L260-305).
+**What to do**:
+Create new file `src/components/dashboard/aluno/workout-exercise-row.tsx` that replaces triplicated exercise row UI across treinos-client (L540-604), workout-editor (L133-197), and PlanoGeradoParaEdicao (L260-305).
 
-  Props interface:
+Props interface:
 
-  ```typescript
-  interface WorkoutExerciseRowProps {
-    exercise: Partial<Exercicio>;
-    index: number;
-    onUpdate: (id: string, field: keyof Exercicio, value: string | number) => void;
-    onRemove?: (id: string) => void;
-    mode?: 'combobox' | 'input'; // default: 'combobox'
-  }
-  ```
+```typescript
+interface WorkoutExerciseRowProps {
+  exercise: Partial<Exercicio>;
+  index: number;
+  onUpdate: (id: string, field: keyof Exercicio, value: string | number) => void;
+  onRemove?: (id: string) => void;
+  mode?: 'combobox' | 'input'; // default: 'combobox'
+}
+````
 
-  - `mode='combobox'` — renders Combobox for exercise name (manual creation/edit)
-  - `mode='input'` — renders plain Input for exercise name (AI plan review)
-  - Always renders: series (Input type="number"), reps (Input), observations (Input)
-  - Conditionally renders delete button only when `onRemove` is provided
-  - Imports `exerciciosOptions`, `flatExerciciosOptions` from `@/lib/exercise-options`
+- `mode='combobox'` — renders Combobox for exercise name (manual creation/edit)
+- `mode='input'` — renders plain Input for exercise name (AI plan review)
+- Always renders: series (Input type="number"), reps (Input), observations (Input)
+- Conditionally renders delete button only when `onRemove` is provided
+- Imports `exerciciosOptions`, `flatExerciciosOptions` from `@/lib/exercise-options`
 
-  **Must NOT do**:
-  - Do NOT modify any existing components (consumers updated in Tasks 6, 7, 8)
-  - Do NOT add any new npm dependencies
-  - Do NOT include card/container layout (only the row content)
+**Must NOT do**:
 
-  **Agent Profile**:
-  - **Category**: `deep`
-  - **Skills**: [`git-master`, `frontend-design`]
+- Do NOT modify any existing components (consumers updated in Tasks 6, 7, 8)
+- Do NOT add any new npm dependencies
+- Do NOT include card/container layout (only the row content)
 
-  **Parallelization**:
-  - **Can Run In Parallel**: YES (with Tasks 2, 3, 5)
-  - **Parallel Group**: Wave 2
-  - **Blocks**: Tasks 6, 7, 8
-  - **Blocked By**: Tasks 1, 2
+**Agent Profile**:
 
-  **References**:
-  - `src/app/dashboard/treinos/treinos-client.tsx` L540-604 — exercise row UI with Combobox, series, reps, obs, delete button
-  - `src/components/dashboard/aluno/workout-editor.tsx` L133-197 — nearly identical exercise row with Combobox
-  - `src/app/dashboard/treinos/treinos-client.tsx` L260-305 — PlanoGeradoParaEdicao exercise row (Input mode, not Combobox)
-  - `src/components/ui/combobox.tsx` — Combobox component API
-  - `src/lib/exercise-options.ts` — import options (created in Task 2)
+- **Category**: `deep`
+- **Skills**: [`git-master`, `frontend-design`]
 
-  **Acceptance Criteria**:
-  - [ ] File exists at `src/components/dashboard/aluno/workout-exercise-row.tsx`
-  - [ ] Exports `WorkoutExerciseRow` component
-  - [ ] `mode='combobox'` renders Combobox with exercise options
-  - [ ] `mode='input'` renders plain Input for exercise name
-  - [ ] Delete button hidden when `onRemove` not provided
-  - [ ] Series input uses `Number.parseInt` + `Number.isFinite` guard
-  - [ ] `npx tsc --noEmit` passes
-  - [ ] `npm test` passes (101/101)
+**Parallelization**:
 
-  **QA Scenarios**:
+- **Can Run In Parallel**: YES (with Tasks 2, 3, 5)
+- **Parallel Group**: Wave 2
+- **Blocks**: Tasks 6, 7, 8
+- **Blocked By**: Tasks 1, 2
 
-  ```
-  Scenario: Verify component renders correctly
-    Tool: Bash
-    Steps:
-      1. Run `npx tsc --noEmit`
-      2. Verify exports WorkoutExerciseRow
-      3. Verify imports from exercise-options.ts
-      4. Run `npm run lint -- src/components/dashboard/aluno/workout-exercise-row.tsx`
-      5. Run `npm test`
-    Expected Result: Typecheck clean, lint clean, all tests pass
-    Evidence: .sisyphus/evidence/task-4-component-exports.txt
+**References**:
 
-  Scenario: Verify both modes exist
-    Tool: Grep
-    Steps:
-      1. Grep file for `mode.*combobox` and `mode.*input`
-      2. Verify both mode branches exist
-      3. Grep for `onRemove` conditional rendering
-    Expected Result: Both combobox and input modes present, delete button conditional
-    Evidence: .sisyphus/evidence/task-4-both-modes.txt
-  ```
+- `src/app/dashboard/treinos/treinos-client.tsx` L540-604 — exercise row UI with Combobox, series, reps, obs, delete button
+- `src/components/dashboard/aluno/workout-editor.tsx` L133-197 — nearly identical exercise row with Combobox
+- `src/app/dashboard/treinos/treinos-client.tsx` L260-305 — PlanoGeradoParaEdicao exercise row (Input mode, not Combobox)
+- `src/components/ui/combobox.tsx` — Combobox component API
+- `src/lib/exercise-options.ts` — import options (created in Task 2)
 
-  **Commit**:
-  - Message: `refactor(workout): extract WorkoutExerciseRow component`
-  - Files: `src/components/dashboard/aluno/workout-exercise-row.tsx`
-  - Pre-commit: `npm run pre-flight`
+**Acceptance Criteria**:
+
+- [ ] File exists at `src/components/dashboard/aluno/workout-exercise-row.tsx`
+- [ ] Exports `WorkoutExerciseRow` component
+- [ ] `mode='combobox'` renders Combobox with exercise options
+- [ ] `mode='input'` renders plain Input for exercise name
+- [ ] Delete button hidden when `onRemove` not provided
+- [ ] Series input uses `Number.parseInt` + `Number.isFinite` guard
+- [ ] `npx tsc --noEmit` passes
+- [ ] `npm test` passes (101/101)
+
+**QA Scenarios**:
+
+```
+Scenario: Verify component renders correctly
+  Tool: Bash
+  Steps:
+    1. Run `npx tsc --noEmit`
+    2. Verify exports WorkoutExerciseRow
+    3. Verify imports from exercise-options.ts
+    4. Run `npm run lint -- src/components/dashboard/aluno/workout-exercise-row.tsx`
+    5. Run `npm test`
+  Expected Result: Typecheck clean, lint clean, all tests pass
+  Evidence: .sisyphus/evidence/task-4-component-exports.txt
+
+Scenario: Verify both modes exist
+  Tool: Grep
+  Steps:
+    1. Grep file for `mode.*combobox` and `mode.*input`
+    2. Verify both mode branches exist
+    3. Grep for `onRemove` conditional rendering
+  Expected Result: Both combobox and input modes present, delete button conditional
+  Evidence: .sisyphus/evidence/task-4-both-modes.txt
+```
+
+**Commit**:
+
+- Message: `refactor(workout): extract WorkoutExerciseRow component`
+- Files: `src/components/dashboard/aluno/workout-exercise-row.tsx`
+- Pre-commit: `npm run pre-flight`
 
 ---
 
@@ -845,7 +839,7 @@ Wave FINAL (After ALL tasks — 4 parallel reviews):
 
 | #   | Message                                                                       | Files                                                     | Pre-commit           |
 | --- | ----------------------------------------------------------------------------- | --------------------------------------------------------- | -------------------- |
-| 1   | `chore(deps): remove unused lodash, framer-motion, motion`                    | `package.json`, `package-lock.json`                       | `npm run pre-flight` |
+| 1   | `chore(deps): remove unused lodash, framer-motion`                            | `package.json`, `package-lock.json`                       | `npm run pre-flight` |
 | 2   | `refactor(workout): extract shared exercise utilities`                        | `src/lib/exercise-options.ts`                             | `npm run pre-flight` |
 | 3   | `refactor(workout): extract useWorkoutExercises hook`                         | `src/hooks/use-workout-exercises.ts`                      | `npm run pre-flight` |
 | 4   | `refactor(workout): extract WorkoutExerciseRow component`                     | `src/components/dashboard/aluno/workout-exercise-row.tsx` | `npm run pre-flight` |
@@ -861,19 +855,20 @@ Wave FINAL (After ALL tasks — 4 parallel reviews):
 
 ### Verification Commands
 
-```bash
+````bash
 npm run pre-flight  # Expected: exit 0 (typecheck + lint + format + test)
-npm test 2>&1 | grep -E "Tests.*passed"  # Expected: 101 tests passed
+npm test 2>&1 | grep -E "Tests.*passed"  # Expected: 1070 tests passed
 npx tsc --noEmit  # Expected: exit 0
-npm ls lodash framer-motion motion 2>&1  # Expected: 3 not found
-```
+npm ls lodash framer-motion 2>&1  # Expected: 3 not found
+```bash
 
 ### Final Checklist
 
 - [ ] All "Must Have" present
 - [ ] All "Must NOT Have" absent
-- [ ] All 101 tests pass
+- [ ] All 1070 tests pass
 - [ ] 3 unused deps removed
 - [ ] No duplicated exercise form code
 - [ ] Shared modules created and imported
 - [ ] Large components refactored with extracted hooks
+````

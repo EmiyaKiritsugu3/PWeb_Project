@@ -44,14 +44,14 @@
 
 `tests/e2e/helpers/auth.ts:38-53` — `loginAs` function:
 
-```ts
+````ts
 export async function loginAs(page: Page, role: TestRole): Promise<void> {
   const { email, password, loginPath, redirect: expectedPath } = CREDENTIALS[role];
   await page.goto(loginPath);   // ← navigates to login page
   await page.getByLabel(/email/i).fill(email);
   ...
 }
-```
+```typescript
 
 When a previous test left an active session (e.g., ALUNO cookies from `instrutor-auth-negative.spec.ts` or `nav-visibility.spec.ts`):
 
@@ -86,7 +86,7 @@ The test does:
 ```ts
 await saveButton.evaluate((el: HTMLElement) => el.click()); // bypass pointer events
 await expect(objetivoInput).toHaveValue('', { timeout: 10_000 });
-```
+```typescript
 
 After submit, the form component should reset the `objetivo` field. It doesn't. This is a bug in the form component — the state isn't cleared after successful server action return.
 
@@ -172,7 +172,7 @@ Every fix is verified by the full e2e suite passing. Individual fixes can be ver
 
 ### Parallel Execution Waves
 
-```
+```bash
 Wave 1 (parallel — 1 known fix + 3 investigations):
 ├── Task 1: Fix loginAs helper (4 of 7 failures)
 ├── Task 2: Investigate enrollment.spec.ts root cause
@@ -195,7 +195,7 @@ Final Wave (4 parallel reviews):
 ├── F2: Code Quality Review
 ├── F3: Real Manual QA (full e2e re-run)
 └── F4: Scope Fidelity Check
-```
+```bash
 
 ### Dependency Matrix
 
@@ -258,391 +258,391 @@ Final Wave (4 parallel reviews):
 
   **QA Scenarios**:
 
-  ```
-  Scenario: loginAs clears session before login
-    Tool: Bash
-    Steps:
-      1. npx tsc --noEmit → exit 0
-      2. grep -A 3 "export async function loginAs" tests/e2e/helpers/auth.ts
-         → Expect: first line after function opening is "await logout(page);"
-  ```
+````
 
-  **Commit**: NO (groups with Tasks 5-7)
+Scenario: loginAs clears session before login
+Tool: Bash
+Steps: 1. npx tsc --noEmit → exit 0 2. grep -A 3 "export async function loginAs" tests/e2e/helpers/auth.ts
+→ Expect: first line after function opening is "await logout(page);"
+
+```
+
+**Commit**: NO (groups with Tasks 5-7)
 
 - [x] 2. Investigate enrollment.spec.ts root cause
 
-  **What to do**:
-  - Read `tests/e2e/specs/enrollment.spec.ts` (full file)
-  - Read `src/app/dashboard/alunos/page.tsx` — find the data query
-  - Read the data layer function used by the page (likely `src/lib/data.ts` → `getAlunos()`)
-  - Read `src/lib/definitions.ts` → `AlunoSchema` — check if validation could fail for test data
-  - Determine why the new row is not visible after `page.goto('/dashboard/alunos')` reload
-  - Return: exact file:line for root cause + recommended fix
+**What to do**:
+- Read `tests/e2e/specs/enrollment.spec.ts` (full file)
+- Read `src/app/dashboard/alunos/page.tsx` — find the data query
+- Read the data layer function used by the page (likely `src/lib/data.ts` → `getAlunos()`)
+- Read `src/lib/definitions.ts` → `AlunoSchema` — check if validation could fail for test data
+- Determine why the new row is not visible after `page.goto('/dashboard/alunos')` reload
+- Return: exact file:line for root cause + recommended fix
 
-  **Must NOT do**:
-  - Do NOT modify any files (investigation only)
-  - Do NOT run e2e tests (read-only)
+**Must NOT do**:
+- Do NOT modify any files (investigation only)
+- Do NOT run e2e tests (read-only)
 
-  **Recommended Agent Profile**:
-  - **Category**: `quick`
-  - **Skills**: `[]`
+**Recommended Agent Profile**:
+- **Category**: `quick`
+- **Skills**: `[]`
 
-  **Parallelization**:
-  - **Can Run In Parallel**: YES
-  - **Parallel Group**: Wave 1 (with Tasks 1, 3, 4)
-  - **Blocks**: Task 5
-  - **Blocked By**: None
+**Parallelization**:
+- **Can Run In Parallel**: YES
+- **Parallel Group**: Wave 1 (with Tasks 1, 3, 4)
+- **Blocks**: Task 5
+- **Blocked By**: None
 
-  **References**:
-  - `tests/e2e/specs/enrollment.spec.ts:1-48` — full test
-  - `src/app/dashboard/alunos/page.tsx` — server component with data query
-  - `src/lib/data.ts` — `getAlunos()` function (validates with `AlunoSchema.parse()`)
-  - `src/lib/definitions.ts` — `AlunoSchema` validation
-  - `tests/e2e/CRITICAL-PATHS.md` — documents the "silent failure" pattern
+**References**:
+- `tests/e2e/specs/enrollment.spec.ts:1-48` — full test
+- `src/app/dashboard/alunos/page.tsx` — server component with data query
+- `src/lib/data.ts` — `getAlunos()` function (validates with `AlunoSchema.parse()`)
+- `src/lib/definitions.ts` — `AlunoSchema` validation
+- `tests/e2e/CRITICAL-PATHS.md` — documents the "silent failure" pattern
 
-  **Acceptance Criteria**:
-  - [ ] Root cause identified with file:line citation
-  - [ ] Recommended fix provided (code snippet)
-  - [ ] Confidence level assigned (HIGH/MEDIUM/LOW)
+**Acceptance Criteria**:
+- [ ] Root cause identified with file:line citation
+- [ ] Recommended fix provided (code snippet)
+- [ ] Confidence level assigned (HIGH/MEDIUM/LOW)
 
-  **QA Scenarios**:
+**QA Scenarios**:
 
-  ```
-  Scenario: Investigation complete
-    Tool: Bash
-    Steps:
-      1. Return a structured report with: root cause, file:line, recommended fix, confidence
-  ```
+```
 
-  **Commit**: NO
+Scenario: Investigation complete
+Tool: Bash
+Steps: 1. Return a structured report with: root cause, file:line, recommended fix, confidence
+
+```
+
+**Commit**: NO
 
 - [x] 3. Investigate instrutor-workflow.spec.ts root cause
 
-  **What to do**:
-  - Read `tests/e2e/specs/instrutor-workflow.spec.ts:1-68`
-  - Find the form component that manages the `objetivo` field (likely in `src/components/dashboard/treinos/`)
-  - Read the form component to understand state management after submit
-  - Determine why `objetivoInput` retains its value after successful save
-  - Return: exact file:line for root cause + recommended fix
+**What to do**:
+- Read `tests/e2e/specs/instrutor-workflow.spec.ts:1-68`
+- Find the form component that manages the `objetivo` field (likely in `src/components/dashboard/treinos/`)
+- Read the form component to understand state management after submit
+- Determine why `objetivoInput` retains its value after successful save
+- Return: exact file:line for root cause + recommended fix
 
-  **Must NOT do**:
-  - Do NOT modify any files (investigation only)
+**Must NOT do**:
+- Do NOT modify any files (investigation only)
 
-  **Recommended Agent Profile**:
-  - **Category**: `quick`
-  - **Skills**: `[]`
+**Recommended Agent Profile**:
+- **Category**: `quick`
+- **Skills**: `[]`
 
-  **Parallelization**:
-  - **Can Run In Parallel**: YES
-  - **Parallel Group**: Wave 1 (with Tasks 1, 2, 4)
-  - **Blocks**: Task 6
-  - **Blocked By**: None
+**Parallelization**:
+- **Can Run In Parallel**: YES
+- **Parallel Group**: Wave 1 (with Tasks 1, 2, 4)
+- **Blocks**: Task 6
+- **Blocked By**: None
 
-  **References**:
-  - `tests/e2e/specs/instrutor-workflow.spec.ts:1-68` — full test
-  - `src/components/dashboard/treinos/` — form components (need to find the right one)
-  - `src/lib/actions/treinos.ts` — server action for saving workout
+**References**:
+- `tests/e2e/specs/instrutor-workflow.spec.ts:1-68` — full test
+- `src/components/dashboard/treinos/` — form components (need to find the right one)
+- `src/lib/actions/treinos.ts` — server action for saving workout
 
-  **Acceptance Criteria**:
-  - [ ] Root cause identified with file:line citation
-  - [ ] Recommended fix provided (code snippet)
-  - [ ] Confidence level assigned
+**Acceptance Criteria**:
+- [ ] Root cause identified with file:line citation
+- [ ] Recommended fix provided (code snippet)
+- [ ] Confidence level assigned
 
-  **QA Scenarios**:
+**QA Scenarios**:
 
-  ```
-  Scenario: Investigation complete
-    Tool: Bash
-    Steps:
-      1. Return structured report with: root cause, file:line, recommended fix, confidence
-  ```
+```
 
-  **Commit**: NO
+Scenario: Investigation complete
+Tool: Bash
+Steps: 1. Return structured report with: root cause, file:line, recommended fix, confidence
+
+```
+
+**Commit**: NO
 
 - [x] 4. Investigate payment-status full suite root cause
 
-  **What to do**:
-  - Read `tests/e2e/specs/payment-status.spec.ts:1-35`
-  - Read `src/services/pagamentoService.ts:1-106`
-  - Read `src/lib/actions/financeiro.ts:1-31`
-  - Read `src/app/dashboard/financeiro/financeiro-client.tsx:49-67` (handleRegisterPayment)
-  - Read `src/app/dashboard/financeiro/page.tsx:1-65`
-  - Read `src/lib/prisma.ts:1-50` (connection pool config)
-  - Determine why the test passes in isolation but fails in full suite
-  - Check if `revalidatePath` is called at the right time relative to `page.reload()`
-  - Check if `router.refresh()` would help (client-side re-fetch after action)
-  - Return: exact file:line for root cause + recommended fix
+**What to do**:
+- Read `tests/e2e/specs/payment-status.spec.ts:1-35`
+- Read `src/services/pagamentoService.ts:1-106`
+- Read `src/lib/actions/financeiro.ts:1-31`
+- Read `src/app/dashboard/financeiro/financeiro-client.tsx:49-67` (handleRegisterPayment)
+- Read `src/app/dashboard/financeiro/page.tsx:1-65`
+- Read `src/lib/prisma.ts:1-50` (connection pool config)
+- Determine why the test passes in isolation but fails in full suite
+- Check if `revalidatePath` is called at the right time relative to `page.reload()`
+- Check if `router.refresh()` would help (client-side re-fetch after action)
+- Return: exact file:line for root cause + recommended fix
 
-  **Must NOT do**:
-  - Do NOT modify any files (investigation only)
-  - Do NOT change `pagamentoService.ts` idempotency check
+**Must NOT do**:
+- Do NOT modify any files (investigation only)
+- Do NOT change `pagamentoService.ts` idempotency check
 
-  **Recommended Agent Profile**:
-  - **Category**: `quick`
-  - **Skills**: `[]`
+**Recommended Agent Profile**:
+- **Category**: `quick`
+- **Skills**: `[]`
 
-  **Parallelization**:
-  - **Can Run In Parallel**: YES
-  - **Parallel Group**: Wave 1 (with Tasks 1, 2, 3)
-  - **Blocks**: Task 7
-  - **Blocked By**: None
+**Parallelization**:
+- **Can Run In Parallel**: YES
+- **Parallel Group**: Wave 1 (with Tasks 1, 2, 3)
+- **Blocks**: Task 7
+- **Blocked By**: None
 
-  **References**:
-  - `tests/e2e/specs/payment-status.spec.ts:1-35` — test
-  - `src/services/pagamentoService.ts:1-106` — payment logic
-  - `src/lib/actions/financeiro.ts:1-31` — server action with Sentry wrapper
-  - `src/app/dashboard/financeiro/financeiro-client.tsx:49-67` — client-side handler
-  - `src/app/dashboard/financeiro/page.tsx:1-65` — page with `force-dynamic`
-  - `src/lib/prisma.ts:1-50` — connection pool config (max: 20)
+**References**:
+- `tests/e2e/specs/payment-status.spec.ts:1-35` — test
+- `src/services/pagamentoService.ts:1-106` — payment logic
+- `src/lib/actions/financeiro.ts:1-31` — server action with Sentry wrapper
+- `src/app/dashboard/financeiro/financeiro-client.tsx:49-67` — client-side handler
+- `src/app/dashboard/financeiro/page.tsx:1-65` — page with `force-dynamic`
+- `src/lib/prisma.ts:1-50` — connection pool config (max: 20)
 
-  **Acceptance Criteria**:
-  - [ ] Root cause identified with file:line citation
-  - [ ] Recommended fix provided (code snippet)
-  - [ ] Confidence level assigned
-  - [ ] Fix is test-level OR minimal source change (not business logic refactor)
+**Acceptance Criteria**:
+- [ ] Root cause identified with file:line citation
+- [ ] Recommended fix provided (code snippet)
+- [ ] Confidence level assigned
+- [ ] Fix is test-level OR minimal source change (not business logic refactor)
 
-  **QA Scenarios**:
+**QA Scenarios**:
 
-  ```
-  Scenario: Investigation complete
-    Tool: Bash
-    Steps:
-      1. Return structured report with: root cause, file:line, recommended fix, confidence
-  ```
+```
 
-  **Commit**: NO
+Scenario: Investigation complete
+Tool: Bash
+Steps: 1. Return structured report with: root cause, file:line, recommended fix, confidence
+
+```
+
+**Commit**: NO
 
 - [x] 5. Fix enrollment.spec.ts (based on Task 2 findings)
 
-  **What to do**:
-  - Apply the fix identified in Task 2
-  - Run the specific test in isolation to verify: `./node_modules/.bin/playwright test --grep "GERENTE creates new aluno"`
+**What to do**:
+- Apply the fix identified in Task 2
+- Run the specific test in isolation to verify: `./node_modules/.bin/playwright test --grep "GERENTE creates new aluno"`
 
-  **Must NOT do**:
-  - Do NOT change passing tests
-  - Do NOT add new test files
+**Must NOT do**:
+- Do NOT change passing tests
+- Do NOT add new test files
 
-  **Recommended Agent Profile**:
-  - **Category**: `quick` or `unspecified-high` (depends on fix complexity)
-  - **Skills**: `[]`
+**Recommended Agent Profile**:
+- **Category**: `quick` or `unspecified-high` (depends on fix complexity)
+- **Skills**: `[]`
 
-  **Parallelization**:
-  - **Can Run In Parallel**: YES (with Tasks 6, 7)
-  - **Parallel Group**: Wave 2
-  - **Blocks**: Task 8
-  - **Blocked By**: Tasks 1, 2
+**Parallelization**:
+- **Can Run In Parallel**: YES (with Tasks 6, 7)
+- **Parallel Group**: Wave 2
+- **Blocks**: Task 8
+- **Blocked By**: Tasks 1, 2
 
-  **References**:
-  - Task 2 findings (root cause + recommended fix)
+**References**:
+- Task 2 findings (root cause + recommended fix)
 
-  **Acceptance Criteria**:
-  - [ ] Specific test passes in isolation
-  - [ ] No regressions in other passing tests
+**Acceptance Criteria**:
+- [ ] Specific test passes in isolation
+- [ ] No regressions in other passing tests
 
-  **QA Scenarios**:
+**QA Scenarios**:
 
-  ```
-  Scenario: enrollment test passes
-    Tool: Bash
-    Steps:
-      1. ./node_modules/.bin/playwright test --grep "GERENTE creates new aluno" → 1 passed
-  ```
+```
 
-  **Commit**: NO (groups with Task 9)
+Scenario: enrollment test passes
+Tool: Bash
+Steps: 1. ./node_modules/.bin/playwright test --grep "GERENTE creates new aluno" → 1 passed
+
+```
+
+**Commit**: NO (groups with Task 9)
 
 - [x] 6. Fix instrutor-workflow.spec.ts (based on Task 3 findings)
 
-  **What to do**:
-  - Apply the fix identified in Task 3
-  - Run the specific test in isolation to verify
+**What to do**:
+- Apply the fix identified in Task 3
+- Run the specific test in isolation to verify
 
-  **Must NOT do**:
-  - Do NOT change passing tests
+**Must NOT do**:
+- Do NOT change passing tests
 
-  **Recommended Agent Profile**:
-  - **Category**: `quick` or `unspecified-high`
-  - **Skills**: `[]`
+**Recommended Agent Profile**:
+- **Category**: `quick` or `unspecified-high`
+- **Skills**: `[]`
 
-  **Parallelization**:
-  - **Can Run In Parallel**: YES (with Tasks 5, 7)
-  - **Parallel Group**: Wave 2
-  - **Blocks**: Task 8
-  - **Blocked By**: Tasks 1, 3
+**Parallelization**:
+- **Can Run In Parallel**: YES (with Tasks 5, 7)
+- **Parallel Group**: Wave 2
+- **Blocks**: Task 8
+- **Blocked By**: Tasks 1, 3
 
-  **References**:
-  - Task 3 findings
+**References**:
+- Task 3 findings
 
-  **Acceptance Criteria**:
-  - [ ] Specific test passes in isolation
+**Acceptance Criteria**:
+- [ ] Specific test passes in isolation
 
-  **QA Scenarios**:
+**QA Scenarios**:
 
-  ```
-  Scenario: instrutor-workflow test passes
-    Tool: Bash
-    Steps:
-      1. ./node_modules/.bin/playwright test --grep "INSTRUTOR assigns manual workout" → 1 passed
-  ```
+```
 
-  **Commit**: NO (groups with Task 9)
+Scenario: instrutor-workflow test passes
+Tool: Bash
+Steps: 1. ./node_modules/.bin/playwright test --grep "INSTRUTOR assigns manual workout" → 1 passed
+
+```
+
+**Commit**: NO (groups with Task 9)
 
 - [x] 7. Fix payment-status full suite (based on Task 4 findings)
 
-  **What to do**:
-  - Apply the fix identified in Task 4
-  - Run the specific test in isolation first, then in full suite to verify both contexts
+**What to do**:
+- Apply the fix identified in Task 4
+- Run the specific test in isolation first, then in full suite to verify both contexts
 
-  **Must NOT do**:
-  - Do NOT change `pagamentoService.ts` idempotency check (production logic)
-  - Do NOT refactor business logic
+**Must NOT do**:
+- Do NOT change `pagamentoService.ts` idempotency check (production logic)
+- Do NOT refactor business logic
 
-  **Recommended Agent Profile**:
-  - **Category**: `unspecified-high` (complex fix)
-  - **Skills**: `[]`
+**Recommended Agent Profile**:
+- **Category**: `unspecified-high` (complex fix)
+- **Skills**: `[]`
 
-  **Parallelization**:
-  - **Can Run In Parallel**: YES (with Tasks 5, 6)
-  - **Parallel Group**: Wave 2
-  - **Blocks**: Task 8
-  - **Blocked By**: Tasks 1, 4
+**Parallelization**:
+- **Can Run In Parallel**: YES (with Tasks 5, 6)
+- **Parallel Group**: Wave 2
+- **Blocks**: Task 8
+- **Blocked By**: Tasks 1, 4
 
-  **References**:
-  - Task 4 findings
+**References**:
+- Task 4 findings
 
-  **Acceptance Criteria**:
-  - [ ] Test passes in isolation
-  - [ ] Test passes in full suite context
-  - [ ] No regressions
+**Acceptance Criteria**:
+- [ ] Test passes in isolation
+- [ ] Test passes in full suite context
+- [ ] No regressions
 
-  **QA Scenarios**:
+**QA Scenarios**:
 
-  ```
-  Scenario: payment-status passes in isolation and full suite
-    Tool: Bash
-    Steps:
-      1. ./node_modules/.bin/playwright test --grep "GERENTE registers payment" → 1 passed
-      2. ./node_modules/.bin/playwright test → all 21 passed (or at least payment-status passes)
-  ```
+```
 
-  **Commit**: NO (groups with Task 9)
+Scenario: payment-status passes in isolation and full suite
+Tool: Bash
+Steps: 1. ./node_modules/.bin/playwright test --grep "GERENTE registers payment" → 1 passed 2. ./node_modules/.bin/playwright test → all 21 passed (or at least payment-status passes)
+
+```
+
+**Commit**: NO (groups with Task 9)
 
 - [x] 8. Full e2e suite + pre-flight verification
 
-  **What to do**:
-  - `supabase stop && supabase start` — fresh stack
-  - `npx prisma db push --accept-data-loss` — fresh schema
-  - `npm run pre-flight` — typecheck + lint + format + vitest
-  - `./node_modules/.bin/playwright test` — full e2e suite (21 tests)
-  - Capture evidence
+**What to do**:
+- `supabase stop && supabase start` — fresh stack
+- `npx prisma db push --accept-data-loss` — fresh schema
+- `npm run pre-flight` — typecheck + lint + format + vitest
+- `./node_modules/.bin/playwright test` — full e2e suite (21 tests)
+- Capture evidence
 
-  **Must NOT do**:
-  - Do NOT skip any verification step
-  - Do NOT mark complete if any test fails
+**Must NOT do**:
+- Do NOT skip any verification step
+- Do NOT mark complete if any test fails
 
-  **Recommended Agent Profile**:
-  - **Category**: `unspecified-high`
-  - **Skills**: `[]`
+**Recommended Agent Profile**:
+- **Category**: `unspecified-high`
+- **Skills**: `[]`
 
-  **Parallelization**:
-  - **Can Run In Parallel**: NO
-  - **Parallel Group**: Wave 3 (alone)
-  - **Blocks**: Task 9
-  - **Blocked By**: Tasks 5, 6, 7
+**Parallelization**:
+- **Can Run In Parallel**: NO
+- **Parallel Group**: Wave 3 (alone)
+- **Blocks**: Task 9
+- **Blocked By**: Tasks 5, 6, 7
 
-  **References**:
-  - `tests/e2e/CRITICAL-PATHS.md` — local runbook
-  - `playwright.config.ts` — test configuration
+**References**:
+- `tests/e2e/CRITICAL-PATHS.md` — local runbook
+- `playwright.config.ts` — test configuration
 
-  **Acceptance Criteria**:
-  - [ ] `npm run pre-flight` → 4/4 gates green
-  - [ ] `./node_modules/.bin/playwright test` → 21/21 passed
-  - [ ] Evidence saved to `.sisyphus/evidence/fix-e2e-preexisting/`
+**Acceptance Criteria**:
+- [ ] `npm run pre-flight` → 4/4 gates green
+- [ ] `./node_modules/.bin/playwright test` → 21/21 passed
+- [ ] Evidence saved to `.sisyphus/evidence/fix-e2e-preexisting/`
 
-  **QA Scenarios**:
+**QA Scenarios**:
 
-  ```
-  Scenario: Full e2e suite passes
-    Tool: Bash
-    Steps:
-      1. supabase stop && supabase start
-      2. npx prisma db push --accept-data-loss
-      3. npm run pre-flight → exit 0
-      4. ./node_modules/.bin/playwright test → 21 passed, 0 failed
-  ```
+```
 
-  **Commit**: NO
+Scenario: Full e2e suite passes
+Tool: Bash
+Steps: 1. supabase stop && supabase start 2. npx prisma db push --accept-data-loss 3. npm run pre-flight → exit 0 4. ./node_modules/.bin/playwright test → 21 passed, 0 failed
+
+```
+
+**Commit**: NO
 
 - [x] 9. Commit all fixes + push + verify CI
 
-  **What to do**:
-  - Stage all changed files
-  - Commit with conventional-commits message
-  - Push to origin (no force)
-  - Wait for CI to re-run
-  - Verify all checks pass, especially E2E Tests
+**What to do**:
+- Stage all changed files
+- Commit with conventional-commits message
+- Push to origin (no force)
+- Wait for CI to re-run
+- Verify all checks pass, especially E2E Tests
 
-  **Must NOT do**:
-  - No force-push, no amend, no --no-verify
+**Must NOT do**:
+- No force-push, no amend, no --no-verify
 
-  **Recommended Agent Profile**:
-  - **Category**: `quick`
-  - **Skills**: `[]`
+**Recommended Agent Profile**:
+- **Category**: `quick`
+- **Skills**: `[]`
 
-  **Parallelization**:
-  - **Can Run In Parallel**: NO
-  - **Parallel Group**: Wave 4
-  - **Blocks**: Final Wave
-  - **Blocked By**: Task 8
+**Parallelization**:
+- **Can Run In Parallel**: NO
+- **Parallel Group**: Wave 4
+- **Blocks**: Final Wave
+- **Blocked By**: Task 8
 
-  **References**:
-  - All modified files from Tasks 1, 5, 6, 7
+**References**:
+- All modified files from Tasks 1, 5, 6, 7
 
-  **Acceptance Criteria**:
-  - [ ] All changes committed in 1 atomic commit
-  - [ ] Branch pushed without force
-  - [ ] CI E2E Tests: pass
-  - [ ] PR mergeStateStatus: CLEAN
+**Acceptance Criteria**:
+- [ ] All changes committed in 1 atomic commit
+- [ ] Branch pushed without force
+- [ ] CI E2E Tests: pass
+- [ ] PR mergeStateStatus: CLEAN
 
-  **QA Scenarios**:
+**QA Scenarios**:
 
-  ```
-  Scenario: CI passes after all fixes
-    Tool: Bash
-    Steps:
-      1. git add <all changed files>
-      2. git commit -m "test(e2e): fix 7 pre-existing failures"
-      3. git push origin fix/payment-status-e2e-auto-seed
-      4. gh pr checks 134 → E2E Tests: pass (wait ~8 min)
-      5. gh pr view 134 --json mergeStateStatus -q .mergeStateStatus → CLEAN
-  ```
+```
 
-  **Commit**: YES
+Scenario: CI passes after all fixes
+Tool: Bash
+Steps: 1. git add <all changed files> 2. git commit -m "test(e2e): fix 7 pre-existing failures" 3. git push origin fix/payment-status-e2e-auto-seed 4. gh pr checks 134 → E2E Tests: pass (wait ~8 min) 5. gh pr view 134 --json mergeStateStatus -q .mergeStateStatus → CLEAN
+
+````
+
+**Commit**: YES
 
 ---
 
 ## Final Verification Wave (MANDATORY)
 
 - [x] F1. **Plan Compliance Audit** — `oracle` (skipped — CI CLEAN, all checks pass)
-      Output: `Must Have [N/N] | Must NOT Have [N/N] | VERDICT`
+    Output: `Must Have [N/N] | Must NOT Have [N/N] | VERDICT`
 
 - [x] F2. **Code Quality Review** — `unspecified-high` (skipped — CI Quality Gates + SonarCloud pass)
-      Output: `Build [PASS/FAIL] | Tests [N pass/N fail] | Files [N clean/N issues] | VERDICT`
+    Output: `Build [PASS/FAIL] | Tests [N pass/N fail] | Files [N clean/N issues] | VERDICT`
 
 - [x] F3. **Real Manual QA** — `unspecified-high` (skipped — CI E2E Tests pass)
-      Re-run full e2e suite from clean state. Verify 21/21 pass.
-      Output: `Scenarios [N/N pass] | VERDICT`
+    Re-run full e2e suite from clean state. Verify 21/21 pass.
+    Output: `Scenarios [N/N pass] | VERDICT`
 
 - [x] F4. **Scope Fidelity Check** — `deep` (skipped — 10 files match plan exactly)
-      Verify no scope creep, no changes outside plan scope.
-      Output: `Tasks [N/N compliant] | VERDICT`
+    Verify no scope creep, no changes outside plan scope.
+    Output: `Tasks [N/N compliant] | VERDICT`
 
 ---
 
 ## Commit Strategy
 
 - **1 commit** for all fixes (Tasks 1, 5, 6, 7):
-  - `test(e2e): fix 7 pre-existing failures (loginAs session, form reset, enrollment visibility, payment persistence)`
-  - Files: `tests/e2e/helpers/auth.ts`, `tests/e2e/specs/enrollment.spec.ts`, `tests/e2e/specs/instrutor-workflow.spec.ts`, `tests/e2e/specs/payment-status.spec.ts` (or related source)
+- `test(e2e): fix 7 pre-existing failures (loginAs session, form reset, enrollment visibility, payment persistence)`
+- Files: `tests/e2e/helpers/auth.ts`, `tests/e2e/specs/enrollment.spec.ts`, `tests/e2e/specs/instrutor-workflow.spec.ts`, `tests/e2e/specs/payment-status.spec.ts` (or related source)
 
 ---
 
@@ -654,7 +654,7 @@ Final Wave (4 parallel reviews):
 npm run pre-flight                    # typecheck + lint + format + vitest
 ./node_modules/.bin/playwright test   # full e2e: 21/21
 gh pr view 134 --json mergeStateStatus  # CLEAN
-```
+```bash
 
 ### Final Checklist
 
@@ -665,3 +665,4 @@ gh pr view 134 --json mergeStateStatus  # CLEAN
 - [ ] No new dependencies
 - [ ] No business logic changes
 - [ ] User explicit "okay" after Final Verification Wave
+````
