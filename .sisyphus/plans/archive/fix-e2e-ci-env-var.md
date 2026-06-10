@@ -29,10 +29,10 @@
 
 **Error from CI logs**:
 
-```
+````yaml
 Error: globalSetup: missing required env vars: SUPABASE_SERVICE_ROLE_KEY
    at ../global-setup.ts:19
-```
+```bash
 
 ### Root Cause
 
@@ -88,7 +88,7 @@ e2e:
         PLAYWRIGHT_BASE_URL: http://localhost:3333
       run: npm run e2e
     - name: Upload Playwright report
-```
+```bash
 
 ### Metis Review
 
@@ -164,7 +164,7 @@ Evidence saved to `.sisyphus/evidence/fix-e2e-ci-env/task-1-*.txt`:
 
 ### Parallel Execution Waves
 
-```
+```bash
 Wave 1 (single task, sequential):
 ├── Task 1: Edit .github/workflows/ci.yml — add 1 env var to Run E2E tests step
 └── Task 2: Commit + push + verify CI
@@ -174,7 +174,7 @@ Wave FINAL (4 parallel reviews — same as PR #134 final wave):
 ├── F2: Diff Audit
 ├── F3: CI Verification
 └── F4: Scope Fidelity Check
-```
+```bash
 
 ### Dependency Matrix
 
@@ -244,67 +244,66 @@ Wave FINAL (4 parallel reviews — same as PR #134 final wave):
 
   **QA Scenarios (MANDATORY)**:
 
-  ```
-  Scenario: ci.yml env block contains the new var
-    Tool: Bash
-    Preconditions: edit applied
-    Steps:
-      1. grep -B 1 -A 6 "Run E2E tests" .github/workflows/ci.yml
-         → Expected: shows step name + env block with new SUPABASE_SERVICE_ROLE_KEY line
-      2. python3 -c "import yaml; yaml.safe_load(open('.github/workflows/ci.yml'))"
-         → Expected: exit 0, no YAML errors
-    Evidence: .sisyphus/evidence/fix-e2e-ci-env/task-1-ci-yml-edit.txt
-  ```
+````
 
-  **Commit**: NO (groups with task 2)
+Scenario: ci.yml env block contains the new var
+Tool: Bash
+Preconditions: edit applied
+Steps: 1. grep -B 1 -A 6 "Run E2E tests" .github/workflows/ci.yml
+→ Expected: shows step name + env block with new SUPABASE_SERVICE_ROLE_KEY line 2. python3 -c "import yaml; yaml.safe_load(open('.github/workflows/ci.yml'))"
+→ Expected: exit 0, no YAML errors
+Evidence: .sisyphus/evidence/fix-e2e-ci-env/task-1-ci-yml-edit.txt
+
+```
+
+**Commit**: NO (groups with task 2)
 
 - [x] 2. Commit + push + verify CI
 
-  **What to do**:
-  1. Stage ONLY `.github/workflows/ci.yml`
-  2. Commit with conventional-commits subject
-  3. Push to origin (no force)
-  4. Wait for CI to re-run (~3 min)
-  5. Verify E2E Tests check passes
+**What to do**:
+1. Stage ONLY `.github/workflows/ci.yml`
+2. Commit with conventional-commits subject
+3. Push to origin (no force)
+4. Wait for CI to re-run (~3 min)
+5. Verify E2E Tests check passes
 
-  **Must NOT do**:
-  - Do NOT use `git add .` or `git add -A`
-  - Do NOT use `--force` or `--amend`
-  - Do NOT use `--no-verify`
-  - Do NOT stage any other file
+**Must NOT do**:
+- Do NOT use `git add .` or `git add -A`
+- Do NOT use `--force` or `--amend`
+- Do NOT use `--no-verify`
+- Do NOT stage any other file
 
-  **Recommended Agent Profile**:
-  - **Category**: `quick`
-    - Reason: standard git commit + push + CI poll
-  - **Skills**: `[]`
+**Recommended Agent Profile**:
+- **Category**: `quick`
+  - Reason: standard git commit + push + CI poll
+- **Skills**: `[]`
 
-  **Parallelization**:
-  - **Can Run In Parallel**: NO
-  - **Parallel Group**: Wave 1
-  - **Blocks**: Final Verification Wave
-  - **Blocked By**: Task 1
+**Parallelization**:
+- **Can Run In Parallel**: NO
+- **Parallel Group**: Wave 1
+- **Blocks**: Final Verification Wave
+- **Blocked By**: Task 1
 
-  **References**:
-  - `.github/workflows/ci.yml` — workflow file (just edited in Task 1)
-  - Current branch: `fix/payment-status-e2e-auto-seed` (from previous PR #134 work)
+**References**:
+- `.github/workflows/ci.yml` — workflow file (just edited in Task 1)
+- Current branch: `fix/payment-status-e2e-auto-seed` (from previous PR #134 work)
 
-  **Acceptance Criteria**:
-  - [ ] Single new commit on branch with subject `fix(ci): forward SUPABASE_SERVICE_ROLE_KEY to e2e job`
-  - [ ] Branch pushed without force
-  - [ ] `gh pr checks 134` shows `E2E Tests: pass` within ~5 min
-  - [ ] `gh pr view 134 --json mergeStateStatus -q .mergeStateStatus` returns `CLEAN`
+**Acceptance Criteria**:
+- [ ] Single new commit on branch with subject `fix(ci): forward SUPABASE_SERVICE_ROLE_KEY to e2e job`
+- [ ] Branch pushed without force
+- [ ] `gh pr checks 134` shows `E2E Tests: pass` within ~5 min
+- [ ] `gh pr view 134 --json mergeStateStatus -q .mergeStateStatus` returns `CLEAN`
 
-  **QA Scenarios (MANDATORY)**:
+**QA Scenarios (MANDATORY)**:
 
-  ```
-  Scenario: Commit + push succeeds
-    Tool: Bash
-    Preconditions: Task 1 complete
-    Steps:
-      1. git add .github/workflows/ci.yml
-      2. git status -s   → Expect: M  .github/workflows/ci.yml (only)
-      3. git commit -m "fix(ci): forward SUPABASE_SERVICE_ROLE_KEY to e2e job" -m "PR #134 moved seeding from a separate CI step into Playwright's globalSetup, but the Run E2E tests step's env block did not include SUPABASE_SERVICE_ROLE_KEY (it was previously set by the now-redundant Seed E2E test users step, in a separate shell with no env persistence).
-  ```
+```
+
+Scenario: Commit + push succeeds
+Tool: Bash
+Preconditions: Task 1 complete
+Steps: 1. git add .github/workflows/ci.yml 2. git status -s → Expect: M .github/workflows/ci.yml (only) 3. git commit -m "fix(ci): forward SUPABASE_SERVICE_ROLE_KEY to e2e job" -m "PR #134 moved seeding from a separate CI step into Playwright's globalSetup, but the Run E2E tests step's env block did not include SUPABASE_SERVICE_ROLE_KEY (it was previously set by the now-redundant Seed E2E test users step, in a separate shell with no env persistence).
+
+```
 
 Adds 1 line forwarding SUPABASE_SERVICE_ROLE_KEY from \$GITHUB_ENV to the Run E2E tests step's env block, so globalSetup's required-env check passes." 4. git push origin fix/payment-status-e2e-auto-seed
 → Expect: success, no force needed 5. git log origin/main..HEAD --oneline
@@ -320,7 +319,7 @@ Steps: 1. sleep 60 # give CI time to start 2. gh pr checks 134
 → Expect: CLEAN (or BLOCKED if any other check still pending)
 Evidence: .sisyphus/evidence/fix-e2e-ci-env/task-2-ci-result.txt
 
-````
+```
 
 **Commit**: YES (this IS the commit task)
 
@@ -331,20 +330,20 @@ Evidence: .sisyphus/evidence/fix-e2e-ci-env/task-2-ci-result.txt
 > 4 review agents run in PARALLEL. ALL must APPROVE. Present consolidated results to user and get explicit "okay" before completing.
 
 - [ ] F1. **Plan Compliance Audit** — `oracle`
-Read the plan end-to-end. Verify each "Must Have" present in the diff. Verify each "Must NOT Have" absent. Check evidence files exist. Compare deliverables against plan.
-Output: `Must Have [N/N] | Must NOT Have [N/N] | Tasks [N/N] | VERDICT: APPROVE/REJECT`
+      Read the plan end-to-end. Verify each "Must Have" present in the diff. Verify each "Must NOT Have" absent. Check evidence files exist. Compare deliverables against plan.
+      Output: `Must Have [N/N] | Must NOT Have [N/N] | Tasks [N/N] | VERDICT: APPROVE/REJECT`
 
 - [ ] F2. **Diff Audit** — `unspecified-high`
-Verify only `.github/workflows/ci.yml` changed. Verify exactly 1 line added (or 1-7 lines if cleanup). Verify YAML valid. Verify the new env var line syntax matches existing lines in the same block.
-Output: `Files [1 changed: ci.yml] | Lines [+1 -0] | YAML valid [yes/no] | VERDICT`
+      Verify only `.github/workflows/ci.yml` changed. Verify exactly 1 line added (or 1-7 lines if cleanup). Verify YAML valid. Verify the new env var line syntax matches existing lines in the same block.
+      Output: `Files [1 changed: ci.yml] | Lines [+1 -0] | YAML valid [yes/no] | VERDICT`
 
 - [ ] F3. **CI Verification** — `unspecified-high`
-Query `gh pr checks 134` and `gh pr view 134 --json statusCheckRollup,mergeStateStatus`. Verify E2E Tests check is `SUCCESS` and `mergeStateStatus` is `CLEAN`.
-Output: `E2E Tests [pass/fail] | mergeStateStatus [CLEAN/BLOCKED/CONFLICTING] | All checks pass [yes/no] | VERDICT`
+      Query `gh pr checks 134` and `gh pr view 134 --json statusCheckRollup,mergeStateStatus`. Verify E2E Tests check is `SUCCESS` and `mergeStateStatus` is `CLEAN`.
+      Output: `E2E Tests [pass/fail] | mergeStateStatus [CLEAN/BLOCKED/CONFLICTING] | All checks pass [yes/no] | VERDICT`
 
 - [ ] F4. **Scope Fidelity Check** — `deep`
-For the new commit, read "What to do" vs actual diff. Verify 1:1. Detect any creep. Flag unaccounted changes.
-Output: `Tasks [N/N compliant] | Contamination [CLEAN/N issues] | Unaccounted [CLEAN/N files] | VERDICT`
+      For the new commit, read "What to do" vs actual diff. Verify 1:1. Detect any creep. Flag unaccounted changes.
+      Output: `Tasks [N/N compliant] | Contamination [CLEAN/N issues] | Unaccounted [CLEAN/N files] | VERDICT`
 
 ---
 
@@ -360,10 +359,11 @@ Output: `Tasks [N/N compliant] | Contamination [CLEAN/N issues] | Unaccounted [C
 ## Success Criteria
 
 ### Verification Commands
+
 ```bash
 gh pr view 134 --json mergeStateStatus,mergeable  # Expect: CLEAN, MERGEABLE
 gh pr checks 134                                     # Expect: all 6+ pass
-````
+```
 
 ### Final Checklist
 
@@ -381,13 +381,13 @@ gh pr checks 134                                     # Expect: all 6+ pass
 
 The CI workflow has this step AFTER PR #134:
 
-```yaml
+````yaml
 - name: Seed E2E test users
   env:
     ...
     SUPABASE_SERVICE_ROLE_KEY: ${{ env.SUPABASE_LOCAL_SERVICE_ROLE_KEY }}
   run: npx tsx prisma/seed-e2e.ts
-```
+```bash
 
 This step is now REDUNDANT because `globalSetup` runs the same seed. Removing it:
 
@@ -397,3 +397,4 @@ This step is now REDUNDANT because `globalSetup` runs the same seed. Removing it
 The seed is idempotent (uses `upsert`), so running it twice (once in the separate step, once in globalSetup) is harmless. The plan does NOT require removing it. If the user wants this cleanup, it's a separate small follow-up plan.
 
 The MINIMAL fix to make CI green is just adding the env var. The plan focuses on that.
+````

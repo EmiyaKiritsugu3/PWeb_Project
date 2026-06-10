@@ -121,7 +121,7 @@ Every task MUST include QA scenarios. Evidence in `.sisyphus/evidence/`.
 
 ### Parallel Execution Waves
 
-```
+````bash
 Wave 1 (Foundation):
 ├── T1: Compile audit findings doc
 ├── T2: Re-run smoke test (baseline)
@@ -148,7 +148,7 @@ Wave 5 (Verification + merge):
 ├── T15: PR-B merge + Vercel verify + manual Genkit flow test
 ├── T16: PR-C merge
 └── T17: F1-F4 reviews
-```
+```bash
 
 ### Dependency Matrix
 
@@ -193,120 +193,120 @@ Wave 5 (Verification + merge):
   - No `Fix` sections (those go in PRs)
     **QA Scenarios**:
 
-  ```
-  Scenario: Findings doc complete
-    Tool: Bash
-    Steps:
-      1. ls .sisyphus/evidence/audit-context7-2026-06-05.md
-      2. wc -l file (expect >100)
-      3. grep -c "## " file (expect ≥4 sections)
-      4. grep -c "🔴\|🟡\|🟢" file (expect severity markers)
-    Expected: all pass
-    Evidence: .sisyphus/evidence/t1-findings-doc.log
-  ```
+````
 
-  **Commit**: NO (evidence file only)
+Scenario: Findings doc complete
+Tool: Bash
+Steps: 1. ls .sisyphus/evidence/audit-context7-2026-06-05.md 2. wc -l file (expect >100) 3. grep -c "## " file (expect ≥4 sections) 4. grep -c "🔴\|🟡\|🟢" file (expect severity markers)
+Expected: all pass
+Evidence: .sisyphus/evidence/t1-findings-doc.log
+
+```
+
+**Commit**: NO (evidence file only)
 
 - [ ] T2. **Re-run smoke test (baseline)**
-      **What**: `npm test -- zod-migration.smoke` on current main (092f077). Verify 15/15 pass. Confirms baseline before any PRs.
-      **Must NOT**: modify any code; skip quality gates.
-      **Recommended Agent Profile**: `quick`
-      **Parallelization**: Can Run In Parallel: YES
-      **References**: `.sisyphus/evidence/f3-manual-qa.md` (prior baseline)
-      **Acceptance Criteria**:
-  - `npm test -- zod-migration.smoke` → 15/15 pass
-  - No test modified: `git diff src/lib/__tests__/zod-migration.smoke.test.ts` empty
-  - main HEAD = 092f077
-    **QA Scenarios**:
+    **What**: `npm test -- zod-migration.smoke` on current main (092f077). Verify 15/15 pass. Confirms baseline before any PRs.
+    **Must NOT**: modify any code; skip quality gates.
+    **Recommended Agent Profile**: `quick`
+    **Parallelization**: Can Run In Parallel: YES
+    **References**: `.sisyphus/evidence/f3-manual-qa.md` (prior baseline)
+    **Acceptance Criteria**:
+- `npm test -- zod-migration.smoke` → 15/15 pass
+- No test modified: `git diff src/lib/__tests__/zod-migration.smoke.test.ts` empty
+- main HEAD = 092f077
+  **QA Scenarios**:
 
-  ```
-  Scenario: Smoke baseline green
-    Tool: Bash
-    Steps:
-      1. git rev-parse origin/main → 092f077
-      2. npm test -- zod-migration.smoke 2>&1 | tail -10
-      3. git diff origin/main -- src/lib/__tests__/zod-migration.smoke.test.ts | wc -l → 0
-    Expected: 15/15 pass, no test modified
-    Evidence: .sisyphus/evidence/t2-smoke-baseline.log
-  ```
+```
 
-  **Commit**: NO
+Scenario: Smoke baseline green
+Tool: Bash
+Steps: 1. git rev-parse origin/main → 092f077 2. npm test -- zod-migration.smoke 2>&1 | tail -10 3. git diff origin/main -- src/lib/**tests**/zod-migration.smoke.test.ts | wc -l → 0
+Expected: 15/15 pass, no test modified
+Evidence: .sisyphus/evidence/t2-smoke-baseline.log
+
+```
+
+**Commit**: NO
 
 - [ ] T3. **Confirm Vercel preview works on current main**
-      **What**: Get current Vercel preview URL for main (from PR #127's preview or the latest commit). Hit `/`, `/login`, `/dashboard` to confirm no baseline issue. If unavailable, skip (informational only).
-      **Must NOT**: trigger new deploy; force push; modify config.
-      **Recommended Agent Profile**: `quick`
-      **Parallelization**: Can Run In Parallel: YES
-      **References**: README "Vercel Preview Comments" check in PRs
-      **Acceptance Criteria**:
-  - Vercel preview URL found (from last Vercel check in #127 or current)
-  - `/` returns 200 (or 307 redirect to /login, expected)
-  - `/login` returns 200
-  - `/dashboard` returns 307 to /login (expected for unauth)
-  - No 5xx errors
-    **QA Scenarios**:
+    **What**: Get current Vercel preview URL for main (from PR #127's preview or the latest commit). Hit `/`, `/login`, `/dashboard` to confirm no baseline issue. If unavailable, skip (informational only).
+    **Must NOT**: trigger new deploy; force push; modify config.
+    **Recommended Agent Profile**: `quick`
+    **Parallelization**: Can Run In Parallel: YES
+    **References**: README "Vercel Preview Comments" check in PRs
+    **Acceptance Criteria**:
+- Vercel preview URL found (from last Vercel check in #127 or current)
+- `/` returns 200 (or 307 redirect to /login, expected)
+- `/login` returns 200
+- `/dashboard` returns 307 to /login (expected for unauth)
+- No 5xx errors
+  **QA Scenarios**:
 
-  ```
-  Scenario: Vercel preview baseline
-    Tool: Bash (curl)
-    Steps:
-      1. Find latest Vercel preview URL from #127 commit checks
-      2. curl -I <preview>/ → 200 or 307
-      3. curl -I <preview>/login → 200
-      4. curl -I <preview>/dashboard → 307 to /login
-    Expected: all match expected status
-    Evidence: .sisyphus/evidence/t3-vercel-baseline.log
-  ```
+```
 
-  **Commit**: NO
+Scenario: Vercel preview baseline
+Tool: Bash (curl)
+Steps: 1. Find latest Vercel preview URL from #127 commit checks 2. curl -I <preview>/ → 200 or 307 3. curl -I <preview>/login → 200 4. curl -I <preview>/dashboard → 307 to /login
+Expected: all match expected status
+Evidence: .sisyphus/evidence/t3-vercel-baseline.log
+
+````
+
+**Commit**: NO
 
 - [ ] T4. **PR-A: Supabase SSR 0.10 setAll headers fix (CRITICAL)**
-      **What**: Fix the `setAll` 2nd-arg `headers` forwarding in `src/utils/supabase/middleware.ts` (CRITICAL — CDN cache-bleed risk) + same fix in `server.ts` (LOW). Bump `@supabase/ssr` to 0.10.3 (current latest). Remove redundant double-write to `request.cookies`.
-      **Edit pattern**:
-  ```ts
-  // middleware.ts
-  setAll(cookiesToSet, headers) {  // ← ADD headers arg
-    cookiesToSet.forEach(({ name, value, options }) =>
-      supabaseResponse.cookies.set(name, value, options)  // write to response ONLY
-    );
-    Object.entries(headers).forEach(([k, v]) => supabaseResponse.headers.set(k, v));
-  },
-  ```
-  **Bump**: `@supabase/ssr` `^0.10.2` → `^0.10.3` in package.json (lockfile-only).
-  **Must NOT**: touch unrelated supabase code; modify cookie names; remove `request.cookies` reads.
-  **Recommended Agent Profile**: `quick`
-  **Parallelization**: Can Run In Parallel: NO; Blocked By: T1, T2; Blocks: T5-T16 (shared file with PR-B? — no, PR-B is in `src/lib/actions/*` and `sentry.*.config.ts`, not supabase files)
-  **References**:
-  - `src/utils/supabase/middleware.ts:52-60` (current `setAll` signature)
-  - `src/utils/supabase/server.ts:17-24` (same pattern, server component)
-  - 0.10 release notes on `setAll` 2nd arg
-  - Vercel CDN cache headers behavior
-    **Acceptance Criteria**:
-  - `src/utils/supabase/middleware.ts` `setAll` takes 2nd `headers` arg
-  - `src/utils/supabase/middleware.ts` writes headers to `supabaseResponse.headers` via `Object.entries(headers).forEach(...)`
-  - `src/utils/supabase/middleware.ts` does NOT write to `request.cookies` in setAll (only response)
-  - `src/utils/supabase/server.ts` same fix applied
-  - `@supabase/ssr` version `^0.10.3` in package.json
-  - `npm ls @supabase/ssr` shows `0.10.3` resolved
-  - `npm run typecheck && npm test` → exit 0
-  - `npm test -- zod-migration.smoke` → 15/15 pass (no regression)
-  - E2e: `curl -I <preview>/login` → response includes `cache-control: private, no-cache, no-store, must-revalidate, max-age=0`
-    **QA Scenarios**:
-  ```
-  Scenario: setAll headers forwarded correctly
-    Tool: Bash (curl) + grep
-    Steps:
-      1. grep -n "setAll" src/utils/supabase/middleware.ts → 2-arg signature
-      2. grep -n "Object.entries(headers)" src/utils/supabase/middleware.ts → present
-      3. npm ls @supabase/ssr → 0.10.3
-      4. npm test 2>&1 | tail -5 → all pass
-      5. (Vercel preview) curl -I <preview>/login | grep -i cache-control
-    Expected: cache-control header present, all green
-    Evidence: .sisyphus/evidence/t4-pr-a-ssr-fix.log
-  ```
-  **Commit**: YES (squash at PR-A merge)
-  - Message: `fix(supabase): forward cache-bust headers in middleware setAll (Supabase SSR 0.10)`
-  - Files: `src/utils/supabase/middleware.ts`, `src/utils/supabase/server.ts`, `package.json`, `package-lock.json`
+    **What**: Fix the `setAll` 2nd-arg `headers` forwarding in `src/utils/supabase/middleware.ts` (CRITICAL — CDN cache-bleed risk) + same fix in `server.ts` (LOW). Bump `@supabase/ssr` to 0.10.3 (current latest). Remove redundant double-write to `request.cookies`.
+    **Edit pattern**:
+```ts
+// middleware.ts
+setAll(cookiesToSet, headers) {  // ← ADD headers arg
+  cookiesToSet.forEach(({ name, value, options }) =>
+    supabaseResponse.cookies.set(name, value, options)  // write to response ONLY
+  );
+  Object.entries(headers).forEach(([k, v]) => supabaseResponse.headers.set(k, v));
+},
+````
+
+**Bump**: `@supabase/ssr` `^0.10.2` → `^0.10.3` in package.json (lockfile-only).
+**Must NOT**: touch unrelated supabase code; modify cookie names; remove `request.cookies` reads.
+**Recommended Agent Profile**: `quick`
+**Parallelization**: Can Run In Parallel: NO; Blocked By: T1, T2; Blocks: T5-T16 (shared file with PR-B? — no, PR-B is in `src/lib/actions/*` and `sentry.*.config.ts`, not supabase files)
+**References**:
+
+- `src/utils/supabase/middleware.ts:52-60` (current `setAll` signature)
+- `src/utils/supabase/server.ts:17-24` (same pattern, server component)
+- 0.10 release notes on `setAll` 2nd arg
+- Vercel CDN cache headers behavior
+  **Acceptance Criteria**:
+- `src/utils/supabase/middleware.ts` `setAll` takes 2nd `headers` arg
+- `src/utils/supabase/middleware.ts` writes headers to `supabaseResponse.headers` via `Object.entries(headers).forEach(...)`
+- `src/utils/supabase/middleware.ts` does NOT write to `request.cookies` in setAll (only response)
+- `src/utils/supabase/server.ts` same fix applied
+- `@supabase/ssr` version `^0.10.3` in package.json
+- `npm ls @supabase/ssr` shows `0.10.3` resolved
+- `npm run typecheck && npm test` → exit 0
+- `npm test -- zod-migration.smoke` → 15/15 pass (no regression)
+- E2e: `curl -I <preview>/login` → response includes `cache-control: private, no-cache, no-store, must-revalidate, max-age=0`
+  **QA Scenarios**:
+
+```
+Scenario: setAll headers forwarded correctly
+  Tool: Bash (curl) + grep
+  Steps:
+    1. grep -n "setAll" src/utils/supabase/middleware.ts → 2-arg signature
+    2. grep -n "Object.entries(headers)" src/utils/supabase/middleware.ts → present
+    3. npm ls @supabase/ssr → 0.10.3
+    4. npm test 2>&1 | tail -5 → all pass
+    5. (Vercel preview) curl -I <preview>/login | grep -i cache-control
+  Expected: cache-control header present, all green
+  Evidence: .sisyphus/evidence/t4-pr-a-ssr-fix.log
+```
+
+**Commit**: YES (squash at PR-A merge)
+
+- Message: `fix(supabase): forward cache-bust headers in middleware setAll (Supabase SSR 0.10)`
+- Files: `src/utils/supabase/middleware.ts`, `src/utils/supabase/server.ts`, `package.json`, `package-lock.json`
 - [ ] T5. **PR-B-T1: Genkit F1 — replace `output!` with null guard**
       **What**: In `src/ai/flows/workout-feedback-flow.ts:99`, replace `return output!` with explicit null guard. 1.36 docs canonical pattern: `if (output == null) throw new Error('flow failed to produce output')`. Fixes non-null assertion lying to type-checker.
       **Edit pattern**:
@@ -858,7 +858,7 @@ All squash-merged to main.
 
 ## Success Criteria
 
-```bash
+````bash
 # After all PRs merged
 npm run typecheck     # exit 0
 npm run lint          # exit 0
@@ -867,7 +867,7 @@ npm test               # 101/101 baseline pass + smoke unchanged
 npm run build          # exit 0
 git grep -E "\.string\(\)\.email|\.string\(\)\.uuid|\.string\(\)\.url|\.string\(\)\.ip" src/  # 0 matches (after PR-C)
 gh pr list --state open  # 0
-```
+```bash
 
 ### Final Checklist
 
@@ -878,3 +878,4 @@ gh pr list --state open  # 0
 - [ ] Vercel preview green for PR-B
 - [ ] F1-F4 reviews APPROVE
 - [ ] No scope creep beyond audit findings
+````

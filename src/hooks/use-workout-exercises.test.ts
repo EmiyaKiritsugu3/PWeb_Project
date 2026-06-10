@@ -17,14 +17,12 @@ vi.mock('@/lib/exercise-options', () => ({
 }));
 
 let exerciseCounter = 0;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const addExercise = (result: { current: ReturnType<typeof useWorkoutExercises> }) => {
   exerciseCounter++;
   vi.spyOn(Date, 'now').mockReturnValue(exerciseCounter);
   act(() => result.current.addObjective());
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const addTwoExercises = (result: { current: ReturnType<typeof useWorkoutExercises> }) => {
   addExercise(result);
   addExercise(result);

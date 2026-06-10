@@ -27,6 +27,7 @@ export function I18nProvider({ children }: Readonly<{ children: React.ReactNode 
     if (normalized.startsWith('en')) {
       savedLang = 'en';
     }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLanguage(savedLang);
   }, []);
 

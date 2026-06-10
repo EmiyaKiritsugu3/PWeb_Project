@@ -9,6 +9,7 @@ export function useWorkoutTracker(treino: Treino | null) {
     const storageKey = `checkedExercises-${new Date().toISOString().split('T')[0]}-${treino.id}`;
     const savedState = localStorage.getItem(storageKey);
     if (savedState) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCheckedExercises(JSON.parse(savedState));
     }
   }, [treino]);

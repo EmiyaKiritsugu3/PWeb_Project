@@ -65,13 +65,13 @@
 
 **Padrão**:
 
-```tsx
+````tsx
 // ANTES
 function Component({ prop1, prop2 }: { prop1: string; prop2: number }) {
 
 // DEPOIS
 function Component({ prop1, prop2 }: Readonly<{ prop1: string; prop2: number }>) {
-```
+```typescript
 
 ---
 
@@ -99,7 +99,7 @@ function CalendarChevron({ orientation }: Readonly<{ orientation: 'left' | 'righ
 
 // Dentro de Calendar:
 components={{ Chevron: CalendarChevron }}
-```
+```typescript
 
 ---
 
@@ -115,7 +115,7 @@ components={{ Chevron: CalendarChevron }}
 // DEPOIS
               Esta ação não pode ser desfeita. Isso excluirá permanentemente o aluno{' '}
               <strong>{deletingAluno?.nomeCompleto}</strong> e removerá todos os seus dados do
-```
+```bash
 
 ---
 
@@ -137,7 +137,7 @@ const chartId = `chart-${id || uniqueId.replaceAll(':', '')}`;
 {
   nestLabel ? null : tooltipLabel;
 }
-```
+```bash
 
 ---
 
@@ -150,7 +150,7 @@ const chartId = `chart-${id || uniqueId.replaceAll(':', '')}`;
 .replace(/\D/g, '')
 // DEPOIS
 .replaceAll(/\D/g, '')
-```
+```bash
 
 ---
 
@@ -177,7 +177,7 @@ function gridCols(mode: GridMode) {
 
 // E na chamada:
 gridCols(onRemove ? 'deletable' : 'readonly');
-```
+```bash
 
 ---
 
@@ -195,7 +195,7 @@ export { Role };
 // DEPOIS
 import { z } from 'zod/v4';
 export { Role } from '@prisma/client';
-```
+```bash
 
 ---
 
@@ -212,12 +212,12 @@ export { Role } from '@prisma/client';
 **Arquivo**: `src/middleware.ts:17`
 
 ```ts
-// ANTES
-'/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
-
-// DEPOIS
+// ANTES (quebrado - String.raw causava erro de build no Vercel)
 String.raw`/((?!_next/static|_next/image|favicon.ico|.*\.(?:svg|png|jpg|jpeg|gif|webp)$).*)`,
-```
+
+// DEPOIS (fixado - string regular)
+'/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+```bash
 
 ---
 
@@ -229,37 +229,47 @@ Remover `as keyof typeof config` e `as string` onde a inferência já é suficie
 
 ---
 
-### Fix 11: carousel.tsx - aria-label (1 instância) — MAJOR
+### Fix 11: carousel.tsx - aria-label (1 instância) — MAJOR ✅ **FEITO**
 
-**Arquivo**: `src/components/ui/carousel.tsx:129-131`
-
-Já tem `aria-label="Carrossel de conteúdo"`. SonarQube quer `<section>` em vez de `<div role="region">`.
+**Arquivo**: `src/components/ui/carousel.tsx:125-132`
 
 ```tsx
 // ANTES
 <div ref={ref} role="region" aria-roledescription="carousel" aria-label="Carrossel de conteúdo">
 
-// DEPOIS
-<section ref={ref} aria-label="Carrossel de conteúdo">
-```
-
-E adicionar `aria-roledescription="carousel"` no `<section>`.
+// DEPOIS (já implementado)
+<section
+  ref={ref}
+  onKeyDownCapture={handleKeyDown}
+  className={cn('relative', className)}
+  aria-roledescription="carousel"
+  aria-label="Carrossel de conteúdo"
+  {...props}
+>
+````
 
 ---
 
-### Fix 12: alert.tsx - Heading Accessible (1 instância) — MAJOR
+### Fix 12: alert.tsx - Heading Accessible (1 instância) — MAJOR ✅ **FEITO**
 
-**Arquivo**: `src/components/ui/alert.tsx:30-38`
+**Arquivo**: `src/components/ui/alert.tsx:30-40`
 
 ```tsx
 // ANTES
 const AlertTitle = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLHeadingElement>>(
-
-// DEPOIS - adicionar aria-label como fallback
-const AlertTitle = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLHeadingElement> & { 'aria-label'?: string }>(
+  ({ className, children, ...props }, ref) => (
+    <h4
+      ref={ref}
+      className={cn('mb-1 font-medium leading-none tracking-tight', className)}
+      {...props}
+    >
+      {children}
+    </h4>
+  )
+);
 ```
 
-Ou simplesmente adicionar `sonar-ignore-next-line` se sempre tiver children.
+O componente já usa `HTMLHeadingElement` e renderiza `<h4>`. O tipo estava correto no forwardRef (era um erro no plano original).
 
 ---
 
@@ -273,12 +283,16 @@ Já tem `sonar-ignore-next-line`. Verificar se está funcionando. Se não, adici
 
 ## Execução
 
-### Wave 1: Readonly Props (20 fixes)
+### ✅ CONCLUÍDO (PR #142 merged)
 
-- Arquivos: page.tsx, layout.tsx, workout-exercise-row.tsx, aluno-header.tsx, dashboard-nav.tsx
-- Ação: Adicionar `Readonly<>` em todos os componentes
+| Fix                         | Status   | Arquivo                                                                           |
+| --------------------------- | -------- | --------------------------------------------------------------------------------- |
+| 9. middleware.ts String.raw | ✅ Feito | `src/middleware.ts:17` — removido `String.raw`                                    |
+| 11. carousel.tsx aria-label | ✅ Feito | `src/components/ui/carousel.tsx:125-132` — `<section>` com `aria-roledescription` |
+| 12. alert.tsx heading       | ✅ Feito | `src/components/ui/alert.tsx:30-40` — `HTMLHeadingElement` + `<h4>`               |
+| 13. data.ts exception       | ✅ Feito | `src/lib/data.ts:125` — `level: 'warning'` no Sentry                              |
 
-### Wave 2: Medium Priority (10 fixes)
+### Wave 1: Readonly Props (20 fixes) — **PENDENTE**
 
 - calendar.tsx: extrair Chevron
 - alunos-client.tsx: espaçamento

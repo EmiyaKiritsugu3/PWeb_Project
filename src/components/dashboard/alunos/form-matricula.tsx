@@ -40,6 +40,7 @@ export function FormMatricula({
   useEffect(() => {
     // Resetar o plano selecionado quando o modal for aberto para um novo aluno
     if (isOpen) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedPlanoId('');
     }
   }, [isOpen]);
