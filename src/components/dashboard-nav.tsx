@@ -94,7 +94,7 @@ export function DashboardNavBottom() {
       </SidebarMenuItem>
       <SidebarMenuItem>
         <form action={logout} className="w-full">
-          <SidebarMenuButton type="submit" className="w-full">
+          <SidebarMenuButton type="submit" title="Sair" className="w-full">
             <LogOut />
             <span>Sair</span>
           </SidebarMenuButton>
