@@ -10,20 +10,20 @@ Cada história contém critérios de aceitação objetivos que definem quando a 
 
 ### Atores
 
-| Ator | Descrição |
-|------|-----------|
-| **Admin / Gerente** | Administrador geral da academia. Acesso completo ao painel de gestão. |
-| **Recepcionista** | Funcionário responsável pelo atendimento presencial. Acesso a alunos, matrículas e finanças. |
-| **Instrutor / Personal** | Profissional de educação física. Cria e gerencia treinos dos alunos. |
-| **Aluno** | Cliente da academia. Acessa o portal do aluno para treinos e acompanhamento. |
+| Ator                     | Descrição                                                                                    |
+| ------------------------ | -------------------------------------------------------------------------------------------- |
+| **Admin / Gerente**      | Administrador geral da academia. Acesso completo ao painel de gestão.                        |
+| **Recepcionista**        | Funcionário responsável pelo atendimento presencial. Acesso a alunos, matrículas e finanças. |
+| **Instrutor / Personal** | Profissional de educação física. Cria e gerencia treinos dos alunos.                         |
+| **Aluno**                | Cliente da academia. Acessa o portal do aluno para treinos e acompanhamento.                 |
 
 ### Legenda de Status
 
-| Status | Significado |
-|--------|-------------|
+| Status           | Significado                                         |
+| ---------------- | --------------------------------------------------- |
 | **Implementado** | Funcionalidade desenvolvida, testada e em produção. |
-| **Em andamento** | Funcionalidade em desenvolvimento. |
-| **Pendente** | Funcionalidade planejada mas não iniciada. |
+| **Em andamento** | Funcionalidade em desenvolvimento.                  |
+| **Pendente**     | Funcionalidade planejada mas não iniciada.          |
 
 ---
 
@@ -31,14 +31,14 @@ Cada história contém critérios de aceitação objetivos que definem quando a 
 
 ### US01 — Cadastro e Gestão de Alunos
 
-| Campo | Valor |
-|-------|-------|
-| **ID** | US01 |
-| **Ator** | Admin / Gerente / Recepcionista |
-| **Título** | Cadastro e gestão de alunos |
-| **Descrição** | Como **admin, gerente ou recepcionista**, desejo cadastrar, editar, visualizar e buscar alunos da academia para manter o cadastro atualizado e gerenciar o relacionamento com cada cliente. |
-| **Prioridade** | Alta |
-| **Status** | Implementado |
+| Campo          | Valor                                                                                                                                                                                       |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **ID**         | US01                                                                                                                                                                                        |
+| **Ator**       | Admin / Gerente / Recepcionista                                                                                                                                                             |
+| **Título**     | Cadastro e gestão de alunos                                                                                                                                                                 |
+| **Descrição**  | Como **admin, gerente ou recepcionista**, desejo cadastrar, editar, visualizar e buscar alunos da academia para manter o cadastro atualizado e gerenciar o relacionamento com cada cliente. |
+| **Prioridade** | Alta                                                                                                                                                                                        |
+| **Status**     | Implementado                                                                                                                                                                                |
 
 **Critérios de Aceitação:**
 
@@ -52,14 +52,14 @@ Cada história contém critérios de aceitação objetivos que definem quando a 
 
 ### US02 — Gestão de Planos de Academia
 
-| Campo | Valor |
-|-------|-------|
-| **ID** | US02 |
-| **Ator** | Admin / Gerente |
-| **Título** | Gestão de planos de academia |
-| **Descrição** | Como **admin ou gerente**, desejo criar e gerenciar planos de academia com diferentes preços e durações para oferecer opções de contratação aos alunos. |
-| **Prioridade** | Alta |
-| **Status** | Implementado |
+| Campo          | Valor                                                                                                                                                   |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **ID**         | US02                                                                                                                                                    |
+| **Ator**       | Admin / Gerente                                                                                                                                         |
+| **Título**     | Gestão de planos de academia                                                                                                                            |
+| **Descrição**  | Como **admin ou gerente**, desejo criar e gerenciar planos de academia com diferentes preços e durações para oferecer opções de contratação aos alunos. |
+| **Prioridade** | Alta                                                                                                                                                    |
+| **Status**     | Implementado                                                                                                                                            |
 
 **Critérios de Aceitação:**
 
@@ -73,14 +73,14 @@ Cada história contém critérios de aceitação objetivos que definem quando a 
 
 ### US03 — Gerenciamento de Matrículas
 
-| Campo | Valor |
-|-------|-------|
-| **ID** | US03 |
-| **Ator** | Admin / Gerente / Recepcionista |
-| **Título** | Gerenciamento de matrículas de alunos |
-| **Descrição** | Como **admin, gerente ou recepcionista**, desejo matricular alunos em planos e gerenciar o ciclo de matrícula para controlar o acesso aos serviços da academia. |
-| **Prioridade** | Alta |
-| **Status** | Implementado |
+| Campo          | Valor                                                                                                                                                           |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **ID**         | US03                                                                                                                                                            |
+| **Ator**       | Admin / Gerente / Recepcionista                                                                                                                                 |
+| **Título**     | Gerenciamento de matrículas de alunos                                                                                                                           |
+| **Descrição**  | Como **admin, gerente ou recepcionista**, desejo matricular alunos em planos e gerenciar o ciclo de matrícula para controlar o acesso aos serviços da academia. |
+| **Prioridade** | Alta                                                                                                                                                            |
+| **Status**     | Implementado                                                                                                                                                    |
 
 **Critérios de Aceitação:**
 
@@ -96,14 +96,14 @@ Cada história contém critérios de aceitação objetivos que definem quando a 
 
 ### US04 — Controle Financeiro e Pagamentos
 
-| Campo | Valor |
-|-------|-------|
-| **ID** | US04 |
-| **Ator** | Admin / Gerente / Recepcionista |
-| **Título** | Controle financeiro e pagamentos |
-| **Descrição** | Como **admin, gerente ou recepcionista**, desejo visualizar alunos inadimplentes e registrar pagamentos para manter a saúde financeira da academia. |
-| **Prioridade** | Alta |
-| **Status** | Implementado |
+| Campo          | Valor                                                                                                                                               |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **ID**         | US04                                                                                                                                                |
+| **Ator**       | Admin / Gerente / Recepcionista                                                                                                                     |
+| **Título**     | Controle financeiro e pagamentos                                                                                                                    |
+| **Descrição**  | Como **admin, gerente ou recepcionista**, desejo visualizar alunos inadimplentes e registrar pagamentos para manter a saúde financeira da academia. |
+| **Prioridade** | Alta                                                                                                                                                |
+| **Status**     | Implementado                                                                                                                                        |
 
 **Critérios de Aceitação:**
 
@@ -120,14 +120,14 @@ Cada história contém critérios de aceitação objetivos que definem quando a 
 
 ### US05 — Criação de Treinos Personalizados
 
-| Campo | Valor |
-|-------|-------|
-| **ID** | US05 |
-| **Ator** | Instrutor / Admin |
-| **Título** | Criação de treinos personalizados |
-| **Descrição** | Como **instrutor**, desejo criar treinos personalizados para cada aluno, selecionando exercícios, séries e repetições, para montar planos de treino alinhados aos objetivos do aluno. |
-| **Prioridade** | Alta |
-| **Status** | Implementado |
+| Campo          | Valor                                                                                                                                                                                 |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **ID**         | US05                                                                                                                                                                                  |
+| **Ator**       | Instrutor / Admin                                                                                                                                                                     |
+| **Título**     | Criação de treinos personalizados                                                                                                                                                     |
+| **Descrição**  | Como **instrutor**, desejo criar treinos personalizados para cada aluno, selecionando exercícios, séries e repetições, para montar planos de treino alinhados aos objetivos do aluno. |
+| **Prioridade** | Alta                                                                                                                                                                                  |
+| **Status**     | Implementado                                                                                                                                                                          |
 
 **Critérios de Aceitação:**
 
@@ -141,14 +141,14 @@ Cada história contém critérios de aceitação objetivos que definem quando a 
 
 ### US06 — Geração de Treinos com IA
 
-| Campo | Valor |
-|-------|-------|
-| **ID** | US06 |
-| **Ator** | Instrutor / Admin |
-| **Título** | Geração de treinos com inteligência artificial |
-| **Descrição** | Como **instrutor**, desejo gerar planos de treino semanais completos usando inteligência artificial (Google Gemini via Genkit) para otimizar a criação de programas personalizados para meus alunos. |
-| **Prioridade** | Média |
-| **Status** | Implementado |
+| Campo          | Valor                                                                                                                                                                                                |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **ID**         | US06                                                                                                                                                                                                 |
+| **Ator**       | Instrutor / Admin                                                                                                                                                                                    |
+| **Título**     | Geração de treinos com inteligência artificial                                                                                                                                                       |
+| **Descrição**  | Como **instrutor**, desejo gerar planos de treino semanais completos usando inteligência artificial (Google Gemini via Genkit) para otimizar a criação de programas personalizados para meus alunos. |
+| **Prioridade** | Média                                                                                                                                                                                                |
+| **Status**     | Implementado                                                                                                                                                                                         |
 
 **Critérios de Aceitação:**
 
@@ -165,14 +165,14 @@ Cada história contém critérios de aceitação objetivos que definem quando a 
 
 ### US07 — Login e Autenticação
 
-| Campo | Valor |
-|-------|-------|
-| **ID** | US07 |
-| **Ator** | Admin / Gerente / Recepcionista / Aluno |
-| **Título** | Login e autenticação de usuários |
-| **Descrição** | Como **usuário do sistema (admin, funcionário ou aluno)**, desejo fazer login de forma segura utilizando e-mail e senha para acessar o painel ou portal correspondente ao meu perfil. |
-| **Prioridade** | Alta |
-| **Status** | Implementado |
+| Campo          | Valor                                                                                                                                                                                 |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **ID**         | US07                                                                                                                                                                                  |
+| **Ator**       | Admin / Gerente / Recepcionista / Aluno                                                                                                                                               |
+| **Título**     | Login e autenticação de usuários                                                                                                                                                      |
+| **Descrição**  | Como **usuário do sistema (admin, funcionário ou aluno)**, desejo fazer login de forma segura utilizando e-mail e senha para acessar o painel ou portal correspondente ao meu perfil. |
+| **Prioridade** | Alta                                                                                                                                                                                  |
+| **Status**     | Implementado                                                                                                                                                                          |
 
 **Critérios de Aceitação:**
 
@@ -189,14 +189,14 @@ Cada história contém critérios de aceitação objetivos que definem quando a 
 
 ### US08 — Dashboard do Aluno
 
-| Campo | Valor |
-|-------|-------|
-| **ID** | US08 |
-| **Ator** | Aluno |
-| **Título** | Dashboard pessoal do aluno |
-| **Descrição** | Como **aluno**, desejo acessar um dashboard pessoal após o login para visualizar meu progresso, treino do dia e informações da minha matrícula. |
-| **Prioridade** | Alta |
-| **Status** | Implementado |
+| Campo          | Valor                                                                                                                                           |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| **ID**         | US08                                                                                                                                            |
+| **Ator**       | Aluno                                                                                                                                           |
+| **Título**     | Dashboard pessoal do aluno                                                                                                                      |
+| **Descrição**  | Como **aluno**, desejo acessar um dashboard pessoal após o login para visualizar meu progresso, treino do dia e informações da minha matrícula. |
+| **Prioridade** | Alta                                                                                                                                            |
+| **Status**     | Implementado                                                                                                                                    |
 
 **Critérios de Aceitação:**
 
@@ -211,14 +211,14 @@ Cada história contém critérios de aceitação objetivos que definem quando a 
 
 ### US09 — Execução do Treino do Dia
 
-| Campo | Valor |
-|-------|-------|
-| **ID** | US09 |
-| **Ator** | Aluno |
-| **Título** | Execução do treino do dia |
-| **Descrição** | Como **aluno**, desejo iniciar o treino do dia, visualizar os exercícios com instruções e marcar as séries como concluídas para registrar meu progresso. |
-| **Prioridade** | Alta |
-| **Status** | Implementado |
+| Campo          | Valor                                                                                                                                                    |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **ID**         | US09                                                                                                                                                     |
+| **Ator**       | Aluno                                                                                                                                                    |
+| **Título**     | Execução do treino do dia                                                                                                                                |
+| **Descrição**  | Como **aluno**, desejo iniciar o treino do dia, visualizar os exercícios com instruções e marcar as séries como concluídas para registrar meu progresso. |
+| **Prioridade** | Alta                                                                                                                                                     |
+| **Status**     | Implementado                                                                                                                                             |
 
 **Critérios de Aceitação:**
 
@@ -232,14 +232,14 @@ Cada história contém critérios de aceitação objetivos que definem quando a 
 
 ### US10 — Gamificação: XP, Nível e Streaks
 
-| Campo | Valor |
-|-------|-------|
-| **ID** | US10 |
-| **Ator** | Aluno |
-| **Título** | Sistema de gamificação (XP, nível e streaks) |
-| **Descrição** | Como **aluno**, desejo acumular experiência (XP), subir de nível e manter uma sequência de dias consecutivos de treino (streak) para me manter motivado e consistente. |
-| **Prioridade** | Média |
-| **Status** | Implementado |
+| Campo          | Valor                                                                                                                                                                  |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **ID**         | US10                                                                                                                                                                   |
+| **Ator**       | Aluno                                                                                                                                                                  |
+| **Título**     | Sistema de gamificação (XP, nível e streaks)                                                                                                                           |
+| **Descrição**  | Como **aluno**, desejo acumular experiência (XP), subir de nível e manter uma sequência de dias consecutivos de treino (streak) para me manter motivado e consistente. |
+| **Prioridade** | Média                                                                                                                                                                  |
+| **Status**     | Implementado                                                                                                                                                           |
 
 **Critérios de Aceitação:**
 
@@ -254,14 +254,14 @@ Cada história contém critérios de aceitação objetivos que definem quando a 
 
 ### US11 — Meus Treinos (Pessoais e do Instrutor)
 
-| Campo | Valor |
-|-------|-------|
-| **ID** | US11 |
-| **Ator** | Aluno |
-| **Título** | Meus treinos pessoais e do instrutor |
-| **Descrição** | Como **aluno**, desejo visualizar todos os meus treinos em uma página separada, diferenciando os treinos criados por mim dos treinos enviados pelo meu personal, para organizar minha rotina de exercícios. |
-| **Prioridade** | Alta |
-| **Status** | Implementado |
+| Campo          | Valor                                                                                                                                                                                                       |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **ID**         | US11                                                                                                                                                                                                        |
+| **Ator**       | Aluno                                                                                                                                                                                                       |
+| **Título**     | Meus treinos pessoais e do instrutor                                                                                                                                                                        |
+| **Descrição**  | Como **aluno**, desejo visualizar todos os meus treinos em uma página separada, diferenciando os treinos criados por mim dos treinos enviados pelo meu personal, para organizar minha rotina de exercícios. |
+| **Prioridade** | Alta                                                                                                                                                                                                        |
+| **Status**     | Implementado                                                                                                                                                                                                |
 
 **Critérios de Aceitação:**
 
@@ -278,14 +278,14 @@ Cada história contém critérios de aceitação objetivos que definem quando a 
 
 ### US12 — Feedback Motivacional com IA Pós-Treino
 
-| Campo | Valor |
-|-------|-------|
-| **ID** | US12 |
-| **Ator** | Aluno |
-| **Título** | Feedback motivacional gerado por IA após o treino |
-| **Descrição** | Como **aluno**, desejo receber uma mensagem de feedback personalizada gerada por IA após finalizar meu treino para obter incentivo e dicas práticas baseadas no meu desempenho. |
-| **Prioridade** | Média |
-| **Status** | Implementado |
+| Campo          | Valor                                                                                                                                                                           |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **ID**         | US12                                                                                                                                                                            |
+| **Ator**       | Aluno                                                                                                                                                                           |
+| **Título**     | Feedback motivacional gerado por IA após o treino                                                                                                                               |
+| **Descrição**  | Como **aluno**, desejo receber uma mensagem de feedback personalizada gerada por IA após finalizar meu treino para obter incentivo e dicas práticas baseadas no meu desempenho. |
+| **Prioridade** | Média                                                                                                                                                                           |
+| **Status**     | Implementado                                                                                                                                                                    |
 
 **Critérios de Aceitação:**
 
@@ -300,25 +300,25 @@ Cada história contém critérios de aceitação objetivos que definem quando a 
 
 ## Tabela Resumo
 
-| ID | Título | Módulo | Ator | Prioridade | Status |
-|----|--------|--------|------|------------|--------|
-| US01 | Cadastro e Gestão de Alunos | Gestão de Alunos | Admin / Gerente / Recepcionista | Alta | Implementado |
-| US02 | Gestão de Planos de Academia | Gestão de Alunos | Admin / Gerente | Alta | Implementado |
-| US03 | Gerenciamento de Matrículas | Gestão de Alunos | Admin / Gerente / Recepcionista | Alta | Implementado |
-| US04 | Controle Financeiro e Pagamentos | Gestão Financeira | Admin / Gerente / Recepcionista | Alta | Implementado |
-| US05 | Criação de Treinos Personalizados | Gestão de Treinos | Instrutor / Admin | Alta | Implementado |
-| US06 | Geração de Treinos com IA | Gestão de Treinos | Instrutor / Admin | Média | Implementado |
-| US07 | Login e Autenticação | Autenticação | Admin / Funcionário / Aluno | Alta | Implementado |
-| US08 | Dashboard Pessoal do Aluno | Portal do Aluno | Aluno | Alta | Implementado |
-| US09 | Execução do Treino do Dia | Portal do Aluno | Aluno | Alta | Implementado |
-| US10 | Gamificação (XP, Nível, Streaks) | Portal do Aluno | Aluno | Média | Implementado |
-| US11 | Meus Treinos | Portal do Aluno | Aluno | Alta | Implementado |
-| US12 | Feedback Motivacional com IA | IA | Aluno | Média | Implementado |
+| ID   | Título                            | Módulo            | Ator                                    | Prioridade | Status       |
+| ---- | --------------------------------- | ----------------- | --------------------------------------- | ---------- | ------------ |
+| US01 | Cadastro e Gestão de Alunos       | Gestão de Alunos  | Admin / Gerente / Recepcionista         | Alta       | Implementado |
+| US02 | Gestão de Planos de Academia      | Gestão de Alunos  | Admin / Gerente                         | Alta       | Implementado |
+| US03 | Gerenciamento de Matrículas       | Gestão de Alunos  | Admin / Gerente / Recepcionista         | Alta       | Implementado |
+| US04 | Controle Financeiro e Pagamentos  | Gestão Financeira | Admin / Gerente / Recepcionista         | Alta       | Implementado |
+| US05 | Criação de Treinos Personalizados | Gestão de Treinos | Instrutor / Admin                       | Alta       | Implementado |
+| US06 | Geração de Treinos com IA         | Gestão de Treinos | Instrutor / Admin                       | Média      | Implementado |
+| US07 | Login e Autenticação              | Autenticação      | Admin / Gerente / Recepcionista / Aluno | Alta       | Implementado |
+| US08 | Dashboard Pessoal do Aluno        | Portal do Aluno   | Aluno                                   | Alta       | Implementado |
+| US09 | Execução do Treino do Dia         | Portal do Aluno   | Aluno                                   | Alta       | Implementado |
+| US10 | Gamificação (XP, Nível, Streaks)  | Portal do Aluno   | Aluno                                   | Média      | Implementado |
+| US11 | Meus Treinos                      | Portal do Aluno   | Aluno                                   | Alta       | Implementado |
+| US12 | Feedback Motivacional com IA      | IA                | Aluno                                   | Média      | Implementado |
 
 ---
 
 ## Histórico de Revisão
 
-| Data | Versão | Descrição | Autor |
-|------|--------|-----------|-------|
-| 2026-07-02 | 1.0 | Criação inicial do documento com 12 user stories mapeando todas as funcionalidades implementadas. | — |
+| Data       | Versão | Descrição                                                                                         | Autor |
+| ---------- | ------ | ------------------------------------------------------------------------------------------------- | ----- |
+| 2026-07-02 | 1.0    | Criação inicial do documento com 12 user stories mapeando todas as funcionalidades implementadas. | —     |

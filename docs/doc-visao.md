@@ -238,12 +238,12 @@ Painel com indicadores-chave para gerentes, incluindo total de alunos ativos, ta
 
 ### 6.1 Desempenho
 
-| ID    | Descrição                                                                             | Prioridade |
-| ----- | ------------------------------------------------------------------------------------- | ---------- |
-| RNF01 | O sistema deve carregar a página inicial em até 3 segundos em conexão de banda larga. | Alta       |
-| RNF02 | As consultas ao banco de dados devem responder em até 500ms para operações comuns.    | Alta       |
-| RNF03 | O sistema deve suportar até 100 usuários simultâneos sem degradação significativa.    | Média      |
-| RNF04 | As Server Actions devem processar requisições em até 2 segundos.                      | Média      |
+| ID    | Descrição                                                                                                  | Prioridade |
+| ----- | ---------------------------------------------------------------------------------------------------------- | ---------- |
+| RNF01 | O sistema deve carregar a página inicial em até 3 segundos em conexão de banda larga.                      | Alta       |
+| RNF02 | As consultas ao banco de dados devem responder em até 500ms para operações comuns.                         | Alta       |
+| RNF03 | O sistema deve suportar até 100 requisições concorrentes no painel de gestão sem degradação significativa. | Média      |
+| RNF04 | As Server Actions devem processar requisições em até 2 segundos.                                           | Média      |
 
 ### 6.2 Segurança
 

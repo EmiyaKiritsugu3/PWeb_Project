@@ -352,16 +352,16 @@ Registra a execução de um treino por um aluno em uma data específica. Armazen
 
 Registro detalhado de cada série executada durante um treino. Inclui o exercício, número da série, peso utilizado, repetições feitas e se foi concluída.
 
-| Campo               | Tipo    | Descrição                                                      | Restrições      |
-| ------------------- | ------- | -------------------------------------------------------------- | --------------- |
-| `id`                | String  | Identificador único da série executada (UUID v4)               | PK, gerado auto |
-| `historicoTreinoId` | String  | FK para o histórico de treino                                  | Obrigatório     |
-| `exercicioId`       | String  | FK p/ Exercicio (snapshot do nome/desc no momento da execução) | Obrigatório     |
-| `nomeExercicio`     | String  | Nome do exercício no momento da execução                       | Obrigatório     |
-| `serieNumero`       | Int     | Número ordinal da série (1, 2, 3, ...)                         | Obrigatório     |
-| `peso`              | Float?  | Carga utilizada na série em kg                                 | Opcional        |
-| `repeticoesFeitas`  | Int?    | Quantidade de repetições efetivamente realizadas               | Opcional        |
-| `concluido`         | Boolean | Indica se a série foi concluída com sucesso                    | Default: false  |
+| Campo               | Tipo    | Descrição                                                | Restrições      |
+| ------------------- | ------- | -------------------------------------------------------- | --------------- |
+| `id`                | String  | Identificador único da série executada (UUID v4)         | PK, gerado auto |
+| `historicoTreinoId` | String  | FK para o histórico de treino                            | Obrigatório     |
+| `exercicioId`       | String  | ID do exercício executado (snapshot — ref denormalizada) | Obrigatório     |
+| `nomeExercicio`     | String  | Nome do exercício no momento da execução                 | Obrigatório     |
+| `serieNumero`       | Int     | Número ordinal da série (1, 2, 3, ...)                   | Obrigatório     |
+| `peso`              | Float?  | Carga utilizada na série em kg                           | Opcional        |
+| `repeticoesFeitas`  | Int?    | Quantidade de repetições efetivamente realizadas         | Opcional        |
+| `concluido`         | Boolean | Indica se a série foi concluída com sucesso              | Default: false  |
 
 **Relacionamentos:**
 
@@ -550,7 +550,6 @@ Todas as chaves estrangeiras são explicitamente definidas e garantem integridad
 | `alunoId` (HistoricoTreino)          | `historico_treinos` | `alunos`            | Restrict (padrão)      |
 | `treinoId` (HistoricoTreino)         | `historico_treinos` | `treinos`           | Restrict (padrão)      |
 | `historicoTreinoId` (SerieExecutada) | `series_executadas` | `historico_treinos` | Cascade                |
-| `exercicioId` (SerieExecutada)       | `series_executadas` | `exercicios`        | Restrict (padrão)      |
 
 ### 6.2 Restrições de Unicidade
 
