@@ -1,0 +1,19 @@
+.agents/skills/PWeb_Project/SKILL.md
+  s_4f2204cced2d9d::t_f4ac7bba5ca06a 7,13,15-21,26-29,32,42,53,58-63,67-69,72,80-82,89,103-109
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.9",
+  "base_commit_sha": "8dfd78c0b527bd82dea813ab74a0586e86fe64fb",
+  "prompts": {},
+  "sessions": {
+    "s_4f2204cced2d9d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6d9f8773-1ba4-49ba-aee5-c05236dd04d7",
+        "model": "deepseek-v4-flash"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
