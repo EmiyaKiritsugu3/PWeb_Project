@@ -11,7 +11,12 @@
 //        - MONGO_PASSWORD=senha_forte_aqui
 // ============================================================================
 
+/* eslint-disable no-redeclare */
+
+/* global db: true, print: true */
+
 // Conecta ao banco alvo
+ 
 db = db.getSiblingDB("AtividadesProj");
 
 // ── 1. Cria usuário da aplicação ───────────────────────────────────────────

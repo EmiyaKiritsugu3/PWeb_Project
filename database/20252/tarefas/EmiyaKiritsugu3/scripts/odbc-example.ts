@@ -1,3 +1,5 @@
+/* eslint-disable no-console -- CLI database example script */
+
 import { Client } from 'pg';
 
 async function runDirectQuery() {

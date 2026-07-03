@@ -7,6 +7,7 @@
 //   node seed.js
 // ============================================================================
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const { MongoClient } = require("mongodb");
 
 const MONGO_URI = process.env.MONGO_URI;

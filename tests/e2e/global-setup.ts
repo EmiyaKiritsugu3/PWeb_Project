@@ -1,3 +1,5 @@
+/* eslint-disable no-console -- E2E setup script */
+
 /**
  * Playwright globalSetup — invokes prisma/seed-e2e.ts once before specs.
  * .env.test must load (override: true) BEFORE spawn so the child inherits test env.

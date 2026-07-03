@@ -1,3 +1,5 @@
+/* eslint-disable no-console -- CLI seed script */
+
 import { PrismaClient } from '@prisma/client';
 import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
@@ -6,6 +8,7 @@ import * as dotenv from 'dotenv';
 dotenv.config({ path: '.env.local' });
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- PrismaPg adapter type mismatch with pg@8 Pool
 const adapter = new PrismaPg(pool as any);
 const prisma = new PrismaClient({ adapter });
 
