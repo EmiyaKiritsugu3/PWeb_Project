@@ -1,0 +1,21 @@
+src/components/dashboard/alunos/columns.test.tsx
+  s_4f2204cced2d9d::t_dc3b0421c233d0 56-57
+src/components/ui/form.test.tsx
+  s_4f2204cced2d9d::t_dc3b0421c233d0 27-28,71
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.9",
+  "base_commit_sha": "6eb0cd2dd13f50b4bd2f2774afe39aaf864a7b05",
+  "prompts": {},
+  "sessions": {
+    "s_4f2204cced2d9d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6d9f8773-1ba4-49ba-aee5-c05236dd04d7",
+        "model": "deepseek-v4-flash"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
