@@ -177,6 +177,10 @@ describe('auth server actions', () => {
             error: null,
           }),
           signOut: vi.fn(),
+          getSession: vi.fn().mockResolvedValue({
+            data: { session: { user: { id: 'user-1' } } },
+            error: null,
+          }),
         },
         from: vi.fn(() => ({
           select: mockSelect,
