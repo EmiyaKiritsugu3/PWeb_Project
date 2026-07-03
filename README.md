@@ -148,19 +148,11 @@ npm run test:coverage  # Testes + relatório de cobertura (enviado ao SonarCloud
 
 ## 📘 Documentação do Projeto
 
-### Artefatos de Engenharia de Software (P1-P4)
-
 - [Documento de Visão](./docs/doc-visao.md)
-- [Documento de Modelos](./docs/doc-modelos.md)
 - [Documento de User Stories](./docs/doc-userstories.md)
-- [Documento de Projeto Arquitetural](./docs/doc-arquitetura.md)
-- [Plano de Iteração (It3/P4)](./docs/plano-iteracao.md)
-- [Relatório de Testes de Aceitação](./docs/relatorio-testes.md)
-
-### Outros Documentos
-
+- [Modelo de Dados](./docs/doc-modelos.md)
 - [Estado Atual](./docs/CURRENT-STATE.md)
-- [Débito Técnico](./docs/TECHNICAL-DEBT.md)
+- [Milestones](./docs/pdr/MILESTONES.md)
 - [Tarefa - ODBC e ORM](./database/20252/tarefas/EmiyaKiritsugu3/tarefa-orm.md)
 - [Tarefa - MongoDB](./database/20261/tarefas/EmiyaKiritsugu3/tarefa-mongodb.md)
 
