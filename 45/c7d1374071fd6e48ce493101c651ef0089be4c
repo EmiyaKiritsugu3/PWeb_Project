@@ -1,0 +1,46 @@
+src/app/login/page.tsx
+  s_3568413a5e525b::t_d8e46ce066f433 98
+  s_3568413a5e525b::t_7737672716c48a 22,25-32
+  s_3568413a5e525b::t_31d9bb3b03ef33 33
+  s_3568413a5e525b::t_2f64ecb0240df8 3-4
+.gitignore
+  s_3568413a5e525b::t_5a617d6dc0fd74 163
+src/app/login/page.test.tsx
+  s_3568413a5e525b::t_5ff51cacd55450 6-9
+src/app/actions/auth.test.ts
+  s_3568413a5e525b::t_a55c239e5033ed 174-175
+  s_3568413a5e525b::t_e570bff2aad233 167
+  s_3568413a5e525b::t_f64928f10d4504 156,163-164
+  s_3568413a5e525b::t_7b9076f18ccc6d 132,139-140
+  s_3568413a5e525b::t_93aebac7fa0b77 121,128-129
+src/app/actions/auth.ts
+  s_3568413a5e525b::t_618ddc73bb5bbc 61
+  s_3568413a5e525b::t_7a29d95ba26eec 40-43,55-56,58-60
+  s_3568413a5e525b::t_ffe4999a2b79c9 14-19
+tests/e2e/helpers/auth.ts
+  s_a3b79513a6e538::t_d68c38776b3d25 53
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "45c7d1374071fd6e48ce493101c651ef0089be4c",
+  "prompts": {},
+  "sessions": {
+    "s_3568413a5e525b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9403b2ef-4b5e-4962-826d-e3b3bde1ed1c",
+        "model": "deepseek-v4-pro"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    },
+    "s_a3b79513a6e538": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2b4e5e71-9e0c-42af-9adc-f6c83dae0323",
+        "model": "deepseek-v4-flash"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
