@@ -1,0 +1,389 @@
+# Instincts generated from https://github.com/EmiyaKiritsugu3/PWeb_Project
+# Generated: 2026-07-03T02:52:28.675Z
+# Version: 2.0
+# NOTE: This file supplements (does not replace) any existing curated instincts.
+# High-confidence manually curated instincts should be preserved alongside these.
+
+---
+id: PWeb_Project-commit-conventional
+trigger: "when writing a commit message"
+confidence: 0.85
+domain: git
+source: repo-analysis
+source_repo: https://github.com/EmiyaKiritsugu3/PWeb_Project
+---
+
+# PWeb_Project Commit Conventional
+
+## Action
+
+Use conventional commit format with prefixes: docs
+
+## Evidence
+
+- 4 commits analyzed
+- Detected conventional commit pattern
+- Examples: docs(p4): add P4-tarefa4 documentation artifacts - Iteracao 3, docs(p4): document SonarQube LabENS execution #1 (02/07/2026)
+
+---
+id: PWeb_Project-commit-length
+trigger: "when writing a commit message"
+confidence: 0.6
+domain: git
+source: repo-analysis
+source_repo: https://github.com/EmiyaKiritsugu3/PWeb_Project
+---
+
+# PWeb_Project Commit Length
+
+## Action
+
+Write moderate-length commit messages (~65 characters)
+
+## Evidence
+
+- Average commit message length: 65 chars
+- Based on 4 commits
+
+---
+id: PWeb_Project-naming-files
+trigger: "when creating a new file"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/EmiyaKiritsugu3/PWeb_Project
+---
+
+# PWeb_Project Naming Files
+
+## Action
+
+Use kebab-case naming convention
+
+## Evidence
+
+- Analyzed file naming patterns in repository
+- Dominant pattern: kebab-case
+
+---
+id: PWeb_Project-import-relative
+trigger: "when importing modules"
+confidence: 0.75
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/EmiyaKiritsugu3/PWeb_Project
+---
+
+# PWeb_Project Import Relative
+
+## Action
+
+Use relative imports for project files
+
+## Evidence
+
+- Import analysis shows relative import pattern
+- Example: import { x } from '../lib/x'
+
+---
+id: PWeb_Project-export-style
+trigger: "when exporting from a module"
+confidence: 0.7
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/EmiyaKiritsugu3/PWeb_Project
+---
+
+# PWeb_Project Export Style
+
+## Action
+
+Prefer named exports
+
+## Evidence
+
+- Export pattern analysis
+- Dominant style: named
+
+---
+id: PWeb_Project-test-separate
+trigger: "when writing tests"
+confidence: 0.8
+domain: testing
+source: repo-analysis
+source_repo: https://github.com/EmiyaKiritsugu3/PWeb_Project
+---
+
+# PWeb_Project Test Separate
+
+## Action
+
+Place tests in the tests/ or __tests__/ directory, mirroring src structure
+
+## Evidence
+
+- Separate test directory pattern detected
+- Tests live in dedicated test folders
+
+---
+id: PWeb_Project-workflow-update-documentation-artifacts
+trigger: "when doing update documentation artifacts"
+confidence: 0.6
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/EmiyaKiritsugu3/PWeb_Project
+---
+
+# PWeb_Project Workflow Update Documentation Artifacts
+
+## Action
+
+Follow the update-documentation-artifacts workflow:
+1. Edit or create documentation files in the docs/ directory (e.g., doc-visao.md, doc-modelos.md, doc-userstories.md, doc-arquitetura.md, plano-iteracao.md, relatorio-testes.md).
+2. Update README.md with new documentation links if necessary.
+3. Adjust .gitignore to allow tracking of new documentation files if needed.
+4. Commit all documentation changes together.
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~2x per month
+- Files: docs/doc-visao.md, docs/doc-modelos.md, docs/doc-userstories.md
+
+---
+id: PWeb_Project-workflow-sonarqube-labens-execution-logging
+trigger: "when doing sonarqube labens execution logging"
+confidence: 0.6
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/EmiyaKiritsugu3/PWeb_Project
+---
+
+# PWeb_Project Workflow Sonarqube Labens Execution Logging
+
+## Action
+
+Follow the sonarqube-labens-execution-logging workflow:
+1. Run SonarQube LabENS scan via npm or CI.
+2. Update docs/plano-iteracao.md with execution details (e.g., execution number, date, results table).
+3. Update docs/relatorio-testes.md with coverage results and SonarQube dashboard links.
+4. Commit documentation updates.
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~2x per month
+- Files: docs/plano-iteracao.md, docs/relatorio-testes.md
+
+---
+id: pweb_project-instinct-file-naming
+trigger: "When creating or renaming a file in the codebase"
+confidence: 0.9
+domain: code-style
+source: repo-analysis
+source_repo: EmiyaKiritsugu3/PWeb_Project
+---
+
+# Pweb_project Instinct File Naming
+
+## Action
+
+Use kebab-case for file names (e.g., my-component.ts)
+
+## Evidence
+
+- Pattern in codeStyle.namingConventions.files
+
+---
+id: pweb_project-instinct-function-naming
+trigger: "When defining a function"
+confidence: 0.9
+domain: code-style
+source: repo-analysis
+source_repo: EmiyaKiritsugu3/PWeb_Project
+---
+
+# Pweb_project Instinct Function Naming
+
+## Action
+
+Use camelCase for function names (e.g., getUserData)
+
+## Evidence
+
+- Pattern in codeStyle.namingConventions.functions
+
+---
+id: pweb_project-instinct-class-naming
+trigger: "When defining a class"
+confidence: 0.9
+domain: code-style
+source: repo-analysis
+source_repo: EmiyaKiritsugu3/PWeb_Project
+---
+
+# Pweb_project Instinct Class Naming
+
+## Action
+
+Use PascalCase for class names (e.g., UserService)
+
+## Evidence
+
+- Pattern in codeStyle.namingConventions.classes
+
+---
+id: pweb_project-instinct-constant-naming
+trigger: "When declaring a constant"
+confidence: 0.9
+domain: code-style
+source: repo-analysis
+source_repo: EmiyaKiritsugu3/PWeb_Project
+---
+
+# Pweb_project Instinct Constant Naming
+
+## Action
+
+Use SCREAMING_SNAKE_CASE for constant names (e.g., MAX_RETRIES)
+
+## Evidence
+
+- Pattern in codeStyle.namingConventions.constants
+
+---
+id: pweb_project-instinct-import-style
+trigger: "When importing modules"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: EmiyaKiritsugu3/PWeb_Project
+---
+
+# Pweb_project Instinct Import Style
+
+## Action
+
+Use relative import paths (e.g., import { X } from '../utils')
+
+## Evidence
+
+- Pattern in codeStyle.importStyle
+
+---
+id: pweb_project-instinct-export-style
+trigger: "When exporting code elements"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: EmiyaKiritsugu3/PWeb_Project
+---
+
+# Pweb_project Instinct Export Style
+
+## Action
+
+Use named exports (e.g., export { MyComponent })
+
+## Evidence
+
+- Pattern in codeStyle.exportStyle
+
+---
+id: pweb_project-instinct-test-location
+trigger: "When adding or updating tests"
+confidence: 0.8
+domain: testing
+source: repo-analysis
+source_repo: EmiyaKiritsugu3/PWeb_Project
+---
+
+# Pweb_project Instinct Test Location
+
+## Action
+
+Place test files in a separate directory from source code
+
+## Evidence
+
+- Pattern in architecture.folderStructure.testLocation
+
+---
+id: pweb_project-instinct-git-commit-format
+trigger: "When writing a commit message"
+confidence: 0.9
+domain: git
+source: repo-analysis
+source_repo: EmiyaKiritsugu3/PWeb_Project
+---
+
+# Pweb_project Instinct Git Commit Format
+
+## Action
+
+Use conventional commit format with a prefix (e.g., docs(p4): ...)
+
+## Evidence
+
+- Seen in commit: docs(p4): add P4-tarefa4 documentation artifacts - Iteracao 3
+- Pattern in commits.prefixes
+
+---
+id: pweb_project-instinct-git-commit-length
+trigger: "When composing a commit message"
+confidence: 0.7
+domain: git
+source: repo-analysis
+source_repo: EmiyaKiritsugu3/PWeb_Project
+---
+
+# Pweb_project Instinct Git Commit Length
+
+## Action
+
+Keep commit messages concise, around 65 characters on average
+
+## Evidence
+
+- Pattern in commits.averageLength
+
+---
+id: pweb_project-instinct-update-documentation-artifacts
+trigger: "When a new project iteration is completed or new documentation is required for academic evaluation"
+confidence: 0.95
+domain: workflow
+source: repo-analysis
+source_repo: EmiyaKiritsugu3/PWeb_Project
+---
+
+# Pweb_project Instinct Update Documentation Artifacts
+
+## Action
+
+Edit or create documentation files in docs/, update README.md and .gitignore if needed, and commit all documentation changes together
+
+## Evidence
+
+- Workflow: update-documentation-artifacts
+- Seen in commits: docs(p4): add P4-tarefa4 documentation artifacts - Iteracao 3
+
+---
+id: pweb_project-instinct-sonarqube-labens-logging
+trigger: "When a SonarQube LabENS scan is executed and its results need to be recorded"
+confidence: 0.9
+domain: workflow
+source: repo-analysis
+source_repo: EmiyaKiritsugu3/PWeb_Project
+---
+
+# Pweb_project Instinct Sonarqube Labens Logging
+
+## Action
+
+Update docs/plano-iteracao.md and docs/relatorio-testes.md with execution and coverage details, then commit documentation updates
+
+## Evidence
+
+- Workflow: sonarqube-labens-execution-logging
+- Seen in commits: docs(p4): document SonarQube LabENS execution #1 (02/07/2026)
+
