@@ -1,0 +1,24 @@
+src/app/actions/auth.test.ts
+  s_3568413a5e525b::t_e5aa77d1f12c57 189-192
+  s_3568413a5e525b::t_953832b231852b 54-57,63
+tests/e2e/global-setup.ts
+  s_3568413a5e525b::t_6282b3e2ef0c6d 3-7,13
+src/app/actions/auth.ts
+  s_3568413a5e525b::t_67776834139cc0 36-43,56-57
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "65a05d424a4d34799b0b0a2f6e56f01dfc21a1a0",
+  "prompts": {},
+  "sessions": {
+    "s_3568413a5e525b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9403b2ef-4b5e-4962-826d-e3b3bde1ed1c",
+        "model": "deepseek-v4-pro"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
