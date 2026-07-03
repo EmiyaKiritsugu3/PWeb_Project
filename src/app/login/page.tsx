@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useActionState } from 'react';
 import { login } from '@/app/actions/auth';
 import { Button } from '@/components/ui/button';
@@ -17,7 +19,17 @@ import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
 
 export default function LoginPage() {
+  const router = useRouter();
   const [state, action, isPending] = useActionState(login, undefined);
+
+  // Client-side navigation on success — avoids Next.js 15 server-action redirect()
+  // cookie-commit race where supabase-ssr session cookie is not flushed before the
+  // 303 response, causing middleware to bounce back to /login.
+  useEffect(() => {
+    if (state && 'redirectTo' in state) {
+      router.push(state.redirectTo);
+    }
+  }, [state, router]);
 
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-background px-4">
@@ -83,7 +95,7 @@ export default function LoginPage() {
               />
             </div>
 
-            {state?.error && <p className="text-sm text-destructive">{state.error}</p>}
+            {state && 'error' in state && <p className="text-sm text-destructive">{state.error}</p>}
 
             <Button
               type="submit"

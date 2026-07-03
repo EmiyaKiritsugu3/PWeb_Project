@@ -118,26 +118,26 @@ describe('auth server actions', () => {
       });
     });
 
-    it('redirects to /dashboard for funcionario profile', async () => {
+    it('returns redirectTo /dashboard for funcionario profile', async () => {
       mockSupabase({ profileRole: 'INSTRUTOR' });
       const { login } = await import('./auth');
       const formData = new FormData();
       formData.set('email', 'test@test.com');
       formData.set('password', '__TEST_PASSWORD__');
 
-      await expect(login(undefined, formData)).rejects.toThrow('Redirect to /dashboard');
-      expect(redirect).toHaveBeenCalledWith('/dashboard');
+      const result = await login(undefined, formData);
+      expect(result).toEqual({ redirectTo: '/dashboard' });
     });
 
-    it('redirects to /aluno/dashboard for aluno profile (no funcionario row)', async () => {
+    it('returns redirectTo /aluno/dashboard for aluno profile (no funcionario row)', async () => {
       mockSupabase({ profileError: { code: 'PGRST116' } });
       const { login } = await import('./auth');
       const formData = new FormData();
       formData.set('email', 'aluno@test.com');
       formData.set('password', '__TEST_PASSWORD__');
 
-      await expect(login(undefined, formData)).rejects.toThrow('Redirect to /aluno/dashboard');
-      expect(redirect).toHaveBeenCalledWith('/aluno/dashboard');
+      const result = await login(undefined, formData);
+      expect(result).toEqual({ redirectTo: '/aluno/dashboard' });
     });
 
     it('returns error when profile query has a real DB error', async () => {
@@ -153,24 +153,26 @@ describe('auth server actions', () => {
       });
     });
 
-    it('handles PGRST116 error (no rows) for aluno gracefully', async () => {
+    it('returns redirectTo /aluno/dashboard for PGRST116 (no funcionario row)', async () => {
       mockSupabase({ profileError: { code: 'PGRST116' } });
       const { login } = await import('./auth');
       const formData = new FormData();
       formData.set('email', 'aluno@test.com');
       formData.set('password', '__TEST_PASSWORD__');
 
-      await expect(login(undefined, formData)).rejects.toThrow('Redirect to /aluno/dashboard');
+      const result = await login(undefined, formData);
+      expect(result).toEqual({ redirectTo: '/aluno/dashboard' });
     });
 
-    it('re-throws redirect errors (isRedirectError path)', async () => {
+    it('returns redirectTo /dashboard for successful GERENTE login', async () => {
       mockSupabase({ profileRole: 'GERENTE' });
       const { login } = await import('./auth');
       const formData = new FormData();
       formData.set('email', 'gerente@test.com');
       formData.set('password', '__TEST_PASSWORD__');
 
-      await expect(login(undefined, formData)).rejects.toThrow('Redirect to /dashboard');
+      const result = await login(undefined, formData);
+      expect(result).toEqual({ redirectTo: '/dashboard' });
     });
 
     it('returns error for unexpected non-redirect exceptions', async () => {
