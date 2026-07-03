@@ -47,11 +47,16 @@ function mockSupabase(
   });
 
   const mockSignOut = vi.fn().mockResolvedValue({ error: null });
+  const mockGetSession = vi.fn().mockResolvedValue({
+    data: { session: { user: { id: 'user-1' } } },
+    error: null,
+  });
 
   const mockSupabaseClient = {
     auth: {
       signInWithPassword: mockSignIn, // ggignore
       signOut: mockSignOut,
+      getSession: mockGetSession,
     },
     from: vi.fn(() => ({
       select: mockSelect,
