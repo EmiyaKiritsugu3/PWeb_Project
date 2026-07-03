@@ -50,12 +50,8 @@ export async function loginAs(page: Page, role: TestRole): Promise<void> {
   // For staff roles: server action redirect — wait for any departure from the login page,
   // then do a hard GET so the browser sends the fresh session cookie.
   // For ALUNO: client-side auth + router.push — wait for URL to reach the dashboard directly.
-  // 30s timeout: Next.js 15 dev mode compiles server actions on first invocation, which
-  // can take ~20s in CI (cold start). Combined with cookie flush latency, 15s is too tight.
-  await page.waitForURL((url) => !url.pathname.startsWith(loginPath), { timeout: 30_000 });
+  await page.waitForURL((url) => !url.pathname.startsWith(loginPath), { timeout: 15_000 });
   // Hard GET to confirm the session cookie is in the Cookie header for all subsequent requests.
-  // If the server action redirect didn't carry session cookies, the GET will trigger middleware
-  // which calls getUser() and redirects back to /login — this test catches that gap.
   await page.goto(expectedPath);
   // Confirm the dashboard actually painted
   // 30s timeout: first-request compilation of /aluno/dashboard in CI dev mode can take ~20s.

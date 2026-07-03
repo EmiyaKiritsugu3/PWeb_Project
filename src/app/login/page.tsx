@@ -1,8 +1,6 @@
 'use client';
 
 import { useActionState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 import { login } from '@/app/actions/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,15 +17,7 @@ import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
 
 export default function LoginPage() {
-  const router = useRouter();
   const [state, action, isPending] = useActionState(login, undefined);
-
-  // Handle client-side redirect on successful login
-  useEffect(() => {
-    if (state && 'success' in state && state.success) {
-      router.push(state.redirectTo);
-    }
-  }, [state, router]);
 
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-background px-4">

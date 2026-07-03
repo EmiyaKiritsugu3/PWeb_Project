@@ -4,12 +4,26 @@ vi.mock('@/utils/supabase/server', () => ({
   createClient: vi.fn(),
 }));
 
+vi.mock('next/navigation', () => ({
+  redirect: vi.fn((url: string) => {
+    throw new Error(`Redirect to ${url}`);
+  }),
+}));
+
+vi.mock('next/dist/client/components/redirect-error', () => ({
+  isRedirectError: vi.fn((err: unknown) => {
+    if (err instanceof Error && err.message.startsWith('Redirect to')) return true;
+    return false;
+  }),
+}));
+
 vi.mock('zod/v4', () => {
   const actual = vi.importActual('zod/v4');
   return actual;
 });
 
 import { createClient } from '@/utils/supabase/server';
+import { redirect } from 'next/navigation';
 
 function mockSupabase(
   overrides: {
@@ -20,11 +34,8 @@ function mockSupabase(
 ) {
   const mockSignIn = vi.fn().mockResolvedValue({
     data: overrides.signInError
-      ? { user: null, session: null }
-      : {
-          user: { id: 'user-1', email: 'test@test.com' },
-          session: { user: { id: 'user-1', email: 'test@test.com' } },
-        },
+      ? { user: null }
+      : { user: { id: 'user-1', email: 'test@test.com' } },
     error: overrides.signInError ? { message: overrides.signInError } : null,
   });
 
@@ -36,11 +47,16 @@ function mockSupabase(
   });
 
   const mockSignOut = vi.fn().mockResolvedValue({ error: null });
+  const mockGetSession = vi.fn().mockResolvedValue({
+    data: { session: { user: { id: 'user-1' } } },
+    error: null,
+  });
 
   const mockSupabaseClient = {
     auth: {
       signInWithPassword: mockSignIn, // ggignore
       signOut: mockSignOut,
+      getSession: mockGetSession,
     },
     from: vi.fn(() => ({
       select: mockSelect,
@@ -64,10 +80,12 @@ describe('auth server actions', () => {
       const { login } = await import('./auth');
       const formData = new FormData();
       formData.set('email', 'invalid-email');
-      formData.set('password', 'Test1234!');
+      formData.set('password', '__TEST_PASSWORD__');
 
       const result = await login(undefined, formData);
-      expect(result).toEqual({ error: 'Dados inválidos. Verifique o e-mail e a senha.' });
+      expect(result).toEqual({
+        error: 'Dados inválidos. Verifique o e-mail e a senha.',
+      });
     });
 
     it('returns error for short password', async () => {
@@ -75,13 +93,15 @@ describe('auth server actions', () => {
       const { login } = await import('./auth');
       const formData = new FormData();
       formData.set('email', 'test@test.com');
-      formData.set('password', 'short');
+      formData.set('password', '123');
 
       const result = await login(undefined, formData);
-      expect(result).toEqual({ error: 'Dados inválidos. Verifique o e-mail e a senha.' });
+      expect(result).toEqual({
+        error: 'Dados inválidos. Verifique o e-mail e a senha.',
+      });
     });
 
-    it('returns error for invalid login credentials', async () => {
+    it('returns error when Supabase auth fails', async () => {
       mockSupabase({ signInError: 'Invalid login credentials' });
       const { login } = await import('./auth');
       const formData = new FormData();
@@ -89,23 +109,35 @@ describe('auth server actions', () => {
       formData.set('password', '__TEST_PASSWORD__');
 
       const result = await login(undefined, formData);
-      expect(result).toEqual({ error: 'E-mail ou senha inválidos. Por favor, tente novamente.' });
+      expect(result).toEqual({
+        error: 'E-mail ou senha inválidos. Por favor, tente novamente.',
+      });
     });
 
-    it('returns error when session is not established', async () => {
-      vi.mocked(createClient).mockResolvedValue({
-        auth: {
-          signInWithPassword: vi.fn().mockResolvedValue({
-            data: {
-              user: { id: 'user-1', email: 'test@test.com' },
-              session: null,
-            },
-            error: null,
-          }),
-          signOut: vi.fn(),
-        },
-      } as never);
+    it('redirects to /dashboard for funcionario profile', async () => {
+      mockSupabase({ profileRole: 'INSTRUTOR' });
+      const { login } = await import('./auth');
+      const formData = new FormData();
+      formData.set('email', 'test@test.com');
+      formData.set('password', '__TEST_PASSWORD__');
 
+      await expect(login(undefined, formData)).rejects.toThrow('Redirect to /dashboard');
+      expect(redirect).toHaveBeenCalledWith('/dashboard');
+    });
+
+    it('redirects to /aluno/dashboard for aluno profile (no funcionario row)', async () => {
+      mockSupabase({ profileError: { code: 'PGRST116' } });
+      const { login } = await import('./auth');
+      const formData = new FormData();
+      formData.set('email', 'aluno@test.com');
+      formData.set('password', '__TEST_PASSWORD__');
+
+      await expect(login(undefined, formData)).rejects.toThrow('Redirect to /aluno/dashboard');
+      expect(redirect).toHaveBeenCalledWith('/aluno/dashboard');
+    });
+
+    it('returns error when profile query has a real DB error', async () => {
+      mockSupabase({ profileError: { code: '50000' } });
       const { login } = await import('./auth');
       const formData = new FormData();
       formData.set('email', 'test@test.com');
@@ -113,59 +145,52 @@ describe('auth server actions', () => {
 
       const result = await login(undefined, formData);
       expect(result).toEqual({
-        error: 'Erro ao estabelecer sessão. Por favor, tente novamente.',
+        error: 'Erro ao verificar perfil. Por favor, tente novamente.',
       });
-    });
-
-    it('returns error for profile lookup failure (non-PGRST116)', async () => {
-      mockSupabase({ profileError: { code: 'PGRST999' } });
-      const { login } = await import('./auth');
-      const formData = new FormData();
-      formData.set('email', 'test@test.com');
-      formData.set('password', '__TEST_PASSWORD__');
-
-      const result = await login(undefined, formData);
-      expect(result).toEqual({ error: 'Erro ao verificar perfil. Por favor, tente novamente.' });
     });
 
     it('handles PGRST116 error (no rows) for aluno gracefully', async () => {
       mockSupabase({ profileError: { code: 'PGRST116' } });
       const { login } = await import('./auth');
       const formData = new FormData();
-      formData.set('email', 'test@test.com');
+      formData.set('email', 'aluno@test.com');
       formData.set('password', '__TEST_PASSWORD__');
 
-      const result = await login(undefined, formData);
-      expect(result).toEqual({ success: true, redirectTo: '/aluno/dashboard' });
+      await expect(login(undefined, formData)).rejects.toThrow('Redirect to /aluno/dashboard');
     });
 
-    it('returns success with redirect to /dashboard for funcionario', async () => {
+    it('re-throws redirect errors (isRedirectError path)', async () => {
       mockSupabase({ profileRole: 'GERENTE' });
       const { login } = await import('./auth');
       const formData = new FormData();
-      formData.set('email', 'test@test.com');
+      formData.set('email', 'gerente@test.com');
       formData.set('password', '__TEST_PASSWORD__');
 
-      const result = await login(undefined, formData);
-      expect(result).toEqual({ success: true, redirectTo: '/dashboard' });
+      await expect(login(undefined, formData)).rejects.toThrow('Redirect to /dashboard');
     });
 
-    it('returns error for unexpected exceptions', async () => {
+    it('returns error for unexpected non-redirect exceptions', async () => {
+      const mockSelect = vi.fn().mockReturnThis();
+      const mockEq = vi.fn().mockReturnThis();
+      const mockSingle = vi.fn().mockRejectedValue(new Error('DB connection lost'));
+
       vi.mocked(createClient).mockResolvedValue({
         auth: {
           signInWithPassword: vi.fn().mockResolvedValue({
-            data: {
-              user: { id: 'user-1', email: 'test@test.com' },
-              session: { user: { id: 'user-1', email: 'test@test.com' } },
-            },
+            // ggignore
+            data: { user: { id: 'user-1', email: 'test@test.com' } },
             error: null,
           }),
           signOut: vi.fn(),
+          getSession: vi.fn().mockResolvedValue({
+            data: { session: { user: { id: 'user-1' } } },
+            error: null,
+          }),
         },
         from: vi.fn(() => ({
-          select: vi.fn().mockReturnThis(),
-          eq: vi.fn().mockReturnThis(),
-          single: vi.fn().mockRejectedValue(new Error('Unexpected error')),
+          select: mockSelect,
+          eq: mockEq,
+          single: mockSingle,
         })),
       } as never);
 
@@ -182,12 +207,13 @@ describe('auth server actions', () => {
   });
 
   describe('logout', () => {
-    it('calls signOut', async () => {
+    it('calls signOut and redirects to /login', async () => {
       const mockSupabaseClient = mockSupabase();
       const { logout } = await import('./auth');
 
-      await logout();
+      await expect(logout()).rejects.toThrow('Redirect to /login');
       expect(mockSupabaseClient.auth.signOut).toHaveBeenCalled();
+      expect(redirect).toHaveBeenCalledWith('/login');
     });
   });
 });
