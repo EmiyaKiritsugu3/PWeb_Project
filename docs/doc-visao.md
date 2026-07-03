@@ -30,7 +30,7 @@ O sistema busca resolver problemas comuns do setor, como a falta de ferramentas 
 O escopo do projeto abrange o desenvolvimento de uma aplicação web responsiva com duas áreas principais de acesso:
 
 - **Painel de Gestão (/dashboard):** Destinado a funcionários da academia (gerentes, instrutores e recepcionistas), oferecendo funcionalidades de cadastro e gestão de alunos, controle de matrículas e planos, monitoramento financeiro, dashboards analíticos e geração de treinos por IA.
-- **Portal do Aluno (/aluno):** Destinado aos alunos da academia, oferecendo visualização e execução de treinos diários, histórico de atividades, sistema de gamificação com níveis, experiência (XP) e streaks, além de feedback motivacional gerado por IA.
+- **Portal do Aluno (/aluno):** Destinado aos alunos da academia, oferecendo visualização e execução de treinos diários, histórico de atividades, gerenciamento de treinos pessoais ("Meus Treinos") com agendamento por dia da semana, sistema de gamificação com níveis, experiência (XP) e streaks, além de feedback motivacional gerado por IA.
 
 O escopo não inclui aplicativos mobile nativos, integração com sistemas de terceiros (como ERPs contábeis), ou módulo de vendas de produtos (loja).
 
@@ -43,6 +43,7 @@ O escopo não inclui aplicativos mobile nativos, integração com sistemas de te
 **Descrição:** Clientes da academia que utilizam o sistema para acessar seus treinos, acompanhar seu progresso e manter sua rotina de exercícios.
 
 **Necessidades principais:**
+
 - Visualizar o treino do dia com instruções claras de execução.
 - Registrar séries executadas, pesos e repetições.
 - Acompanhar seu nível, experiência (XP) e streaks de comparecimento.
@@ -56,6 +57,7 @@ O escopo não inclui aplicativos mobile nativos, integração com sistemas de te
 **Descrição:** Profissionais de educação física responsáveis por criar e acompanhar os planos de treino dos alunos.
 
 **Necessidades principais:**
+
 - Visualizar a lista de alunos sob sua supervisão.
 - Criar e editar planos de treino personalizados para cada aluno.
 - Gerar treinos automaticamente com auxílio de IA.
@@ -66,6 +68,7 @@ O escopo não inclui aplicativos mobile nativos, integração com sistemas de te
 **Descrição:** Funcionários responsáveis pelo atendimento inicial, cadastro de novos alunos e gestão de matrículas e pagamentos.
 
 **Necessidades principais:**
+
 - Realizar cadastro completo de novos alunos (dados pessoais, foto, biometria).
 - Gerenciar matrículas e vínculo a planos.
 - Registrar pagamentos e consultar status financeiro dos alunos.
@@ -76,6 +79,7 @@ O escopo não inclui aplicativos mobile nativos, integração com sistemas de te
 **Descrição:** Administradores da academia responsáveis pela visão estratégica do negócio, incluindo análise de indicadores e definição de planos.
 
 **Necessidades principais:**
+
 - Acessar dashboards com indicadores de crescimento, retenção e inadimplência.
 - Gerenciar planos oferecidos (preços, duração e características).
 - Visualizar relatórios financeiros consolidados.
@@ -86,6 +90,7 @@ O escopo não inclui aplicativos mobile nativos, integração com sistemas de te
 **Descrição:** Desenvolvedores responsáveis pela construção, manutenção e evolução do sistema.
 
 **Necessidades principais:**
+
 - Código-fonte com TypeScript estrito e tipagem forte.
 - Documentação técnica clara (modelo de dados, arquitetura, qualidade).
 - Pipeline de CI/CD com quality gates automatizados.
@@ -161,71 +166,71 @@ Painel com indicadores-chave para gerentes, incluindo total de alunos ativos, ta
 
 ### 5.1 Módulo de Autenticação e Acesso
 
-| ID | Descrição | Prioridade |
-|---|---|---|
-| RF01 | O sistema deve permitir login de funcionários via email e senha utilizando Supabase Auth. | Alta |
-| RF02 | O sistema deve permitir login de alunos via email e senha em portal separado. | Alta |
-| RF03 | O sistema deve utilizar autenticação SSR (Server-Side Rendering) para rotas protegidas. | Alta |
-| RF04 | O sistema deve redirecionar usuários não autenticados para a página de login. | Alta |
-| RF05 | O sistema deve diferenciar permissões por papel: GERENTE, INSTRUTOR e RECEPCIONISTA. | Alta |
+| ID   | Descrição                                                                                 | Prioridade |
+| ---- | ----------------------------------------------------------------------------------------- | ---------- |
+| RF01 | O sistema deve permitir login de funcionários via email e senha utilizando Supabase Auth. | Alta       |
+| RF02 | O sistema deve permitir login de alunos via email e senha em portal separado.             | Alta       |
+| RF03 | O sistema deve utilizar autenticação SSR (Server-Side Rendering) para rotas protegidas.   | Alta       |
+| RF04 | O sistema deve redirecionar usuários não autenticados para a página de login.             | Alta       |
+| RF05 | O sistema deve diferenciar permissões por papel: GERENTE, INSTRUTOR e RECEPCIONISTA.      | Alta       |
 
 ### 5.2 Módulo de Gestão de Alunos
 
-| ID | Descrição | Prioridade |
-|---|---|---|
-| RF06 | O sistema deve permitir cadastrar aluno com nome completo, CPF, email, telefone e data de nascimento. | Alta |
-| RF07 | O sistema deve permitir editar dados cadastrais de um aluno existente. | Alta |
-| RF08 | O sistema deve permitir consultar a lista de alunos com busca e filtros. | Alta |
-| RF09 | O sistema deve exibir o status da matrícula de cada aluno (ativa, inadimplente, inativa). | Alta |
-| RF10 | O sistema deve armazenar hash de biometria e URL de foto do aluno. | Média |
+| ID   | Descrição                                                                                             | Prioridade |
+| ---- | ----------------------------------------------------------------------------------------------------- | ---------- |
+| RF06 | O sistema deve permitir cadastrar aluno com nome completo, CPF, email, telefone e data de nascimento. | Alta       |
+| RF07 | O sistema deve permitir editar dados cadastrais de um aluno existente.                                | Alta       |
+| RF08 | O sistema deve permitir consultar a lista de alunos com busca e filtros.                              | Alta       |
+| RF09 | O sistema deve exibir o status da matrícula de cada aluno (ativa, inadimplente, inativa).             | Alta       |
+| RF10 | O sistema deve armazenar hash de biometria e URL de foto do aluno.                                    | Média      |
 
 ### 5.3 Módulo de Planos e Matrículas
 
-| ID | Descrição | Prioridade |
-|---|---|---|
-| RF11 | O sistema deve permitir cadastrar planos com nome, preço e duração em dias. | Alta |
-| RF12 | O sistema deve permitir editar e excluir planos existentes. | Alta |
-| RF13 | O sistema deve permitir matricular um aluno em um plano com data de início e vencimento. | Alta |
-| RF14 | O sistema deve atualizar automaticamente o status da matrícula para VENCIDA ao passar da data de vencimento. | Média |
+| ID   | Descrição                                                                                                    | Prioridade |
+| ---- | ------------------------------------------------------------------------------------------------------------ | ---------- |
+| RF11 | O sistema deve permitir cadastrar planos com nome, preço e duração em dias.                                  | Alta       |
+| RF12 | O sistema deve permitir editar e excluir planos existentes.                                                  | Alta       |
+| RF13 | O sistema deve permitir matricular um aluno em um plano com data de início e vencimento.                     | Alta       |
+| RF14 | O sistema deve atualizar automaticamente o status da matrícula para VENCIDA ao passar da data de vencimento. | Média      |
 
 ### 5.4 Módulo Financeiro
 
-| ID | Descrição | Prioridade |
-|---|---|---|
-| RF15 | O sistema deve permitir registrar pagamentos com valor, data e método (PIX, dinheiro, cartão). | Alta |
-| RF16 | O sistema deve exibir o histórico de pagamentos de cada matrícula. | Alta |
-| RF17 | O sistema deve identificar alunos com status INADIMPLENTE. | Alta |
-| RF18 | O sistema deve exibir um resumo financeiro com receita do período. | Média |
+| ID   | Descrição                                                                                      | Prioridade |
+| ---- | ---------------------------------------------------------------------------------------------- | ---------- |
+| RF15 | O sistema deve permitir registrar pagamentos com valor, data e método (PIX, dinheiro, cartão). | Alta       |
+| RF16 | O sistema deve exibir o histórico de pagamentos de cada matrícula.                             | Alta       |
+| RF17 | O sistema deve identificar alunos com status INADIMPLENTE.                                     | Alta       |
+| RF18 | O sistema deve exibir um resumo financeiro com receita do período.                             | Média      |
 
 ### 5.5 Módulo de Treinos
 
-| ID | Descrição | Prioridade |
-|---|---|---|
-| RF19 | O sistema deve permitir criar treinos para um aluno com objetivo e dia da semana. | Alta |
-| RF20 | O sistema deve permitir associar exercícios a um treino com nome, séries, repetições e observações. | Alta |
-| RF21 | O sistema deve permitir que o instrutor edite treinos e exercícios existentes. | Alta |
-| RF22 | O sistema deve gerar planos de treino semanais utilizando Google Gemini via Genkit. | Alta |
-| RF23 | O sistema deve exibir o treino do dia para o aluno com lista de exercícios. | Alta |
-| RF24 | O sistema deve permitir que o aluno registre a execução de cada série (peso, repetições, conclusão). | Alta |
-| RF25 | O sistema deve armazenar o histórico de treinos executados com data e duração. | Alta |
+| ID   | Descrição                                                                                            | Prioridade |
+| ---- | ---------------------------------------------------------------------------------------------------- | ---------- |
+| RF19 | O sistema deve permitir criar treinos para um aluno com objetivo e dia da semana.                    | Alta       |
+| RF20 | O sistema deve permitir associar exercícios a um treino com nome, séries, repetições e observações.  | Alta       |
+| RF21 | O sistema deve permitir que o instrutor edite treinos e exercícios existentes.                       | Alta       |
+| RF22 | O sistema deve gerar planos de treino semanais utilizando Google Gemini via Genkit.                  | Alta       |
+| RF23 | O sistema deve exibir o treino do dia para o aluno com lista de exercícios.                          | Alta       |
+| RF24 | O sistema deve permitir que o aluno registre a execução de cada série (peso, repetições, conclusão). | Alta       |
+| RF25 | O sistema deve armazenar o histórico de treinos executados com data e duração.                       | Alta       |
 
 ### 5.6 Módulo de Gamificação
 
-| ID | Descrição | Prioridade |
-|---|---|---|
-| RF26 | O sistema deve conceder XP ao aluno ao finalizar um treino. | Média |
-| RF27 | O sistema deve gerenciar níveis do aluno com base no XP acumulado. | Média |
-| RF28 | O sistema deve controlar streaks de dias consecutivos de treino. | Média |
-| RF29 | O sistema deve gerar feedback motivacional por IA ao concluir um treino. | Média |
+| ID   | Descrição                                                                | Prioridade |
+| ---- | ------------------------------------------------------------------------ | ---------- |
+| RF26 | O sistema deve conceder XP ao aluno ao finalizar um treino.              | Média      |
+| RF27 | O sistema deve gerenciar níveis do aluno com base no XP acumulado.       | Média      |
+| RF28 | O sistema deve controlar streaks de dias consecutivos de treino.         | Média      |
+| RF29 | O sistema deve gerar feedback motivacional por IA ao concluir um treino. | Média      |
 
 ### 5.7 Módulo de Dashboard
 
-| ID | Descrição | Prioridade |
-|---|---|---|
-| RF30 | O sistema deve exibir no dashboard o total de alunos ativos, inadimplentes e inativos. | Alta |
-| RF31 | O sistema deve exibir indicadores de crescimento de matrículas. | Média |
-| RF32 | O sistema deve exibir a receita acumulada no período. | Média |
-| RF33 | O sistema deve exibir o engajamento dos alunos (treinos realizados no período). | Média |
+| ID   | Descrição                                                                              | Prioridade |
+| ---- | -------------------------------------------------------------------------------------- | ---------- |
+| RF30 | O sistema deve exibir no dashboard o total de alunos ativos, inadimplentes e inativos. | Alta       |
+| RF31 | O sistema deve exibir indicadores de crescimento de matrículas.                        | Média      |
+| RF32 | O sistema deve exibir a receita acumulada no período.                                  | Média      |
+| RF33 | O sistema deve exibir o engajamento dos alunos (treinos realizados no período).        | Média      |
 
 ---
 
@@ -233,48 +238,48 @@ Painel com indicadores-chave para gerentes, incluindo total de alunos ativos, ta
 
 ### 6.1 Desempenho
 
-| ID | Descrição | Prioridade |
-|---|---|---|
-| RNF01 | O sistema deve carregar a página inicial em até 3 segundos em conexão de banda larga. | Alta |
-| RNF02 | As consultas ao banco de dados devem responder em até 500ms para operações comuns. | Alta |
-| RNF03 | O sistema deve suportar até 100 usuários simultâneos sem degradação significativa. | Média |
-| RNF04 | As Server Actions devem processar requisições em até 2 segundos. | Média |
+| ID    | Descrição                                                                             | Prioridade |
+| ----- | ------------------------------------------------------------------------------------- | ---------- |
+| RNF01 | O sistema deve carregar a página inicial em até 3 segundos em conexão de banda larga. | Alta       |
+| RNF02 | As consultas ao banco de dados devem responder em até 500ms para operações comuns.    | Alta       |
+| RNF03 | O sistema deve suportar até 100 usuários simultâneos sem degradação significativa.    | Média      |
+| RNF04 | As Server Actions devem processar requisições em até 2 segundos.                      | Média      |
 
 ### 6.2 Segurança
 
-| ID | Descrição | Prioridade |
-|---|---|---|
-| RNF05 | O sistema deve utilizar autenticação SSR com Supabase para rotas protegidas. | Alta |
-| RNF06 | Senhas e dados sensíveis (CPF) devem ser filtrados em logs e respostas da API. | Alta |
-| RNF07 | O Prisma não deve ser acessível a partir do código cliente (apenas Server Actions e services). | Alta |
-| RNF08 | O sistema deve utilizar variáveis de ambiente para chaves de API e configurações sensíveis. | Alta |
-| RNF09 | O sistema deve implementar sanitização de entrada para prevenir XSS e SQL injection. | Alta |
+| ID    | Descrição                                                                                      | Prioridade |
+| ----- | ---------------------------------------------------------------------------------------------- | ---------- |
+| RNF05 | O sistema deve utilizar autenticação SSR com Supabase para rotas protegidas.                   | Alta       |
+| RNF06 | Senhas e dados sensíveis (CPF) devem ser filtrados em logs e respostas da API.                 | Alta       |
+| RNF07 | O Prisma não deve ser acessível a partir do código cliente (apenas Server Actions e services). | Alta       |
+| RNF08 | O sistema deve utilizar variáveis de ambiente para chaves de API e configurações sensíveis.    | Alta       |
+| RNF09 | O sistema deve implementar sanitização de entrada para prevenir XSS e SQL injection.           | Alta       |
 
 ### 6.3 Usabilidade
 
-| ID | Descrição | Prioridade |
-|---|---|---|
-| RNF10 | O sistema deve ser responsivo e funcional em dispositivos móveis e desktop. | Alta |
-| RNF11 | Os componentes de interface devem utilizar Tailwind CSS e shadcn/ui com tema consistente. | Média |
-| RNF12 | O sistema deve exibir mensagens de erro claras e amigáveis para o usuário final. | Média |
-| RNF13 | O sistema deve fornecer feedback visual para ações do usuário (loading, sucesso, erro). | Média |
+| ID    | Descrição                                                                                 | Prioridade |
+| ----- | ----------------------------------------------------------------------------------------- | ---------- |
+| RNF10 | O sistema deve ser responsivo e funcional em dispositivos móveis e desktop.               | Alta       |
+| RNF11 | Os componentes de interface devem utilizar Tailwind CSS e shadcn/ui com tema consistente. | Média      |
+| RNF12 | O sistema deve exibir mensagens de erro claras e amigáveis para o usuário final.          | Média      |
+| RNF13 | O sistema deve fornecer feedback visual para ações do usuário (loading, sucesso, erro).   | Média      |
 
 ### 6.4 Manutenibilidade
 
-| ID | Descrição | Prioridade |
-|---|---|---|
-| RNF14 | O código deve ser escrito em TypeScript com modo estrito ativado. | Alta |
-| RNF15 | O sistema deve possuir cobertura de testes superior a 80%. | Alta |
-| RNF16 | O pipeline CI deve executar lint, typecheck, testes e formatação em cada PR. | Alta |
-| RNF17 | O sistema deve utilizar Prisma ORM com schema versionado via migrations. | Alta |
+| ID    | Descrição                                                                    | Prioridade |
+| ----- | ---------------------------------------------------------------------------- | ---------- |
+| RNF14 | O código deve ser escrito em TypeScript com modo estrito ativado.            | Alta       |
+| RNF15 | O sistema deve possuir cobertura de testes superior a 80%.                   | Alta       |
+| RNF16 | O pipeline CI deve executar lint, typecheck, testes e formatação em cada PR. | Alta       |
+| RNF17 | O sistema deve utilizar Prisma ORM com schema versionado via migrations.     | Alta       |
 
 ### 6.5 Confiabilidade
 
-| ID | Descrição | Prioridade |
-|---|---|---|
-| RNF18 | O sistema deve utilizar Sentry para monitoramento de erros em produção. | Alta |
-| RNF19 | As chamadas de IA do Genkit devem ser isoladas com try/catch para não quebrar a interface. | Alta |
-| RNF20 | O sistema deve exibir mensagens amigáveis em caso de falha na geração de treino por IA. | Média |
+| ID    | Descrição                                                                                  | Prioridade |
+| ----- | ------------------------------------------------------------------------------------------ | ---------- |
+| RNF18 | O sistema deve utilizar Sentry para monitoramento de erros em produção.                    | Alta       |
+| RNF19 | As chamadas de IA do Genkit devem ser isoladas com try/catch para não quebrar a interface. | Alta       |
+| RNF20 | O sistema deve exibir mensagens amigáveis em caso de falha na geração de treino por IA.    | Média      |
 
 ---
 

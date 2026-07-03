@@ -2,20 +2,20 @@
 
 ## Five Star Academy - Sistema de Gestão Acadêmica
 
-| Campo | Detalhe |
-|-------|---------|
+| Campo       | Detalhe                                           |
+| ----------- | ------------------------------------------------- |
 | **Projeto** | Five Star Academy - Sistema de Gestão de Academia |
-| **Versão** | 1.0.0 |
-| **Data** | Julho de 2026 |
-| **Autor** | José Inamar de Medeiros Júnior |
+| **Versão**  | 1.0.0                                             |
+| **Data**    | Julho de 2026                                     |
+| **Autor**   | José Inamar de Medeiros Júnior                    |
 
 ---
 
 ## Histórico de Revisões
 
-| Data | Versão | Descrição | Autor |
-|------|--------|-----------|-------|
-| Jul/2026 | 1.0 | Versão inicial do documento arquitetural | José Inamar de Medeiros Júnior |
+| Data     | Versão | Descrição                                | Autor                          |
+| -------- | ------ | ---------------------------------------- | ------------------------------ |
+| Jul/2026 | 1.0    | Versão inicial do documento arquitetural | José Inamar de Medeiros Júnior |
 
 ---
 
@@ -43,18 +43,18 @@ O escopo deste documento cobre:
 
 ### 1.3 Definições, Acrônimos e Abreviações
 
-| Termo | Definição |
-|-------|-----------|
-| **SSR** | Server-Side Rendering |
-| **RSC** | React Server Component |
-| **SPA** | Single Page Application |
-| **ORM** | Object-Relational Mapping |
-| **FPA** | Function Point Analysis |
-| **PII** | Personally Identifiable Information |
-| **E2E** | End-to-End (testes) |
+| Termo     | Definição                                      |
+| --------- | ---------------------------------------------- |
+| **SSR**   | Server-Side Rendering                          |
+| **RSC**   | React Server Component                         |
+| **SPA**   | Single Page Application                        |
+| **ORM**   | Object-Relational Mapping                      |
+| **FPA**   | Function Point Analysis                        |
+| **PII**   | Personally Identifiable Information            |
+| **E2E**   | End-to-End (testes)                            |
 | **CI/CD** | Continuous Integration / Continuous Deployment |
-| **API** | Application Programming Interface |
-| **JWT** | JSON Web Token |
+| **API**   | Application Programming Interface              |
+| **JWT**   | JSON Web Token                                 |
 
 ---
 
@@ -99,29 +99,29 @@ C4Context
 
 ### 2.3 Stack Tecnológica
 
-| Camada | Tecnologia | Versão |
-|--------|-----------|--------|
-| Framework | Next.js | 15.5.15 |
-| Linguagem | TypeScript | 6.0.3 |
-| Runtime | Node.js | 22+ |
-| UI Library | React | 19.2.7 |
-| Estilização | Tailwind CSS | 4.2.2 |
-| Componentes | shadcn/ui (Radix UI) | - |
-| Animações | motion (Framer Motion) | 12.40.0 |
-| Ícones | Lucide React | 1.17.0 |
-| ORM | Prisma | 7.7.0 |
-| Banco | PostgreSQL (Supabase) | - |
-| Autenticação | Supabase Auth SSR | - |
-| Validação | Zod | 3.25.76 |
-| Formulários | React Hook Form | 7.77.0 |
-| IA Engine | Google Genkit | 1.36.0 |
-| Modelo IA | Gemini (Google AI) | - |
-| Testes unitários | Vitest | 4.1.7 |
-| Testes E2E | Playwright | 1.59.1 |
-| Monitoramento | Sentry | 10.56.0 |
-| CI/CD | GitHub Actions | - |
-| Qualidade | SonarCloud | - |
-| Deploy | Vercel | - |
+| Camada           | Tecnologia             | Versão  |
+| ---------------- | ---------------------- | ------- |
+| Framework        | Next.js                | 15.5.15 |
+| Linguagem        | TypeScript             | 6.0.3   |
+| Runtime          | Node.js                | 22+     |
+| UI Library       | React                  | 19.2.7  |
+| Estilização      | Tailwind CSS           | 4.2.2   |
+| Componentes      | shadcn/ui (Radix UI)   | -       |
+| Animações        | motion (Framer Motion) | 12.40.0 |
+| Ícones           | Lucide React           | 1.17.0  |
+| ORM              | Prisma                 | 7.7.0   |
+| Banco            | PostgreSQL (Supabase)  | -       |
+| Autenticação     | Supabase Auth SSR      | -       |
+| Validação        | Zod                    | 3.25.76 |
+| Formulários      | React Hook Form        | 7.77.0  |
+| IA Engine        | Google Genkit          | 1.36.0  |
+| Modelo IA        | Gemini (Google AI)     | -       |
+| Testes unitários | Vitest                 | 4.1.7   |
+| Testes E2E       | Playwright             | 1.59.1  |
+| Monitoramento    | Sentry                 | 10.56.0 |
+| CI/CD            | GitHub Actions         | -       |
+| Qualidade        | SonarCloud             | -       |
+| Deploy           | Vercel                 | -       |
 
 ---
 
@@ -185,6 +185,7 @@ Todos os componentes UI são baseados no **shadcn/ui**, que por sua vez utiliza 
 **Server Components (padrão)**: A maioria das páginas e layouts são Server Components. Eles acessam o banco de dados diretamente, buscam dados do usuário autenticado e renderizam HTML no servidor.
 
 **Client Components**: São usados apenas quando há interatividade do lado do cliente:
+
 - Formulários com React Hook Form
 - Componentes de UI que usam estado (sidebars, modais, toasts, carrosséis)
 - Gráficos com Recharts
@@ -196,7 +197,7 @@ O projeto utiliza **Tailwind CSS 4** com PostCSS. A configuração é nativa do 
 
 ```css
 /* globals.css - Exemplo de configuração */
-@import "tailwindcss";
+@import 'tailwindcss';
 ```
 
 ### 3.5 Internacionalização
@@ -213,7 +214,7 @@ As mutações de dados são realizadas exclusivamente através de **Server Actio
 
 ```typescript
 // Exemplo: src/app/actions/auth.ts
-"use server";
+'use server';
 
 export async function login(formData: FormData) {
   // Validação com Zod
@@ -262,6 +263,7 @@ const client = new PrismaClient({ adapter });
 ```
 
 **Características**:
+
 - **Singleton**: O Prisma Client é instanciado uma única vez e armazenado no escopo global (evita múltiplas conexões em desenvolvimento com hot-reload)
 - **Connection Pooling**: Pool de conexões PostgreSQL com limite de 20 conexões
 - **Adapter pg**: Utiliza `@prisma/adapter-pg` para integração nativa com o driver `pg`
@@ -271,6 +273,7 @@ const client = new PrismaClient({ adapter });
 ### 4.4 PostgreSQL / Supabase
 
 O banco de dados PostgreSQL é hospedado no **Supabase**, que oferece:
+
 - PostgreSQL gerenciado com conexões pooler via `pgbouncer` (porta 6543)
 - Conexão direta para migrations (porta 5432)
 - Autenticação integrada (Supabase Auth)
@@ -384,9 +387,10 @@ erDiagram
 
 ### 5.2 Esquema Prisma
 
-O schema Prisma define 8 modelos e 4 enums:
+O schema Prisma define 9 modelos e 4 enums:
 
 **Modelos**:
+
 - `Funcionario` - Funcionários da academia (GERENTE, RECEPCIONISTA, INSTRUTOR)
 - `Aluno` - Alunos matriculados com dados de gamificação (nível, XP, streak)
 - `Plano` - Planos de assinatura (nome, preço, duração)
@@ -398,12 +402,14 @@ O schema Prisma define 8 modelos e 4 enums:
 - `SerieExecutada` - Detalhes de cada série executada durante um treino
 
 **Enums**:
+
 - `Role`: GERENTE, RECEPCIONISTA, INSTRUTOR
 - `StatusAluno`: ATIVA, INADIMPLENTE, INATIVA
 - `StatusMatricula`: ATIVA, VENCIDA
 - `MetodoPagamento`: PIX, DINHEIRO, CARTAO
 
 **Índices**:
+
 - `matriculas`: índice em `alunoId` e `status`
 - `pagamentos`: índice em `alunoId` e `dataPagamento`
 - `treinos`: índice em `alunoId`
@@ -413,6 +419,7 @@ O schema Prisma define 8 modelos e 4 enums:
 ### 5.3 Mapeamento para PostgreSQL
 
 Cada modelo é mapeado para uma tabela no PostgreSQL com nomes em português via `@@map()`:
+
 - `alunos`, `funcionarios`, `planos`, `matriculas`, `pagamentos`,
   `treinos`, `exercicios`, `historico_treinos`, `series_executadas`
 
@@ -512,11 +519,13 @@ export const ai = genkit({
 Dois fluxos principais estão definidos em `src/ai/flows/`:
 
 **Workout Generator** (`workout-generator-flow.ts`):
+
 - Gera planos de treino semanais personalizados com base no perfil do aluno
 - Utiliza o modelo Gemini para criar exercícios, séries e repetições
 - Retorna dados estruturados validados por esquemas Zod
 
 **Workout Feedback** (`workout-feedback-flow.ts`):
+
 - Gera feedback motivacional personalizado após cada treino concluído
 - Considera o desempenho do aluno, streak e nível atual
 - Mensagens customizadas para incentivar a consistência
@@ -528,6 +537,7 @@ A integração com Next.js usa `@genkit-ai/next` para expor os fluxos de IA como
 ### 7.4 Desenvolvimento Local
 
 O Genkit oferece uma interface de desenvolvimento local via:
+
 ```bash
 npm run genkit:dev  # genkit start -- tsx src/ai/dev.ts
 ```
@@ -547,6 +557,7 @@ Os schemas de entrada e saída dos fluxos de IA são definidos com **Zod** em `s
 O **Sentry 10** é integrado via `@sentry/nextjs` para monitoramento de erros e performance em produção.
 
 **Configuração** (`next.config.ts`):
+
 ```typescript
 export default withSentryConfig(nextConfig, {
   silent: true,
@@ -558,6 +569,7 @@ export default withSentryConfig(nextConfig, {
 ```
 
 **Características**:
+
 - **Túnel de telemetria**: O Sentry é configurado com `tunnelRoute: '/monitoring'`, que cria um proxy no servidor Next.js para evitar bloqueios por ad-blockers no navegador
 - **Source maps**: Upload de source maps para debug de erros em produção
 - **Performance tracing**: Rastreamento de transações e spans
@@ -567,10 +579,10 @@ export default withSentryConfig(nextConfig, {
 O `Logger` em `src/lib/logger.ts` centraliza todo o logging do sistema:
 
 ```typescript
-Logger.info(message, context);   // Log informativo + Sentry breadcrumb
-Logger.warn(message, context);   // Aviso + Sentry breadcrumb
-Logger.error(message, error);    // Erro + Sentry.captureException()
-Logger.debug(message, context);  // Apenas em desenvolvimento
+Logger.info(message, context); // Log informativo + Sentry breadcrumb
+Logger.warn(message, context); // Aviso + Sentry breadcrumb
+Logger.error(message, error); // Erro + Sentry.captureException()
+Logger.debug(message, context); // Apenas em desenvolvimento
 ```
 
 **Fluxo**: Em produção, logs de erro disparam `Sentry.captureException()` automaticamente. Logs info/warn são registrados como breadcrumbs no Sentry para contexto de debugging.
@@ -578,6 +590,7 @@ Logger.debug(message, context);  // Apenas em desenvolvimento
 ### 8.3 Vercel Speed Insights
 
 O projeto inclui `@vercel/speed-insights` para monitoramento de performance de carregamento no Vercel:
+
 ```typescript
 import { SpeedInsights } from '@vercel/speed-insights/next';
 // Renderizado no layout raiz
@@ -834,17 +847,17 @@ C4Deployment
 
 ### 13.1 Tabela de Decisões
 
-| Decisão | Opção Escolhida | Alternativas | Justificativa |
-|---------|----------------|--------------|---------------|
-| **Framework** | Next.js 15 App Router | React SPA + API separada | Unificação frontend/backend, Server Components, SSR nativo |
-| **ORM** | Prisma 7 | Drizzle, TypeORM, Raw SQL | Type-safe, migrations automáticas, integração com Supabase |
-| **Autenticação** | Supabase Auth SSR | NextAuth.js, Clerk | Já incluso no ecossistema Supabase, SSR nativo |
-| **Estilização** | Tailwind CSS 4 | CSS Modules, Styled Components | Performance, produtividade, ecossistema shadcn/ui |
-| **Componentes** | shadcn/ui (Radix) | Material UI, Chakra UI | Acessível, customizável, sem lock-in |
-| **IA** | Google Genkit + Gemini | OpenAI, LangChain | Custo, integração com ecossistema Google |
-| **Testes** | Vitest + Playwright | Jest + Cypress | Performance (Vitest é mais rápido), Playwright é padrão da indústria |
-| **Validação** | Zod | Yup, Joi | TypeScript-first, inferência de tipos automática |
-| **Deploy** | Vercel | AWS, Cloudflare, Railway | Plataforma nativa Next.js, preview deploys, edge network |
+| Decisão          | Opção Escolhida        | Alternativas                   | Justificativa                                                        |
+| ---------------- | ---------------------- | ------------------------------ | -------------------------------------------------------------------- |
+| **Framework**    | Next.js 15 App Router  | React SPA + API separada       | Unificação frontend/backend, Server Components, SSR nativo           |
+| **ORM**          | Prisma 7               | Drizzle, TypeORM, Raw SQL      | Type-safe, migrations automáticas, integração com Supabase           |
+| **Autenticação** | Supabase Auth SSR      | NextAuth.js, Clerk             | Já incluso no ecossistema Supabase, SSR nativo                       |
+| **Estilização**  | Tailwind CSS 4         | CSS Modules, Styled Components | Performance, produtividade, ecossistema shadcn/ui                    |
+| **Componentes**  | shadcn/ui (Radix)      | Material UI, Chakra UI         | Acessível, customizável, sem lock-in                                 |
+| **IA**           | Google Genkit + Gemini | OpenAI, LangChain              | Custo, integração com ecossistema Google                             |
+| **Testes**       | Vitest + Playwright    | Jest + Cypress                 | Performance (Vitest é mais rápido), Playwright é padrão da indústria |
+| **Validação**    | Zod                    | Yup, Joi                       | TypeScript-first, inferência de tipos automática                     |
+| **Deploy**       | Vercel                 | AWS, Cloudflare, Railway       | Plataforma nativa Next.js, preview deploys, edge network             |
 
 ### 13.2 Server Components como Padrão
 
@@ -853,6 +866,7 @@ Toda página e layout é um **React Server Component** por padrão. Apenas quand
 ### 13.3 Server Actions para Mutações
 
 Toda operação de escrita (criar, atualizar, deletar) é feita via **Server Actions**, nunca via API endpoints tradicionais. As Server Actions:
+
 - São funções `async` executadas no servidor
 - Podem ser chamadas diretamente de formulários HTML (`<form action={}>`)
 - Têm acesso direto ao banco de dados e ao contexto de autenticação
@@ -861,6 +875,7 @@ Toda operação de escrita (criar, atualizar, deletar) é feita via **Server Act
 ### 13.4 Validação com Zod
 
 O **Zod** é usado em múltiplas camadas:
+
 - Validação de formulários (integrado com React Hook Form via `@hookform/resolvers`)
 - Schemas de entrada/saída dos fluxos de IA em `src/ai/schemas.ts`
 - Validação de dados em Server Actions antes de persistir no banco
@@ -868,6 +883,7 @@ O **Zod** é usado em múltiplas camadas:
 ### 13.5 Gamificação
 
 O sistema de gamificação (níveis, XP, streaks) é implementado no serviço `gamificationService.ts`, que:
+
 - Calcula XP ganho por treino concluído
 - Gerencia streaks (dias consecutivos de treino)
 - Determina o nível do aluno baseado no XP acumulado
@@ -894,37 +910,37 @@ O projeto utiliza TypeScript 6 com modo strict ativado (`strict: true`, `noUnuse
 
 ## 14. Tecnologias e Versões
 
-| Tecnologia | Versão | Finalidade |
-|-----------|--------|------------|
-| Next.js | 15.5.15 | Framework web full-stack |
-| React | 19.2.7 | Biblioteca de interface |
-| TypeScript | 6.0.3 | Linguagem de programação |
-| Node.js | 22+ | Runtime |
-| Prisma | 7.7.0 | ORM |
-| Prisma Client | 7.7.0 | Cliente de banco |
-| PostgreSQL | - | Banco de dados relacional |
-| Supabase | - | Autenticação + hospedagem PostgreSQL |
-| Tailwind CSS | 4.2.2 | Framework de estilização |
-| PostCSS | 8.5.15 | Processador CSS |
-| Radix UI | (via shadcn/ui) | Componentes headless acessíveis |
-| motion | 12.40.0 | Biblioteca de animações |
-| Lucide React | 1.17.0 | Ícones |
-| shadcn/ui | - | Coleção de componentes |
-| Zod | 3.25.76 | Validação de schemas |
-| React Hook Form | 7.77.0 | Gerenciamento de formulários |
-| Google Genkit | 1.36.0 | Engine de IA |
-| @genkit-ai/google-genai | 1.36.0 | Plugin Gemini para Genkit |
-| Sentry | 10.56.0 | Monitoramento de erros |
-| Vitest | 4.1.7 | Testes unitários |
-| Playwright | 1.59.1 | Testes E2E |
-| ESLint | 9.39.4 | Linting |
-| Prettier | 3.8.3 | Formatação de código |
-| Husky | 9.1.7 | Git hooks |
-| lint-staged | 16.4.0 | Linting em arquivos staged |
-| Vercel Speed Insights | 2.0.0 | Monitoramento de performance |
-| date-fns | 3.6.0 | Manipulação de datas |
-| Recharts | 3.8.1 | Gráficos |
-| TanStack Table | 8.21.3 | Tabelas |
+| Tecnologia              | Versão          | Finalidade                           |
+| ----------------------- | --------------- | ------------------------------------ |
+| Next.js                 | 15.5.15         | Framework web full-stack             |
+| React                   | 19.2.7          | Biblioteca de interface              |
+| TypeScript              | 6.0.3           | Linguagem de programação             |
+| Node.js                 | 22+             | Runtime                              |
+| Prisma                  | 7.7.0           | ORM                                  |
+| Prisma Client           | 7.7.0           | Cliente de banco                     |
+| PostgreSQL              | -               | Banco de dados relacional            |
+| Supabase                | -               | Autenticação + hospedagem PostgreSQL |
+| Tailwind CSS            | 4.2.2           | Framework de estilização             |
+| PostCSS                 | 8.5.15          | Processador CSS                      |
+| Radix UI                | (via shadcn/ui) | Componentes headless acessíveis      |
+| motion                  | 12.40.0         | Biblioteca de animações              |
+| Lucide React            | 1.17.0          | Ícones                               |
+| shadcn/ui               | -               | Coleção de componentes               |
+| Zod                     | 3.25.76         | Validação de schemas                 |
+| React Hook Form         | 7.77.0          | Gerenciamento de formulários         |
+| Google Genkit           | 1.36.0          | Engine de IA                         |
+| @genkit-ai/google-genai | 1.36.0          | Plugin Gemini para Genkit            |
+| Sentry                  | 10.56.0         | Monitoramento de erros               |
+| Vitest                  | 4.1.7           | Testes unitários                     |
+| Playwright              | 1.59.1          | Testes E2E                           |
+| ESLint                  | 9.39.4          | Linting                              |
+| Prettier                | 3.8.3           | Formatação de código                 |
+| Husky                   | 9.1.7           | Git hooks                            |
+| lint-staged             | 16.4.0          | Linting em arquivos staged           |
+| Vercel Speed Insights   | 2.0.0           | Monitoramento de performance         |
+| date-fns                | 3.6.0           | Manipulação de datas                 |
+| Recharts                | 3.8.1           | Gráficos                             |
+| TanStack Table          | 8.21.3          | Tabelas                              |
 
 ---
 

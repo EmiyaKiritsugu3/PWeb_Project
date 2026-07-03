@@ -220,7 +220,7 @@ Este relatório documenta os resultados dos testes de unidade e aceitação exec
 
 ### Bugs Pendentes
 
-Nenhum bug crítico pendente. O sistema encontra-se estável com todos os testes passando.
+Nenhum bug crítico pendente. O sistema encontra-se estável, com 1 bug conhecido e não bloqueante no SonarQube LabENS, e todos os testes passando.
 
 ---
 

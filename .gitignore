@@ -140,13 +140,13 @@ docs/security/
 docs/specs/
 docs/Project\ Index.md
 # Documentos do projeto (versionados como artefatos academicos)
+docs/doc-*.md
 !docs/doc-visao.md
 !docs/doc-modelos.md
 !docs/doc-userstories.md
 !docs/doc-arquitetura.md
 !docs/plano-iteracao.md
 !docs/relatorio-testes.md
-docs/doc-*.md
 docs/dev-errors.md
 
 # Sentinel Standalone Framework

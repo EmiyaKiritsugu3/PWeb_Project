@@ -264,7 +264,7 @@ Esta iteração tem como foco a **evolução do sistema**, a execução de **tes
 | Relatório de Testes                  | ✅     | `docs/relatorio-testes.md` |
 | Correções SonarQube                  | ✅     | Code smells reduzidos      |
 | Cobertura de Código                  | ✅     | 85.23% (meta: 65%)         |
-| Release                              | ✅     | v0.6.0                     |
+| Release                              | ✅     | v1.0.0 (It3)               |
 
 ---
 
