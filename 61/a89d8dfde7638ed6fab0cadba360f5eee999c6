@@ -1,0 +1,26 @@
+docs/doc-modelos.md
+  s_4f2204cced2d9d::t_abfc107faa3c10 359
+  s_4f2204cced2d9d::t_9075c287d0883f 355-358,360-364
+docs/doc-visao.md
+  s_4f2204cced2d9d::t_48537b265a4f8a 245
+  s_4f2204cced2d9d::t_2878b92299aa63 241-244,246
+docs/doc-userstories.md
+  s_4f2204cced2d9d::t_6ea4f68b5077b2 311
+  s_4f2204cced2d9d::t_d0c11e4ef66e9f 13-18,22-23,25-26,34-41,55-62,76-83,99-106,123-130,144-151,168-175,192-199,214-221,235-242,257-264,281-288,303-310,312-316,322-324
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.9",
+  "base_commit_sha": "61a89d8dfde7638ed6fab0cadba360f5eee999c6",
+  "prompts": {},
+  "sessions": {
+    "s_4f2204cced2d9d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6d9f8773-1ba4-49ba-aee5-c05236dd04d7",
+        "model": "deepseek-v4-flash"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
