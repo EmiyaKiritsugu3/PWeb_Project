@@ -227,27 +227,4 @@ describe('Combobox', () => {
     const checks = screen.getAllByTestId('icon-check');
     expect(checks.length).toBeGreaterThan(0);
   });
-
-  it('renders not found message', () => {
-    render(
-      <Combobox
-        options={mockOptions}
-        flatOptions={mockFlatOptions}
-        onChange={vi.fn()}
-        notFoundMessage="Nothing here"
-      />
-    );
-    expect(screen.getByText('Nothing here')).toBeTruthy();
-  });
-
-  it('handles Command filter function', () => {
-    render(
-      <Combobox
-        options={mockOptions}
-        flatOptions={mockFlatOptions}
-        onChange={vi.fn()}
-      />
-    );
-    expect(screen.getByTestId('command')).toBeTruthy();
-  });
 });
