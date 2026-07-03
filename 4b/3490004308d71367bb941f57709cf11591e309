@@ -1,0 +1,28 @@
+src/app/actions/auth.test.ts
+  s_a3b79513a6e538::t_aaf7e03b381482 95-107,111,114-117,120-121,128,135,138-139,142,146,149-150,153,166-167
+  s_a3b79513a6e538::t_f200058ae72d20 67,70,78,81,84,92,168,185,189
+src/app/login/page.test.tsx
+  s_a3b79513a6e538::t_cc74de1ddfea68 1,4-6
+src/app/login/page.tsx
+  s_a3b79513a6e538::t_2b8f8d55292ac4 4-5,22,25-30
+  s_a3b79513a6e538::t_13d1b6aa7add63 31
+src/app/actions/auth.ts
+  s_a3b79513a6e538::t_4df0989dac3ea7 12-17,52,56
+  s_a3b79513a6e538::t_9792b7d9ae2506 57,59,61,64,76
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "4b3490004308d71367bb941f57709cf11591e309",
+  "prompts": {},
+  "sessions": {
+    "s_a3b79513a6e538": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2b4e5e71-9e0c-42af-9adc-f6c83dae0323",
+        "model": "claude-haiku-4.5"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
