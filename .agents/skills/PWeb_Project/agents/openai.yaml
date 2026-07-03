@@ -1,6 +1,6 @@
 interface:
-  display_name: "PWeb Project"
-  short_description: "Repo-specific patterns and workflows for PWeb_Project"
-  default_prompt: "Use the PWeb_Project repo skill to follow existing architecture, testing, and workflow conventions."
+  display_name: 'PWeb Project'
+  short_description: 'Repo-specific patterns and workflows for PWeb_Project'
+  default_prompt: 'Use the PWeb_Project repo skill to follow existing architecture, testing, and workflow conventions.'
 policy:
   allow_implicit_invocation: true
