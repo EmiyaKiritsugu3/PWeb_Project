@@ -1,0 +1,75 @@
+docs/doc-arquitetura.md
+  s_7a5ced4addcbe6::t_9699a6cef1d891 1-955
+.gitignore
+  s_e082bd154e52e4::t_89324fe5e4b143 142-148
+docs/doc-visao.md
+  s_bae63d56396e1c::t_debada9c428c97 1-321
+docs/doc-modelos.md
+  s_66514bbdb6415a::t_44750daaadbf34 1-601
+docs/plano-iteracao.md
+  s_e082bd154e52e4::t_75bea035496f89 6
+  s_e082bd154e52e4::t_891246bdbdbf1d 1-5,7-295
+README.md
+  s_e082bd154e52e4::t_c2f1b406c53164 151-152,154,156-161,163
+docs/doc-userstories.md
+  s_761c0b1d6ebfdc::t_73a3b6817dfe63 1-324
+docs/relatorio-testes.md
+  s_e082bd154e52e4::t_435a734dc89a48 1-289
+  s_b679449ea2d7d9::t_c63ef773cfff48 290-291
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.9",
+  "base_commit_sha": "cc8d24646b3546b4fb5e236016b8b2afa3f9ce14",
+  "prompts": {},
+  "sessions": {
+    "s_66514bbdb6415a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ses_0da4eb6a3ffeR6laey6ysXHlFW",
+        "model": "unknown"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    },
+    "s_761c0b1d6ebfdc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ses_0da4d9a5fffeowXmk97IGJXeH3",
+        "model": "unknown"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    },
+    "s_7a5ced4addcbe6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ses_0da4d72b6ffefsGUFfDfnFyb05",
+        "model": "unknown"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    },
+    "s_b679449ea2d7d9": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0da5af0c0ffeyY8eQi7W7GUASa",
+        "model": "ocg/deepseek-v4-pro"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    },
+    "s_bae63d56396e1c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ses_0da4ecbdcffefL7cmQ3Ni7TGpo",
+        "model": "unknown"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    },
+    "s_e082bd154e52e4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ses_0da5af0c0ffeyY8eQi7W7GUASa",
+        "model": "unknown"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
