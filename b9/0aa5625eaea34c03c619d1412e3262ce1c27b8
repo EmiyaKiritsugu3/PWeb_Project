@@ -1,0 +1,164 @@
+tests/e2e/helpers/auth.ts
+  s_a3b79513a6e538::t_d68c38776b3d25 53
+src/app/actions/auth.test.ts
+  s_3568413a5e525b::t_f64928f10d4504 156,163-164
+  s_3568413a5e525b::t_7b9076f18ccc6d 132,139-140
+  s_3568413a5e525b::t_93aebac7fa0b77 121,128-129
+  s_3568413a5e525b::t_e570bff2aad233 167
+  s_3568413a5e525b::t_a55c239e5033ed 174-175
+src/app/login/page.test.tsx
+  s_3568413a5e525b::t_5ff51cacd55450 6-9
+src/app/actions/auth.ts
+  s_3568413a5e525b::t_7a29d95ba26eec 40-43,55-56,58-60
+  s_3568413a5e525b::t_ffe4999a2b79c9 14-19
+  s_3568413a5e525b::t_618ddc73bb5bbc 61
+src/app/login/page.tsx
+  s_3568413a5e525b::t_7737672716c48a 22,25-32
+  s_3568413a5e525b::t_d8e46ce066f433 98
+  s_3568413a5e525b::t_2f64ecb0240df8 3-4
+  s_3568413a5e525b::t_31d9bb3b03ef33 33
+.omo/boulder.json
+  s_3568413a5e525b::t_0c0f5e093df1d4 1-8
+.omo/evidence/audit-context7-2026-06-05.md
+  s_3568413a5e525b::t_e1f0f75db38f93 1-350
+.omo/evidence/f1-plan-compliance.md
+  s_3568413a5e525b::t_98a3ec308a2a66 1-34
+.omo/evidence/f2-code-quality.md
+  s_3568413a5e525b::t_a3cbc63d3ba10c 1-160
+.omo/evidence/f3-manual-qa.md
+  s_3568413a5e525b::t_b9b253f89e5687 1-253
+.omo/evidence/f4-scope-fidelity.md
+  s_3568413a5e525b::t_91e625239f8794 1-54
+.omo/evidence/fix-e2e-ci-env/commit-stat.txt
+  s_3568413a5e525b::t_c64d40ed34e45f 1-22
+.omo/evidence/fix-e2e-ci-env/final-pr-state.json
+  s_3568413a5e525b::t_e926da962a841e 1-132
+.omo/evidence/fix-e2e-ci-env/pr-url.txt
+  s_3568413a5e525b::t_82a20be8627104 1
+.omo/evidence/fix-e2e-preexisting/diff-stat.txt
+  s_3568413a5e525b::t_ddb894f63e8a33 1-6
+.omo/evidence/fix-e2e-preexisting/e2e-output.txt
+  s_3568413a5e525b::t_2e67d37e2a75b7 1-40
+.omo/evidence/fix-payment-status-e2e/f3-final-qa/01-supabase-stop.txt
+  s_3568413a5e525b::t_7f6450c1d6cbe4 1-3
+.omo/evidence/fix-payment-status-e2e/f3-final-qa/02-supabase-start.txt
+  s_3568413a5e525b::t_720b02abc8fd8a 1-62
+.omo/evidence/fix-payment-status-e2e/f3-final-qa/03-prisma-db-push.txt
+  s_3568413a5e525b::t_46e7addbf39d9b 1-4
+.omo/evidence/fix-payment-status-e2e/f3-final-qa/04-preflight.txt
+  s_3568413a5e525b::t_c7296461e7e766 1-107
+.omo/evidence/fix-payment-status-e2e/f3-final-qa/04b-format-fix.txt
+  s_3568413a5e525b::t_6ba5467fcb14c1 1-203
+.omo/evidence/fix-payment-status-e2e/f3-final-qa/04c-preflight-retry.txt
+  s_3568413a5e525b::t_a12ac1888d92b8 1-112
+.omo/evidence/fix-payment-status-e2e/f3-final-qa/05-targeted.txt
+  s_3568413a5e525b::t_bb905f38757e76 1-107
+.omo/evidence/fix-payment-status-e2e/followup-pr-url.txt
+  s_3568413a5e525b::t_306c93739f0b64 1
+.omo/evidence/fix-payment-status-e2e/task-1-global-setup.txt
+  s_3568413a5e525b::t_4a959dbf443a15 1-148
+.omo/evidence/fix-payment-status-e2e/task-2-config-valid.txt
+  s_3568413a5e525b::t_0a07d829e0657e 1-28
+.omo/evidence/fix-payment-status-e2e/task-3-env-test-rename.txt
+  s_3568413a5e525b::t_37be1db3957d2d 1
+.omo/evidence/fix-payment-status-e2e/task-4-env-local-additive.txt
+  s_3568413a5e525b::t_97a86ea4cf72b8 1
+.omo/evidence/fix-payment-status-e2e/task-5-debt-closed.txt
+  s_3568413a5e525b::t_9a2ff5b2be8806 1-2
+.omo/evidence/fix-payment-status-e2e/task-6-changelog.txt
+  s_3568413a5e525b::t_ab0ebb052dde20 1-16
+.omo/evidence/fix-payment-status-e2e/task-7-full-suite.txt
+  s_3568413a5e525b::t_193aa10fdbfd64 1-240
+.omo/evidence/fix-payment-status-e2e/task-7-idempotent.txt
+  s_3568413a5e525b::t_adcaa25b261440 1-240
+.omo/evidence/fix-payment-status-e2e/task-7-preflight.txt
+  s_3568413a5e525b::t_7e64da50d89456 1-112
+.omo/evidence/fix-payment-status-e2e/task-7-summary.md
+  s_3568413a5e525b::t_b4b2c74a9d7ffa 1-121
+.omo/evidence/fix-payment-status-e2e/task-7-supabase-start.txt
+  s_3568413a5e525b::t_458ba65af0281f 1-3466
+.omo/evidence/fix-payment-status-e2e/task-7-supabase-status.txt
+  s_3568413a5e525b::t_258968e9c7ef72 1-42
+.omo/evidence/fix-payment-status-e2e/task-7-supabase-stop.txt
+  s_3568413a5e525b::t_5fbf70ffe7d4e8 1-2
+.omo/evidence/fix-payment-status-e2e/task-7-targeted.txt
+  s_3568413a5e525b::t_d5c87c3c64f94b 1-40
+.omo/evidence/fix-payment-status-e2e/task-9-pr-url.txt
+  s_3568413a5e525b::t_435832d22549aa 1
+.omo/evidence/pause-2026-06-06T0345.md
+  s_3568413a5e525b::t_67b3e41f278e7e 1-42
+.omo/evidence/t124-close-major-group-rejected.md
+  s_3568413a5e525b::t_258797873c8cb4 1-11
+.omo/evidence/t13-rev-pr113-closed.md
+  s_3568413a5e525b::t_8115b6c76e87c8 1-6
+.omo/evidence/t2-tracking-issue.md
+  s_3568413a5e525b::t_589cf6f5402c39 1-8
+.omo/evidence/t3-pr112-closed.md
+  s_3568413a5e525b::t_081dd1f1f1c1a5 1-7
+.omo/evidence/t4-t6-blocker-diagnosis.md
+  s_3568413a5e525b::t_b9e6c6c5f3bc01 1-29
+.omo/evidence/t4-t6-branches-archived.md
+  s_3568413a5e525b::t_3d852abc5aa8a3 1-13
+.omo/evidence/t6-pr108-archive.txt
+  s_3568413a5e525b::t_428f2010cf24b4 1-18
+.omo/evidence/t7-dependabot-yml-diff.txt
+  s_3568413a5e525b::t_dffa2b18b37788 1-116
+.omo/notepads/code-optimization/learnings.md
+  s_3568413a5e525b::t_681747355ecb01 1-40
+.omo/notepads/fix-e2e-ci-env/learnings.md
+  s_3568413a5e525b::t_6caf9759dc4c25 1-13
+.omo/notepads/fix-payment-status-e2e/learnings.md
+  s_3568413a5e525b::t_2e38a3b5e0a159 1-174
+.omo/notepads/meus-treinos-hooks/learnings.md
+  s_3568413a5e525b::t_b0852db2ae51f4 1-9
+.omo/notepads/pr118-correction-optimization/learnings.md
+  s_3568413a5e525b::t_8ca2d7f36295a9 1-23
+.omo/notepads/refactor-exercise-state/learnings.md
+  s_3568413a5e525b::t_99bdb2c97b6332 1-9
+.omo/notepads/sonarqube-debt-fix/learnings.md
+  s_3568413a5e525b::t_d55d05ba030609 1-18
+.omo/notepads/sonarqube-mechanical-fixes/learnings.md
+  s_3568413a5e525b::t_2419e85409345a 1-31
+.omo/plans/archive/fix-e2e-ci-env-var.md
+  s_3568413a5e525b::t_dfacee860e8334 1-400
+.omo/plans/archive/fix-e2e-preexisting-failures.md
+  s_3568413a5e525b::t_49553b718f85ce 1-668
+.omo/plans/archive/fix-middleware-string-raw.md
+  s_3568413a5e525b::t_e9c800afcde9a0 1-134
+.omo/plans/archive/fix-payment-status-e2e.md
+  s_3568413a5e525b::t_4e4927ad0bad2f 1-817
+.omo/plans/archive/library-drift-audit-2026-06-05.md
+  s_3568413a5e525b::t_925ce56eb10527 1-881
+.omo/plans/archive/pr118-correction-optimization.md
+  s_3568413a5e525b::t_ac87991676eaed 1-830
+.omo/plans/code-optimization.md
+  s_3568413a5e525b::t_5c556c311ecaea 1-874
+.omo/plans/sonarqube-code-smells-fix.md
+  s_3568413a5e525b::t_87c636ac2b9f37 1-326
+.omo/plans/sonarqube-debt-fix.md
+  s_3568413a5e525b::t_0fe120a0f35425 1-523
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "b90aa5625eaea34c03c619d1412e3262ce1c27b8",
+  "prompts": {},
+  "sessions": {
+    "s_3568413a5e525b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9403b2ef-4b5e-4962-826d-e3b3bde1ed1c",
+        "model": "deepseek-v4-pro"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    },
+    "s_a3b79513a6e538": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2b4e5e71-9e0c-42af-9adc-f6c83dae0323",
+        "model": "deepseek-v4-flash"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
