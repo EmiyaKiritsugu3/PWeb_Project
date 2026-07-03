@@ -1,0 +1,21 @@
+prisma/seed-e2e.ts
+  s_3568413a5e525b::t_c2b39d6378b24c 219-232
+supabase/seed.sql
+  s_3568413a5e525b::t_4a7aeb548b6d36 2-5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "c297fc82b5af4925ff30493c0c0b70e95133d7e6",
+  "prompts": {},
+  "sessions": {
+    "s_3568413a5e525b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9403b2ef-4b5e-4962-826d-e3b3bde1ed1c",
+        "model": "unknown"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
