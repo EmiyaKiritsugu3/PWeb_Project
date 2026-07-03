@@ -1,0 +1,19 @@
+src/app/actions/auth.test.ts
+  s_682818446517a5::t_7bcdc38762a08a 180-183
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "c43d9c3a5700e9b95bf0c092335671ccf91b47de",
+  "prompts": {},
+  "sessions": {
+    "s_682818446517a5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ce9d65be-83c2-4f2f-a26e-7b48bdf8af39",
+        "model": "deepseek-v4-flash"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
