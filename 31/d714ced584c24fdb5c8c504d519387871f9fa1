@@ -1,0 +1,24 @@
+src/app/aluno/dashboard/dashboard-client.test.tsx
+  s_682818446517a5::t_61e393b0c855c8 1
+src/app/aluno/login/page.test.tsx
+  s_682818446517a5::t_201a7074b2db03 1
+src/app/dashboard/alunos/alunos-client.test.tsx
+  s_682818446517a5::t_a53bb4772a0993 289
+  s_682818446517a5::t_640fd7690dda13 320-330
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "31d714ced584c24fdb5c8c504d519387871f9fa1",
+  "prompts": {},
+  "sessions": {
+    "s_682818446517a5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ce9d65be-83c2-4f2f-a26e-7b48bdf8af39",
+        "model": "deepseek-v4-flash"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
