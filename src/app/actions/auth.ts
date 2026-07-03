@@ -1,8 +1,6 @@
 'use server';
 
 import { createClient } from '@/utils/supabase/server';
-import { redirect } from 'next/navigation';
-import { isRedirectError } from 'next/dist/client/components/redirect-error';
 import * as Sentry from '@sentry/nextjs';
 import { z } from 'zod/v4';
 
@@ -11,7 +9,12 @@ const loginSchema = z.object({
   password: z.string().min(6, { message: 'A senha deve ter no mínimo 6 caracteres.' }),
 });
 
-export async function login(_prevState: { error: string } | undefined, formData: FormData) {
+export type LoginResult = { error: string } | { success: true; redirectTo: string };
+
+export async function login(
+  _prevState: LoginResult | undefined,
+  formData: FormData
+): Promise<LoginResult> {
   const data = Object.fromEntries(formData);
   const result = loginSchema.safeParse(data);
 
@@ -32,8 +35,6 @@ export async function login(_prevState: { error: string } | undefined, formData:
   }
 
   // signInWithPassword already returns the session + sets cookies via supabase-ssr setAll.
-  // Calling getSession() after redirect response headers are committed causes a timing gap
-  // in Next.js 15 server actions where getSession() returns null.
   if (!authData.session) {
     return { error: 'Erro ao estabelecer sessão. Por favor, tente novamente.' };
   }
@@ -48,17 +49,19 @@ export async function login(_prevState: { error: string } | undefined, formData:
 
     // PGRST116 = "no rows found" — expected for alunos; any other code is a real DB error
     if (profileError && profileError.code !== 'PGRST116') {
+      Sentry.captureMessage(`Profile lookup failed: ${profileError.code}`, 'error');
       return { error: 'Erro ao verificar perfil. Por favor, tente novamente.' };
     }
 
+    // Return redirect path instead of calling redirect() to avoid server action
+    // cookie timing issues in Next.js 15. Client will handle the navigation.
     if (profile) {
-      redirect('/dashboard');
+      return { success: true, redirectTo: '/dashboard' };
     } else {
-      redirect('/aluno/dashboard');
+      return { success: true, redirectTo: '/aluno/dashboard' };
     }
   } catch (err: unknown) {
-    // redirect() throws internally — must re-throw or the navigation is swallowed
-    if (isRedirectError(err)) throw err;
+    Sentry.captureException(err, { tags: { action: 'login' }, level: 'error' });
     return { error: 'Ocorreu um erro inesperado. Por favor, tente novamente.' };
   }
 }
@@ -68,8 +71,7 @@ export async function logout() {
     const supabase = await createClient();
     await supabase.auth.signOut();
   } catch (err: unknown) {
-    if (isRedirectError(err)) throw err;
     Sentry.captureException(err, { tags: { action: 'logout' }, level: 'warning' });
   }
-  redirect('/login');
+  // Client will handle redirect after logout succeeds
 }
