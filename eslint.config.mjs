@@ -1,6 +1,5 @@
 import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
-import prettierConfig from 'eslint-config-prettier/flat';
 import nextCoreWebVitals from 'eslint-config-next/core-web-vitals';
 
 export default tseslint.config(

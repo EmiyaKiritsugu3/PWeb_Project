@@ -1,3 +1,5 @@
+/* eslint-disable no-console -- CLI database example script */
+
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();

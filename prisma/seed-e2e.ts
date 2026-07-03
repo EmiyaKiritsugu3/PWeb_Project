@@ -1,3 +1,5 @@
+/* eslint-disable no-console -- CLI seed script for E2E */
+
 /**
  * E2E Test Seed — Five Star Academy
  *

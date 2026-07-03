@@ -1,3 +1,4 @@
+/* eslint-disable no-undef -- CommonJS, node globals */
 module.exports = {
   extends: ['@commitlint/config-conventional'],
   rules: {
