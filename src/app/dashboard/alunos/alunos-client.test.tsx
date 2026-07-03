@@ -286,7 +286,7 @@ describe('AlunosClient', () => {
 
   it('opens edit form via DataTable column and submits update', async () => {
     const { updateAlunoAction } = await import('@/lib/actions/alunos');
-    vi.mocked(updateAlunoAction).mockResolvedValue({ success: true });
+    vi.mocked(updateAlunoAction).mockResolvedValue({ success: true, data: mockAlunos[0] });
 
     render(<AlunosClient initialAlunos={mockAlunos} planos={mockPlanos} />);
     fireEvent.click(screen.getByText('Editar Aluno'));
@@ -317,7 +317,17 @@ describe('AlunosClient', () => {
 
   it('opens matricula form via column and submits', async () => {
     const { createMatriculaAction } = await import('@/lib/actions/alunos');
-    vi.mocked(createMatriculaAction).mockResolvedValue({ success: true });
+    vi.mocked(createMatriculaAction).mockResolvedValue({
+      success: true,
+      data: {
+        id: 'mat-1',
+        alunoId: 'aluno-1',
+        planoId: 'plano-1',
+        dataInicio: new Date(),
+        dataVencimento: new Date(),
+        status: 'ATIVA',
+      },
+    });
 
     render(<AlunosClient initialAlunos={mockAlunos} planos={mockPlanos} />);
     fireEvent.click(screen.getByText('Nova Matrícula'));
