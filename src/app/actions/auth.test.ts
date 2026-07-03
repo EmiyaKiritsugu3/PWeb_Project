@@ -17,6 +17,10 @@ vi.mock('next/dist/client/components/redirect-error', () => ({
   }),
 }));
 
+vi.mock('next/cache', () => ({
+  revalidatePath: vi.fn(),
+}));
+
 vi.mock('zod/v4', () => {
   const actual = vi.importActual('zod/v4');
   return actual;
@@ -47,16 +51,11 @@ function mockSupabase(
   });
 
   const mockSignOut = vi.fn().mockResolvedValue({ error: null });
-  const mockGetSession = vi.fn().mockResolvedValue({
-    data: { session: { user: { id: 'user-1' } } },
-    error: null,
-  });
 
   const mockSupabaseClient = {
     auth: {
       signInWithPassword: mockSignIn, // ggignore
       signOut: mockSignOut,
-      getSession: mockGetSession,
     },
     from: vi.fn(() => ({
       select: mockSelect,
@@ -182,10 +181,6 @@ describe('auth server actions', () => {
             error: null,
           }),
           signOut: vi.fn(),
-          getSession: vi.fn().mockResolvedValue({
-            data: { session: { user: { id: 'user-1' } } },
-            error: null,
-          }),
         },
         from: vi.fn(() => ({
           select: mockSelect,

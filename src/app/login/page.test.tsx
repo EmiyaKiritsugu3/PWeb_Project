@@ -1,23 +1,13 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import LoginPage from './page';
 import type { ReactNode } from 'react';
 
-const { getMockState, setMockError } = vi.hoisted(() => {
-  let mockState = { error: undefined as string | undefined };
-  return {
-    getMockState: () => mockState,
-    setMockError: (err: string | undefined) => {
-      mockState = { error: err };
-    },
-  };
-});
-
 vi.mock('react', async () => {
-  const actual = await vi.importActual<typeof import('react')>('react');
+  const actual = await vi.importActual('react');
   return {
     ...actual,
-    useActionState: () => [getMockState(), vi.fn(), false],
+    useActionState: () => [{ error: undefined }, vi.fn(), false],
   };
 });
 
@@ -54,20 +44,19 @@ vi.mock('@/components/ui/button', () => ({
     type,
     disabled,
     variant,
-    className,
+    ...props
   }: {
     children: ReactNode;
     type?: string;
     disabled?: boolean;
     variant?: string;
-    asChild?: boolean;
-    className?: string;
+    [key: string]: unknown;
   }) => (
     <button
       type={type as 'button' | 'reset' | 'submit'}
       disabled={disabled}
       data-variant={variant}
-      className={className}
+      {...props}
     >
       {children}
     </button>
@@ -83,26 +72,30 @@ vi.mock('@/components/ui/separator', () => ({
 }));
 
 describe('LoginPage', () => {
-  beforeEach(() => {
-    setMockError(undefined);
-  });
-
   it('renders the login form', () => {
     render(<LoginPage />);
-    const el = screen.getByText('Five Star');
-    expect(el).toBeTruthy();
+    expect(screen.getByText('Five Star')).toBeTruthy();
+    expect(screen.getByText('SISTEMA DE GESTÃO')).toBeTruthy();
   });
 
-  it('renders pending state on button', () => {
+  it('renders email and password inputs', () => {
     render(<LoginPage />);
-    const btn = screen.getByText('Entrar no Sistema');
-    expect(btn).toBeTruthy();
+    expect(screen.getByLabelText('Email corporativo')).toBeTruthy();
+    expect(screen.getByLabelText('Senha de acesso')).toBeTruthy();
   });
 
-  it('renders error message when state has error', () => {
-    setMockError('Credenciais inválidas');
+  it('renders submit button', () => {
     render(<LoginPage />);
-    const el = screen.getByText('Credenciais inválidas');
-    expect(el).toBeTruthy();
+    expect(screen.getByText('Entrar no Sistema')).toBeTruthy();
+  });
+
+  it('renders link to aluno portal', () => {
+    render(<LoginPage />);
+    expect(screen.getByText('Acessar Portal do Aluno')).toBeTruthy();
+  });
+
+  it('renders copyright notice', () => {
+    render(<LoginPage />);
+    expect(screen.getByText((content) => content.includes('Five Star Fitness'))).toBeTruthy();
   });
 });

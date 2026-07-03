@@ -2,6 +2,7 @@
 
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
+import { revalidatePath } from 'next/cache';
 import { isRedirectError } from 'next/dist/client/components/redirect-error';
 import * as Sentry from '@sentry/nextjs';
 import { z } from 'zod/v4';
@@ -44,6 +45,9 @@ export async function login(_prevState: { error: string } | undefined, formData:
       return { error: 'Erro ao verificar perfil. Por favor, tente novamente.' };
     }
 
+    // revalidatePath before redirect forces cookie commit in Next.js 15 server actions.
+    // Without this, cookies set by supabase-ssr setAll may not survive the 303 redirect.
+    revalidatePath('/');
     if (profile) {
       redirect('/dashboard');
     } else {

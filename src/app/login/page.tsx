@@ -83,7 +83,7 @@ export default function LoginPage() {
               />
             </div>
 
-            {state && 'error' in state && <p className="text-sm text-destructive">{state.error}</p>}
+            {state?.error && <p className="text-sm text-destructive">{state.error}</p>}
 
             <Button
               type="submit"
