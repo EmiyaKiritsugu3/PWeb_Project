@@ -1,0 +1,22 @@
+docs/doc-modelos.md
+  s_4f2204cced2d9d::t_e96470cc34bfda 26
+  s_4f2204cced2d9d::t_a88fb6677c64ff 359
+  s_4f2204cced2d9d::t_dd7dce5c46bc17 553
+  s_4f2204cced2d9d::t_2ac2ac3835316d 145-150,154-155,166-182,186-187,201-206,210-212,222-229,233-237,249-256,260-263,275-282,286-291,303-311,315-317,329-335,339-343,355-358,360-364,368-370,386-390,396-400,406-409,415-419,429-434,438-454,458-463,467-474,478-485,489-496,500-508,512-518,522-531,541-552
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.9",
+  "base_commit_sha": "e87c44a0cccada702cbf098b75a43dff853672c2",
+  "prompts": {},
+  "sessions": {
+    "s_4f2204cced2d9d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6d9f8773-1ba4-49ba-aee5-c05236dd04d7",
+        "model": "deepseek-v4-flash"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
