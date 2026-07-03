@@ -229,10 +229,10 @@ Esta iteração tem como foco a **evolução do sistema**, a execução de **tes
 
 ### SonarQube LabENS (Execuções Manuais)
 
-| Execução | Data           | Status               | Dashboard                                                                      |
-| -------- | -------------- | -------------------- | ------------------------------------------------------------------------------ |
-| **#1**   | 02/07/2026     | ✅ EXECUTION SUCCESS | [PWeb_Project](https://labens.dct.ufrn.br/sonarqube/dashboard?id=PWeb_Project) |
-| **#2**   | _(a executar)_ | —                    | —                                                                              |
+| Execução | Data       | Status               | Dashboard                                                                      |
+| -------- | ---------- | -------------------- | ------------------------------------------------------------------------------ |
+| **#1**   | 02/07/2026 | ✅ EXECUTION SUCCESS | [PWeb_Project](https://labens.dct.ufrn.br/sonarqube/dashboard?id=PWeb_Project) |
+| **#2**   | 02/07/2026 | ✅ EXECUTION SUCCESS | [PWeb_Project](https://labens.dct.ufrn.br/sonarqube/dashboard?id=PWeb_Project) |
 
 > **Script:** `npm run sonar:labens` (Docker + `SONAR_TOKEN`)
 
