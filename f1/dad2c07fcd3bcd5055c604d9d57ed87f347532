@@ -1,0 +1,19 @@
+supabase/seed.sql
+  s_3568413a5e525b::t_eaac59ea320689 2-5,9-22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "f1dad2c07fcd3bcd5055c604d9d57ed87f347532",
+  "prompts": {},
+  "sessions": {
+    "s_3568413a5e525b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9403b2ef-4b5e-4962-826d-e3b3bde1ed1c",
+        "model": "deepseek-v4-pro"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
