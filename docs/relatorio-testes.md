@@ -249,10 +249,11 @@ Todos os arquivos   |   85.23 |    73.53 |   81.26 |   85.97 |
 
 | Métrica             | Valor                                                                                        |
 | ------------------- | -------------------------------------------------------------------------------------------- |
-| **Servidor**        | labens.dct.ufrn.br/sonarqube                                                                 |
-| **Project Key**     | `PWeb_Project`                                                                               |
-| **Última Execução** | 02/07/2026 23:11 (UTC-3)                                                                     |
-| **Script**          | `npm run sonar:labens`                                                                       |
+| **Coverage**        | **76.5%**                                                                                    |
+| **Bugs**            | 1                                                                                            |
+| **Vulnerabilities** | 0                                                                                            |
+| **Code Smells**     | 7                                                                                            |
+| **Última Execução** | 02/07/2026 23:46 (UTC-3)                                                                     |
 | **Status**          | ✅ EXECUTION SUCCESS                                                                         |
 | **Dashboard**       | [/dashboard?id=PWeb_Project](https://labens.dct.ufrn.br/sonarqube/dashboard?id=PWeb_Project) |
 
