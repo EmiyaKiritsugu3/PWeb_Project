@@ -1,0 +1,19 @@
+docs/relatorio-testes.md
+  s_e082bd154e52e4::t_22e53f6eb8faac 252-256
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.9",
+  "base_commit_sha": "53a5089418e56b6621b8a6b7c5b61108f43785ea",
+  "prompts": {},
+  "sessions": {
+    "s_e082bd154e52e4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ses_0da5af0c0ffeyY8eQi7W7GUASa",
+        "model": "unknown"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
