@@ -1,0 +1,22 @@
+src/app/actions/auth.ts
+  s_a3b79513a6e538::t_63a432ba4aabef 34-37
+src/app/actions/auth.test.ts
+  s_a3b79513a6e538::t_ba17feca40377a 37-41
+  s_a3b79513a6e538::t_6b15cf416fe4e7 179-182
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "0c5fcb285af814ce1f61e29a5c5171853bccb3ed",
+  "prompts": {},
+  "sessions": {
+    "s_a3b79513a6e538": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2b4e5e71-9e0c-42af-9adc-f6c83dae0323",
+        "model": "claude-haiku-4.5"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
