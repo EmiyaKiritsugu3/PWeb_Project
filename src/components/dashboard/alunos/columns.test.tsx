@@ -53,8 +53,8 @@ vi.mock('@/components/ui/dropdown-menu', () => ({
 }));
 
 vi.mock('lucide-react', () => ({
-  MoreHorizontal: () => <span>⋮</span>,
-  Eye: () => <span>👁</span>,
+  MoreHorizontal: () => <span>...</span>,
+  Eye: () => <span>eye</span>,
 }));
 
 vi.mock('@/hooks/use-toast', () => ({
@@ -87,6 +87,21 @@ const mockAluno: Aluno = {
   streakDiasSeguidos: 0,
   treinosNoMes: 0,
   ultimoTreinoData: null,
+};
+
+const mockAlunoEmptyName: Aluno = {
+  ...mockAluno,
+  nomeCompleto: '',
+};
+
+const mockAlunoSingleName: Aluno = {
+  ...mockAluno,
+  nomeCompleto: 'João',
+};
+
+const mockAlunoNullDate: Aluno = {
+  ...mockAluno,
+  dataCadastro: '',
 };
 
 describe('columns', () => {
@@ -157,6 +172,20 @@ describe('columns', () => {
     }
   });
 
+  it('renders email in email column', () => {
+    const cell = columnDefs[2].cell;
+    if (typeof cell === 'function') {
+      render(
+        cell({
+          row: {
+            original: mockAluno,
+          },
+        } as never)
+      );
+      expect(screen.getByText('joao@test.com')).toBeTruthy();
+    }
+  });
+
   it('renders formatted date in date column', () => {
     const cell = columnDefs[3].cell;
     if (typeof cell === 'function') {
@@ -169,6 +198,21 @@ describe('columns', () => {
         } as never)
       );
       expect(screen.getByText('01/01/2024')).toBeTruthy();
+    }
+  });
+
+  it('renders nothing when date is empty', () => {
+    const cell = columnDefs[3].cell;
+    if (typeof cell === 'function') {
+      const { container } = render(
+        cell({
+          row: {
+            getValue: () => '',
+            original: mockAlunoNullDate,
+          },
+        } as never)
+      );
+      expect(container.firstChild).toBeNull();
     }
   });
 
@@ -229,6 +273,43 @@ describe('columns', () => {
         } as never)
       );
       expect(screen.getByLabelText('Mais opções')).toBeTruthy();
+    }
+  });
+
+  it('renders "Editar Aluno" button and triggers onEdit', () => {
+    const cell = columnDefs[5].cell;
+    if (typeof cell === 'function') {
+      render(
+        cell({
+          row: {
+            original: mockAluno,
+          },
+        } as never)
+      );
+      screen.getByText('Editar Aluno').click();
+      expect(onEdit).toHaveBeenCalledWith(mockAluno);
+    }
+  });
+
+  it('renders avatar fallback with initials for full name', () => {
+    const cell = columnDefs[0].cell;
+    if (typeof cell === 'function') {
+      render(cell({ row: { original: mockAluno } } as never));
+      expect(screen.getByText('JS')).toBeTruthy();
+    }
+  });
+
+  it('renders avatar fallback with empty name', () => {
+    const cell = columnDefs[0].cell;
+    if (typeof cell === 'function') {
+      render(cell({ row: { original: mockAlunoEmptyName } } as never));
+    }
+  });
+
+  it('renders avatar fallback with single name', () => {
+    const cell = columnDefs[0].cell;
+    if (typeof cell === 'function') {
+      render(cell({ row: { original: mockAlunoSingleName } } as never));
     }
   });
 });

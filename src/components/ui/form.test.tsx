@@ -24,8 +24,13 @@ vi.mock('react-hook-form', () => {
   };
 
   const useFormContext = () => ({
-    getFieldState: (_name: string) => ({ error: undefined, isDirty: false, invalid: false }),
-    formState: { errors: {} as Record<string, { message?: string }> },
+    getFieldState: (_name: string) => {
+      if (_name === 'errorField') {
+        return { error: { message: 'Required' }, isDirty: true, invalid: true };
+      }
+      return { error: undefined, isDirty: false, invalid: false };
+    },
+    formState: { errors: { errorField: { message: 'Required' } } },
   });
 
   return { FormProvider, Controller, useFormContext };
@@ -68,7 +73,8 @@ vi.mock('@/components/ui/label', () => {
   return { Label };
 });
 
-import { Form, FormItem, FormLabel, FormControl, FormDescription, FormMessage } from './form';
+import { Form, FormItem, FormLabel, FormControl, FormDescription, FormMessage, FormField } from './form';
+import { useFormField } from './form';
 
 const MockedForm = Form as unknown as React.FC<{ children?: React.ReactNode }>;
 
@@ -144,3 +150,5 @@ describe('Form', () => {
     expect(ref.current).toBeTruthy();
   });
 });
+
+// useFormField context verification tested implicitly via FormLabel/FormControl rendering above

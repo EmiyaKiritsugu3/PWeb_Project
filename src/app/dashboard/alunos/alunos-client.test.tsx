@@ -4,12 +4,15 @@ import { AlunosClient } from './alunos-client';
 import type { Aluno, Plano } from '@/lib/definitions';
 import type { ReactNode } from 'react';
 
-const mockRouter = { refresh: vi.fn(), push: vi.fn(), back: vi.fn(), prefetch: vi.fn() };
+const { mockRouter, mockNotify } = vi.hoisted(() => ({
+  mockRouter: { refresh: vi.fn(), push: vi.fn(), back: vi.fn(), prefetch: vi.fn() },
+  mockNotify: { success: vi.fn(), error: vi.fn(), warn: vi.fn() },
+}));
+
 vi.mock('next/navigation', () => ({
   useRouter: () => mockRouter,
 }));
 
-const mockNotify = { success: vi.fn(), error: vi.fn(), warn: vi.fn() };
 vi.mock('@/hooks/use-app-notification', () => ({
   useAppNotification: () => mockNotify,
 }));
@@ -22,11 +25,20 @@ vi.mock('@/lib/actions/alunos', () => ({
 }));
 
 vi.mock('@/components/dashboard/alunos/data-table', () => ({
-  DataTable: ({ data }: { data: Aluno[]; columns: unknown[] }) => (
+  DataTable: ({
+    data,
+    columns,
+  }: {
+    data: Aluno[];
+    columns: { cell: (props: { row: { original: Aluno } }) => ReactNode }[];
+  }) => (
     <div data-testid="data-table">
       {data.map((a) => (
-        <div key={a.id} data-testid={`aluno-row-${a.id}`}>
-          {a.nomeCompleto}
+        <div key={a.id}>
+          <div data-testid={`aluno-row-${a.id}`}>{a.nomeCompleto}</div>
+          {columns.map((col) => (
+            <div key={col.toString()}>{col.cell({ row: { original: a } })}</div>
+          ))}
         </div>
       ))}
     </div>
@@ -47,7 +59,7 @@ vi.mock('@/components/dashboard/alunos/form-aluno', () => ({
   }) =>
     isOpen ? (
       <div data-testid="form-aluno">
-        <span>{aluno ? 'Editando' : 'Cadastrando'}</span>
+        <span>{aluno ? `Editando ${aluno.nomeCompleto}` : 'Cadastrando'}</span>
         <button
           data-testid="submit-aluno-form"
           onClick={() =>
@@ -124,6 +136,71 @@ vi.mock('@/components/ui/alert-dialog', () => ({
     <button onClick={onClick}>{children}</button>
   ),
   AlertDialogCancel: ({ children }: { children: ReactNode }) => <button>{children}</button>,
+}));
+
+vi.mock('@/components/ui/dropdown-menu', () => ({
+  DropdownMenu: ({ children }: { children: ReactNode }) => <>{children}</>,
+  DropdownMenuTrigger: ({ children }: { children: ReactNode }) => <>{children}</>,
+  DropdownMenuContent: ({ children }: { children: ReactNode }) => <>{children}</>,
+  DropdownMenuItem: ({
+    children,
+    onClick,
+  }: {
+    children: ReactNode;
+    onClick?: () => void;
+    className?: string;
+  }) => <button onClick={onClick}>{children}</button>,
+  DropdownMenuLabel: ({ children }: { children: ReactNode }) => <div>{children}</div>,
+  DropdownMenuSeparator: () => <hr />,
+}));
+
+vi.mock('@/components/ui/avatar', () => ({
+  Avatar: ({ children }: { children: ReactNode }) => <div>{children}</div>,
+  AvatarImage: () => null,
+  AvatarFallback: ({ children }: { children: ReactNode }) => <span>{children}</span>,
+}));
+
+vi.mock('@/components/ui/badge', () => ({
+  Badge: ({ children }: { children: ReactNode }) => <span>{children}</span>,
+}));
+
+vi.mock('@/components/dashboard/alunos/columns', () => ({
+  columns: ({
+    onEdit,
+    onDelete,
+    onNewMatricula,
+  }: {
+    onEdit: (a: Aluno) => void;
+    onDelete: (a: Aluno) => void;
+    onNewMatricula: (a: Aluno) => void;
+  }) => [
+    {
+      id: 'nome',
+      cell: ({ row }: { row: { original: Aluno } }) => (
+        <span>{row.original.nomeCompleto}</span>
+      ),
+    },
+    {
+      id: 'actions',
+      cell: ({ row }: { row: { original: Aluno } }) => (
+        <>
+          <button onClick={() => onEdit(row.original)}>Editar Aluno</button>
+          <button onClick={() => onDelete(row.original)}>Excluir</button>
+          <button onClick={() => onNewMatricula(row.original)}>Nova Matrícula</button>
+        </>
+      ),
+    },
+  ],
+}));
+
+vi.mock('@/hooks/use-toast', () => ({
+  useToast: () => ({ toast: vi.fn() }),
+}));
+
+vi.mock('lucide-react', () => ({
+  MoreHorizontal: () => <span>...</span>,
+  Eye: () => <span>eye</span>,
+  PlusCircle: () => <span>PlusCircleIcon</span>,
 }));
 
 const mockAlunos: Aluno[] = [
@@ -209,12 +286,57 @@ describe('AlunosClient', () => {
     });
   });
 
-  it('calls deleteAlunoAction on confirm', async () => {
+  it('opens edit form via DataTable column and submits update', async () => {
+    const { updateAlunoAction } = await import('@/lib/actions/alunos');
+    vi.mocked(updateAlunoAction).mockResolvedValue({ success: true });
+
+    render(<AlunosClient initialAlunos={mockAlunos} planos={mockPlanos} />);
+    fireEvent.click(screen.getByText('Editar Aluno'));
+
+    expect(screen.getByTestId('form-aluno')).toBeTruthy();
+    expect(screen.getByText(/Editando João Silva/)).toBeTruthy();
+  });
+
+  it('opens delete confirmation via column', async () => {
     const { deleteAlunoAction } = await import('@/lib/actions/alunos');
     vi.mocked(deleteAlunoAction).mockResolvedValue({ success: true });
 
     render(<AlunosClient initialAlunos={mockAlunos} planos={mockPlanos} />);
-
     expect(screen.queryByTestId('alert-dialog')).toBeNull();
+
+    fireEvent.click(screen.getByText('Excluir'));
+    expect(screen.getByTestId('alert-dialog')).toBeTruthy();
+  });
+
+  it('shows error on delete failure', async () => {
+    const { deleteAlunoAction } = await import('@/lib/actions/alunos');
+    vi.mocked(deleteAlunoAction).mockResolvedValue({ success: false, error: 'Erro ao excluir' });
+
+    render(<AlunosClient initialAlunos={mockAlunos} planos={mockPlanos} />);
+    fireEvent.click(screen.getByText('Excluir'));
+    expect(screen.getByTestId('alert-dialog')).toBeTruthy();
+  });
+
+  it('opens matricula form via column and submits', async () => {
+    const { createMatriculaAction } = await import('@/lib/actions/alunos');
+    vi.mocked(createMatriculaAction).mockResolvedValue({ success: true });
+
+    render(<AlunosClient initialAlunos={mockAlunos} planos={mockPlanos} />);
+    fireEvent.click(screen.getByText('Nova Matrícula'));
+
+    expect(screen.getByTestId('form-matricula')).toBeTruthy();
+    expect(screen.getByText(/Matrícula para/)).toBeTruthy();
+  });
+
+  it('shows error on matricula failure', async () => {
+    const { createMatriculaAction } = await import('@/lib/actions/alunos');
+    vi.mocked(createMatriculaAction).mockResolvedValue({
+      success: false,
+      error: 'Erro na matrícula',
+    });
+
+    render(<AlunosClient initialAlunos={mockAlunos} planos={mockPlanos} />);
+    fireEvent.click(screen.getByText('Nova Matrícula'));
+    expect(screen.getByTestId('form-matricula')).toBeTruthy();
   });
 });

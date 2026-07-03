@@ -4,36 +4,50 @@ import TreinosManagementClient from './treinos-client';
 import type { Aluno } from '@/lib/definitions';
 import type { ReactNode } from 'react';
 
-const mockNotify = { success: vi.fn(), error: vi.fn(), warn: vi.fn() };
+const { mockNotify, mockWorkoutExercises } = vi.hoisted(() => ({
+  mockNotify: { success: vi.fn(), error: vi.fn(), warn: vi.fn() },
+  mockWorkoutExercises: {
+    objetivo: '',
+    setObjetivo: vi.fn(),
+    exercicios: [] as unknown[],
+    addObjective: vi.fn(),
+    removeExercise: vi.fn(),
+    updateExercise: vi.fn(),
+    hasValidationErrors: vi.fn(() => true),
+    reset: vi.fn(),
+  },
+}));
+
 vi.mock('@/hooks/use-app-notification', () => ({
   useAppNotification: () => mockNotify,
 }));
 
-const mockWorkoutExercises = {
-  objetivo: '',
-  setObjetivo: vi.fn(),
-  exercicios: [] as unknown[],
-  addObjective: vi.fn(),
-  removeExercise: vi.fn(),
-  updateExercise: vi.fn(),
-  hasValidationErrors: vi.fn(() => true),
-  reset: vi.fn(),
-};
 vi.mock('@/hooks/use-workout-exercises', () => ({
   useWorkoutExercises: () => mockWorkoutExercises,
 }));
 
+const { mockUpsertTreinoAction, mockBatchUpsertTreinoAction, mockStreamWorkoutPlan } =
+  vi.hoisted(() => ({
+    mockUpsertTreinoAction: vi.fn(),
+    mockBatchUpsertTreinoAction: vi.fn(),
+    mockStreamWorkoutPlan: vi.fn(),
+  }));
+
 vi.mock('@/lib/actions/treinos', () => ({
-  upsertTreinoAction: vi.fn(),
-  batchUpsertTreinoAction: vi.fn(),
+  upsertTreinoAction: (...args: unknown[]) => mockUpsertTreinoAction(...args),
+  batchUpsertTreinoAction: (...args: unknown[]) => mockBatchUpsertTreinoAction(...args),
 }));
 
 vi.mock('@/ai/flows/workout-generator-flow', () => ({
-  streamWorkoutPlan: vi.fn(),
+  streamWorkoutPlan: (...args: unknown[]) => mockStreamWorkoutPlan(...args),
 }));
 
 vi.mock('@/lib/logger', () => ({
   Logger: { error: vi.fn(), info: vi.fn(), warn: vi.fn(), debug: vi.fn() },
+}));
+
+vi.mock('@/lib/exercise-options', () => ({
+  flatExerciciosOptions: [{ value: 'Supino Reto', description: 'Supino' }],
 }));
 
 vi.mock('@/components/dashboard/aluno/workout-generator', () => ({
@@ -84,7 +98,11 @@ vi.mock('@/components/ui/select', () => ({
 }));
 
 vi.mock('@/components/ui/card', () => ({
-  Card: ({ children }: { children: ReactNode }) => <div data-testid="card">{children}</div>,
+  Card: ({ children, className }: { children: ReactNode; className?: string }) => (
+    <div data-testid="card" className={className}>
+      {children}
+    </div>
+  ),
   CardHeader: ({ children }: { children: ReactNode }) => <div>{children}</div>,
   CardTitle: ({ children }: { children: ReactNode }) => <h2>{children}</h2>,
   CardDescription: ({ children }: { children: ReactNode }) => <p>{children}</p>,
@@ -97,12 +115,14 @@ vi.mock('@/components/ui/button', () => ({
     children,
     onClick,
     disabled,
+    variant,
   }: {
     children: ReactNode;
     onClick?: () => void;
     disabled?: boolean;
+    variant?: string;
   }) => (
-    <button onClick={onClick} disabled={disabled}>
+    <button onClick={onClick} disabled={disabled} data-variant={variant}>
       {children}
     </button>
   ),
@@ -194,9 +214,7 @@ describe('TreinosManagementClient', () => {
   });
 
   it('calls upsertTreinoAction on save when validation passes', async () => {
-    const { upsertTreinoAction } = await import('@/lib/actions/treinos');
-    vi.mocked(upsertTreinoAction).mockResolvedValue({ success: true });
-
+    mockUpsertTreinoAction.mockResolvedValue({ success: true });
     mockWorkoutExercises.hasValidationErrors.mockReturnValue(false);
     mockWorkoutExercises.exercicios = [
       {
@@ -212,19 +230,40 @@ describe('TreinosManagementClient', () => {
 
     render(<TreinosManagementClient initialAlunos={mockAlunos} />);
     fireEvent.change(screen.getByTestId('aluno-select'), { target: { value: 'aluno-1' } });
-
     fireEvent.click(screen.getByText(/Salvar Treino/));
 
     await waitFor(() => {
-      expect(upsertTreinoAction).toHaveBeenCalled();
+      expect(mockUpsertTreinoAction).toHaveBeenCalled();
       expect(mockNotify.success).toHaveBeenCalledWith('Treino Salvo!');
     });
   });
 
   it('shows error notification when upsertTreinoAction fails', async () => {
-    const { upsertTreinoAction } = await import('@/lib/actions/treinos');
-    vi.mocked(upsertTreinoAction).mockResolvedValue({ success: false, error: 'Erro de banco' });
+    mockUpsertTreinoAction.mockResolvedValue({ success: false, error: 'Erro de banco' });
+    mockWorkoutExercises.hasValidationErrors.mockReturnValue(false);
+    mockWorkoutExercises.exercicios = [
+      {
+        id: 'ex-1',
+        nomeExercicio: 'Supino',
+        series: 3,
+        repeticoes: '10-12',
+        observacoes: null,
+        descricao: null,
+      },
+    ];
+    mockWorkoutExercises.objetivo = 'Peito';
 
+    render(<TreinosManagementClient initialAlunos={mockAlunos} />);
+    fireEvent.change(screen.getByTestId('aluno-select'), { target: { value: 'aluno-1' } });
+    fireEvent.click(screen.getByText(/Salvar Treino/));
+
+    await waitFor(() => {
+      expect(mockNotify.error).toHaveBeenCalled();
+    });
+  });
+
+  it('handles upsertTreinoAction throwing an error', async () => {
+    mockUpsertTreinoAction.mockRejectedValue(new Error('Erro inesperado'));
     mockWorkoutExercises.hasValidationErrors.mockReturnValue(false);
     mockWorkoutExercises.exercicios = [
       {
@@ -250,7 +289,6 @@ describe('TreinosManagementClient', () => {
   it('calls addObjective when "Adicionar Exercício" is clicked', () => {
     render(<TreinosManagementClient initialAlunos={mockAlunos} />);
     fireEvent.change(screen.getByTestId('aluno-select'), { target: { value: 'aluno-1' } });
-
     fireEvent.click(screen.getByText(/Adicionar Exercício/));
     expect(mockWorkoutExercises.addObjective).toHaveBeenCalled();
   });
@@ -269,5 +307,108 @@ describe('TreinosManagementClient', () => {
     render(<TreinosManagementClient initialAlunos={mockAlunos} />);
     const saveBtn = screen.queryByText(/Salvar Treino/);
     expect(saveBtn).toBeNull();
+  });
+
+  it('generates AI workout plan and shows PlanoGeradoParaEdicao', async () => {
+    const aiPlan = {
+      planName: 'Plano IA',
+      workouts: [
+        {
+          nome: 'Treino A',
+          objetivo: 'Hipertrofia',
+          diaSugerido: 1,
+          exercicios: [
+            {
+              nomeExercicio: 'Supino Reto',
+              grupoMuscular: 'Peito',
+              series: 4,
+              repeticoes: '10-12',
+              observacoes: '',
+            },
+          ],
+        },
+      ],
+    };
+    mockStreamWorkoutPlan.mockResolvedValue(aiPlan);
+
+    render(<TreinosManagementClient initialAlunos={mockAlunos} />);
+    fireEvent.change(screen.getByTestId('aluno-select'), { target: { value: 'aluno-1' } });
+    fireEvent.click(screen.getByTestId('btn-generate-ai'));
+
+    await waitFor(() => {
+      expect(mockStreamWorkoutPlan).toHaveBeenCalled();
+      expect(mockNotify.success).toHaveBeenCalledWith('Plano Gerado!');
+      expect(screen.getByText('Revisar Plano para João Silva')).toBeTruthy();
+    });
+
+    expect(screen.getByDisplayValue('Plano IA')).toBeTruthy();
+    expect(screen.getByDisplayValue('Treino A')).toBeTruthy();
+  });
+
+  it('saves generated plan via batchUpsertTreinoAction', async () => {
+    const aiPlan = {
+      planName: 'Plano IA',
+      workouts: [
+        {
+          nome: 'Treino A',
+          objetivo: 'Hipertrofia',
+          diaSugerido: 1,
+          exercicios: [
+            {
+              nomeExercicio: 'Supino Reto',
+              grupoMuscular: 'Peito',
+              series: 4,
+              repeticoes: '10-12',
+              observacoes: '',
+            },
+          ],
+        },
+      ],
+    };
+    mockStreamWorkoutPlan.mockResolvedValue(aiPlan);
+    mockBatchUpsertTreinoAction.mockResolvedValue({ success: true });
+
+    render(<TreinosManagementClient initialAlunos={mockAlunos} />);
+    fireEvent.change(screen.getByTestId('aluno-select'), { target: { value: 'aluno-1' } });
+    fireEvent.click(screen.getByTestId('btn-generate-ai'));
+
+    await waitFor(() => {
+      expect(screen.getByText('Revisar Plano para João Silva')).toBeTruthy();
+    });
+
+    fireEvent.click(screen.getByText(/Salvar e Atribuir/));
+
+    await waitFor(() => {
+      expect(mockBatchUpsertTreinoAction).toHaveBeenCalled();
+      expect(mockNotify.success).toHaveBeenCalledWith('Plano Atribuído!');
+    });
+  });
+
+  it('handles AI generation returning null', async () => {
+    mockStreamWorkoutPlan.mockResolvedValue(null);
+
+    render(<TreinosManagementClient initialAlunos={mockAlunos} />);
+    fireEvent.change(screen.getByTestId('aluno-select'), { target: { value: 'aluno-1' } });
+    fireEvent.click(screen.getByTestId('btn-generate-ai'));
+
+    await waitFor(() => {
+      expect(mockNotify.error).toHaveBeenCalled();
+    });
+  });
+
+  it('handles AI generation throwing error', async () => {
+    mockStreamWorkoutPlan.mockRejectedValue(new Error('API Error'));
+
+    render(<TreinosManagementClient initialAlunos={mockAlunos} />);
+    fireEvent.change(screen.getByTestId('aluno-select'), { target: { value: 'aluno-1' } });
+    fireEvent.click(screen.getByTestId('btn-generate-ai'));
+
+    await waitFor(() => {
+      expect(mockNotify.error).toHaveBeenCalledWith(
+        'Erro da IA',
+        'Não foi possível gerar o treino. Tente novamente em instantes.',
+        expect.any(Error)
+      );
+    });
   });
 });

@@ -1,10 +1,19 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import type { WorkoutFeedbackOutput } from '@/ai/flows/workout-feedback-flow';
+
+const { mockFeedbackPrompt, mockDefinePrompt, mockDefineFlow, mockSetAttribute } = vi.hoisted(
+  () => {
+    const mockFeedbackPrompt = vi.fn();
+    const mockDefinePrompt = vi.fn((_config: unknown) => mockFeedbackPrompt);
+    const mockDefineFlow = vi.fn((_config: unknown, handler: unknown) => handler);
+    const mockSetAttribute = vi.fn();
+    return { mockFeedbackPrompt, mockDefinePrompt, mockDefineFlow, mockSetAttribute };
+  }
+);
 
 vi.mock('@/ai/genkit', () => ({
   ai: {
-    definePrompt: vi.fn(),
-    defineFlow: vi.fn(),
+    definePrompt: mockDefinePrompt,
+    defineFlow: mockDefineFlow,
   },
 }));
 
@@ -12,11 +21,14 @@ vi.mock('@genkit-ai/google-genai', () => ({
   googleAI: { model: vi.fn(() => 'gemini-2.5-flash') },
 }));
 
-vi.mock('@/ai/flows/workout-feedback-flow', async () => {
-  return {
-    generateWorkoutFeedback: vi.fn(),
-  };
-});
+vi.mock('@sentry/nextjs', () => ({
+  startSpan: vi.fn(
+    async (
+      _config: unknown,
+      fn: (span: { setAttribute: typeof mockSetAttribute }) => Promise<unknown>
+    ) => fn({ setAttribute: mockSetAttribute })
+  ),
+}));
 
 import { generateWorkoutFeedback } from '@/ai/flows/workout-feedback-flow';
 
@@ -26,11 +38,6 @@ describe('generateWorkoutFeedback', () => {
   });
 
   it('returns fallback when no exercises completed (no AI call)', async () => {
-    vi.mocked(generateWorkoutFeedback).mockResolvedValue({
-      title: 'O primeiro passo é o mais importante!',
-      message: expect.any(String) as unknown as string,
-    });
-
     const result = await generateWorkoutFeedback({
       goal: 'Hipertrofia',
       completedExercises: [],
@@ -38,13 +45,16 @@ describe('generateWorkoutFeedback', () => {
     });
 
     expect(result.title).toBe('O primeiro passo é o mais importante!');
+    expect(result.message).toMatch(/nenhum exercício/i);
+    expect(mockFeedbackPrompt).not.toHaveBeenCalled();
   });
 
-  it('returns AI feedback when exercises are completed', async () => {
-    vi.mocked(generateWorkoutFeedback).mockResolvedValue({
+  it('returns AI feedback when exercises completed', async () => {
+    const aiResult = {
       title: 'Mandou bem!',
       message: 'Excelente sessão. Continue assim!',
-    });
+    };
+    mockFeedbackPrompt.mockResolvedValue({ output: aiResult });
 
     const result = await generateWorkoutFeedback({
       goal: 'Hipertrofia',
@@ -53,30 +63,19 @@ describe('generateWorkoutFeedback', () => {
     });
 
     expect(result.title).toBe('Mandou bem!');
-    expect(result.message).toBeTruthy();
+    expect(result.message).toBe('Excelente sessão. Continue assim!');
+    expect(mockFeedbackPrompt).toHaveBeenCalledTimes(1);
   });
 
-  it('propagates errors from AI call', async () => {
-    vi.mocked(generateWorkoutFeedback).mockRejectedValue(new Error('AI unavailable'));
+  it('throws when AI returns null output', async () => {
+    mockFeedbackPrompt.mockResolvedValue({ output: null });
 
     await expect(
       generateWorkoutFeedback({
-        goal: 'Força',
-        completedExercises: ['Agachamento'],
+        goal: 'Hipertrofia',
+        completedExercises: ['Supino Reto'],
         totalExercises: 1,
       })
-    ).rejects.toThrow('AI unavailable');
-  });
-});
-
-// Integration contract: WorkoutSession must handle the rejection gracefully
-describe('WorkoutSession feedback contract', () => {
-  it('fallback feedback shape is valid', () => {
-    const fallback: WorkoutFeedbackOutput = {
-      title: 'Treino Concluído!',
-      message: 'Continue assim!',
-    };
-    expect(fallback.title).toBeTruthy();
-    expect(fallback.message).toBeTruthy();
+    ).rejects.toThrow('workoutFeedbackFlow: output is null');
   });
 });
