@@ -1,0 +1,27 @@
+src/app/actions/auth.ts
+  s_a3b79513a6e538::t_bb8fbfb42c8283 5,48-50
+src/app/login/page.test.tsx
+  s_a3b79513a6e538::t_7ee31a36192874 1,7,10,47,53,59,75-78,81-87,89,92,94,97,99
+src/app/actions/auth.test.ts
+  s_a3b79513a6e538::t_8df6a05597dc05 20-23
+playwright.config.ts
+  s_a3b79513a6e538::t_db9bce149675b4 4-7
+src/app/login/page.tsx
+  s_a3b79513a6e538::t_3943a22ac5aed8 86
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "9eb1992787617282a9f9e66c9c42def97f2a0492",
+  "prompts": {},
+  "sessions": {
+    "s_a3b79513a6e538": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2b4e5e71-9e0c-42af-9adc-f6c83dae0323",
+        "model": "deepseek-v4-flash"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
