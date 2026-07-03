@@ -1,0 +1,29 @@
+docs/doc-arquitetura.md
+  s_4f2204cced2d9d::t_aafa6b6facb532 390
+  s_4f2204cced2d9d::t_9f4ec7140dbe7f 5-6,8-10,16-18,46-54,56-57,102-124,188,200,217,266,276,393,405,412,422,522,528,540,560,572,582-585,593,850-860,869,878,886,913-943
+docs/doc-visao.md
+  s_4f2204cced2d9d::t_6acc9288872811 33
+  s_4f2204cced2d9d::t_5da6ebf7d5d630 46,60,71,82,93,169-175,179-185,189-194,198-203,207-215,219-224,228-233,241-246,250-256,260-265,269-274,278-282
+docs/plano-iteracao.md
+  s_4f2204cced2d9d::t_3117501d261084 267
+.gitignore
+  s_4f2204cced2d9d::t_70a7996f9ca9e2 143
+docs/relatorio-testes.md
+  s_4f2204cced2d9d::t_dc0fb0d013aff3 223
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.9",
+  "base_commit_sha": "be502371fbea00ac63183d3cf9aa7a782df7d355",
+  "prompts": {},
+  "sessions": {
+    "s_4f2204cced2d9d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6d9f8773-1ba4-49ba-aee5-c05236dd04d7",
+        "model": "unknown"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
