@@ -37,17 +37,12 @@ export async function login(
   }
 
   try {
-    // Fetch profile role to determine redirect destination.
-    // Client-side router.push handles navigation — avoids Next.js 15 server-action
-    // redirect() cookie-commit race in CI where Set-Cookie from supabase-ssr
-    // is not flushed before the 303 response.
     const { data: profile, error: profileError } = await supabase
       .from('funcionarios')
       .select('role')
       .eq('id', authData.user.id)
       .single();
 
-    // PGRST116 = "no rows found" — expected for alunos; any other code is a real DB error
     if (profileError && profileError.code !== 'PGRST116') {
       return { error: 'Erro ao verificar perfil. Por favor, tente novamente.' };
     }

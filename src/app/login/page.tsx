@@ -1,9 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useActionState } from 'react';
-import { login } from '@/app/actions/auth';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -17,19 +14,43 @@ import {
 import { Dumbbell } from 'lucide-react';
 import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
+import { createClient } from '@/utils/supabase/client';
 
 export default function LoginPage() {
-  const router = useRouter();
-  const [state, action, isPending] = useActionState(login, undefined);
+  const [error, setError] = useState('');
+  const [isPending, setIsPending] = useState(false);
 
-  // Client-side navigation on success — avoids Next.js 15 server-action redirect()
-  // cookie-commit race where supabase-ssr session cookie is not flushed before the
-  // 303 response, causing middleware to bounce back to /login.
-  useEffect(() => {
-    if (state && 'redirectTo' in state) {
-      router.push(state.redirectTo);
+  const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError('');
+    setIsPending(true);
+
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
+
+    const supabase = createClient();
+    const { error: authError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (authError) {
+      setError('E-mail ou senha inválidos. Por favor, tente novamente.');
+      setIsPending(false);
+      return;
     }
-  }, [state, router]);
+
+    // Small delay for browser to commit the session cookie after signIn
+    // before hard navigation. Without this, middleware may drop the cookie.
+    await new Promise((r) => setTimeout(r, 500));
+
+    // Hard navigation (not router.push) so middleware reads the fresh
+    // session cookie. router.push sends a soft RSC request that reaches
+    // middleware before the browser has committed the cookie set by
+    // signInWithPassword, causing middleware to redirect back to /login.
+    window.location.href = '/dashboard';
+  };
 
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-background px-4">
@@ -61,7 +82,7 @@ export default function LoginPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="pt-4">
-          <form action={action} className="grid gap-5">
+          <form onSubmit={handleSubmit} className="grid gap-5">
             <div className="space-y-1.5">
               <label
                 htmlFor="email"
@@ -95,7 +116,7 @@ export default function LoginPage() {
               />
             </div>
 
-            {state && 'error' in state && <p className="text-sm text-destructive">{state.error}</p>}
+            {error && <p className="text-sm text-destructive">{error}</p>}
 
             <Button
               type="submit"
