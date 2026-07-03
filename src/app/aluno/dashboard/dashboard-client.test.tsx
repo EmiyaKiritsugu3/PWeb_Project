@@ -9,7 +9,12 @@ vi.mock('motion/react', () => ({
     div: ({ children, ...props }: { children: ReactNode; [key: string]: unknown }) => {
       const domProps: Record<string, unknown> = {};
       for (const [key, val] of Object.entries(props)) {
-        if (key === 'children' || key === 'className' || key === 'data-testid' || key.startsWith('data-')) {
+        if (
+          key === 'children' ||
+          key === 'className' ||
+          key === 'data-testid' ||
+          key.startsWith('data-')
+        ) {
           domProps[key] = val;
         }
       }
@@ -28,7 +33,12 @@ vi.mock('@/components/ui/button', () => ({
   Button: ({ children, ...props }: { children: ReactNode; [key: string]: unknown }) => {
     const domProps: Record<string, unknown> = {};
     for (const [key, val] of Object.entries(props)) {
-      if (key === 'children' || key === 'className' || key === 'data-testid' || key.startsWith('data-')) {
+      if (
+        key === 'children' ||
+        key === 'className' ||
+        key === 'data-testid' ||
+        key.startsWith('data-')
+      ) {
         domProps[key] = val;
       }
     }
@@ -208,7 +218,7 @@ describe('AlunoDashboardClient', () => {
   });
 
   it('renders without crashing when initialTreino is null', () => {
-    const { container } = render(<AlunoDashboardClient aluno={mockAluno} initialTreino={null} />);
+    render(<AlunoDashboardClient aluno={mockAluno} initialTreino={null} />);
     expect(screen.getByTestId('dashboard-welcome')).toBeTruthy();
   });
 

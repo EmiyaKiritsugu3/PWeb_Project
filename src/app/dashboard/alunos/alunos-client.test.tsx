@@ -176,9 +176,7 @@ vi.mock('@/components/dashboard/alunos/columns', () => ({
   }) => [
     {
       id: 'nome',
-      cell: ({ row }: { row: { original: Aluno } }) => (
-        <span>{row.original.nomeCompleto}</span>
-      ),
+      cell: ({ row }: { row: { original: Aluno } }) => <span>{row.original.nomeCompleto}</span>,
     },
     {
       id: 'actions',

@@ -26,12 +26,13 @@ vi.mock('@/hooks/use-workout-exercises', () => ({
   useWorkoutExercises: () => mockWorkoutExercises,
 }));
 
-const { mockUpsertTreinoAction, mockBatchUpsertTreinoAction, mockStreamWorkoutPlan } =
-  vi.hoisted(() => ({
+const { mockUpsertTreinoAction, mockBatchUpsertTreinoAction, mockStreamWorkoutPlan } = vi.hoisted(
+  () => ({
     mockUpsertTreinoAction: vi.fn(),
     mockBatchUpsertTreinoAction: vi.fn(),
     mockStreamWorkoutPlan: vi.fn(),
-  }));
+  })
+);
 
 vi.mock('@/lib/actions/treinos', () => ({
   upsertTreinoAction: (...args: unknown[]) => mockUpsertTreinoAction(...args),

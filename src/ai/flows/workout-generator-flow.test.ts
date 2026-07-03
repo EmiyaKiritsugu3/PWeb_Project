@@ -1,15 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { z } from 'zod';
 
-const { mockGenerate, mockGenerateStream, mockDefineFlow, mockSetAttribute, mockSpan } =
-  vi.hoisted(() => {
-    const mockGenerate = vi.fn();
-    const mockGenerateStream = vi.fn();
-    const mockDefineFlow = vi.fn((_config: unknown, handler: unknown) => handler);
-    const mockSetAttribute = vi.fn();
-    const mockSpan = { setAttribute: mockSetAttribute };
-    return { mockGenerate, mockGenerateStream, mockDefineFlow, mockSetAttribute, mockSpan };
-  });
+const { mockGenerate, mockGenerateStream, mockDefineFlow, mockSpan } = vi.hoisted(() => {
+  const mockGenerate = vi.fn();
+  const mockGenerateStream = vi.fn();
+  const mockDefineFlow = vi.fn((_config: unknown, handler: unknown) => handler);
+  const mockSetAttribute = vi.fn();
+  const mockSpan = { setAttribute: mockSetAttribute };
+  return { mockGenerate, mockGenerateStream, mockDefineFlow, mockSetAttribute, mockSpan };
+});
 
 vi.mock('@/ai/genkit', () => ({
   ai: {
@@ -24,8 +23,8 @@ vi.mock('@genkit-ai/google-genai', () => ({
 }));
 
 vi.mock('@sentry/nextjs', () => ({
-  startSpan: vi.fn(
-    async (_config: unknown, fn: (span: typeof mockSpan) => Promise<unknown>) => fn(mockSpan)
+  startSpan: vi.fn(async (_config: unknown, fn: (span: typeof mockSpan) => Promise<unknown>) =>
+    fn(mockSpan)
   ),
 }));
 
