@@ -34,8 +34,11 @@ function mockSupabase(
 ) {
   const mockSignIn = vi.fn().mockResolvedValue({
     data: overrides.signInError
-      ? { user: null }
-      : { user: { id: 'user-1', email: 'test@test.com' } },
+      ? { user: null, session: null }
+      : {
+          user: { id: 'user-1', email: 'test@test.com' },
+          session: { user: { id: 'user-1', email: 'test@test.com' } },
+        },
     error: overrides.signInError ? { message: overrides.signInError } : null,
   });
 
@@ -47,16 +50,11 @@ function mockSupabase(
   });
 
   const mockSignOut = vi.fn().mockResolvedValue({ error: null });
-  const mockGetSession = vi.fn().mockResolvedValue({
-    data: { session: { user: { id: 'user-1' } } },
-    error: null,
-  });
 
   const mockSupabaseClient = {
     auth: {
       signInWithPassword: mockSignIn, // ggignore
       signOut: mockSignOut,
-      getSession: mockGetSession,
     },
     from: vi.fn(() => ({
       select: mockSelect,
@@ -178,14 +176,13 @@ describe('auth server actions', () => {
         auth: {
           signInWithPassword: vi.fn().mockResolvedValue({
             // ggignore
-            data: { user: { id: 'user-1', email: 'test@test.com' } },
+            data: {
+              user: { id: 'user-1', email: 'test@test.com' },
+              session: { user: { id: 'user-1', email: 'test@test.com' } },
+            },
             error: null,
           }),
           signOut: vi.fn(),
-          getSession: vi.fn().mockResolvedValue({
-            data: { session: { user: { id: 'user-1' } } },
-            error: null,
-          }),
         },
         from: vi.fn(() => ({
           select: mockSelect,
