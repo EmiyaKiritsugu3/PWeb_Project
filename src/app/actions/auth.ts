@@ -33,6 +33,14 @@ export async function login(_prevState: { error: string } | undefined, formData:
   }
 
   try {
+    // getUser() waits for onAuthStateChange(SIGNED_IN) -> setAll to flush the
+    // session cookie into next/headers' mutable cookie store before redirect().
+    // Without this, @supabase/ssr may not have committed the sb-*-auth-token
+    // cookie by the time redirect() throws NEXT_REDIRECT, so the browser hits
+    // /dashboard with no session cookie -> middleware getUser()=null -> redirect
+    // /login -> waitForURL timeout.
+    await supabase.auth.getUser();
+
     // Fetch profile role to determine redirect destination
     const { data: profile, error: profileError } = await supabase
       .from('funcionarios')
@@ -45,8 +53,8 @@ export async function login(_prevState: { error: string } | undefined, formData:
       return { error: 'Erro ao verificar perfil. Por favor, tente novamente.' };
     }
 
-    // revalidatePath before redirect forces cookie commit in Next.js 15 server actions.
-    // Without this, cookies set by supabase-ssr setAll may not survive the 303 redirect.
+    // revalidatePath purges Router/Data cache so the dashboard renders fresh data
+    // after redirect (not stale cache from a previous session).
     revalidatePath('/');
     if (profile) {
       redirect('/dashboard');
