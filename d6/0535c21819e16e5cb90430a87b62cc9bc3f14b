@@ -1,0 +1,25 @@
+src/app/login/page.test.tsx
+  s_a3b79513a6e538::t_c05305d21d8cd2 1-83,86-106
+src/app/actions/auth.ts
+  s_a3b79513a6e538::t_c05305d21d8cd2 4-5,14,48,50,53-54,64,67
+tests/e2e/helpers/auth.ts
+  s_a3b79513a6e538::t_c05305d21d8cd2 53
+src/app/actions/auth.test.ts
+  s_a3b79513a6e538::t_c05305d21d8cd2 7-19,26,37-38,50-53,59,83,86-88,96,99-101,104,112-114,117-118,124-136,139-140,147-149,156,159,162,166,169,172-176,180-181,185-188,191-193,210,214,216
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "d60535c21819e16e5cb90430a87b62cc9bc3f14b",
+  "prompts": {},
+  "sessions": {
+    "s_a3b79513a6e538": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2b4e5e71-9e0c-42af-9adc-f6c83dae0323",
+        "model": "z-ai/glm-5.2"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
