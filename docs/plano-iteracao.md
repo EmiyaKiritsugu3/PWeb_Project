@@ -217,7 +217,7 @@ Esta iteração tem como foco a **evolução do sistema**, a execução de **tes
 
 ## 4. Qualidade de Código
 
-### SonarCloud
+### SonarCloud (CI Automático)
 
 | Métrica                   | Valor                          |
 | ------------------------- | ------------------------------ |
@@ -226,6 +226,15 @@ Esta iteração tem como foco a **evolução do sistema**, a execução de **tes
 | **Quality Gate**          | ✅ Pass                        |
 | **Code Smells**           | Resolvidos (47 → 16)           |
 | **Execuções na Iteração** | Múltiplas (via CI e manual)    |
+
+### SonarQube LabENS (Execuções Manuais)
+
+| Execução | Data           | Status               | Dashboard                                                                      |
+| -------- | -------------- | -------------------- | ------------------------------------------------------------------------------ |
+| **#1**   | 02/07/2026     | ✅ EXECUTION SUCCESS | [PWeb_Project](https://labens.dct.ufrn.br/sonarqube/dashboard?id=PWeb_Project) |
+| **#2**   | _(a executar)_ | —                    | —                                                                              |
+
+> **Script:** `npm run sonar:labens` (Docker + `SONAR_TOKEN`)
 
 ### CI/CD
 

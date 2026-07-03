@@ -234,7 +234,7 @@ Arquivos            | % Stmts | % Branch | % Funcs | % Lines |
 Todos os arquivos   |   85.23 |    73.53 |   81.26 |   85.97 |
 ```
 
-### 6.2 SonarCloud
+### 6.2 SonarCloud (CI)
 
 | Métrica               | Valor               |
 | --------------------- | ------------------- |
@@ -244,6 +244,19 @@ Todos os arquivos   |   85.23 |    73.53 |   81.26 |   85.97 |
 | **Code Smells**       | 16 (reduzido de 47) |
 | **Duplications**      | Baixo               |
 | **Security Hotspots** | Revisados           |
+
+### 6.2b SonarQube LabENS (Execução Manual)
+
+| Métrica             | Valor                                                                                        |
+| ------------------- | -------------------------------------------------------------------------------------------- |
+| **Servidor**        | labens.dct.ufrn.br/sonarqube                                                                 |
+| **Project Key**     | `PWeb_Project`                                                                               |
+| **Última Execução** | 02/07/2026 23:11 (UTC-3)                                                                     |
+| **Script**          | `npm run sonar:labens`                                                                       |
+| **Status**          | ✅ EXECUTION SUCCESS                                                                         |
+| **Dashboard**       | [/dashboard?id=PWeb_Project](https://labens.dct.ufrn.br/sonarqube/dashboard?id=PWeb_Project) |
+
+> **Nota:** O projeto utiliza SonarCloud no pipeline CI (automático a cada PR/commit) e o SonarQube LabENS para execuções manuais conforme exigido pela disciplina.
 
 ### 6.3 CI/CD
 
