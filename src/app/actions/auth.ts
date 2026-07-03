@@ -31,6 +31,17 @@ export async function login(_prevState: { error: string } | undefined, formData:
     return { error: 'E-mail ou senha inválidos. Por favor, tente novamente.' };
   }
 
+  // Force session cookie flush before redirect.
+  // Next.js 15 server actions may not commit cookie mutations from setAll
+  // to the redirect response. Calling getSession() ensures supabase-ssr
+  // re-applies cookies on the response via the cookie store's committed set.
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  if (!session) {
+    return { error: 'Erro ao estabelecer sessão. Por favor, tente novamente.' };
+  }
+
   try {
     // Fetch profile role to determine redirect destination
     const { data: profile, error: profileError } = await supabase
