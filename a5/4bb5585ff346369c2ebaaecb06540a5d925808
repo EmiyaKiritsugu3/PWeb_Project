@@ -1,0 +1,19 @@
+.github/workflows/ci.yml
+  s_682818446517a5::t_185afd7e1a4788 179-181
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "a54bb5585ff346369c2ebaaecb06540a5d925808",
+  "prompts": {},
+  "sessions": {
+    "s_682818446517a5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ce9d65be-83c2-4f2f-a26e-7b48bdf8af39",
+        "model": "deepseek-v4-flash"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
