@@ -1,0 +1,28 @@
+src/app/dashboard/alunos/alunos-client.test.tsx
+  s_682818446517a5::t_aa60c43ae0710c 179
+src/ai/flows/workout-generator-flow.test.ts
+  s_682818446517a5::t_aa60c43ae0710c 11,26-27
+  s_682818446517a5::t_425f18e1ee16ea 4
+  s_682818446517a5::t_bb0e42241410ce 5-10
+src/app/dashboard/treinos/treinos-client.test.tsx
+  s_682818446517a5::t_aa60c43ae0710c 29-30,34-35
+src/app/aluno/dashboard/dashboard-client.test.tsx
+  s_682818446517a5::t_aa60c43ae0710c 12-17,36-41
+  s_682818446517a5::t_3172d48ffb03f4 221
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.9",
+  "base_commit_sha": "4e3855bb75c18bc52387b1ccb27ce6291a51cac4",
+  "prompts": {},
+  "sessions": {
+    "s_682818446517a5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ce9d65be-83c2-4f2f-a26e-7b48bdf8af39",
+        "model": "deepseek-v4-flash"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
