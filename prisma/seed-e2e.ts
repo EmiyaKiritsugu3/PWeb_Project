@@ -216,6 +216,20 @@ async function seed(): Promise<void> {
   });
   console.log('  Treino E2E upserted: Treino E2E (2 exercícios)');
 
+  // Apply RLS + policy for funcionarios — runs AFTER prisma db push, so the
+  // table is guaranteed to exist. supabase/seed.sql runs BEFORE db push and
+  // cannot target tables that haven't been created yet.
+  await pool.query(`
+    ALTER TABLE public.funcionarios ENABLE ROW LEVEL SECURITY;
+    DO $$
+    BEGIN
+      DROP POLICY IF EXISTS "Authenticated can read funcionarios" ON public.funcionarios;
+      CREATE POLICY "Authenticated can read funcionarios" ON public.funcionarios
+        FOR SELECT TO authenticated USING (true);
+    END $$;
+  `);
+  console.log('  RLS + policy applied: funcionarios');
+
   console.log('E2E seed complete.');
 }
 
