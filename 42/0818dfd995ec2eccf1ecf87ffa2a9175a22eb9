@@ -1,0 +1,31 @@
+docs/relatorio-testes.md
+  s_e082bd154e52e4::t_62dcf0c7cd8233 237,248-259
+  s_b679449ea2d7d9::t_709940016d0549 260
+docs/plano-iteracao.md
+  s_e082bd154e52e4::t_f4e127f93ea47a 220,230-237
+  s_b679449ea2d7d9::t_2f0b846a54ef76 238
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.9",
+  "base_commit_sha": "420818dfd995ec2eccf1ecf87ffa2a9175a22eb9",
+  "prompts": {},
+  "sessions": {
+    "s_b679449ea2d7d9": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0da5af0c0ffeyY8eQi7W7GUASa",
+        "model": "ocg/deepseek-v4-pro"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    },
+    "s_e082bd154e52e4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ses_0da5af0c0ffeyY8eQi7W7GUASa",
+        "model": "unknown"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
