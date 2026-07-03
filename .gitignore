@@ -160,3 +160,4 @@ graphify-out/
 .nanostack/
 qa/
 .sisyphus/evidence/
+.omo/

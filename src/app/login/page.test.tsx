@@ -3,6 +3,10 @@ import { render, screen } from '@testing-library/react';
 import LoginPage from './page';
 import type { ReactNode } from 'react';
 
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ push: vi.fn() }),
+}));
+
 vi.mock('react', async () => {
   const actual = await vi.importActual('react');
   return {

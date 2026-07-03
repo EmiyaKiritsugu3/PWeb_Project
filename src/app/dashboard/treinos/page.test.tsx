@@ -2,14 +2,17 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import TreinosPage from './page';
 
+const mockRequireAnyRole = vi.fn().mockResolvedValue(undefined);
+const mockFindMany = vi.fn();
+
 vi.mock('@/lib/auth', () => ({
-  requireAnyRole: vi.fn().mockResolvedValue(undefined),
+  requireAnyRole: (...args: unknown[]) => mockRequireAnyRole(...args),
 }));
 
 vi.mock('@/lib/prisma', () => ({
   prisma: {
     aluno: {
-      findMany: vi.fn().mockResolvedValue([]),
+      findMany: (...args: unknown[]) => mockFindMany(...args),
     },
   },
 }));
@@ -37,17 +40,43 @@ describe('TreinosPage', () => {
   });
 
   it('renders the page header', async () => {
+    mockFindMany.mockResolvedValue([]);
     render(await TreinosPage());
     expect(screen.getByText('Gestão de Treinos')).toBeTruthy();
   });
 
   it('renders the TreinosManagementClient', async () => {
+    mockFindMany.mockResolvedValue([]);
     render(await TreinosPage());
     expect(screen.getByTestId('treinos-client')).toBeTruthy();
   });
 
   it('passes empty alunos data by default', async () => {
+    mockFindMany.mockResolvedValue([]);
     render(await TreinosPage());
     expect(screen.getByText('0 alunos')).toBeTruthy();
+  });
+
+  it('transforms prisma aluno data correctly with null fields', async () => {
+    mockFindMany.mockResolvedValue([
+      {
+        id: '1',
+        nomeCompleto: 'João',
+        cpf: '123',
+        email: 'joao@test.com',
+        telefone: null,
+        dataNascimento: null,
+        dataCadastro: new Date('2024-01-01'),
+        statusMatricula: 'ATIVA',
+        fotoUrl: null,
+        nivel: 1,
+        exp: 0,
+        streakDiasSeguidos: 0,
+        treinosNoMes: 0,
+        ultimoTreinoData: null,
+      },
+    ]);
+    render(await TreinosPage());
+    expect(screen.getByText('1 alunos')).toBeTruthy();
   });
 });

@@ -2,13 +2,17 @@
 
 /**
  * Playwright globalSetup — invokes prisma/seed-e2e.ts once before specs.
- * .env.test must load (override: true) BEFORE spawn so the child inherits test env.
+ * Load .env.test WITHOUT override: true — CI passes a dynamic Supabase anon key via
+ * $GITHUB_ENV that must take priority over the static demo key in .env.test.
+ * override:true clobbers the CI key; signInWithPassword then runs against the local
+ * Supabase instance with the wrong (demo) key → login action returns {error} or sets
+ * an invalid session cookie → page stays on /login → waitForURL timeout.
  */
 import { spawn } from 'node:child_process';
 import dotenv from 'dotenv';
 
 export default async function globalSetup(): Promise<void> {
-  dotenv.config({ path: '.env.test', override: true });
+  dotenv.config({ path: '.env.test' });
 
   const required = [
     'DATABASE_URL',

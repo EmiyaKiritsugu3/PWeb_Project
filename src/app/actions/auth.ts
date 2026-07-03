@@ -11,7 +11,12 @@ const loginSchema = z.object({
   password: z.string().min(6, { message: 'A senha deve ter no mínimo 6 caracteres.' }),
 });
 
-export async function login(_prevState: { error: string } | undefined, formData: FormData) {
+export type LoginResult = { error: string } | { redirectTo: string };
+
+export async function login(
+  _prevState: LoginResult | undefined,
+  formData: FormData
+): Promise<LoginResult> {
   const data = Object.fromEntries(formData);
   const result = loginSchema.safeParse(data);
 
@@ -32,26 +37,23 @@ export async function login(_prevState: { error: string } | undefined, formData:
   }
 
   try {
-    // Fetch profile role to determine redirect destination
     const { data: profile, error: profileError } = await supabase
       .from('funcionarios')
       .select('role')
       .eq('id', authData.user.id)
       .single();
 
-    // PGRST116 = "no rows found" — expected for alunos; any other code is a real DB error
     if (profileError && profileError.code !== 'PGRST116') {
       return { error: 'Erro ao verificar perfil. Por favor, tente novamente.' };
     }
 
-    if (profile) {
-      redirect('/dashboard');
-    } else {
-      redirect('/aluno/dashboard');
-    }
+    const redirectTo = profile ? '/dashboard' : '/aluno/dashboard';
+    return { redirectTo };
   } catch (err: unknown) {
-    // redirect() throws internally — must re-throw or the navigation is swallowed
-    if (isRedirectError(err)) throw err;
+    Sentry.captureException(err, {
+      tags: { action: 'login', step: 'profile-query' },
+      level: 'error',
+    });
     return { error: 'Ocorreu um erro inesperado. Por favor, tente novamente.' };
   }
 }
