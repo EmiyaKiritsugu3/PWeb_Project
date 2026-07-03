@@ -1,0 +1,39 @@
+database/20252/tarefas/EmiyaKiritsugu3/scripts/orm-example.ts
+  s_4f2204cced2d9d::t_df088e51818c2f 1-2
+database/20261/tarefas/EmiyaKiritsugu3/scripts/crud.js
+  s_4f2204cced2d9d::t_5cbddbc635f36c 14
+database/20252/tarefas/EmiyaKiritsugu3/scripts/odbc-example.ts
+  s_4f2204cced2d9d::t_bb014aaf5f09d3 1-2
+commitlint.config.cjs
+  s_4f2204cced2d9d::t_2a3899c02008fd 1
+database/20261/tarefas/EmiyaKiritsugu3/scripts/seed.js
+  s_4f2204cced2d9d::t_4f9c065fe963e1 10
+prisma/seed.ts
+  s_4f2204cced2d9d::t_94e6fff815cc49 1-2
+  s_4f2204cced2d9d::t_41073848281fe5 11
+database/20261/tarefas/EmiyaKiritsugu3/scripts/mongo-init.js
+  s_4f2204cced2d9d::t_344184a2af1f97 19
+  s_4f2204cced2d9d::t_bac0e7a50b14eb 16
+  s_4f2204cced2d9d::t_a1d398f3fedd43 14-15
+  s_4f2204cced2d9d::t_1c23446b42d5e1 17
+tests/e2e/global-setup.ts
+  s_4f2204cced2d9d::t_3e45cecf271a12 1-2
+prisma/seed-e2e.ts
+  s_4f2204cced2d9d::t_eab25785505db2 1-2
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.9",
+  "base_commit_sha": "798b9a9a208cbf22a42dd3ebaa0cb679a5e6162b",
+  "prompts": {},
+  "sessions": {
+    "s_4f2204cced2d9d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6d9f8773-1ba4-49ba-aee5-c05236dd04d7",
+        "model": "deepseek-v4-flash"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
