@@ -1,0 +1,21 @@
+docs/decisions/ADR-001-recharts3-upgrade.md
+  s_8a564db3232729::t_594e88b4de87d7 1-51
+.gitignore
+  s_8a564db3232729::t_8dbec3a23fe018 132
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "6fc96bba1ac6b3029206366b86e30aaf4df5150e",
+  "prompts": {},
+  "sessions": {
+    "s_8a564db3232729": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1a95e919-4afa-4a08-b23e-8af2f26a5c7c",
+        "model": "deepseek-v4-flash"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
