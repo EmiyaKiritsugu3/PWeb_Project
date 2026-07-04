@@ -206,6 +206,62 @@ describe('PlanosClient', () => {
     expect(screen.queryAllByTestId('card')).toHaveLength(0);
   });
 
+  it('opens form in edit mode when "Editar" is clicked', () => {
+    render(<PlanosClient initialPlanos={mockPlanos} />);
+    const editButtons = screen.getAllByText('P');
+    fireEvent.click(editButtons[0]);
+    expect(screen.getByTestId('form-plano')).toBeTruthy();
+    expect(screen.getByText('Editando')).toBeTruthy();
+  });
+
+  it('calls updatePlanoAction on edit submit', async () => {
+    const { updatePlanoAction } = await import('@/lib/actions/planos');
+    vi.mocked(updatePlanoAction).mockResolvedValue({
+      success: true,
+      data: { id: 'plano-1', nome: 'Mensal', preco: 100, duracaoDias: 30 },
+    });
+
+    render(<PlanosClient initialPlanos={mockPlanos} />);
+    fireEvent.click(screen.getAllByText('P')[0]);
+    fireEvent.click(screen.getByTestId('submit-plano'));
+
+    await waitFor(() => {
+      expect(updatePlanoAction).toHaveBeenCalled();
+      expect(mockNotify.success).toHaveBeenCalledWith('Plano atualizado!', expect.any(String));
+    });
+  });
+
+  it('shows error on delete failure', async () => {
+    const { deletePlanoAction } = await import('@/lib/actions/planos');
+    vi.mocked(deletePlanoAction).mockResolvedValue({ success: false, error: 'Erro ao excluir' });
+
+    render(<PlanosClient initialPlanos={mockPlanos} />);
+    fireEvent.click(screen.getAllByText('Excluir')[0]);
+    fireEvent.click(screen.getAllByText('Excluir')[screen.getAllByText('Excluir').length - 1]);
+
+    await waitFor(() => {
+      expect(mockNotify.error).toHaveBeenCalledWith('Erro ao excluir', 'Erro ao excluir');
+    });
+  });
+
+  it('displays "mês" badge when duration is exactly 30 days', () => {
+    const customPlanos: Plano[] = [{ id: 'p2', nome: 'Mensal', preco: 100, duracaoDias: 30 }];
+    render(<PlanosClient initialPlanos={customPlanos} />);
+    expect(screen.getByText('mês')).toBeTruthy();
+  });
+
+  it('displays "2 meses" badge for 60-day duration', () => {
+    const customPlanos: Plano[] = [{ id: 'p3', nome: 'Bimestral', preco: 180, duracaoDias: 60 }];
+    render(<PlanosClient initialPlanos={customPlanos} />);
+    expect(screen.getByText('2 meses')).toBeTruthy();
+  });
+
+  it('displays "dias" badge when duration is not a multiple of 30', () => {
+    const customPlanos: Plano[] = [{ id: 'p1', nome: 'Personal', preco: 200, duracaoDias: 15 }];
+    render(<PlanosClient initialPlanos={customPlanos} />);
+    expect(screen.getByText('15 dias')).toBeTruthy();
+  });
+
   it('calls deletePlanoAction when delete is confirmed', async () => {
     const { deletePlanoAction } = await import('@/lib/actions/planos');
     vi.mocked(deletePlanoAction).mockResolvedValue({ success: true });

@@ -1,6 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, act } from '@testing-library/react';
 import { SupabaseAuthProvider, useAuth } from './auth-provider';
+import * as Sentry from '@sentry/nextjs';
+
+let authStateCallback: ((event: string, session: unknown) => void) | null = null;
 
 const mockGetUser = vi.fn();
 const mockOnAuthStateChange = vi.fn();
@@ -35,9 +38,11 @@ function TestConsumer() {
 describe('SupabaseAuthProvider', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    authStateCallback = null;
     mockGetUser.mockResolvedValue({ data: { user: null }, error: null });
-    mockOnAuthStateChange.mockReturnValue({
-      data: { subscription: { unsubscribe: vi.fn() } },
+    mockOnAuthStateChange.mockImplementation((cb: (event: string, session: unknown) => void) => {
+      authStateCallback = cb;
+      return { data: { subscription: { unsubscribe: vi.fn() } } };
     });
   });
 
@@ -115,6 +120,43 @@ describe('SupabaseAuthProvider', () => {
       );
     });
     expect(mockOnAuthStateChange).toHaveBeenCalled();
+  });
+
+  it('calls Sentry.setUser on auth state change with user', async () => {
+    await act(async () => {
+      render(
+        <SupabaseAuthProvider>
+          <TestConsumer />
+        </SupabaseAuthProvider>
+      );
+    });
+
+    await act(async () => {
+      authStateCallback?.('SIGNED_IN', {
+        user: { id: 'u1', email: 'user@test.com' },
+      });
+    });
+
+    expect(Sentry.setUser).toHaveBeenCalledWith({
+      id: 'u1',
+      email: 'user@test.com',
+    });
+  });
+
+  it('calls Sentry.setUser(null) on auth state change without session', async () => {
+    await act(async () => {
+      render(
+        <SupabaseAuthProvider>
+          <TestConsumer />
+        </SupabaseAuthProvider>
+      );
+    });
+
+    await act(async () => {
+      authStateCallback?.('SIGNED_OUT', null);
+    });
+
+    expect(Sentry.setUser).toHaveBeenCalledWith(null);
   });
 });
 
