@@ -10,11 +10,11 @@ import { EXERCICIOS_POR_GRUPO } from './constants';
 describe('exerciciosOptions', () => {
   it('is a non-empty array', () => {
     expect(Array.isArray(exerciciosOptions)).toBe(true);
-    expect(exerciciosOptions.length).toBeGreaterThan(0);
+    expect(exerciciosOptions.length).toBeGreaterThanOrEqual(1);
   });
 
   it('has the same number of groups as EXERCICIOS_POR_GRUPO', () => {
-    expect(exerciciosOptions.length).toBe(EXERCICIOS_POR_GRUPO.length);
+    expect(exerciciosOptions).toHaveLength(EXERCICIOS_POR_GRUPO.length);
   });
 
   it('each entry has a label matching the group name and a non-empty options array', () => {
@@ -30,11 +30,11 @@ describe('exerciciosOptions', () => {
     for (const group of exerciciosOptions) {
       for (const opt of group.options) {
         expect(typeof opt.value).toBe('string');
-        expect(opt.value.length).toBeGreaterThan(0);
+        expect(opt.value.length).toBeGreaterThanOrEqual(1);
         expect(typeof opt.label).toBe('string');
-        expect(opt.label.length).toBeGreaterThan(0);
+        expect(opt.label.length).toBeGreaterThanOrEqual(1);
         expect(Array.isArray(opt.keywords)).toBe(true);
-        expect(opt.keywords.length).toBeGreaterThan(0);
+        expect(opt.keywords.length).toBeGreaterThanOrEqual(1);
       }
     }
   });
@@ -43,12 +43,12 @@ describe('exerciciosOptions', () => {
 describe('flatExerciciosOptions', () => {
   it('is a non-empty array', () => {
     expect(Array.isArray(flatExerciciosOptions)).toBe(true);
-    expect(flatExerciciosOptions.length).toBeGreaterThan(0);
+    expect(flatExerciciosOptions.length).toBeGreaterThanOrEqual(1);
   });
 
   it('contains the total count of all exercises across groups', () => {
     const totalExercises = EXERCICIOS_POR_GRUPO.reduce((sum, g) => sum + g.exercicios.length, 0);
-    expect(flatExerciciosOptions.length).toBe(totalExercises);
+    expect(flatExerciciosOptions).toHaveLength(totalExercises);
   });
 
   it('each entry has value, label, and description', () => {
@@ -105,7 +105,7 @@ describe('DEFAULT_EXERCISE', () => {
 
   it('has repeticoes as a non-empty string', () => {
     expect(typeof DEFAULT_EXERCISE.repeticoes).toBe('string');
-    expect(DEFAULT_EXERCISE.repeticoes.length).toBeGreaterThan(0);
+    expect(DEFAULT_EXERCISE.repeticoes.length).toBeGreaterThanOrEqual(1);
   });
 });
 

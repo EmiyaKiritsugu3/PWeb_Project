@@ -34,7 +34,7 @@ describe('CardFeedback', () => {
     render(<CardFeedback feedback={null} isLoading={true} />);
     expect(screen.getByText(/Pulsando Bio-Dados/i)).toBeTruthy();
     const skeletons = screen.getAllByTestId('skeleton');
-    expect(skeletons.length).toBe(3);
+    expect(skeletons).toHaveLength(3);
   });
 
   it('renders feedback title and message when provided', () => {

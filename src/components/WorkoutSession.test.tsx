@@ -129,8 +129,8 @@ describe('WorkoutSession', () => {
     render(<WorkoutSession treino={mockTreino} onFinish={mockOnFinish} onCancel={mockOnCancel} />);
     const pesoInputs = screen.getAllByPlaceholderText('Peso (kg)');
     const repsInputs = screen.getAllByPlaceholderText('Reps');
-    expect(pesoInputs.length).toBe(3);
-    expect(repsInputs.length).toBe(3);
+    expect(pesoInputs).toHaveLength(3);
+    expect(repsInputs).toHaveLength(3);
   });
 
   it('disables "Anterior" button on first exercise', () => {
