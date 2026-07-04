@@ -1,0 +1,60 @@
+supabase/migrations/20260703200722_prueba.sql
+  s_3568413a5e525b::t_9703d288d902be 1-400
+src/app/aluno/dashboard/dashboard-client.test.tsx
+  s_93c13d2cd0ec46::t_2ae3141745c174 7-21,24-26,37-39
+  s_93c13d2cd0ec46::t_c5e1d398b3c4f9 224
+  s_93c13d2cd0ec46::t_eecb7809a2168e 225-227
+src/app/dashboard/treinos/treinos-client.test.tsx
+  s_93c13d2cd0ec46::t_fe67381127dc6b 306-325,334
+  s_93c13d2cd0ec46::t_772b905b2b82d4 351
+src/ai/flows/workout-generator-flow.test.ts
+  s_93c13d2cd0ec46::t_3a25dfe7759b86 4
+  s_93c13d2cd0ec46::t_81b25d82f44f27 5-13,188,232-233
+supabase/seed.sql
+  s_93c13d2cd0ec46::t_bc1f92ba760507 7-10
+src/app/dashboard/alunos/alunos-client.test.tsx
+  s_93c13d2cd0ec46::t_80ca6e1ef14867 355,377
+  s_93c13d2cd0ec46::t_a6be5118491af5 354,356-363
+  s_93c13d2cd0ec46::t_ee3c6314ac15f3 376,378-382
+  s_93c13d2cd0ec46::t_0b700e6af77638 296-305
+  s_93c13d2cd0ec46::t_eb54c6d276825c 2
+  s_93c13d2cd0ec46::t_9ef45290c68933 327
+  s_93c13d2cd0ec46::t_5f5c949b0a63b5 326,328-332
+src/app/aluno/login/page.test.tsx
+  s_93c13d2cd0ec46::t_fa4c11128c8e3d 10-11
+  s_93c13d2cd0ec46::t_7cb30062ffc14a 36
+  s_93c13d2cd0ec46::t_fb63bd53dc8d83 184
+  s_93c13d2cd0ec46::t_00a4e8e090602c 104-106
+  s_93c13d2cd0ec46::t_1ad60107082539 185
+  s_93c13d2cd0ec46::t_3cc47bac58e9d1 186-189
+src/app/dashboard/treinos/page.test.tsx
+  s_93c13d2cd0ec46::t_ece1eefc719874 60
+src/app/login/page.tsx
+  s_93c13d2cd0ec46::t_9161116faedae7 44-55
+src/app/actions/auth.ts
+  s_93c13d2cd0ec46::t_dc4e3c44670730 16
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "ddba3bd91faaf039ac0e48d24d32ed4f34bc8baf",
+  "prompts": {},
+  "sessions": {
+    "s_3568413a5e525b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9403b2ef-4b5e-4962-826d-e3b3bde1ed1c",
+        "model": "deepseek-v4-pro"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    },
+    "s_93c13d2cd0ec46": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "cc1c1cd3-ff81-4567-bea5-e4e4dabaf50a",
+        "model": "deepseek-v4-flash"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
