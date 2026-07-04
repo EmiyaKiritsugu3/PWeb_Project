@@ -129,6 +129,7 @@ docs/.obsidian/
 docs/archive/
 docs/assets/
 docs/decisions/
+!docs/decisions/ADR-*.md
 docs/observability/
 docs/operations/
 docs/pdr/
