@@ -7,7 +7,9 @@ vi.mock('@/components/ui/avatar', () => ({
   Avatar: ({ children }: { children?: React.ReactNode }) => (
     <div data-testid="avatar">{children}</div>
   ),
-  AvatarFallback: ({ children }: { children?: React.ReactNode }) => <span>{children}</span>,
+  AvatarFallback: ({ children }: { children?: React.ReactNode }) => (
+    <span data-testid="avatar-fallback">{children}</span>
+  ),
   AvatarImage: () => null,
 }));
 
@@ -142,6 +144,28 @@ describe('columns', () => {
     }
   });
 
+  it('avatar shows empty for empty name', () => {
+    const cell = columnDefs[0].cell;
+    if (typeof cell === 'function') {
+      const { container } = render(
+        cell({ row: { original: { ...mockAluno, nomeCompleto: '' } } } as never)
+      );
+      const fallback = container.querySelector('[data-testid="avatar-fallback"]');
+      expect(fallback?.textContent).toBe('');
+    }
+  });
+
+  it('avatar shows first 2 chars for single-word name', () => {
+    const cell = columnDefs[0].cell;
+    if (typeof cell === 'function') {
+      const { container } = render(
+        cell({ row: { original: { ...mockAluno, nomeCompleto: 'João' } } } as never)
+      );
+      const fallback = container.querySelector('[data-testid="avatar-fallback"]');
+      expect(fallback?.textContent).toBe('JO');
+    }
+  });
+
   it('renders name and email in name column', () => {
     const cell = columnDefs[1].cell;
     if (typeof cell === 'function') {
@@ -154,6 +178,19 @@ describe('columns', () => {
         } as never)
       );
       expect(screen.getByText('João Silva')).toBeTruthy();
+    }
+  });
+
+  it('renders null for empty date', () => {
+    const cell = columnDefs[3].cell;
+    if (typeof cell === 'function') {
+      const result = cell({
+        row: {
+          original: { ...mockAluno, dataCadastro: '' },
+          getValue: () => '',
+        },
+      } as never);
+      expect(result).toBeNull();
     }
   });
 
