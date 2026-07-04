@@ -57,7 +57,7 @@ describe('TreinosPage', () => {
     expect(screen.getByText('0 alunos')).toBeTruthy();
   });
 
-  it('transforms prisma aluno data correctly with null fields', async () => {
+  it('handles aluno data with null fields without crashing', async () => {
     mockFindMany.mockResolvedValue([
       {
         id: '1',

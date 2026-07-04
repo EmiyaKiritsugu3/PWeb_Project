@@ -13,6 +13,7 @@ const loginSchema = z.object({
 
 export type LoginResult = { error: string } | { redirectTo: string };
 
+/** @deprecated Use client-side signInWithPassword + role redirect in login/page.tsx instead. */
 export async function login(
   _prevState: LoginResult | undefined,
   formData: FormData

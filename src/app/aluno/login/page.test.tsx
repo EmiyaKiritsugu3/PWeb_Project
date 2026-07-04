@@ -7,6 +7,8 @@ const mockPush = vi.fn();
 const mockSignInWithPassword = vi.fn().mockResolvedValue({ data: {}, error: null });
 const mockSignUp = vi.fn().mockResolvedValue({ data: {}, error: null });
 
+const mockNotify = { success: vi.fn(), error: vi.fn(), warn: vi.fn() };
+
 vi.mock('@/utils/supabase/client', () => ({
   createClient: () => ({
     auth: {
@@ -31,11 +33,7 @@ vi.mock('next/link', () => ({
 }));
 
 vi.mock('@/hooks/use-app-notification', () => ({
-  useAppNotification: () => ({
-    success: vi.fn(),
-    error: vi.fn(),
-    warn: vi.fn(),
-  }),
+  useAppNotification: () => mockNotify,
 }));
 
 vi.mock('@/components/ui/card', () => ({
@@ -103,7 +101,9 @@ vi.mock('@/components/ui/form', () => ({
 
 describe('AlunoLoginPage', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    vi.resetAllMocks();
+    mockSignInWithPassword.mockResolvedValue({ data: {}, error: null });
+    mockSignUp.mockResolvedValue({ data: {}, error: null });
   });
 
   it('renders the login card title', () => {
@@ -181,6 +181,12 @@ describe('AlunoLoginPage', () => {
 
     await waitFor(() => {
       expect(mockSignUp).toHaveBeenCalled();
+      expect(mockNotify.error).toHaveBeenCalledWith(
+        'Erro de autenticação',
+        expect.any(String),
+        expect.any(Object)
+      );
+      expect(mockPush).not.toHaveBeenCalled();
     });
   });
 

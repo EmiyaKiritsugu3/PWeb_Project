@@ -4,22 +4,26 @@ import AlunoDashboardClient from './dashboard-client';
 import type { Aluno, Treino } from '@/lib/definitions';
 import type { ReactNode } from 'react';
 
+const filterDomProps = (props: Record<string, unknown>): Record<string, unknown> => {
+  const domProps: Record<string, unknown> = {};
+  for (const [key, val] of Object.entries(props)) {
+    if (
+      key === 'children' ||
+      key === 'className' ||
+      key === 'data-testid' ||
+      key.startsWith('data-')
+    ) {
+      domProps[key] = val;
+    }
+  }
+  return domProps;
+};
+
 vi.mock('motion/react', () => ({
   motion: {
-    div: ({ children, ...props }: { children: ReactNode; [key: string]: unknown }) => {
-      const domProps: Record<string, unknown> = {};
-      for (const [key, val] of Object.entries(props)) {
-        if (
-          key === 'children' ||
-          key === 'className' ||
-          key === 'data-testid' ||
-          key.startsWith('data-')
-        ) {
-          domProps[key] = val;
-        }
-      }
-      return <div {...domProps}>{children}</div>;
-    },
+    div: ({ children, ...props }: { children: ReactNode; [key: string]: unknown }) => (
+      <div {...filterDomProps(props)}>{children}</div>
+    ),
   },
 }));
 
@@ -30,20 +34,9 @@ vi.mock('@/components/ui/card', () => ({
 }));
 
 vi.mock('@/components/ui/button', () => ({
-  Button: ({ children, ...props }: { children: ReactNode; [key: string]: unknown }) => {
-    const domProps: Record<string, unknown> = {};
-    for (const [key, val] of Object.entries(props)) {
-      if (
-        key === 'children' ||
-        key === 'className' ||
-        key === 'data-testid' ||
-        key.startsWith('data-')
-      ) {
-        domProps[key] = val;
-      }
-    }
-    return <button {...domProps}>{children}</button>;
-  },
+  Button: ({ children, ...props }: { children: ReactNode; [key: string]: unknown }) => (
+    <button {...filterDomProps(props)}>{children}</button>
+  ),
 }));
 
 const { mockNotify, mockFinalizarTreinoAction, mockGenerateWorkoutFeedback, mockLogger } =
@@ -228,7 +221,10 @@ describe('AlunoDashboardClient', () => {
 
     await waitFor(() => {
       expect(mockFinalizarTreinoAction).toHaveBeenCalledWith('treino-1');
-      expect(mockNotify.success).toHaveBeenCalled();
+      expect(mockNotify.success).toHaveBeenCalledWith(
+        'Treino Sincronizado!',
+        '+500 XP adicinados ao seu perfil.'
+      );
     });
   });
 

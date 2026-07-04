@@ -41,14 +41,18 @@ export default function LoginPage() {
       return;
     }
 
-    // Small delay for browser to commit the session cookie after signIn
-    // before hard navigation. Without this, middleware may drop the cookie.
-    await new Promise((r) => setTimeout(r, 500));
+    // Wait for the session cookie to be committed before navigating.
+    // Poll getSession() up to 5s — middleware needs the cookie to exist
+    // before it can read it. Using setTimeout(500) was brittle.
+    for (let attempt = 0; attempt < 10; attempt++) {
+      const { data } = await supabase.auth.getSession();
+      if (data.session) break;
+      await new Promise((r) => setTimeout(r, 500));
+    }
 
-    // Hard navigation (not router.push) so middleware reads the fresh
-    // session cookie. router.push sends a soft RSC request that reaches
-    // middleware before the browser has committed the cookie set by
-    // signInWithPassword, causing middleware to redirect back to /login.
+    // Hard navigation so middleware reads the fresh session cookie.
+    // router.push sends soft RSC that reaches middleware before cookie
+    // is available, causing redirect back to /login.
     window.location.href = '/dashboard';
   };
 

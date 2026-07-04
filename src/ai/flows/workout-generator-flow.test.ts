@@ -1,14 +1,16 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { z } from 'zod';
 
-const { mockGenerate, mockGenerateStream, mockDefineFlow, mockSpan } = vi.hoisted(() => {
-  const mockGenerate = vi.fn();
-  const mockGenerateStream = vi.fn();
-  const mockDefineFlow = vi.fn((_config: unknown, handler: unknown) => handler);
-  const mockSetAttribute = vi.fn();
-  const mockSpan = { setAttribute: mockSetAttribute };
-  return { mockGenerate, mockGenerateStream, mockDefineFlow, mockSetAttribute, mockSpan };
-});
+const { mockGenerate, mockGenerateStream, mockDefineFlow, mockSpan, mockSetAttribute } = vi.hoisted(
+  () => {
+    const mockGenerate = vi.fn();
+    const mockGenerateStream = vi.fn();
+    const mockDefineFlow = vi.fn((_config: unknown, handler: unknown) => handler);
+    const mockSetAttribute = vi.fn();
+    const mockSpan = { setAttribute: mockSetAttribute };
+    return { mockGenerate, mockGenerateStream, mockDefineFlow, mockSetAttribute, mockSpan };
+  }
+);
 
 vi.mock('@/ai/genkit', () => ({
   ai: {
@@ -183,7 +185,7 @@ describe('streamWorkoutPlan', () => {
     expect(result).toBeDefined();
   });
 
-  it('handles missing usage stats with nullish coalescing', async () => {
+  it('handles nullish coalescing and sets defaults to 0', async () => {
     const chunkOutput = {
       planName: 'Plano Teste',
       workouts: [],
@@ -227,6 +229,8 @@ describe('streamWorkoutPlan', () => {
     )(validInput, { sendChunk });
 
     expect(result).toBeDefined();
+    expect(mockSetAttribute).toHaveBeenCalledWith('gen_ai.usage.input_tokens', 0);
+    expect(mockSetAttribute).toHaveBeenCalledWith('gen_ai.usage.output_tokens', 0);
   });
 
   it('throws when AI output fails schema validation', async () => {

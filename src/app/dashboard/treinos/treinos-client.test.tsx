@@ -303,6 +303,26 @@ describe('TreinosManagementClient', () => {
     expect(saveBtn.hasAttribute('disabled')).toBe(true);
   });
 
+  const mockAiPlan = {
+    planName: 'Plano IA',
+    workouts: [
+      {
+        nome: 'Treino A',
+        objetivo: 'Hipertrofia',
+        diaSugerido: 1,
+        exercicios: [
+          {
+            nomeExercicio: 'Supino Reto',
+            grupoMuscular: 'Peito',
+            series: 4,
+            repeticoes: '10-12',
+            observacoes: '',
+          },
+        ],
+      },
+    ],
+  };
+
   it('shows error when trying to save without validation and no selectedAlunoId', () => {
     mockWorkoutExercises.hasValidationErrors.mockReturnValue(true);
     render(<TreinosManagementClient initialAlunos={mockAlunos} />);
@@ -311,26 +331,7 @@ describe('TreinosManagementClient', () => {
   });
 
   it('generates AI workout plan and shows PlanoGeradoParaEdicao', async () => {
-    const aiPlan = {
-      planName: 'Plano IA',
-      workouts: [
-        {
-          nome: 'Treino A',
-          objetivo: 'Hipertrofia',
-          diaSugerido: 1,
-          exercicios: [
-            {
-              nomeExercicio: 'Supino Reto',
-              grupoMuscular: 'Peito',
-              series: 4,
-              repeticoes: '10-12',
-              observacoes: '',
-            },
-          ],
-        },
-      ],
-    };
-    mockStreamWorkoutPlan.mockResolvedValue(aiPlan);
+    mockStreamWorkoutPlan.mockResolvedValue(mockAiPlan);
 
     render(<TreinosManagementClient initialAlunos={mockAlunos} />);
     fireEvent.change(screen.getByTestId('aluno-select'), { target: { value: 'aluno-1' } });
@@ -347,26 +348,7 @@ describe('TreinosManagementClient', () => {
   });
 
   it('saves generated plan via batchUpsertTreinoAction', async () => {
-    const aiPlan = {
-      planName: 'Plano IA',
-      workouts: [
-        {
-          nome: 'Treino A',
-          objetivo: 'Hipertrofia',
-          diaSugerido: 1,
-          exercicios: [
-            {
-              nomeExercicio: 'Supino Reto',
-              grupoMuscular: 'Peito',
-              series: 4,
-              repeticoes: '10-12',
-              observacoes: '',
-            },
-          ],
-        },
-      ],
-    };
-    mockStreamWorkoutPlan.mockResolvedValue(aiPlan);
+    mockStreamWorkoutPlan.mockResolvedValue(mockAiPlan);
     mockBatchUpsertTreinoAction.mockResolvedValue({ success: true });
 
     render(<TreinosManagementClient initialAlunos={mockAlunos} />);

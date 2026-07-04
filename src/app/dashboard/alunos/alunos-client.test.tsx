@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
 import { AlunosClient } from './alunos-client';
 import type { Aluno, Plano } from '@/lib/definitions';
 import type { ReactNode } from 'react';
@@ -293,6 +293,16 @@ describe('AlunosClient', () => {
 
     expect(screen.getByTestId('form-aluno')).toBeTruthy();
     expect(screen.getByText(/Editando João Silva/)).toBeTruthy();
+
+    fireEvent.click(screen.getByTestId('submit-aluno-form'));
+
+    await waitFor(() => {
+      expect(updateAlunoAction).toHaveBeenCalled();
+      expect(mockNotify.success).toHaveBeenCalledWith(
+        'Aluno atualizado!',
+        expect.stringContaining('salvo')
+      );
+    });
   });
 
   it('opens delete confirmation via column', async () => {
@@ -313,6 +323,13 @@ describe('AlunosClient', () => {
     render(<AlunosClient initialAlunos={mockAlunos} planos={mockPlanos} />);
     fireEvent.click(screen.getByText('Excluir'));
     expect(screen.getByTestId('alert-dialog')).toBeTruthy();
+
+    fireEvent.click(within(screen.getByTestId('alert-dialog')).getByText('Excluir'));
+
+    await waitFor(() => {
+      expect(deleteAlunoAction).toHaveBeenCalled();
+      expect(mockNotify.error).toHaveBeenCalledWith('Erro ao excluir', 'Erro ao excluir');
+    });
   });
 
   it('opens matricula form via column and submits', async () => {
@@ -334,6 +351,16 @@ describe('AlunosClient', () => {
 
     expect(screen.getByTestId('form-matricula')).toBeTruthy();
     expect(screen.getByText(/Matrícula para/)).toBeTruthy();
+
+    fireEvent.click(screen.getByTestId('submit-matricula'));
+
+    await waitFor(() => {
+      expect(createMatriculaAction).toHaveBeenCalled();
+      expect(mockNotify.success).toHaveBeenCalledWith(
+        'Matrícula realizada!',
+        expect.stringContaining('matriculado')
+      );
+    });
   });
 
   it('shows error on matricula failure', async () => {
@@ -346,5 +373,12 @@ describe('AlunosClient', () => {
     render(<AlunosClient initialAlunos={mockAlunos} planos={mockPlanos} />);
     fireEvent.click(screen.getByText('Nova Matrícula'));
     expect(screen.getByTestId('form-matricula')).toBeTruthy();
+
+    fireEvent.click(screen.getByTestId('submit-matricula'));
+
+    await waitFor(() => {
+      expect(createMatriculaAction).toHaveBeenCalled();
+      expect(mockNotify.error).toHaveBeenCalledWith('Erro na matrícula', 'Erro na matrícula');
+    });
   });
 });
