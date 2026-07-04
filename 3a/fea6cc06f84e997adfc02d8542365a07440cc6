@@ -1,0 +1,21 @@
+docs/TECHNICAL-DEBT.md
+  s_8a564db3232729::t_2b9078b7cebf16 3
+docs/CURRENT-STATE.md
+  s_8a564db3232729::t_1ff384224b0000 1,3,5,7,11,13,15,17-37,41-44
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "3afea6cc06f84e997adfc02d8542365a07440cc6",
+  "prompts": {},
+  "sessions": {
+    "s_8a564db3232729": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1a95e919-4afa-4a08-b23e-8af2f26a5c7c",
+        "model": "deepseek-v4-flash"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
