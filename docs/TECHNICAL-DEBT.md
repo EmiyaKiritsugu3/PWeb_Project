@@ -1,6 +1,6 @@
 # Technical Debt — Five Star Academy
 
-> **Propósito**: Registrar débitos técnicos identificados mas não resolvidos durante as sessões de desenvolvimento. Atualizado em 2026-06-09.
+> **Propósito**: Registrar débitos técnicos identificados mas não resolvidos durante as sessões de desenvolvimento. Atualizado em 2026-07-04.
 >
 > Itens marcados com **(CI)** bloqueiam a CI ou causam falha em checks. Itens **(WARN)** são conhecidos mas não bloqueantes.
 

@@ -1,28 +1,44 @@
-# Estado Atual (2026-06-09)
+# Estado Atual (2026-07-04)
 
-## Estabilizado — Library Drift Audit (PRs #128, #130, #129, #131, #132, #139 merged)
+## v0.8.0 — It5: Instrutor Auth + Recharts 3 + Security Audit
 
-**Última versão:** 1.5.0
+**Última versão:** v0.8.0
 **Branch principal:** `main`
-**CI:** 4/4 quality gates verdes (typecheck · lint · format:check · test). 13/13 CI checks pass.
+**CI:** 4/4 quality gates (typecheck · lint · format:check · test). 21/21 E2E.
 
 ### O que foi feito
 
-- **PR #128 (CRITICAL fix)**: Supabase SSR 0.10 middleware `setAll` headers forwarding — CDN cache-bleed prevention. Bumped `@supabase/ssr` 0.10.2 → 0.10.3.
-- **PR #130**: 7-commit observability modernization. Genkit 1.36: removed `output!`, dropped stream-chunk `safeParse`, removed redundant `streamSchema`. Sentry 10.56: 11 server actions wrapped with `withServerActionInstrumentation`, `sendDefaultPii` → `dataCollection` migration, manual `Sentry.startSpan` for Genkit AI flows with `gen_ai.*` attributes.
-- **PR #129**: 2-commit Zod forward-compat. ~30 positional `message` → `{ message: '...' }` object form. 22 `z.string().email/uuid/url` → top-level `z.email/uuid/url`. Required `zod/v4` import (v3 lacks top-level format functions).
-- **PR #131 hotfix**: TS spread error in Sentry test mock — cast `importOriginal()` to `Record<string, unknown>`.
-- **PR #132 hotfix**: 6 treino test regressions from PR #129's v4-strict UUIDs — updated 10 literal UUIDs to v4-valid format.
-- **PR #139**: SonarQube code smells fix. 32 code smells resolved (47 → 16, 66% reduction). Readonly props (20 instances), CalendarChevron extraction, Chart replaceAll + condition fix, Form-aluno replaceAll, Workout action pattern (GridMode union type), Carousel section for accessibility, Alert NOSONAR + HTMLHeadingElement type, Definitions re-export pattern. 10 false positives identified via Context7 (cmdk, Embla, skeletons). Sonar script added: `npm run sonar:labens`.
+#### It5 — Instrutor Authorization Hardening (spec 007)
 
-(2 hotfixes were required because PR #130's test mock + PR #129's zod v4 import both introduced regressions caught by F2 review and local test runs respectively.)
+12/12 tasks shipped. `requireAnyRole` route gate guarding `/dashboard/treinos` (INSTRUTOR/GERENTE only). Server-derived `instrutorId` via role check in `upsertTreinoAction`, ownership guards on `updateTreinoDayAction`/`deleteTreinoAction`. 19 E2E scenarios, incl. negative auth tests (RECEPCIONISTA redirect, unauthenticated block).
 
-### Testes
+#### Recharts 2 → 3 Upgrade (spec 008)
 
-- **101/101** vitest tests passing (14 suites) — baseline 86 + 15 new zod-migration smoke
-- TypeScript: **0 erros**
-- CI 13/13 verde: Quality Gates, Tests & Coverage, SonarCloud, E2E, Vercel, CodeQL, Semgrep ×2, GitGuardian, CodeRabbit, cubic, Analyze JS-TS, Vercel Preview
+PR #78 (2026-04-22). Breaking type change absorbed: `TooltipContentProps`, `DefaultLegendContentProps` import pivot. ADR-001 documents decision. No runtime regression.
+
+#### Security Audit & Dependency Fixes
+
+- **postcss CVE GHSA-qx2v-qp2m-jg93**: `next@15.5.20` bundles nested `postcss@8.4.31` (<8.5.10). Fixed via npm `overrides` forcing ^8.5.16 (PR #170).
+- **js-yaml CVE**: removed in dep security audit (PR #164).
+- **ESLint code smells**: 7 errors, 28 warnings fixed (PR #167).
+- **Dependabot PRs #165/#166**: merged (16 minor + 27 patch bumps).
+- **npm audit**: 0 high, 2 moderate (OpenTelemetry core, uuid — no fix available, deferred).
+
+#### CI & Test Infrastructure
+
+- **E2E 21/21 green**: fixed PostgREST grants in `supabase/seed.sql`, cookie race via client-side redirect, dotenv clobber in global-setup. Infrastructure tested live after 23-day main break.
+- **Coverage**: branch coverage 78.68% (PR #168).
+- **4 CI gates**: typecheck 0 errors, ESLint 0 errors (10 pre-existing warnings), 1103/1103 vitest, format:check pass.
+
+#### Maintenance
+
+- 14 stale It3 issue trackers closed (#43-#56).
+- ADR dir created (`docs/decisions/`, git-tracked via `!ADR-*.md` negation). ADR-001: recharts 3 upgrade.
+- Memory saved: postcss override pattern for nested transitive CVEs.
 
 ### Pendências Técnicas
 
-_Nenhuma pendência crítica._ Audits completed: Next.js 15.5 (no critical, all forward-compat work tracked for v16), Genkit 1.36 (3 MEDIUM fixed in #130, 3 LOW deferred), Sentry 10.56 (1 CRITICAL + 2 MAJOR fixed in #130), Zod 3.25+Supabase SSR 0.10 (1 CRITICAL + 2 MEDIUM + 1 LOW fixed across #128/#129, 2 LOW deferred). Out-of-scope items (Next 16, genkit zod v4, full audit beyond Context7) tracked in `.sisyphus/plans/library-drift-audit-2026-06-05.md` and `.sisyphus/evidence/audit-context7-2026-06-05.md`.
+- **ESLint 10 (#122)**: blocked upstream (eslint-config-next #3979).
+- **SonarQube 16 smells (#160)**: all false positives (skeleton keys, cmdk, logger).
+- **Branch coverage 80% (#159)**: 78.68% → 80% target.
+- **Academic trackers**: #96 (ODBC), #106 (MongoDB) kept open.
