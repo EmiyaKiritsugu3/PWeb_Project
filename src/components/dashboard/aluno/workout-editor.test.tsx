@@ -208,6 +208,6 @@ describe('WorkoutEditor', () => {
     mockUseWorkoutExercises.mockReturnValue({ ...defaultHookReturn, exercicios: exercises });
 
     render(<WorkoutEditor onSave={mockOnSave} treinoToEdit={null} onCancel={mockOnCancel} />);
-    expect(screen.getAllByTestId('exercise-row').length).toBe(2);
+    expect(screen.getAllByTestId('exercise-row')).toHaveLength(2);
   });
 });

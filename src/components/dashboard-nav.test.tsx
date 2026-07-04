@@ -125,7 +125,7 @@ describe('DashboardNav', () => {
     const activeButtons = menuButtons.filter(
       (btn) => btn.getAttribute('data-is-active') === 'true'
     );
-    expect(activeButtons.length).toBe(1);
+    expect(activeButtons).toHaveLength(1);
   });
 
   it('links have correct href attributes', () => {

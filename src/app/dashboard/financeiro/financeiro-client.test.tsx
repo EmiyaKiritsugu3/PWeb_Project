@@ -129,13 +129,13 @@ describe('FinanceiroClient', () => {
   it('renders "Inadimplente" badge for each student', () => {
     render(<FinanceiroClient initialInadimplentes={mockInadimplentes} />);
     const badges = screen.getAllByText('Inadimplente');
-    expect(badges.length).toBe(2);
+    expect(badges).toHaveLength(2);
   });
 
   it('renders "Registrar Pagamento" buttons', () => {
     render(<FinanceiroClient initialInadimplentes={mockInadimplentes} />);
     const buttons = screen.getAllByText('Registrar Pagamento');
-    expect(buttons.length).toBe(2);
+    expect(buttons).toHaveLength(2);
   });
 
   it('shows empty state when no inadimplentes', () => {

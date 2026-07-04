@@ -25,7 +25,7 @@ describe('NaN guard patterns', () => {
 
   it('empty string becomes undefined with ||, not empty string', () => {
     const empty = '';
-    expect(empty || undefined).toBe(undefined);
+    expect(empty || undefined).toBeUndefined();
     expect(empty ?? undefined).toBe(''); // '' passes through ??
   });
 

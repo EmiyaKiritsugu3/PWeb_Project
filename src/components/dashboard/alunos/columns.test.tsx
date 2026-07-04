@@ -103,7 +103,7 @@ describe('columns', () => {
 
   it('returns an array of column definitions', () => {
     expect(Array.isArray(columnDefs)).toBe(true);
-    expect(columnDefs.length).toBe(6);
+    expect(columnDefs).toHaveLength(6);
   });
 
   it('has photo column with accessorKey fotoUrl', () => {

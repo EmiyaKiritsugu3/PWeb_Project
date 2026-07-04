@@ -12,7 +12,7 @@ describe('CircularProgress', () => {
   it('renders SVG circles', () => {
     const { container } = render(<CircularProgress value={75} />);
     const circles = container.querySelectorAll('circle');
-    expect(circles.length).toBe(2);
+    expect(circles).toHaveLength(2);
   });
 
   it('displays value when showValue is true', () => {
