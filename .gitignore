@@ -107,6 +107,9 @@ walkthrough.md
 # AI session tooling
 .claude/
 .remember/
+
+# Generated coverage reports
+coverage-report.json
 .specify/
 
 # Feature planning artifacts (root-level only — not tests/e2e/specs/)
