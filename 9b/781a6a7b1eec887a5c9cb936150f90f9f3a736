@@ -1,0 +1,41 @@
+src/components/dashboard/alunos/columns.test.tsx
+  s_8a564db3232729::t_1c6873035be30d 106
+src/lib/exercise-options.test.ts
+  s_8a564db3232729::t_d8a05ab6af4c96 33,35,37
+  s_8a564db3232729::t_e991bd007d13e3 46
+  s_8a564db3232729::t_2cfce0da4b287d 51
+  s_8a564db3232729::t_959fe40f02083c 13
+  s_8a564db3232729::t_11810b60dd8ace 17
+  s_8a564db3232729::t_6d0cf5b03b2a7c 108
+src/app/dashboard/treinos/__tests__/nan-guards.test.ts
+  s_8a564db3232729::t_84b251c15a79f4 28
+src/components/dashboard-nav.test.tsx
+  s_8a564db3232729::t_8dd9af9c909bd2 128
+src/components/ui/circular-progress.test.tsx
+  s_8a564db3232729::t_489f2047fdeb09 15
+src/components/WorkoutSession.test.tsx
+  s_8a564db3232729::t_6b17304774f280 132-133
+src/app/dashboard/financeiro/financeiro-client.test.tsx
+  s_8a564db3232729::t_d4271cf2d0a1bf 138
+  s_8a564db3232729::t_1a4f8c720a301f 132
+src/components/dashboard/aluno/card-feedback.test.tsx
+  s_8a564db3232729::t_e11a3708c12119 37
+src/components/dashboard/aluno/workout-editor.test.tsx
+  s_8a564db3232729::t_d951b814afe799 211
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "9b781a6a7b1eec887a5c9cb936150f90f9f3a736",
+  "prompts": {},
+  "sessions": {
+    "s_8a564db3232729": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1a95e919-4afa-4a08-b23e-8af2f26a5c7c",
+        "model": "unknown"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
