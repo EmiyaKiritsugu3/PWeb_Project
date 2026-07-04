@@ -1,0 +1,19 @@
+.gitignore
+  s_8a564db3232729::t_c3af52004b30e3 110-112
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "26cc77acd55277c4f756350c4073cb595166f66f",
+  "prompts": {},
+  "sessions": {
+    "s_8a564db3232729": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1a95e919-4afa-4a08-b23e-8af2f26a5c7c",
+        "model": "deepseek-v4-flash"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
