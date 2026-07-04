@@ -1,10 +1,13 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import AlunoLoginPage from './page';
 import type { ReactNode } from 'react';
 
+const mockPush = vi.fn();
 const mockSignInWithPassword = vi.fn().mockResolvedValue({ data: {}, error: null });
 const mockSignUp = vi.fn().mockResolvedValue({ data: {}, error: null });
+
+const mockNotify = { success: vi.fn(), error: vi.fn(), warn: vi.fn() };
 
 vi.mock('@/utils/supabase/client', () => ({
   createClient: () => ({
@@ -17,7 +20,7 @@ vi.mock('@/utils/supabase/client', () => ({
 
 vi.mock('next/navigation', () => ({
   useRouter: () => ({
-    push: vi.fn(),
+    push: mockPush,
     back: vi.fn(),
     refresh: vi.fn(),
   }),
@@ -30,11 +33,7 @@ vi.mock('next/link', () => ({
 }));
 
 vi.mock('@/hooks/use-app-notification', () => ({
-  useAppNotification: () => ({
-    success: vi.fn(),
-    error: vi.fn(),
-    warn: vi.fn(),
-  }),
+  useAppNotification: () => mockNotify,
 }));
 
 vi.mock('@/components/ui/card', () => ({
@@ -101,6 +100,12 @@ vi.mock('@/components/ui/form', () => ({
 }));
 
 describe('AlunoLoginPage', () => {
+  beforeEach(() => {
+    vi.resetAllMocks();
+    mockSignInWithPassword.mockResolvedValue({ data: {}, error: null });
+    mockSignUp.mockResolvedValue({ data: {}, error: null });
+  });
+
   it('renders the login card title', () => {
     render(<AlunoLoginPage />);
     expect(screen.getByText('Portal do Aluno (Supabase)')).toBeTruthy();
@@ -125,5 +130,78 @@ describe('AlunoLoginPage', () => {
   it('renders the dumbbell icon', () => {
     const { container } = render(<AlunoLoginPage />);
     expect(container.querySelector('.lucide-dumbbell')).toBeTruthy();
+  });
+
+  it('calls signInWithPassword on form submit and redirects on success', async () => {
+    mockSignInWithPassword.mockResolvedValue({ data: {}, error: null });
+
+    render(<AlunoLoginPage />);
+    const form = screen.getByRole('button', { name: /entrar/i }).closest('form')!;
+    fireEvent.submit(form);
+
+    await waitFor(() => {
+      expect(mockSignInWithPassword).toHaveBeenCalled();
+      expect(mockPush).toHaveBeenCalledWith('/aluno/dashboard');
+    });
+  });
+
+  it('auto-signs up when signIn returns "Invalid login credentials"', async () => {
+    mockSignInWithPassword.mockResolvedValue({
+      data: {},
+      error: { message: 'Invalid login credentials' },
+    });
+    mockSignUp.mockResolvedValue({ data: {}, error: null });
+
+    render(<AlunoLoginPage />);
+    const form = screen.getByRole('button', { name: /entrar/i }).closest('form')!;
+    fireEvent.submit(form);
+
+    await waitFor(() => {
+      expect(mockSignUp).toHaveBeenCalledWith(
+        expect.objectContaining({
+          options: expect.objectContaining({
+            data: { role: 'ALUNO' },
+          }),
+        })
+      );
+      expect(mockPush).toHaveBeenCalledWith('/aluno/dashboard');
+    });
+  });
+
+  it('throws error when signUp also fails', async () => {
+    mockSignInWithPassword.mockResolvedValue({
+      data: {},
+      error: { message: 'Invalid login credentials' },
+    });
+    mockSignUp.mockResolvedValue({ data: {}, error: { message: 'Signup failed' } });
+
+    render(<AlunoLoginPage />);
+    const form = screen.getByRole('button', { name: /entrar/i }).closest('form')!;
+    fireEvent.submit(form);
+
+    await waitFor(() => {
+      expect(mockSignUp).toHaveBeenCalled();
+      expect(mockNotify.error).toHaveBeenCalledWith(
+        'Erro de autenticação',
+        expect.any(String),
+        expect.any(Object)
+      );
+      expect(mockPush).not.toHaveBeenCalled();
+    });
+  });
+
+  it('handles signIn generic error (not "Invalid login credentials")', async () => {
+    mockSignInWithPassword.mockResolvedValue({
+      data: {},
+      error: { message: 'Network error' },
+    });
+
+    render(<AlunoLoginPage />);
+    const form = screen.getByRole('button', { name: /entrar/i }).closest('form')!;
+    fireEvent.submit(form);
+
+    await waitFor(() => {
+      expect(mockSignUp).not.toHaveBeenCalled();
+    });
   });
 });

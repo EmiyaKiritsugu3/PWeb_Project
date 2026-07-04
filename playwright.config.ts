@@ -1,8 +1,10 @@
 import { defineConfig, devices } from '@playwright/test';
 import dotenv from 'dotenv';
 
-// override: true ensures .env.test values win over any pre-loaded .env.local
-dotenv.config({ path: '.env.test', override: true });
+// Load .env.test as defaults so local dev matches CI.
+// Do NOT use override: true — CI passes dynamic Supabase keys that must
+// take priority over the hardcoded demo key in .env.test.
+dotenv.config({ path: '.env.test' });
 
 export default defineConfig({
   testDir: './tests/e2e/specs',

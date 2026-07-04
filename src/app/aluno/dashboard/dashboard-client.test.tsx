@@ -1,8 +1,23 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import AlunoDashboardClient from './dashboard-client';
 import type { Aluno, Treino } from '@/lib/definitions';
 import type { ReactNode } from 'react';
+
+const filterDomProps = (props: Record<string, unknown>): Record<string, unknown> => {
+  const domProps: Record<string, unknown> = {};
+  for (const [key, val] of Object.entries(props)) {
+    if (
+      key === 'children' ||
+      key === 'className' ||
+      key === 'data-testid' ||
+      key.startsWith('data-')
+    ) {
+      domProps[key] = val;
+    }
+  }
+  return domProps;
+};
 
 vi.mock('motion/react', () => ({
   motion: {
@@ -24,28 +39,26 @@ vi.mock('@/components/ui/button', () => ({
   ),
 }));
 
-vi.mock('lucide-react', () => ({
-  Trophy: () => <span>TrophyIcon</span>,
-  TrendingUp: () => <span>TrendingUpIcon</span>,
-  Zap: () => <span>ZapIcon</span>,
-  Target: () => <span>TargetIcon</span>,
-  Award: () => <span>AwardIcon</span>,
-}));
+const { mockNotify, mockFinalizarTreinoAction, mockGenerateWorkoutFeedback, mockLogger } =
+  vi.hoisted(() => ({
+    mockNotify: { success: vi.fn(), error: vi.fn(), warn: vi.fn() },
+    mockFinalizarTreinoAction: vi.fn().mockResolvedValue({ success: true }),
+    mockGenerateWorkoutFeedback: vi
+      .fn()
+      .mockResolvedValue({ title: 'Mandou bem!', message: 'Ótimo treino!' }),
+    mockLogger: { error: vi.fn(), info: vi.fn() },
+  }));
 
 vi.mock('@/lib/logger', () => ({
-  Logger: { error: vi.fn(), info: vi.fn() },
+  Logger: mockLogger,
 }));
 
 vi.mock('@/lib/actions/alunos', () => ({
-  finalizarTreinoAction: vi.fn().mockResolvedValue({ success: true }),
+  finalizarTreinoAction: (...args: unknown[]) => mockFinalizarTreinoAction(...args),
 }));
 
 vi.mock('@/hooks/use-app-notification', () => ({
-  useAppNotification: () => ({
-    success: vi.fn(),
-    error: vi.fn(),
-    warn: vi.fn(),
-  }),
+  useAppNotification: () => mockNotify,
 }));
 
 vi.mock('@/components/ui/circular-progress', () => ({
@@ -82,27 +95,37 @@ vi.mock('@/components/dashboard/aluno/card-matricula', () => ({
 }));
 
 vi.mock('@/components/dashboard/aluno/card-treino', () => ({
-  CardTreino: () => <div data-testid="card-treino" />,
+  CardTreino: ({
+    onFinishTraining,
+  }: {
+    treino: Treino | null;
+    onFinishTraining: (exIds: string[]) => void;
+    isFeedbackLoading: boolean;
+    onViewExercicio: (ex: unknown) => void;
+  }) => (
+    <div data-testid="card-treino">
+      <button data-testid="btn-finish-training" onClick={() => onFinishTraining(['ex-1'])}>
+        Finish Training
+      </button>
+    </div>
+  ),
 }));
 
 vi.mock('@/components/dashboard/aluno/card-feedback', () => ({
   CardFeedback: () => <div data-testid="card-feedback" />,
 }));
 
-function filterDomProps(props: Record<string, unknown>): Record<string, unknown> {
-  const domProps: Record<string, unknown> = {};
-  for (const [key, val] of Object.entries(props)) {
-    if (
-      key === 'children' ||
-      key === 'className' ||
-      key === 'data-testid' ||
-      key.startsWith('data-')
-    ) {
-      domProps[key] = val;
-    }
-  }
-  return domProps;
-}
+vi.mock('@/ai/flows/workout-feedback-flow', () => ({
+  generateWorkoutFeedback: (...args: unknown[]) => mockGenerateWorkoutFeedback(...args),
+}));
+
+vi.mock('lucide-react', () => ({
+  Trophy: () => <span>TrophyIcon</span>,
+  TrendingUp: () => <span>TrendingUpIcon</span>,
+  Zap: () => <span>ZapIcon</span>,
+  Target: () => <span>TargetIcon</span>,
+  Award: () => <span>AwardIcon</span>,
+}));
 
 const mockAluno: Aluno = {
   id: '1',
@@ -141,6 +164,10 @@ const mockTreino: Treino = {
 };
 
 describe('AlunoDashboardClient', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   it('renders welcome message with first name', () => {
     render(<AlunoDashboardClient aluno={mockAluno} initialTreino={mockTreino} />);
     expect(screen.getByTestId('dashboard-welcome').textContent).toContain('JOÃO');
@@ -186,5 +213,40 @@ describe('AlunoDashboardClient', () => {
   it('renders without crashing when initialTreino is null', () => {
     render(<AlunoDashboardClient aluno={mockAluno} initialTreino={null} />);
     expect(screen.getByTestId('dashboard-welcome')).toBeTruthy();
+  });
+
+  it('calls finalizarTreinoAction on finish training success', async () => {
+    render(<AlunoDashboardClient aluno={mockAluno} initialTreino={mockTreino} />);
+    fireEvent.click(screen.getByTestId('btn-finish-training'));
+
+    await waitFor(() => {
+      expect(mockFinalizarTreinoAction).toHaveBeenCalledWith('treino-1');
+      expect(mockNotify.success).toHaveBeenCalledWith(
+        'Treino Sincronizado!',
+        '+500 XP adicinados ao seu perfil.'
+      );
+    });
+  });
+
+  it('shows error notification when finalizarTreinoAction fails', async () => {
+    mockFinalizarTreinoAction.mockResolvedValue({ success: false });
+
+    render(<AlunoDashboardClient aluno={mockAluno} initialTreino={mockTreino} />);
+    fireEvent.click(screen.getByTestId('btn-finish-training'));
+
+    await waitFor(() => {
+      expect(mockNotify.error).toHaveBeenCalledWith('Erro de conexão');
+    });
+  });
+
+  it('handles finalizarTreinoAction throwing', async () => {
+    mockFinalizarTreinoAction.mockRejectedValue(new Error('Network error'));
+
+    render(<AlunoDashboardClient aluno={mockAluno} initialTreino={mockTreino} />);
+    fireEvent.click(screen.getByTestId('btn-finish-training'));
+
+    await waitFor(() => {
+      expect(mockNotify.error).toHaveBeenCalledWith('Erro ao salvar treino');
+    });
   });
 });

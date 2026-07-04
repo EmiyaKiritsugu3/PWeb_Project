@@ -50,7 +50,7 @@ export async function loginAs(page: Page, role: TestRole): Promise<void> {
   // For staff roles: server action redirect — wait for any departure from the login page,
   // then do a hard GET so the browser sends the fresh session cookie.
   // For ALUNO: client-side auth + router.push — wait for URL to reach the dashboard directly.
-  await page.waitForURL((url) => !url.pathname.startsWith(loginPath), { timeout: 15_000 });
+  await page.waitForURL((url) => !url.pathname.startsWith(loginPath), { timeout: 30_000 });
   // Hard GET to confirm the session cookie is in the Cookie header for all subsequent requests.
   await page.goto(expectedPath);
   // Confirm the dashboard actually painted

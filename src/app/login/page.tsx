@@ -1,7 +1,6 @@
 'use client';
 
-import { useActionState } from 'react';
-import { login } from '@/app/actions/auth';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -15,9 +14,47 @@ import {
 import { Dumbbell } from 'lucide-react';
 import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
+import { createClient } from '@/utils/supabase/client';
 
 export default function LoginPage() {
-  const [state, action, isPending] = useActionState(login, undefined);
+  const [error, setError] = useState('');
+  const [isPending, setIsPending] = useState(false);
+
+  const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError('');
+    setIsPending(true);
+
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
+
+    const supabase = createClient();
+    const { error: authError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (authError) {
+      setError('E-mail ou senha inválidos. Por favor, tente novamente.');
+      setIsPending(false);
+      return;
+    }
+
+    // Wait for the session cookie to be committed before navigating.
+    // Poll getSession() up to 5s — middleware needs the cookie to exist
+    // before it can read it. Using setTimeout(500) was brittle.
+    for (let attempt = 0; attempt < 10; attempt++) {
+      const { data } = await supabase.auth.getSession();
+      if (data.session) break;
+      await new Promise((r) => setTimeout(r, 500));
+    }
+
+    // Hard navigation so middleware reads the fresh session cookie.
+    // router.push sends soft RSC that reaches middleware before cookie
+    // is available, causing redirect back to /login.
+    window.location.href = '/dashboard';
+  };
 
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-background px-4">
@@ -49,7 +86,7 @@ export default function LoginPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="pt-4">
-          <form action={action} className="grid gap-5">
+          <form onSubmit={handleSubmit} className="grid gap-5">
             <div className="space-y-1.5">
               <label
                 htmlFor="email"
@@ -83,7 +120,7 @@ export default function LoginPage() {
               />
             </div>
 
-            {state?.error && <p className="text-sm text-destructive">{state.error}</p>}
+            {error && <p className="text-sm text-destructive">{error}</p>}
 
             <Button
               type="submit"

@@ -3,6 +3,10 @@ import { render, screen } from '@testing-library/react';
 import LoginPage from './page';
 import type { ReactNode } from 'react';
 
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ push: vi.fn() }),
+}));
+
 vi.mock('react', async () => {
   const actual = await vi.importActual('react');
   return {
@@ -10,10 +14,6 @@ vi.mock('react', async () => {
     useActionState: () => [{ error: undefined }, vi.fn(), false],
   };
 });
-
-vi.mock('@/app/actions/auth', () => ({
-  login: vi.fn(),
-}));
 
 vi.mock('next/link', () => ({
   default: ({ children, href }: { children: ReactNode; href: string }) => (
