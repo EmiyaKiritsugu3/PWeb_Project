@@ -7,8 +7,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY;
 
 type AuthResult =
-  | { user: User; role: string | null; isFuncionario: boolean }
-  | { redirect: NextResponse };
+  { user: User; role: string | null; isFuncionario: boolean } | { redirect: NextResponse };
 
 async function getAuthForRoute(
   supabase: SupabaseClient,
