@@ -1,0 +1,21 @@
+src/utils/supabase/middleware.ts
+  s_2e303c0e5e8f38::t_fef82d44497eca 10
+src/components/dashboard/alunos/data-table.tsx
+  s_2e303c0e5e8f38::t_6b11a7be4ddd61 46
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "666a6fcc3e9071faed65ce9f6982ff9968f35413",
+  "prompts": {},
+  "sessions": {
+    "s_2e303c0e5e8f38": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0ff09ea3-1019-471b-a2c8-bf00bf29db67",
+        "model": "z-ai/glm-5.2"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
