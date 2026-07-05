@@ -25,6 +25,7 @@ export function useWorkoutGeneration({
   onSuccess,
 }: UseWorkoutGenerationOptions) {
   const [isGenerating, setIsGenerating] = useState(false);
+  const [planName, setPlanName] = useState<string | null>(null);
 
   const handleGenerate = useCallback(
     async (data: WorkoutGeneratorInput) => {
@@ -76,6 +77,7 @@ export function useWorkoutGeneration({
             }
           }
 
+          setPlanName(result.planName);
           notify.success('Plano Pessoal Gerado!', `${result.planName} foi criado com sucesso.`);
           onSuccess();
         } else {
@@ -92,5 +94,5 @@ export function useWorkoutGeneration({
     [userId, meusTreinos, notify]
   );
 
-  return { isGenerating, handleGenerate };
+  return { isGenerating, handleGenerate, planName };
 }
