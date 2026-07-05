@@ -25,25 +25,27 @@ export function useWorkoutCRUD({ initialTreinos, userId, router, notify }: UseWo
   const [deletingTreino, setDeletingTreino] = useState<Treino | null>(null);
 
   const handleSave = useCallback(
-    async (treinoData: Omit<Treino, 'id' | 'alunoId' | 'instrutorId'>) => {
+    async (treinoData: Omit<Treino, 'id' | 'alunoId' | 'instrutorId'>, treinoId?: string) => {
+      const isEdit = Boolean(treinoId);
       try {
         const res = await upsertTreinoAction({
           ...treinoData,
-          ...(editingTreino ? { id: editingTreino.id } : {}),
+          ...(isEdit ? { id: treinoId } : {}),
           alunoId: userId,
         });
 
         if (res.success) {
-          notify.success(editingTreino ? 'Treino atualizado!' : 'Novo treino salvo!');
-          if (editingTreino) {
+          notify.success(isEdit ? 'Treino atualizado!' : 'Novo treino salvo!');
+          if (isEdit) {
             setMeusTreinos((prev) =>
-              prev.map((t) => (t.id === editingTreino.id ? { ...t, ...treinoData } : t))
+              prev.map((t) => (t.id === treinoId ? { ...t, ...treinoData } : t))
             );
           } else {
             router.refresh();
           }
           setIsFormVisible(false);
           setEditingTreino(null);
+          return true;
         } else {
           throw new Error(res.error);
         }
@@ -51,13 +53,12 @@ export function useWorkoutCRUD({ initialTreinos, userId, router, notify }: UseWo
         notify.error('Erro ao salvar', undefined, error);
       }
     },
-    [editingTreino, userId, router, notify]
+    [userId, router, notify]
   );
 
   const handleEdit = useCallback((treino: Treino) => {
     setEditingTreino(treino);
     setIsFormVisible(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
   const handleDayChange = useCallback(
@@ -79,6 +80,8 @@ export function useWorkoutCRUD({ initialTreinos, userId, router, notify }: UseWo
           setMeusTreinos((prev) =>
             prev.map((t) => (t.id === treinoId ? { ...t, diaSemana: novoDia } : t))
           );
+        } else {
+          notify.error('Erro ao atualizar agenda', res.error || 'Tente novamente.');
         }
       } catch (error) {
         notify.error('Erro ao atualizar agenda', undefined, error);
@@ -100,6 +103,8 @@ export function useWorkoutCRUD({ initialTreinos, userId, router, notify }: UseWo
       if (res.success) {
         notify.success('Treino excluído!');
         setMeusTreinos((prev) => prev.filter((t) => t.id !== deletingTreino.id));
+      } else {
+        notify.error('Erro ao excluir', res.error || 'Tente novamente.');
       }
     } catch (error) {
       notify.error('Erro ao excluir', undefined, error);

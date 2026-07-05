@@ -243,10 +243,12 @@ export async function updateTreinoDayAction(treinoId: string, diaSemana: number 
           select: { instrutorId: true, alunoId: true },
         });
 
+        const alunoAuthId = await resolveAlunoId(user);
+
         if (
           funcData?.role !== 'GERENTE' &&
           treino?.instrutorId !== user.id &&
-          treino?.alunoId !== user.id
+          treino?.alunoId !== alunoAuthId
         ) {
           return { success: false, error: 'Acesso não autorizado' };
         }
@@ -286,10 +288,12 @@ export async function deleteTreinoAction(treinoId: string) {
           select: { instrutorId: true, alunoId: true },
         });
 
+        const alunoAuthId = await resolveAlunoId(user);
+
         if (
           funcData?.role !== 'GERENTE' &&
           treino?.instrutorId !== user.id &&
-          treino?.alunoId !== user.id
+          treino?.alunoId !== alunoAuthId
         ) {
           return { success: false, error: 'Acesso não autorizado' };
         }
