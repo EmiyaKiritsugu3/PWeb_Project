@@ -1,0 +1,28 @@
+src/app/aluno/meus-treinos/meus-treinos-client.tsx
+  s_2e303c0e5e8f38::t_06767c13a3c101 70-72
+  s_2e303c0e5e8f38::t_853164644ad59f 3
+  s_2e303c0e5e8f38::t_c001fedc29e776 153,155-164
+  s_2e303c0e5e8f38::t_ad38ddd84ebe8c 108-113,115-118,120-152,165-167
+  s_2e303c0e5e8f38::t_afb39bf998603a 228-252,254
+  s_2e303c0e5e8f38::t_e1df0d6a1254e1 68
+  s_2e303c0e5e8f38::t_5ed39918eee151 114
+  s_2e303c0e5e8f38::t_4c618d4b966de1 69,168-173,255-258,260
+src/hooks/use-workout-crud.ts
+  s_2e303c0e5e8f38::t_ef874b905b0457 28-29,33,38-39,41,55
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "74777c12ae4e719cbb2a01ab5c9e0a8389e3f343",
+  "prompts": {},
+  "sessions": {
+    "s_2e303c0e5e8f38": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0ff09ea3-1019-471b-a2c8-bf00bf29db67",
+        "model": "deepseek-v4-pro"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
