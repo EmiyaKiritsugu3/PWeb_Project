@@ -1,0 +1,20 @@
+src/lib/actions/treinos.ts
+  s_2e303c0e5e8f38::t_887587c2c4235b 246-248,252
+  s_2e303c0e5e8f38::t_ee3fefda08fdf9 292-294,298
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "1e287c4df712fc238d2a0f6bfe9808aa16834f4d",
+  "prompts": {},
+  "sessions": {
+    "s_2e303c0e5e8f38": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0ff09ea3-1019-471b-a2c8-bf00bf29db67",
+        "model": "deepseek-v4-pro"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
