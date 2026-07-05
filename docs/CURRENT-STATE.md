@@ -1,6 +1,20 @@
-# Estado Atual (2026-07-04)
+# Estado Atual (2026-07-05)
 
-## v0.8.0 — It5: Instrutor Auth + Recharts 3 + Security Audit
+## v0.9.0 — AI Workout Gen Fix + Meus Treinos UX Overhaul
+
+**Última versão:** v0.9.0
+**Branch principal:** `main`
+**CI:** 4/4 quality gates.
+
+### Sessão 2026-07-05
+
+**PR #174 — FK fix:** `resolveAlunoId(user)` resolve Prisma `aluno.id` by email para ALUNO role. Fix para foreign key violation em `performTreinoUpsert`. Squash merged.
+
+**PR #175 — UX overhaul:** Editor inline dentro dos cards (WorkoutEditor `compact`). Banner visual "Plano Semanal" pós geração AI (auto-hide 30s). Scroll após gen com `requestAnimationFrame` (max 20 tentativas). Botão "Criar Manual" reposicionado acima da lista. Editor inferior removido. `handleSave` retorna boolean — editor fecha só no success. Silent errors em handleDelete/handleDayChange corrigidos. Auth checks unificados com `resolveAlunoId()`. `onSuccess` opcional em `useWorkoutGeneration`. 12 commits, 10 files.
+
+**Root cause AI gen crash:** `GOOGLE_GENAI_API_KEY` ausente no Vercel deployment env. Adicionado via CLI (`vercel env add`) aos targets production, preview, development. Redeploy feito.
+
+### v0.8.0 — It5: Instrutor Auth + Recharts 3 + Security Audit
 
 **Última versão:** v0.8.0
 **Branch principal:** `main`
