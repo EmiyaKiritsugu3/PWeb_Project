@@ -1,0 +1,19 @@
+docs/superpowers/plans/2026-07-05-meus-treinos-ux-improvements.md
+  s_2e303c0e5e8f38::t_0ec4f936e188d8 1-431
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "0152a0f5baab4056ea383714794f998353c0fe67",
+  "prompts": {},
+  "sessions": {
+    "s_2e303c0e5e8f38": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0ff09ea3-1019-471b-a2c8-bf00bf29db67",
+        "model": "deepseek-v4-pro"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
