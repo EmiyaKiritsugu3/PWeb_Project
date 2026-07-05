@@ -1,0 +1,19 @@
+.prettierignore
+  s_2e303c0e5e8f38::t_e61e89d003e2f3 8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "004e4af88118af9ec786b40ba6c877b102a885e4",
+  "prompts": {},
+  "sessions": {
+    "s_2e303c0e5e8f38": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0ff09ea3-1019-471b-a2c8-bf00bf29db67",
+        "model": "deepseek-v4-pro"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
