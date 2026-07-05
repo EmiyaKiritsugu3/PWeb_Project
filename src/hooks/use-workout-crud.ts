@@ -25,19 +25,20 @@ export function useWorkoutCRUD({ initialTreinos, userId, router, notify }: UseWo
   const [deletingTreino, setDeletingTreino] = useState<Treino | null>(null);
 
   const handleSave = useCallback(
-    async (treinoData: Omit<Treino, 'id' | 'alunoId' | 'instrutorId'>) => {
+    async (treinoData: Omit<Treino, 'id' | 'alunoId' | 'instrutorId'>, treinoId?: string) => {
+      const isEdit = Boolean(treinoId);
       try {
         const res = await upsertTreinoAction({
           ...treinoData,
-          ...(editingTreino ? { id: editingTreino.id } : {}),
+          ...(isEdit ? { id: treinoId } : {}),
           alunoId: userId,
         });
 
         if (res.success) {
-          notify.success(editingTreino ? 'Treino atualizado!' : 'Novo treino salvo!');
-          if (editingTreino) {
+          notify.success(isEdit ? 'Treino atualizado!' : 'Novo treino salvo!');
+          if (isEdit) {
             setMeusTreinos((prev) =>
-              prev.map((t) => (t.id === editingTreino.id ? { ...t, ...treinoData } : t))
+              prev.map((t) => (t.id === treinoId ? { ...t, ...treinoData } : t))
             );
           } else {
             router.refresh();
@@ -51,13 +52,12 @@ export function useWorkoutCRUD({ initialTreinos, userId, router, notify }: UseWo
         notify.error('Erro ao salvar', undefined, error);
       }
     },
-    [editingTreino, userId, router, notify]
+    [userId, router, notify]
   );
 
   const handleEdit = useCallback((treino: Treino) => {
     setEditingTreino(treino);
     setIsFormVisible(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
   const handleDayChange = useCallback(
