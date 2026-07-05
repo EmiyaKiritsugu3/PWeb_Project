@@ -1,0 +1,26 @@
+src/hooks/use-workout-crud.ts
+  s_2e303c0e5e8f38::t_e43032f2eb3a3f 82-83
+  s_2e303c0e5e8f38::t_82cdd386072991 105-106
+src/lib/actions/treinos.ts
+  s_2e303c0e5e8f38::t_07cb2feb0f9c78 246,251,291,296
+src/hooks/use-workout-generation.ts
+  s_2e303c0e5e8f38::t_bbc986fba1747b 95
+src/app/aluno/meus-treinos/meus-treinos-client.tsx
+  s_2e303c0e5e8f38::t_d1dce6c9a2377c 66-67,74-76
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "2c65f93d63f56a4c4f2e141fb614b120e4256ea7",
+  "prompts": {},
+  "sessions": {
+    "s_2e303c0e5e8f38": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0ff09ea3-1019-471b-a2c8-bf00bf29db67",
+        "model": "deepseek-v4-pro"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
