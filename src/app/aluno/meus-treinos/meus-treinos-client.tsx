@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { PageHeader } from '@/components/page-header';
 import {
@@ -13,7 +13,7 @@ import {
 import { DIAS_DA_SEMANA } from '@/lib/constants';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { PlusCircle, Trash2, Pencil, FileSignature, User, Play } from 'lucide-react';
+import { PlusCircle, Trash2, Pencil, FileSignature, User, Play, Sparkles } from 'lucide-react';
 import type { Treino, HistoricoTreino } from '@/lib/definitions';
 import { useAppNotification } from '@/hooks/use-app-notification';
 import { WorkoutSession } from '@/components/WorkoutSession';
@@ -57,12 +57,31 @@ export default function MeusTreinosClient({
     handleDelete,
   } = useWorkoutCRUD({ initialTreinos, userId, router, notify });
 
-  const { isGenerating, handleGenerate } = useWorkoutGeneration({
+  const { isGenerating, handleGenerate, planName } = useWorkoutGeneration({
     userId,
     meusTreinos,
     notify,
-    onSuccess: () => router.refresh(),
+    onSuccess: () => {
+      router.refresh();
+      setTimeout(() => {
+        document
+          .getElementById('treinos-pessoais')
+          ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 300);
+    },
   });
+
+  const [showPlanBanner, setShowPlanBanner] = useState(false);
+  const [bannerPlanName, setBannerPlanName] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (planName) {
+      setBannerPlanName(planName);
+      setShowPlanBanner(true);
+      const timer = setTimeout(() => setShowPlanBanner(false), 30000);
+      return () => clearTimeout(timer);
+    }
+  }, [planName]);
 
   const [treinoEmSessao, setTreinoEmSessao] = useState<Treino | null>(null);
   const [editingTreinoId, setEditingTreinoId] = useState<string | null>(null);
@@ -225,6 +244,16 @@ export default function MeusTreinosClient({
 
         <WorkoutGenerator onGenerate={handleGenerate} isGenerating={isGenerating} />
 
+        {showPlanBanner && bannerPlanName && (
+          <Card className="bg-gradient-to-r from-primary/5 to-secondary/5 border-primary/20">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Sparkles className="text-primary h-5 w-5" />
+                Plano Semanal: {bannerPlanName}
+              </CardTitle>
+            </CardHeader>
+          </Card>
+        )}
         <div id="treinos-pessoais">
           {renderWorkoutList(
             treinosDoAluno,
