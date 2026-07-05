@@ -251,6 +251,9 @@ export default function MeusTreinosClient({
                 <Sparkles className="text-primary h-5 w-5" />
                 Plano Semanal: {bannerPlanName}
               </CardTitle>
+              <CardDescription>
+                Seu plano semanal foi gerado! Confira os treinos abaixo.
+              </CardDescription>
             </CardHeader>
           </Card>
         )}
