@@ -200,6 +200,20 @@ describe('WorkoutEditor', () => {
     expect(mockOnSave).not.toHaveBeenCalled();
   });
 
+  describe('compact mode', () => {
+    it('does not render outer Card when compact', () => {
+      render(
+        <WorkoutEditor onSave={mockOnSave} treinoToEdit={null} onCancel={mockOnCancel} compact />
+      );
+      expect(screen.queryByTestId('card')).toBeNull();
+    });
+
+    it('renders outer Card by default', () => {
+      render(<WorkoutEditor onSave={mockOnSave} treinoToEdit={null} onCancel={mockOnCancel} />);
+      expect(screen.getByTestId('card')).toBeTruthy();
+    });
+  });
+
   it('renders exercise rows when exercises exist', () => {
     const exercises = [
       { id: 'ex-1', nomeExercicio: 'Supino', series: 3, repeticoes: '10-12' },
