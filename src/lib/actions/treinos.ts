@@ -43,6 +43,16 @@ async function getAuthRole() {
   };
 }
 
+/**
+ * ALUNO role has no funcionarios record, so role === null.
+ * Their Prisma `aluno.id` may differ from Supabase Auth `user.id`.
+ * Resolve the correct alunoId from Prisma by email to avoid FK violation.
+ */
+async function resolveAlunoId(user: { id: string; email?: string | null }): Promise<string> {
+  const aluno = await prisma.aluno.findUnique({ where: { email: user.email ?? '' } });
+  return aluno?.id ?? user.id;
+}
+
 async function performTreinoUpsert(
   validatedData: TreinoBase & { id?: string },
   user: { id: string },
@@ -50,7 +60,7 @@ async function performTreinoUpsert(
   derivedInstrutorId: string | null
 ) {
   const { objetivo, exercicios, diaSemana } = validatedData;
-  const alunoId = role === null ? user.id : validatedData.alunoId;
+  const alunoId = role === null ? await resolveAlunoId(user) : validatedData.alunoId;
   const id = 'id' in validatedData ? (validatedData as TreinoBase & { id: string }).id : undefined;
 
   if (id) {
@@ -172,7 +182,12 @@ export async function batchUpsertTreinoAction(
         if ('error' in auth) return { success: false, error: auth.error };
         const { user, role, derivedInstrutorId } = auth;
 
-        const validated = treinos.map((t) => TreinoBaseSchema.parse({ ...t, alunoId: t.alunoId }));
+        const validated = await Promise.all(
+          treinos.map(async (t) => ({
+            ...TreinoBaseSchema.parse({ ...t, alunoId: t.alunoId }),
+            alunoId: role === null ? await resolveAlunoId(user) : t.alunoId,
+          }))
+        );
 
         await prisma.$transaction(
           validated.map((data) =>
@@ -180,7 +195,7 @@ export async function batchUpsertTreinoAction(
               data: {
                 objetivo: data.objetivo,
                 diaSemana: data.diaSemana,
-                alunoId: role === null ? user.id : data.alunoId,
+                alunoId: data.alunoId,
                 instrutorId: derivedInstrutorId,
                 Exercicios: {
                   create: data.exercicios.map((ex) => ({
