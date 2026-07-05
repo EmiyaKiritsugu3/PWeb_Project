@@ -1,0 +1,19 @@
+src/app/aluno/meus-treinos/meus-treinos-client.tsx
+  s_2e303c0e5e8f38::t_4bd20f9b9d113e 66-74
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "e7900ca66148141148a101017ed774fa65e5f1e6",
+  "prompts": {},
+  "sessions": {
+    "s_2e303c0e5e8f38": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0ff09ea3-1019-471b-a2c8-bf00bf29db67",
+        "model": "deepseek-v4-pro"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
