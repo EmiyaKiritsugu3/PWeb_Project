@@ -63,13 +63,17 @@ export default function MeusTreinosClient({
     notify,
     onSuccess: () => {
       router.refresh();
+      let scrollAttempts = 0;
+      const MAX_SCROLL_ATTEMPTS = 20;
       const scrollToTreinos = () => {
         const el = document.getElementById('treinos-pessoais');
         if (el) {
           el.scrollIntoView({ behavior: 'smooth', block: 'start' });
           return;
         }
-        requestAnimationFrame(scrollToTreinos);
+        if (++scrollAttempts < MAX_SCROLL_ATTEMPTS) {
+          requestAnimationFrame(scrollToTreinos);
+        }
       };
       requestAnimationFrame(scrollToTreinos);
     },

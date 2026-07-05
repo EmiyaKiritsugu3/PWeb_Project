@@ -79,6 +79,8 @@ export function useWorkoutCRUD({ initialTreinos, userId, router, notify }: UseWo
           setMeusTreinos((prev) =>
             prev.map((t) => (t.id === treinoId ? { ...t, diaSemana: novoDia } : t))
           );
+        } else {
+          notify.error('Erro ao atualizar agenda', res.error || 'Tente novamente.');
         }
       } catch (error) {
         notify.error('Erro ao atualizar agenda', undefined, error);
@@ -100,6 +102,8 @@ export function useWorkoutCRUD({ initialTreinos, userId, router, notify }: UseWo
       if (res.success) {
         notify.success('Treino excluído!');
         setMeusTreinos((prev) => prev.filter((t) => t.id !== deletingTreino.id));
+      } else {
+        notify.error('Erro ao excluir', res.error || 'Tente novamente.');
       }
     } catch (error) {
       notify.error('Erro ao excluir', undefined, error);

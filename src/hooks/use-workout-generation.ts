@@ -92,7 +92,7 @@ export function useWorkoutGeneration({
         setIsGenerating(false);
       }
     },
-    [userId, meusTreinos, notify]
+    [userId, meusTreinos, notify, onSuccess]
   );
 
   return { isGenerating, handleGenerate, planName };

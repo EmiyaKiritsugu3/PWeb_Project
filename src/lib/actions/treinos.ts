@@ -243,13 +243,12 @@ export async function updateTreinoDayAction(treinoId: string, diaSemana: number 
           select: { instrutorId: true, alunoId: true },
         });
 
-        // Resolve aluno.id from Auth email — treino.alunoId is Prisma ID, user.id is Auth UUID
-        const alunoConsulta = await prisma.aluno.findUnique({ where: { email: user.email ?? '' } });
+        const alunoAuthId = await resolveAlunoId(user);
 
         if (
           funcData?.role !== 'GERENTE' &&
           treino?.instrutorId !== user.id &&
-          treino?.alunoId !== alunoConsulta?.id
+          treino?.alunoId !== alunoAuthId
         ) {
           return { success: false, error: 'Acesso não autorizado' };
         }
@@ -289,13 +288,12 @@ export async function deleteTreinoAction(treinoId: string) {
           select: { instrutorId: true, alunoId: true },
         });
 
-        // Resolve aluno.id from Auth email — treino.alunoId is Prisma ID, user.id is Auth UUID
-        const alunoConsulta = await prisma.aluno.findUnique({ where: { email: user.email ?? '' } });
+        const alunoAuthId = await resolveAlunoId(user);
 
         if (
           funcData?.role !== 'GERENTE' &&
           treino?.instrutorId !== user.id &&
-          treino?.alunoId !== alunoConsulta?.id
+          treino?.alunoId !== alunoAuthId
         ) {
           return { success: false, error: 'Acesso não autorizado' };
         }
