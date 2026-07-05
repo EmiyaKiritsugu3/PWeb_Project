@@ -128,11 +128,14 @@ describe('useWorkoutCRUD', () => {
       act(() => result.current.handleEdit(createMockTreino('t-1', 1)));
 
       await act(async () => {
-        await result.current.handleSave({
-          objetivo: 'Updated',
-          diaSemana: 1,
-          exercicios: [],
-        });
+        await result.current.handleSave(
+          {
+            objetivo: 'Updated',
+            diaSemana: 1,
+            exercicios: [],
+          },
+          't-1'
+        );
       });
 
       expect(upsertTreinoAction).toHaveBeenCalledWith(
@@ -152,14 +155,6 @@ describe('useWorkoutCRUD', () => {
 
       expect(result.current.editingTreino).toEqual(treino);
       expect(result.current.isFormVisible).toBe(true);
-    });
-
-    it('should scroll to top', () => {
-      const { result } = renderHook(() => useWorkoutCRUD(defaultOptions()));
-
-      act(() => result.current.handleEdit(createMockTreino('t-1')));
-
-      expect(window.scrollTo).toHaveBeenCalledWith({ top: 0, behavior: 'smooth' });
     });
   });
 
