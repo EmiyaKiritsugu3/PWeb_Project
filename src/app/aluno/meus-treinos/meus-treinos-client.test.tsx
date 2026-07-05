@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/react';
 import MeusTreinosClient from './meus-treinos-client';
 import type { Treino } from '@/lib/definitions';
 import type { ReactNode } from 'react';
+import { useWorkoutGeneration } from '@/hooks/use-workout-generation';
 
 vi.mock('next/navigation', () => ({
   useRouter: () => ({
@@ -55,10 +56,11 @@ vi.mock('@/hooks/use-workout-crud', () => ({
 }));
 
 vi.mock('@/hooks/use-workout-generation', () => ({
-  useWorkoutGeneration: () => ({
+  useWorkoutGeneration: vi.fn(() => ({
     isGenerating: false,
     handleGenerate: vi.fn(),
-  }),
+    planName: null,
+  })),
 }));
 
 vi.mock('@/lib/actions/treinos', () => ({
@@ -193,5 +195,16 @@ describe('MeusTreinosClient', () => {
   it('renders create button when form is not visible', () => {
     render(<MeusTreinosClient initialTreinos={[]} userId="user-1" />);
     expect(screen.getByText('Criar Novo Treino Manualmente')).toBeTruthy();
+  });
+
+  it('renders plan banner when planName is set', () => {
+    vi.mocked(useWorkoutGeneration).mockReturnValue({
+      isGenerating: false,
+      handleGenerate: vi.fn(),
+      planName: 'Hipertrofia 3x',
+    });
+    render(<MeusTreinosClient initialTreinos={mockTreinos} userId="user-1" />);
+    expect(screen.getByText(/Plano Semanal/)).toBeTruthy();
+    expect(screen.getByText(/Hipertrofia 3x/)).toBeTruthy();
   });
 });
