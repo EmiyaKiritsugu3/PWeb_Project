@@ -66,6 +66,7 @@ export default function MeusTreinosClient({
     userId,
     meusTreinos,
     notify,
+    onSuccess: () => router.refresh(),
   });
 
   const [treinoEmSessao, setTreinoEmSessao] = useState<Treino | null>(null);

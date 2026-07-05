@@ -15,9 +15,15 @@ interface UseWorkoutGenerationOptions {
     success: (title: string, description?: string) => void;
     error: (title: string, description?: string, error?: unknown) => void;
   };
+  onSuccess: () => void;
 }
 
-export function useWorkoutGeneration({ userId, meusTreinos, notify }: UseWorkoutGenerationOptions) {
+export function useWorkoutGeneration({
+  userId,
+  meusTreinos,
+  notify,
+  onSuccess,
+}: UseWorkoutGenerationOptions) {
   const [isGenerating, setIsGenerating] = useState(false);
 
   const handleGenerate = useCallback(
@@ -71,6 +77,7 @@ export function useWorkoutGeneration({ userId, meusTreinos, notify }: UseWorkout
           }
 
           notify.success('Plano Pessoal Gerado!', `${result.planName} foi criado com sucesso.`);
+          onSuccess();
         } else {
           Logger.error('Resultado inesperado da IA:', result);
           throw new Error('Formato de retorno inválido.');
