@@ -63,11 +63,15 @@ export default function MeusTreinosClient({
     notify,
     onSuccess: () => {
       router.refresh();
-      setTimeout(() => {
-        document
-          .getElementById('treinos-pessoais')
-          ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 300);
+      const scrollToTreinos = () => {
+        const el = document.getElementById('treinos-pessoais');
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          return;
+        }
+        requestAnimationFrame(scrollToTreinos);
+      };
+      requestAnimationFrame(scrollToTreinos);
     },
   });
 
