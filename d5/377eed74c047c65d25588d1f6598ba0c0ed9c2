@@ -1,0 +1,21 @@
+src/hooks/use-workout-generation.ts
+  s_2e303c0e5e8f38::t_e26fdee73a4f69 97
+  s_2e303c0e5e8f38::t_fc8cac8ce0b7b7 80
+  s_2e303c0e5e8f38::t_7c42f253087603 28
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "d5377eed74c047c65d25588d1f6598ba0c0ed9c2",
+  "prompts": {},
+  "sessions": {
+    "s_2e303c0e5e8f38": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0ff09ea3-1019-471b-a2c8-bf00bf29db67",
+        "model": "deepseek-v4-pro"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
