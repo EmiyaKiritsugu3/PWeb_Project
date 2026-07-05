@@ -1,0 +1,24 @@
+src/hooks/use-workout-generation.ts
+  s_2e303c0e5e8f38::t_5d9e0a084f96d4 18,21
+  s_2e303c0e5e8f38::t_6afac36bb58bd8 22-26,80
+src/app/aluno/meus-treinos/meus-treinos-client.tsx
+  s_2e303c0e5e8f38::t_1c1db210618670 69
+package-lock.json
+  s_2e303c0e5e8f38::t_c714c1349bbed6 840,847,860,2610,3657,7144,7202,7221,7247,7263,7277,7284,7294,7306,7316,7326,7333,7340,7357,7370,10325,10550,12807,12817,14058,14129,14275,14304,14426,14439,14751,14954,15213,15258,15265,15294,15475,15527,16654,16821,16834,17325,17453,17504,17750,17757,17905,17996,18545,19542-19544,19551,19595,19961,19982,19999,20358,20638,20645,20768,20780,20799,20850,20957,21012,21024,21118,21196,21280,21403,21520,21628,22070,22384,23195,23469,24214
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "1118d928dee4d873432ca91c4c87ebebab681981",
+  "prompts": {},
+  "sessions": {
+    "s_2e303c0e5e8f38": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0ff09ea3-1019-471b-a2c8-bf00bf29db67",
+        "model": "deepseek-v4-pro"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
