@@ -45,6 +45,7 @@ export function useWorkoutCRUD({ initialTreinos, userId, router, notify }: UseWo
           }
           setIsFormVisible(false);
           setEditingTreino(null);
+          return true;
         } else {
           throw new Error(res.error);
         }

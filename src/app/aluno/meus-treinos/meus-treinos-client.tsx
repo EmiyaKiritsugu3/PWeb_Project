@@ -137,9 +137,9 @@ export default function MeusTreinosClient({
                 <WorkoutEditor
                   compact
                   treinoToEdit={treino}
-                  onSave={(data) => {
-                    handleSave(data, treino.id);
-                    setEditingTreinoId(null);
+                  onSave={async (data) => {
+                    const ok = await handleSave(data, treino.id);
+                    if (ok) setEditingTreinoId(null);
                   }}
                   onCancel={() => setEditingTreinoId(null)}
                 />
