@@ -30,6 +30,7 @@ export function useWorkoutGeneration({
   const handleGenerate = useCallback(
     async (data: WorkoutGeneratorInput) => {
       setIsGenerating(true);
+      setPlanName(null);
       try {
         Logger.info('Chamando a IA com dados:', data);
         const result = await streamWorkoutPlan(data);
