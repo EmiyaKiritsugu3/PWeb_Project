@@ -1,0 +1,22 @@
+src/components/dashboard/aluno/workout-editor.test.tsx
+  s_2e303c0e5e8f38::t_48d338e28ca220 203-216
+src/components/dashboard/aluno/workout-editor.tsx
+  s_2e303c0e5e8f38::t_fcd652f26219cf 59-79,81-95,97-120
+  s_2e303c0e5e8f38::t_046bf0c7d102a5 22,27
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "e3ca41746922d7f9fb17466a3ad3075479596afa",
+  "prompts": {},
+  "sessions": {
+    "s_2e303c0e5e8f38": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0ff09ea3-1019-471b-a2c8-bf00bf29db67",
+        "model": "deepseek-v4-pro"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
