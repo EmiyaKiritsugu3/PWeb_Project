@@ -79,12 +79,18 @@ Mobile chart height 200px (readable without horizontal scroll), desktop 300px.
 
 ### 5. Chart legend below on mobile
 
-Recharts `Legend` vertical layout on mobile, horizontal on desktop:
+Recharts `Legend` vertical layout on mobile, horizontal on desktop. Pass responsive `layout` prop based on `useIsMobile()` (or Tailwind `md:` breakpoint hook already in repo):
 ```tsx
-<Legend layout="horizontal" verticalAlign="bottom" wrapperStyle={{ fontSize: '12px' }} />
+const isMobile = useIsMobile(); // existing hook
+<Legend
+  layout={isMobile ? 'vertical' : 'horizontal'}
+  verticalAlign="bottom"
+  align={isMobile ? 'center' : 'right'}
+  wrapperStyle={{ fontSize: '12px' }}
+/>
 ```
 
-Tailwind text-size handling for chart labels impossible (SVG); wrapperStyle sets size directly.
+Vertical on mobile stacks legend items below chart (no horizontal overflow). Horizontal on desktop keeps compact inline legend. Tailwind text-size handling for chart labels impossible (SVG); wrapperStyle sets size directly. `useIsMobile` already exists — no new hook, no JS breakpoint duplication.
 
 ## Files Changed
 

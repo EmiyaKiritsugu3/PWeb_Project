@@ -51,7 +51,7 @@ ponytail: no Sheet/Drawer lib for bottom nav — native CSS `fixed`. shadcn Side
 
 ### 2. Aluno layout wiring
 
-`src/app/aluno/aluno-layout.tsx`:
+`src/app/aluno/layout.tsx`:
 - Pass navLinks to `<BottomNav>` after `<main>`. navLinks already exists (Today Dashboard, Meus Treinos — 2 items, under `bottom-nav-limit`).
 - Remove `md:hidden` nav block from `UserMenu` dropdown (aluno-header.tsx:90-100) — bottom bar makes redundant.
 - Add `pb-16 md:pb-0` to `<main>` to reserve space for fixed bottom bar.
@@ -73,7 +73,7 @@ Bottom bar uses `pb-[env(safe-area-inset-bottom)]` to clear iPhone home indicato
 | File | Change | Risk |
 |---|---|---|
 | `src/components/bottom-nav.tsx` | new component | Low |
-| `src/app/aluno/aluno-layout.tsx` | +BottomNav render, +main pb-16 | Low |
+| `src/app/aluno/layout.tsx` | +BottomNav render, +main pb-16 | Low |
 | `src/app/aluno/aluno-header.tsx` | remove md:hidden nav block from dropdown | Low |
 | `src/app/dashboard/layout.tsx` | +BottomNav render, +main pb-16 | Medium (existing sidebar+sheet interaction) |
 | `src/components/bottom-nav.test.tsx` | new test | Low |
