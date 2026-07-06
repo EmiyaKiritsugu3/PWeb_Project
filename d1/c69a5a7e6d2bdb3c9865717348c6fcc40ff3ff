@@ -1,0 +1,64 @@
+src/app/page.tsx
+  s_5c3f7e0784d464::t_a18a82608fccf9 40
+  s_5c3f7e0784d464::t_a3125a589c202b 51
+  s_5c3f7e0784d464::t_b58608a707d7ed 25
+  s_5c3f7e0784d464::t_f9f1fe2f4350a5 10,12
+src/app/dashboard/page.tsx
+  s_5c3f7e0784d464::t_18cc4a65de9712 80,83,85
+docs/superpowers/specs/2026-07-07-aluno-detail-tables-mobile-design.md
+  s_5c3f7e0784d464::t_a6a304900e1ff8 1-113
+docs/superpowers/specs/2026-07-07-brand-consistency-design.md
+  s_5c3f7e0784d464::t_8fdf6102e74a79 1-82
+docs/superpowers/specs/2026-07-07-kpi-charts-mobile-design.md
+  s_5c3f7e0784d464::t_ae4606206dd557 1-118
+docs/superpowers/specs/2026-07-07-login-parity-nextfont-design.md
+  s_5c3f7e0784d464::t_6ed219f9b072e2 1-110
+docs/superpowers/specs/2026-07-07-meus-treinos-kebab-design.md
+  s_5c3f7e0784d464::t_8bfefba5fd3c86 1-117
+docs/superpowers/specs/2026-07-07-mobile-first-foundation-design.md
+  s_5c3f7e0784d464::t_30afeab070771b 1-143
+docs/superpowers/specs/2026-07-07-mobile-navigation-design.md
+  s_5c3f7e0784d464::t_9e175eb0df9553 1-97
+docs/superpowers/specs/2026-07-07-workout-session-fullscreen-design.md
+  s_5c3f7e0784d464::t_ef7a85a15ca818 1-124
+src/app/aluno/aluno-header.tsx
+  s_5c3f7e0784d464::t_ea8897255419a9 32,76
+src/app/aluno/dashboard/dashboard-client.tsx
+  s_5c3f7e0784d464::t_ba32c294fdc2d1 85
+src/app/aluno/layout.tsx
+  s_5c3f7e0784d464::t_1bd6ac1f2b44a8 23,38,74
+src/app/aluno/login/page.tsx
+  s_5c3f7e0784d464::t_566288a499005d 94
+src/app/dashboard/alunos/page.test.tsx
+  s_5c3f7e0784d464::t_1d24db1f91ea17 23,25
+src/app/dashboard/alunos/page.tsx
+  s_5c3f7e0784d464::t_338337f28ec348 19
+src/app/dashboard/financeiro/page.tsx
+  s_5c3f7e0784d464::t_1717f38e9541e7 42
+src/app/dashboard/layout.tsx
+  s_5c3f7e0784d464::t_3b59086edf09b6 106
+src/app/global-error.tsx
+  s_5c3f7e0784d464::t_e3d4111e04abe6 20
+src/app/globals.css
+  s_5c3f7e0784d464::t_07de63f46c37ef 114-118,184-198
+src/app/layout.tsx
+  s_5c3f7e0784d464::t_7076a5596cc769 1,13-19
+src/app/login/page.tsx
+  s_5c3f7e0784d464::t_4016785cebd278 60
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "d1c69a5a7e6d2bdb3c9865717348c6fcc40ff3ff",
+  "prompts": {},
+  "sessions": {
+    "s_5c3f7e0784d464": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f258312b-4fad-4cd6-8cde-a842264361ca",
+        "model": "z-ai/glm-5.2"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
