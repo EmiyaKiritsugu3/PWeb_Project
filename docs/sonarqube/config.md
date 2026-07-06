@@ -54,7 +54,7 @@ Step `SonarCloud Scan` dentro do job `test` no `.github/workflows/ci.yml` (execu
 
 ```yaml
 - name: SonarCloud Scan
-  uses: SonarSource/sonarqube-scan-action@689fb39b34b9aa95ebc5f8f119343ddd51542402
+  uses: SonarSource/sonarqube-scan-action@713881670b6b3676cda39549040e2d88c70d582e
   env:
     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

@@ -23,23 +23,9 @@
 - **2ª execução SonarQube (2026-07-09, cron automático)** — quinta, não 2026-07-10 (sexta). 4 loc a corrigir R04.
 - SonarCloud action pré-existente usa tag `v2.89.0` (Semgrep WARNING pin SHA) — fora escopo P5.
 
-### Remediação P5 — PR #192 (PENDENTE, branch `fix/p5-review-remediation` ainda não criada)
+### Remediação P5 — PR #192 (OPEN, branch `fix/p5-review-remediation`)
 
-PR #191 merged **sem corrigir 26 reviews** (4 P1, 12 P2, 2 P3 de cubic-dev + coderabbit). Plano auditado em `~/.claude/plans/shimmering-knitting-plum.md`. Auditoria encontrou 3 erros no plano original (R07 escopo, R08 string, tag SHA), corrigidos.
-
-- **R01** docker-compose: rm `container_name` (L8,L26); ports bind `127.0.0.1` (L15,L36); `NODE_ENV: development` hardcode (L34); `POSTGRES_PASSWORD:?` (L12).
-- **R02** `sonar-project.properties`: move `src/components/ui/**` de `sonar.exclusions` → `sonar.coverage.exclusions` (mantém análise qualidade nos 74 wrappers).
-- **R03** `docs/doc-deploy.md` §5 L121: warning `SUPABASE_SERVICE_ROLE_KEY` (bypass RLS, Production-only).
-- **R04** Data `2026-07-10` → `2026-07-09` (4 loc: CURRENT-STATE L23,L34; scans.md L8,L12).
-- **R05** `sonar.login` → `sonar.token` (2 loc: config.md §4 L45, doc-deploy §4 L105).
-- **R06** `docs/doc-deploy.md` §3 L87: 10 → 9 patterns (vitest.config.ts tem 9 entries em coverage.exclude).
-- **R07** `docs/sonarqube/config.md` §5 L50-60: `Job sonar` → `Step SonarCloud Scan dentro do job test`; bloco yaml `run: sonar-scanner` shell → action `SonarSource/sonarqube-scan-action` (espelha ci.yml L102-106). scans.md L16 `CI job` → `CI step`.
-- **R08** `docs/sonarqube/config.md` §2 L24: `sonar.test.inclusions` shorthand `ts(x)` → 4 globs exactos `src/**/*.test.ts, src/**/*.test.tsx, src/**/*.spec.ts, src/**/*.spec.tsx`.
-- **R09** `docs/sonarqube/config.md` §7 L84: Code smells `0` → `0 ativos (16 FP em TECHNICAL-DEBT.md)`.
-- **R10** `docs/relatorio-testes.md`: restaurar seção "Bugs Pendentes" (#160 16 SonarQube FP, #122 ESLint upstream); §6 GitGuardian `✅` → `⚠️ FP`; §4 SonarQube `2026-07-10` → `2026-07-09`; §7 Conclusão reword (completed vs pending).
-- **R11** `docker-compose.yml`: comment volume `pweb_pgdata` (POSTGRES_* só 1ª init, mudar requer `docker volume rm pweb_pgdata`); comment app root (generated files root no host Linux).
-- **R12** `docs/doc-deploy.md`: nota POSTGRES_PASSWORD chars especiais (@:#:?) quebram DATABASE_URL parse; prefira alfanuméricos via .env.
-- **R13** branch `fix/p5-review-remediation` de main, aplicar R01-R12, commit `fix(p5): remedia reviews PR #191`, push, PR #192, commitlint 0 errors, CI verde + reviews pass, merge squash.
+PR #191 merged **sem corrigir 26 reviews** (4 P1, 12 P2, 2 P3 de cubic-dev + coderabbit). Plano auditado em `~/.claude/plans/shimmering-knitting-plum.md`. R01-R12 aplicados (commit `3c712d8`), PR #192 aberta 2026-07-06. Gates locais: lint ✅ typecheck ✅ test 1137/1137 ✅ format ✅ commitlint ✅. GitGuardian ✅ (R01 removeu FP default password).
 
 ### T05 (pós-merge PR #192)
 
