@@ -2,8 +2,16 @@
 
 ## Mobile-First Premium Polish (v0.10.0 em andamento)
 
-**Branch ativa:** `main` (PRD-1/2/3 merged; PRD-4 next)
-**PRs mobile-first:** PR #176 (PRD-1) ✅ → PR #179 (PRD-3) ✅ → PR #180 (PRD-2) ✅.
+**Branch ativa:** `fix/meus-treinos-kebab` (PR #181 aberto, aguardando review bots)
+**PRs mobile-first:** PR #176 (PRD-1) ✅ → PR #179 (PRD-3) ✅ → PR #180 (PRD-2) ✅ → PR #181 (PRD-4) 🟡.
+
+### PRD-4 — Meus Treinos Kebab + Primary Action — PR #181 (open)
+
+`src/app/aluno/meus-treinos/meus-treinos-client.tsx`: card aluno ganha kebab overflow (`Editar`/`Excluir` em shadcn `DropdownMenu`), `Iniciar Treino` promovido a CTA primário full-width mobile. Select dia em linha própria acima das ações. `Excluir` com `text-destructive` dentro do menu (separado da primária, mis-tap risk fixado). Empty state: ícone (Dumbbell) + heading + subtext + CTA `Criar primeiro treino` (reusa trigger `__new__`). `font-headline` (Outfit) no H3. data-testids: `treino-card`, `iniciar-treino`, `treino-kebab`, `editar-treino`, `excluir-treino`.
+
+Banner auto-hide split em effect separado keyed on `showPlanBanner` (react-hooks/set-state-in-effect); eslint-disable scoped no effect de derive de prop.
+
+Test: `useWorkoutCRUD` mock parametrizado para respeitar `initialTreinos` (gap de cobertura real — empty state nunca exercitado antes). Mock dropdown-menu. 3 novos asserts (kebab, primary, empty state). 1132/1132 pass. 0 errors lint/typecheck.
 
 ### PRD-3 — Bottom Navigation (mobile) — merged #179
 
@@ -24,7 +32,7 @@ Viewport `viewportFit: cover`, dvh swap 13 files, 44pt touch-target, safe-area, 
 
 ### Sequência mobile-first
 
-PRD-1 ✅ → PRD-2 ✅ → PRD-3 ✅ → PRD-4 (kebab menu) → 5 → 6 → 7 → 8. PRD-4 próxima sessão.
+PRD-1 ✅ → PRD-2 ✅ → PRD-3 ✅ → PRD-4 🟡 (PR #181 open) → 5 (meus-treinos UX) → 6 (WorkoutSession fullscreen) → 7 (KPI/charts) → 8 (login parity + next/font). PRD-5 próxima após merge PR #181.
 
 ---
 
