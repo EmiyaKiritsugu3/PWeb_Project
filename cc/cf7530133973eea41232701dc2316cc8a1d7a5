@@ -1,0 +1,30 @@
+sonar-project.properties
+  s_8d36270e3faa7d::t_f31b21eb4af9a2 16
+docs/sonarqube/config.md
+  s_8d36270e3faa7d::t_87e4639a97dade 74
+docs/sonarqube/scans.md
+  s_8d36270e3faa7d::t_f6b61f221f53e7 8,12
+docs/CURRENT-STATE.md
+  s_8d36270e3faa7d::t_4ae3848850eb93 26-38
+docs/doc-deploy.md
+  s_8d36270e3faa7d::t_2f02524233f43e 87-93
+  s_8d36270e3faa7d::t_f6ea8afff0ab6f 139,141-151
+  s_8d36270e3faa7d::t_cbc172f14c9b98 184-195
+  s_8d36270e3faa7d::t_a9d6046773c251 1-86,94-138,140,152-183
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "cccf7530133973eea41232701dc2316cc8a1d7a5",
+  "prompts": {},
+  "sessions": {
+    "s_8d36270e3faa7d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d7b07447-e2d9-4516-8ed2-a3df9930ae86",
+        "model": "z-ai/glm-5.2"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
