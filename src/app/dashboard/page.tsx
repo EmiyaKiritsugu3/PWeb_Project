@@ -77,14 +77,12 @@ export default async function DashboardPage() {
               >
                 {kpi.value}
               </div>
-              <div className="mt-2 flex items-center text-xs font-bold text-primary uppercase tracking-tighter bg-primary/10 w-fit px-1.5 py-0.5 rounded border border-primary/20">
-                <span className="sr-only">Aumento de </span>↑ 12% vs mês anterior
-              </div>
+              {/* ponytail: trend badge removed — getDashboardStats has no prior-period data; fake "↑ 12%" misleads. Re-add when data layer exposes deltas. */}
             </CardContent>
 
-            {/* Subtle bottom glow line */}
+            {/* Subtle bottom glow line — reuses card gradient directly */}
             <div
-              className={`absolute bottom-0 left-0 h-1 w-0 group-hover:w-full transition-all duration-700 bg-gradient-to-r ${kpi.color.replaceAll('/20', '')}`}
+              className={`absolute bottom-0 left-0 h-1 w-0 group-hover:w-full transition-all duration-700 bg-gradient-to-r ${kpi.color}`}
             ></div>
           </Card>
         ))}

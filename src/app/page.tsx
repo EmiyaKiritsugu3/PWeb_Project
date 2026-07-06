@@ -7,9 +7,9 @@ import Image from 'next/image';
 
 export default function LandingPage() {
   return (
-    <div className="flex min-h-screen flex-col bg-background text-foreground font-body">
+    <div className="flex min-h-dvh flex-col bg-background text-foreground font-body">
       {/* Hero Section */}
-      <section className="relative flex min-h-[75vh] items-center justify-center text-center text-white md:min-h-[85vh]">
+      <section className="relative flex min-h-[75dvh] items-center justify-center text-center text-white md:min-h-[85dvh]">
         <Image
           src="/images/hero_gym_dark.png"
           alt="Academia Five Star - Interior moderno e de alta performance"
@@ -22,7 +22,7 @@ export default function LandingPage() {
 
         <div className="relative z-10 flex flex-col items-center space-y-6 px-4 animate-in fade-in slide-in-from-bottom-8 duration-1000">
           <div className="rounded-full bg-primary/20 p-4 backdrop-blur-sm border border-primary/30">
-            <Dumbbell className="h-12 w-12 text-primary md:h-16 md:w-16 drop-shadow-[0_0_15px_rgba(255,102,0,0.8)]" />
+            <Dumbbell className="h-12 w-12 text-primary md:h-16 md:w-16 drop-shadow-[0_0_15px_oklch(0.7_0.25_190_/_0.8)]" />
           </div>
           <h1 className="font-headline text-5xl font-extrabold tracking-tight md:text-7xl lg:text-8xl drop-shadow-lg">
             Academia <span className="text-primary">Five Star</span>
@@ -37,7 +37,7 @@ export default function LandingPage() {
       {/* Content and Login Section */}
       <section className="container mx-auto flex flex-1 flex-col items-center justify-center px-4 py-16 md:py-24 relative -mt-10 z-20">
         <div className="w-full max-w-4xl rounded-3xl bg-card border border-white/5 p-8 md:p-12 shadow-2xl backdrop-blur-xl text-center">
-          <h2 className="text-3xl font-bold tracking-tight md:text-5xl bg-clip-text text-transparent bg-gradient-to-r from-primary to-orange-300">
+          <h2 className="text-3xl font-bold tracking-tight md:text-5xl bg-clip-text text-transparent text-gradient-cyan">
             Uma Nova Era de Gestão
           </h2>
           <p className="mt-6 text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
@@ -48,7 +48,7 @@ export default function LandingPage() {
             <Button
               asChild
               size="lg"
-              className="w-full sm:w-auto h-14 px-8 text-lg font-semibold shadow-[0_0_20px_rgba(255,102,0,0.3)] hover:shadow-[0_0_30px_rgba(255,102,0,0.6)] transition-all"
+              className="w-full sm:w-auto h-14 px-8 text-lg font-semibold glow-cyan hover:shadow-glow-cyan-hover transition-all"
             >
               <Link href="/login">Acessar Painel</Link>
             </Button>

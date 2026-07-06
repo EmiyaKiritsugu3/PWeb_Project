@@ -29,7 +29,7 @@ export function LanguageSelector() {
         <Button
           variant="ghost"
           size="icon"
-          className="h-9 w-9"
+          className="touch-target h-11 w-11"
           aria-label={t('common.selectLanguage')}
         >
           <Languages className="h-4 w-4" />
@@ -73,7 +73,7 @@ export function UserMenu({
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          className="relative h-9 w-9 rounded-full"
+          className="touch-target relative h-11 w-11 rounded-full"
           aria-label="Perfil do usuario"
         >
           <Avatar>

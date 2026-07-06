@@ -17,7 +17,7 @@ export default function GlobalError({
   return (
     <html lang="pt-BR">
       <body>
-        <div className="min-h-screen flex items-center justify-center p-4 bg-background">
+        <div className="min-h-dvh flex items-center justify-center p-4 bg-background">
           <div className="text-center">
             <h2 className="text-2xl font-bold mb-4 text-foreground">Algo deu errado no sistema!</h2>
             <button
