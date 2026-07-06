@@ -45,8 +45,8 @@ export default function AlunoLoginPage() {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: 'ana.silva@example.com',
-      password: '123456',
+      email: '',
+      password: '',
     },
   });
 
@@ -91,26 +91,51 @@ export default function AlunoLoginPage() {
   };
 
   return (
-    <div className="flex min-h-dvh flex-col items-center justify-center bg-background px-4">
-      <Card className="w-full max-w-sm">
-        <CardHeader className="text-center">
-          <div className="mb-4 flex justify-center">
-            <Dumbbell className="h-10 w-10 text-primary" />
+    <div className="relative flex min-h-dvh flex-col items-center justify-center overflow-hidden bg-background px-4">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute top-[-10%] left-[-10%] h-[40%] w-[40%] rounded-full bg-primary/10 blur-[120px] animate-glow-pulse" />
+        <div
+          className="absolute bottom-[-10%] right-[-10%] h-[40%] w-[40%] rounded-full bg-gold/5 blur-[120px] animate-glow-pulse"
+          style={{ animationDelay: '1s' }}
+        />
+      </div>
+
+      <Card className="z-10 w-full max-w-sm glass-card glow-cyan border-white/10">
+        <CardHeader className="space-y-1 text-center">
+          <div className="mb-6 flex justify-center">
+            <div className="relative">
+              <div className="absolute -inset-4 rounded-full bg-primary/20 blur-xl animate-pulse" />
+              <Dumbbell className="relative h-12 w-12 text-primary animate-float" />
+            </div>
           </div>
-          <CardTitle className="text-2xl">Portal do Aluno (Supabase)</CardTitle>
-          <CardDescription>Acesse seu treino e informações usando sua conta.</CardDescription>
+          <CardTitle className="text-3xl font-bold tracking-tight">
+            <span className="text-gradient-cyan">Five Star</span>
+            <span className="block text-sm font-medium text-muted-foreground mt-1">
+              PORTAL DO ALUNO
+            </span>
+          </CardTitle>
+          <CardDescription className="text-balance pt-2">
+            Acesse seu treino e informações usando sua conta.
+          </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-4">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleFormSubmit)} className="grid gap-4">
+            <form onSubmit={form.handleSubmit(handleFormSubmit)} className="grid gap-5">
               <FormField
                 control={form.control}
                 name="email"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
+                  <FormItem className="space-y-1.5">
+                    <FormLabel className="text-xs uppercase tracking-wider text-muted-foreground/70">
+                      Email
+                    </FormLabel>
                     <FormControl>
-                      <Input placeholder="seu@email.com" {...field} />
+                      <Input
+                        placeholder="seu@email.com"
+                        className="bg-background/50 border-white/5 focus-visible:ring-primary/50 transition-all"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -120,25 +145,52 @@ export default function AlunoLoginPage() {
                 control={form.control}
                 name="password"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Senha</FormLabel>
+                  <FormItem className="space-y-1.5">
+                    <FormLabel className="text-xs uppercase tracking-wider text-muted-foreground/70">
+                      Senha
+                    </FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="••••••••" {...field} />
+                      <Input
+                        type="password"
+                        placeholder="••••••••"
+                        className="bg-background/50 border-white/5 focus-visible:ring-primary/50 transition-all"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? 'Entrando...' : 'Entrar'}
+              <Button
+                type="submit"
+                className="group relative w-full overflow-hidden bg-primary text-primary-foreground hover:bg-primary/90 transition-all"
+                disabled={isLoading}
+              >
+                <span className="relative z-10 flex items-center justify-center gap-2">
+                  {isLoading ? 'Entrando...' : 'Entrar'}
+                </span>
+                <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:translate-x-full transition-transform duration-1000" />
               </Button>
             </form>
           </Form>
         </CardContent>
-        <CardFooter className="flex-col gap-4">
-          <Separator />
-          <Button variant="link" size="sm" asChild className="w-full text-muted-foreground">
-            <Link href="/login">Acesso para Gestão</Link>
+        <CardFooter className="flex-col gap-4 pb-8">
+          <div className="flex w-full items-center gap-4 px-2">
+            <Separator className="flex-1 opacity-20" />
+            <span className="text-[10px] uppercase tracking-widest text-muted-foreground/50">
+              OU
+            </span>
+            <Separator className="flex-1 opacity-20" />
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            asChild
+            className="w-full text-muted-foreground hover:text-primary hover:bg-primary/5 transition-colors"
+          >
+            <Link href="/login" className="flex items-center gap-2">
+              Acesso para Gestão
+            </Link>
           </Button>
         </CardFooter>
       </Card>

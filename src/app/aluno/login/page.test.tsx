@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import AlunoLoginPage from './page';
 import type { ReactNode } from 'react';
+import React from 'react';
 
 const mockPush = vi.fn();
 const mockSignInWithPassword = vi.fn().mockResolvedValue({ data: {}, error: null });
@@ -87,17 +88,9 @@ vi.mock('@/components/ui/separator', () => ({
   Separator: ({ className }: { className?: string }) => <hr className={className} />,
 }));
 
-vi.mock('@/components/ui/form', () => ({
-  Form: ({ children }: { children: ReactNode }) => <form>{children}</form>,
-  FormControl: ({ children }: { children: ReactNode }) => <>{children}</>,
-  FormField: ({ render }: { render: (props: { field: Record<string, unknown> }) => ReactNode }) => {
-    const field = { value: '', onChange: vi.fn(), onBlur: vi.fn(), name: 'field' };
-    return <>{render({ field })}</>;
-  },
-  FormItem: ({ children }: { children: ReactNode }) => <div>{children}</div>,
-  FormLabel: ({ children }: { children: ReactNode }) => <label>{children}</label>,
-  FormMessage: () => null,
-}));
+// Real @/components/ui/form (shadcn = thin FormProvider + RHF Controller wrapper)
+// is used unmocked so typed input reaches RHF's store and handleFormSubmit receives
+// the actual credentials. Real zod schema in page.tsx validates the typed creds.
 
 describe('AlunoLoginPage', () => {
   beforeEach(() => {
@@ -108,7 +101,8 @@ describe('AlunoLoginPage', () => {
 
   it('renders the login card title', () => {
     render(<AlunoLoginPage />);
-    expect(screen.getByText('Portal do Aluno (Supabase)')).toBeTruthy();
+    expect(screen.getByText('Five Star')).toBeTruthy();
+    expect(screen.getByText('PORTAL DO ALUNO')).toBeTruthy();
   });
 
   it('renders email and password labels', () => {
@@ -132,15 +126,30 @@ describe('AlunoLoginPage', () => {
     expect(container.querySelector('.lucide-dumbbell')).toBeTruthy();
   });
 
+  // PRD-7: default creds removed from aluno/login — tests must type valid creds
+  // before submit (zodResolver blocks empty fields, signIn never called).
+  const typeValidCreds = () => {
+    fireEvent.change(screen.getByPlaceholderText('seu@email.com'), {
+      target: { value: 'ana.silva@example.com' },
+    });
+    fireEvent.change(screen.getByPlaceholderText('••••••••'), {
+      target: { value: '123456' },
+    });
+  };
+
   it('calls signInWithPassword on form submit and redirects on success', async () => {
     mockSignInWithPassword.mockResolvedValue({ data: {}, error: null });
 
     render(<AlunoLoginPage />);
+    typeValidCreds();
     const form = screen.getByRole('button', { name: /entrar/i }).closest('form')!;
     fireEvent.submit(form);
 
     await waitFor(() => {
-      expect(mockSignInWithPassword).toHaveBeenCalled();
+      expect(mockSignInWithPassword).toHaveBeenCalledWith({
+        email: 'ana.silva@example.com',
+        password: '123456',
+      });
       expect(mockPush).toHaveBeenCalledWith('/aluno/dashboard');
     });
   });
@@ -153,6 +162,7 @@ describe('AlunoLoginPage', () => {
     mockSignUp.mockResolvedValue({ data: {}, error: null });
 
     render(<AlunoLoginPage />);
+    typeValidCreds();
     const form = screen.getByRole('button', { name: /entrar/i }).closest('form')!;
     fireEvent.submit(form);
 
@@ -176,6 +186,7 @@ describe('AlunoLoginPage', () => {
     mockSignUp.mockResolvedValue({ data: {}, error: { message: 'Signup failed' } });
 
     render(<AlunoLoginPage />);
+    typeValidCreds();
     const form = screen.getByRole('button', { name: /entrar/i }).closest('form')!;
     fireEvent.submit(form);
 
@@ -197,6 +208,7 @@ describe('AlunoLoginPage', () => {
     });
 
     render(<AlunoLoginPage />);
+    typeValidCreds();
     const form = screen.getByRole('button', { name: /entrar/i }).closest('form')!;
     fireEvent.submit(form);
 
