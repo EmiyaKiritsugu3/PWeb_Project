@@ -1,0 +1,49 @@
+src/app/dashboard/alunos/page.test.tsx
+  s_4b57d304719d67::t_5ae7089ed0d9da 23,25
+src/app/aluno/aluno-header.tsx
+  s_4b57d304719d67::t_f39e2a045f51f3 32
+  s_4b57d304719d67::t_603087e5ca1447 76
+src/app/layout.tsx
+  s_4b57d304719d67::t_f21ac96e477113 13-17
+  s_4b57d304719d67::t_8af6227878e6dc 1
+  s_4b57d304719d67::t_92216f9be17faf 18-19
+src/app/aluno/dashboard/dashboard-client.tsx
+  s_4b57d304719d67::t_af2d75bb454b13 85
+src/app/dashboard/financeiro/page.tsx
+  s_4b57d304719d67::t_7d305d8baa2512 42
+src/app/aluno/layout.tsx
+  s_4b57d304719d67::t_808f6e40266f0c 74
+  s_4b57d304719d67::t_e9a4d27c6e708f 23
+  s_4b57d304719d67::t_c4384c3f18ad0e 38
+src/app/dashboard/alunos/page.tsx
+  s_4b57d304719d67::t_3ab810b56379ff 19
+src/app/dashboard/layout.tsx
+  s_4b57d304719d67::t_3ea35203bcbdeb 106
+src/app/login/page.tsx
+  s_4b57d304719d67::t_80dd8b6508f987 60
+src/app/globals.css
+  s_4b57d304719d67::t_daa9438217eb08 114-118
+  s_4b57d304719d67::t_b30f97d6cb55ab 184-198
+src/app/global-error.tsx
+  s_4b57d304719d67::t_94375c7add861b 20
+src/app/page.tsx
+  s_4b57d304719d67::t_72aa0767bf815d 10,12
+src/app/aluno/login/page.tsx
+  s_4b57d304719d67::t_2cbac1c46a835d 94
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "6974cf2f33390b8faee14fb6a77984649897b224",
+  "prompts": {},
+  "sessions": {
+    "s_4b57d304719d67": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3f003016-e72d-49d0-898e-77d13709d382",
+        "model": "z-ai/glm-5.2"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
