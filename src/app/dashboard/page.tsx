@@ -53,25 +53,25 @@ export default async function DashboardPage() {
         description="Bem-vindo ao centro de comando da Five Star Gym."
       />
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 md:gap-6 lg:grid-cols-4">
         {kpis.map((kpi) => (
           <Card
             key={kpi.title}
-            className={`glass-card group overflow-hidden border-white/5 hover:border-primary/30 transition-all duration-500 hover:-translate-y-1 ${kpi.glow}`}
+            className={`glass-card group overflow-hidden border-white/5 transition-all duration-200 active:scale-[0.98] md:hover:border-primary/30 md:duration-500 md:hover:-translate-y-1 ${kpi.glow}`}
           >
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 p-4 md:p-6">
               <CardTitle className="text-xs font-bold uppercase tracking-widest text-muted-foreground group-hover:text-foreground transition-colors">
                 {kpi.title}
               </CardTitle>
               <div
-                className={`p-2 rounded-lg bg-gradient-to-br ${kpi.color} ${kpi.iconColor} border border-white/5 group-hover:scale-110 transition-transform duration-300`}
+                className={`p-2 rounded-lg bg-gradient-to-br ${kpi.color} ${kpi.iconColor} border border-white/5 md:group-hover:scale-110 transition-transform duration-300`}
               >
                 {kpi.icon}
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-4 md:p-6">
               <div
-                className={`text-3xl font-headline font-black tracking-tight drop-shadow-sm ${
+                className={`text-2xl md:text-3xl font-headline font-black tracking-tight drop-shadow-sm ${
                   kpi.isWeighted ? 'text-destructive-foreground/90' : 'text-foreground'
                 }`}
               >
@@ -82,7 +82,7 @@ export default async function DashboardPage() {
 
             {/* Subtle bottom glow line — reuses card gradient directly */}
             <div
-              className={`absolute bottom-0 left-0 h-1 w-0 group-hover:w-full transition-all duration-700 bg-gradient-to-r ${kpi.color}`}
+              className={`absolute bottom-0 left-0 h-1 w-0 md:group-hover:w-full transition-all duration-300 md:duration-700 bg-gradient-to-r ${kpi.color}`}
             ></div>
           </Card>
         ))}
