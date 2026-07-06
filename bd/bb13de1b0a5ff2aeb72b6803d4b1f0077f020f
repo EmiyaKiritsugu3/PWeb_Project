@@ -1,0 +1,30 @@
+src/components/WorkoutSession.test.tsx
+  s_a4ca894d705db2::t_ee3e9caabd882b 242,244-254
+  s_a4ca894d705db2::t_066c7351930954 41,47,49
+  s_a4ca894d705db2::t_369a04c3aa6e05 10-15
+  s_a4ca894d705db2::t_63018731dc5d50 7-9,16-21
+tests/e2e/specs/workout-session.spec.ts
+  s_a4ca894d705db2::t_ff42b4ef201bf7 36
+  s_a4ca894d705db2::t_06d7165b210071 19-21
+src/app/globals.css
+  s_a4ca894d705db2::t_eae157b1ac2e51 188-195
+src/components/WorkoutSession.tsx
+  s_a4ca894d705db2::t_83bc5128c0d83e 229,231-248,250-259,261-283,286-295,297,299-301,303,305-321
+  s_a4ca894d705db2::t_369a04c3aa6e05 249
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "bdbb13de1b0a5ff2aeb72b6803d4b1f0077f020f",
+  "prompts": {},
+  "sessions": {
+    "s_a4ca894d705db2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "01e618e4-deb7-4a0f-88d3-2ef0e00b6920",
+        "model": "z-ai/glm-5.2"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
