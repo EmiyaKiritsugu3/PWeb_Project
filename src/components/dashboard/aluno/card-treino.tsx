@@ -123,7 +123,7 @@ export function CardTreino({
           </div>
         ))}
       </CardContent>
-      <CardFooter className="bg-white/5 p-6 border-t border-white/5">
+      <CardFooter className="bg-white/5 p-6 border-t border-white/5 flex flex-col gap-3">
         <Button
           variant="premium"
           size="lg"
@@ -143,6 +143,11 @@ export function CardTreino({
             </div>
           )}
         </Button>
+        {completedCount === 0 && !isFeedbackLoading && (
+          <p data-testid="finish-hint" className="text-sm text-muted-foreground text-center">
+            Marque os exercícios concluídos acima para finalizar o treino.
+          </p>
+        )}
       </CardFooter>
     </Card>
   );
