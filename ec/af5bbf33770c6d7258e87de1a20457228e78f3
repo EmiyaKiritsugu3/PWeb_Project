@@ -1,0 +1,28 @@
+src/app/aluno/meus-treinos/meus-treinos-client.test.tsx
+  s_a4ca894d705db2::t_ed456e7cfd2c1d 216-225,228-231,234
+  s_a4ca894d705db2::t_a71fbc437e22c3 232
+  s_a4ca894d705db2::t_53ded594a04b23 226
+  s_a4ca894d705db2::t_4e68ffc5bc619b 125-130,140-144
+  s_a4ca894d705db2::t_4e85ddf8c189f7 131-139
+  s_a4ca894d705db2::t_c8145100c6c7f5 227
+  s_a4ca894d705db2::t_009cacc3c72472 25-26,39
+  s_a4ca894d705db2::t_4cb5030e24ffc3 233
+  s_a4ca894d705db2::t_4eece177d06773 235
+  s_a4ca894d705db2::t_be364efe153a63 145-146
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "ecaf5bbf33770c6d7258e87de1a20457228e78f3",
+  "prompts": {},
+  "sessions": {
+    "s_a4ca894d705db2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "01e618e4-deb7-4a0f-88d3-2ef0e00b6920",
+        "model": "z-ai/glm-5.2"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
