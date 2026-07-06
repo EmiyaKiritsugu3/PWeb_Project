@@ -1,0 +1,27 @@
+docs/superpowers/specs/2026-07-07-aluno-detail-tables-mobile-design.md
+  s_4b57d304719d67::t_ab29c1a287b203 9,11-13
+  s_4b57d304719d67::t_d763f878d535ef 90
+  s_4b57d304719d67::t_3c9ce3d5ce9c09 37,40,42-43,46-50,52,58-74,80
+  s_4b57d304719d67::t_169b5708721443 81
+docs/superpowers/specs/2026-07-07-mobile-navigation-design.md
+  s_4b57d304719d67::t_f02677bfd717df 76
+  s_4b57d304719d67::t_f587ffc233e303 54
+docs/superpowers/specs/2026-07-07-kpi-charts-mobile-design.md
+  s_4b57d304719d67::t_5df09299cc3833 82,84-90,93
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "5640d9272cfc12de8cfedd1870931009232e3381",
+  "prompts": {},
+  "sessions": {
+    "s_4b57d304719d67": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3f003016-e72d-49d0-898e-77d13709d382",
+        "model": "z-ai/glm-5.2"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
