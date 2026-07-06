@@ -1,0 +1,20 @@
+src/app/aluno/login/page.test.tsx
+  s_2296ce58b9c48f::t_ca8ac2565d9ec8 91-93
+  s_2296ce58b9c48f::t_6bb04eb6aedddd 149-152
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "a607deadba71e0e04966ba788412cc8d91c1031f",
+  "prompts": {},
+  "sessions": {
+    "s_2296ce58b9c48f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "983bfabc-0770-47ca-bd35-ed1636b219b6",
+        "model": "z-ai/glm-5.2"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
