@@ -144,7 +144,11 @@ export function CardTreino({
           )}
         </Button>
         {completedCount === 0 && !isFeedbackLoading && (
-          <p data-testid="finish-hint" className="text-sm text-muted-foreground text-center">
+          <p
+            data-testid="finish-hint"
+            aria-live="polite"
+            className="text-sm text-muted-foreground text-center"
+          >
             Marque os exercícios concluídos acima para finalizar o treino.
           </p>
         )}

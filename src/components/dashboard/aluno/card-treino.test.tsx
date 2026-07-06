@@ -228,18 +228,6 @@ describe('CardTreino', () => {
   });
 
   it('hides finish hint when an exercise is checked', () => {
-    let checkedExercises: Record<string, boolean> = {};
-    mockUseWorkoutTracker.mockReturnValue({
-      checkedExercises,
-      handleCheckChange: (id: string) => {
-        checkedExercises = { ...checkedExercises, [id]: !checkedExercises[id] };
-        mockUseWorkoutTracker.mockReturnValue({
-          checkedExercises,
-          handleCheckChange: vi.fn(),
-        });
-      },
-    });
-
     const { rerender } = render(
       <CardTreino
         treino={mockTreino}
@@ -248,8 +236,12 @@ describe('CardTreino', () => {
         onViewExercicio={mockOnViewExercicio}
       />
     );
-    const checkboxes = screen.getAllByRole('checkbox');
-    fireEvent.click(checkboxes[0]);
+    expect(screen.getByTestId('finish-hint')).toBeTruthy();
+
+    mockUseWorkoutTracker.mockReturnValue({
+      checkedExercises: { 'ex-1': true },
+      handleCheckChange: vi.fn(),
+    });
     rerender(
       <CardTreino
         treino={mockTreino}
