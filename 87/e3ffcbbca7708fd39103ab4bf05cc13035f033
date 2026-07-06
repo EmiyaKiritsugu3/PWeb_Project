@@ -1,0 +1,33 @@
+docs/superpowers/specs/2026-07-07-brand-consistency-design.md
+  s_4b57d304719d67::t_df34077c295b47 1-82
+docs/superpowers/specs/2026-07-07-workout-session-fullscreen-design.md
+  s_4b57d304719d67::t_451e89ac7db51d 1-124
+docs/superpowers/specs/2026-07-07-kpi-charts-mobile-design.md
+  s_4b57d304719d67::t_1e853045ed7f17 1-112
+docs/superpowers/specs/2026-07-07-mobile-first-foundation-design.md
+  s_4b57d304719d67::t_0591a2d749a272 1-143
+docs/superpowers/specs/2026-07-07-login-parity-nextfont-design.md
+  s_4b57d304719d67::t_4bed479872eac4 1-110
+docs/superpowers/specs/2026-07-07-meus-treinos-kebab-design.md
+  s_4b57d304719d67::t_0e657e21b1bb33 1-117
+docs/superpowers/specs/2026-07-07-mobile-navigation-design.md
+  s_4b57d304719d67::t_93aea2f60d5b10 1-97
+docs/superpowers/specs/2026-07-07-aluno-detail-tables-mobile-design.md
+  s_4b57d304719d67::t_1bc224d1d8ae98 1-93
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "87e3ffcbbca7708fd39103ab4bf05cc13035f033",
+  "prompts": {},
+  "sessions": {
+    "s_4b57d304719d67": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3f003016-e72d-49d0-898e-77d13709d382",
+        "model": "z-ai/glm-5.2"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
