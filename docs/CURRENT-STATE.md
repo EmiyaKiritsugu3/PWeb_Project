@@ -2,8 +2,16 @@
 
 ## Mobile-First Premium Polish (v0.10.0 em andamento)
 
-**Branch ativa:** `fix/meus-treinos-kebab` (PR #181 aberto, aguardando review bots)
-**PRs mobile-first:** PR #176 (PRD-1) ✅ → PR #179 (PRD-3) ✅ → PR #180 (PRD-2) ✅ → PR #181 (PRD-4) 🟡.
+**Branch ativa:** `fix/card-treino-empty-hint` (PR #183 aberto, CI em andamento)
+**PRs mobile-first:** PR #176 (PRD-1) ✅ → PR #179 (PRD-3) ✅ → PR #180 (PRD-2) ✅ → PR #181 (PRD-4) ✅ → PR #182 (PRD-5) ✅ → PR #183 (bugfix) 🟡.
+
+### PR #183 — Dead-button hint + duration clamp (open)
+
+`src/components/dashboard/aluno/card-treino.tsx`: botão "Finalizar e Avaliar Treino" disabled quando `completedCount === 0` sem feedback visual — adicionado hint condicional `data-testid="finish-hint"` abaixo do botão. 3 novos tests (hint visível, hint some ao marcar exercício, stateful mock `useWorkoutTracker`).
+
+`src/components/WorkoutSession.tsx` L173: `duracaoMinutos` clamp `Math.max(1, Math.round(...))`. Root cause toast `"ocorreu um erro inesperado ao salvar no histórico"`: schema Zod `HistoricoTreinoBaseSchema` exige `duracaoMinutos >= 1`, mas treino rápido (<30s) arredonda para 0. Fix defensivo. (Segunda causa plausível: `exercicioId` não-UUID em treinos AI-gen — não verificado ainda.)
+
+4 gates green local: typecheck 0, lint 0, Vitest 1134/1134, prettier clean.
 
 ### PRD-4 — Meus Treinos Kebab + Primary Action — PR #181 (open)
 
