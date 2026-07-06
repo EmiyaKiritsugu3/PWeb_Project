@@ -112,7 +112,7 @@ export default function MeusTreinosClient({
     if (!showPlanBanner) return;
     const timer = setTimeout(() => setShowPlanBanner(false), 30000);
     return () => clearTimeout(timer);
-  }, [showPlanBanner]);
+  }, [bannerPlanName, showPlanBanner]);
 
   const [treinoEmSessao, setTreinoEmSessao] = useState<Treino | null>(null);
   const [editingTreinoId, setEditingTreinoId] = useState<string | null>(null);
