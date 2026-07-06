@@ -2,10 +2,10 @@
 
 ## Mobile-First Premium Polish (v0.10.0 em andamento)
 
-**Branch ativa:** `feat/009-mobile-navigation`
-**PRs mobile-first:** PR #176 (PRD-1 foundation, merged) → PR #179 (PRD-3 bottom nav, open).
+**Branch ativa:** `main` (PRD-1/2/3 merged; PRD-4 next)
+**PRs mobile-first:** PR #176 (PRD-1) ✅ → PR #179 (PRD-3) ✅ → PR #180 (PRD-2) ✅.
 
-### PRD-3 — Bottom Navigation (mobile) — PR #179
+### PRD-3 — Bottom Navigation (mobile) — merged #179
 
 Shared `src/components/bottom-nav.tsx` (client, `md:hidden`, 44pt touch-target, safe-area pb, reduced-motion-safe). Wired into ambos os portais:
 
@@ -14,7 +14,9 @@ Shared `src/components/bottom-nav.tsx` (client, `md:hidden`, 44pt touch-target, 
 
 Refactor `getNavItems(role)` extraído de `DashboardNav` — single source de nav filtrada por role, compartilhada sidebar + bottom bar. `UserMenu` (aluno) perdeu `navLinks` prop + bloco `md:hidden` redundante no dropdown.
 
-Gates: typecheck ✅, lint ✅ (changed files clean), prettier ✅, 1129/1129 tests ✅.
+### PRD-2 — Brand Consistency — merged #180
+
+Orange hex landing → oklch primary + `.glow-cyan`/`.text-gradient-cyan` tokens (`page.tsx`: drop-shadow L25, gradient L40, CTA shadow L51). Dashboard KPI: removido badge fake "↑ 12% vs mês anterior" (`getDashboardStats` sem prior-period data) + hack `kpi.color.replaceAll('/20','')` — glow line reusa `kpi.color` gradient direto. `text-orange-400` em Flame streak (alunos/[id]) mantido — semântico (fogo), carve-out spec.
 
 ### PRD-1 — Mobile-First Foundation (merged #176)
 
@@ -22,7 +24,7 @@ Viewport `viewportFit: cover`, dvh swap 13 files, 44pt touch-target, safe-area, 
 
 ### Sequência mobile-first
 
-PRD-1 ✅ → PRD-3 ✅ (open) → PRD-2 (brand consistency) → 4 → 5 → 6 → 7 → 8.
+PRD-1 ✅ → PRD-2 ✅ → PRD-3 ✅ → PRD-4 (kebab menu) → 5 → 6 → 7 → 8. PRD-4 próxima sessão.
 
 ---
 
