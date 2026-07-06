@@ -11,21 +11,60 @@ import {
   Settings,
   LogOut,
   FlaskConical,
+  type LucideIcon,
 } from 'lucide-react';
 import { SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
 import { logout } from '@/app/actions/auth';
 import { FINANCIAL_ROUTES } from '@/lib/constants';
+import { isNavActive, type NavIconName } from '@/components/bottom-nav';
 
-const allNavItems = [
-  { href: '/dashboard', icon: <LayoutDashboard />, label: 'Dashboard' },
-  { href: '/dashboard/alunos', icon: <Users />, label: 'Alunos' },
-  { href: '/dashboard/treinos', icon: <Dumbbell />, label: 'Treinos' },
-  { href: '/dashboard/financeiro', icon: <DollarSign />, label: 'Financeiro' },
-  { href: '/dashboard/planos', icon: <FileText />, label: 'Planos' },
+export type NavItemDef = {
+  href: string;
+  label: string;
+  iconName: NavIconName;
+};
+
+export const DEV_HREF = '/dashboard/dev';
+
+const NAV_ITEM_DEFS: NavItemDef[] = [
+  { href: '/dashboard', label: 'Dashboard', iconName: 'layout-dashboard' },
+  { href: '/dashboard/alunos', label: 'Alunos', iconName: 'users' },
+  { href: '/dashboard/treinos', label: 'Treinos', iconName: 'dumbbell' },
+  { href: '/dashboard/financeiro', label: 'Financeiro', iconName: 'dollar-sign' },
+  { href: '/dashboard/planos', label: 'Planos', iconName: 'file-text' },
 ];
 
-if (process.env.NODE_ENV === 'development') {
-  allNavItems.push({ href: '/dashboard/dev', icon: <FlaskConical />, label: 'Dev' });
+// ponytail: dev item uses FlaskConical which has no NavIconName slot (dev stays sidebar-only, never reaches BottomNav)
+const DEV_ITEM: NavItemDef = { href: DEV_HREF, label: 'Dev', iconName: 'dumbbell' };
+
+function buildAllItems(): NavItemDef[] {
+  const items = [...NAV_ITEM_DEFS];
+  if (process.env.NODE_ENV === 'development') {
+    items.push(DEV_ITEM);
+  }
+  return items;
+}
+
+export function getNavItems(role: string): NavItemDef[] {
+  const all = buildAllItems();
+  return role === 'GERENTE'
+    ? all
+    : all.filter((item) => !FINANCIAL_ROUTES.some((r) => item.href.startsWith(r)));
+}
+
+const SIDEBAR_ICONS: Record<NavIconName, LucideIcon> = {
+  'layout-dashboard': LayoutDashboard,
+  users: Users,
+  dumbbell: Dumbbell,
+  'dollar-sign': DollarSign,
+  'file-text': FileText,
+  'folder-kanban': FileText,
+};
+
+function iconFor(item: NavItemDef): LucideIcon {
+  // dev item sidebar uses FlaskConical — separate from BottomNav's union
+  if (item.href === DEV_HREF) return FlaskConical;
+  return SIDEBAR_ICONS[item.iconName];
 }
 
 interface DashboardNavProps {
@@ -35,23 +74,13 @@ interface DashboardNavProps {
 export function DashboardNav({ role }: Readonly<DashboardNavProps>) {
   const pathname = usePathname();
 
-  const navItems =
-    role === 'GERENTE'
-      ? allNavItems
-      : allNavItems.filter((item) => !FINANCIAL_ROUTES.some((r) => item.href.startsWith(r)));
-
-  const isActive = (href: string) => {
-    // Make it active for sub-paths as well, except for the main dashboard page
-    if (href === '/dashboard') {
-      return pathname === href;
-    }
-    return pathname.startsWith(href);
-  };
+  const navItems = getNavItems(role);
 
   return (
     <SidebarMenu className="gap-2">
       {navItems.map((item) => {
-        const active = isActive(item.href);
+        const active = isNavActive(item.href, pathname);
+        const Icon = iconFor(item);
         return (
           <SidebarMenuItem key={item.href}>
             <Link href={item.href} className="block w-full">
@@ -68,7 +97,7 @@ export function DashboardNav({ role }: Readonly<DashboardNavProps>) {
                 <div
                   className={`${active ? 'text-primary scale-110' : 'group-hover:text-foreground'} transition-all duration-300`}
                 >
-                  {item.icon}
+                  <Icon className="h-4 w-4" />
                 </div>
                 <span className="ml-2">{item.label}</span>
                 {active && (

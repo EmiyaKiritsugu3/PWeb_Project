@@ -57,13 +57,11 @@ export function UserMenu({
   displayName,
   photoURL,
   email,
-  navLinks,
   onLogout,
 }: Readonly<{
   displayName: string;
   photoURL: string;
   email?: string | null;
-  navLinks: NavLink[];
   onLogout: () => void;
 }>) {
   const { t } = useI18n();
@@ -87,17 +85,6 @@ export function UserMenu({
           <p>{displayName}</p>
           <p className="text-xs font-normal text-muted-foreground">{email}</p>
         </DropdownMenuLabel>
-        <div className="md:hidden">
-          <DropdownMenuSeparator />
-          {navLinks.map((link) => (
-            <DropdownMenuItem key={link.href} asChild>
-              <Link href={link.href}>
-                {link.icon}
-                <span>{link.label}</span>
-              </Link>
-            </DropdownMenuItem>
-          ))}
-        </div>
         <DropdownMenuSeparator />
         <DropdownMenuItem disabled>
           <UserIcon className="mr-2 h-4 w-4" />
@@ -148,13 +135,7 @@ export function AlunoHeader({
         <span className="hidden text-sm text-muted-foreground md:inline-block">
           {t('common.welcome')}, {displayName}!
         </span>
-        <UserMenu
-          displayName={displayName}
-          photoURL={photoURL}
-          email={email}
-          navLinks={navLinks}
-          onLogout={onLogout}
-        />
+        <UserMenu displayName={displayName} photoURL={photoURL} email={email} onLogout={onLogout} />
       </div>
     </header>
   );

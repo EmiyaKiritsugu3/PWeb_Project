@@ -6,6 +6,12 @@ import { Dumbbell, LayoutDashboard, FolderKanban } from 'lucide-react';
 import { useAuth } from '@/components/providers/auth-provider';
 import { I18nProvider, useI18n } from '@/components/providers/i18n-provider';
 import { AlunoHeader, type NavLink } from './aluno-header';
+import { BottomNav, type NavIconName } from '@/components/bottom-nav';
+
+const ALUNO_ICON_BY_HREF: Record<string, NavIconName> = {
+  '/aluno/dashboard': 'layout-dashboard',
+  '/aluno/meus-treinos': 'folder-kanban',
+};
 
 function resolveDisplayName(meta: Record<string, unknown> | undefined, fallback: string): string {
   const m = meta as { full_name?: string; nomeCompleto?: string } | undefined;
@@ -80,7 +86,17 @@ function AuthenticatedLayout({
         email={email}
         onLogout={onLogout}
       />
-      <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6 lg:p-8">{children}</main>
+      <main className="flex flex-1 flex-col gap-4 p-4 pb-16 md:gap-8 md:p-6 md:pb-6 lg:p-8 lg:pb-8">
+        {children}
+      </main>
+      <BottomNav
+        items={navLinks.map((n) => ({
+          href: n.href,
+          label: n.label,
+          iconName: ALUNO_ICON_BY_HREF[n.href] ?? 'layout-dashboard',
+        }))}
+        activeHref={pathname}
+      />
     </div>
   );
 }

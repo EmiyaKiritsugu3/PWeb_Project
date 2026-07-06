@@ -125,29 +125,13 @@ describe('AlunoHeader', () => {
 
 describe('UserMenu (aluno-header)', () => {
   it('renders user name and email', () => {
-    render(
-      <UserMenu
-        displayName="Ana"
-        photoURL=""
-        email="ana@test.com"
-        navLinks={[]}
-        onLogout={vi.fn()}
-      />
-    );
+    render(<UserMenu displayName="Ana" photoURL="" email="ana@test.com" onLogout={vi.fn()} />);
     expect(screen.getByText('Ana')).toBeTruthy();
     expect(screen.getByText('ana@test.com')).toBeTruthy();
   });
 
   it('renders profile and logout options', () => {
-    render(
-      <UserMenu
-        displayName="Ana"
-        photoURL=""
-        email="ana@test.com"
-        navLinks={[]}
-        onLogout={vi.fn()}
-      />
-    );
+    render(<UserMenu displayName="Ana" photoURL="" email="ana@test.com" onLogout={vi.fn()} />);
     expect(screen.getByText('Meu Perfil')).toBeTruthy();
     expect(screen.getByText('Sair')).toBeTruthy();
   });

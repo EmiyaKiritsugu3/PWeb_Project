@@ -1,4 +1,30 @@
-# Estado Atual (2026-07-05)
+# Estado Atual (2026-07-06)
+
+## Mobile-First Premium Polish (v0.10.0 em andamento)
+
+**Branch ativa:** `feat/009-mobile-navigation`
+**PRs mobile-first:** PR #176 (PRD-1 foundation, merged) → PR #179 (PRD-3 bottom nav, open).
+
+### PRD-3 — Bottom Navigation (mobile) — PR #179
+
+Shared `src/components/bottom-nav.tsx` (client, `md:hidden`, 44pt touch-target, safe-area pb, reduced-motion-safe). Wired into ambos os portais:
+
+- **Aluno** (mobile): 2 items (Dashboard, Meus Treinos).
+- **Dashboard** (mobile): GERENTE 5 items, INSTRUTOR/RECEPCIONISTA 3 (FINANCIAL_ROUTES exclui Financeiro+Planos). Dev fica sidebar-only.
+
+Refactor `getNavItems(role)` extraído de `DashboardNav` — single source de nav filtrada por role, compartilhada sidebar + bottom bar. `UserMenu` (aluno) perdeu `navLinks` prop + bloco `md:hidden` redundante no dropdown.
+
+Gates: typecheck ✅, lint ✅ (changed files clean), prettier ✅, 1129/1129 tests ✅.
+
+### PRD-1 — Mobile-First Foundation (merged #176)
+
+Viewport `viewportFit: cover`, dvh swap 13 files, 44pt touch-target, safe-area, reduced-motion.
+
+### Sequência mobile-first
+
+PRD-1 ✅ → PRD-3 ✅ (open) → PRD-2 (brand consistency) → 4 → 5 → 6 → 7 → 8.
+
+---
 
 ## v0.9.0 — AI Workout Gen Fix + Meus Treinos UX Overhaul
 
