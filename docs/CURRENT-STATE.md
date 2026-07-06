@@ -1,40 +1,51 @@
 # Estado Atual (2026-07-06)
 
-## Iteração 4 (P5) — CI/CD + Docker + SonarQube — PR #191 (open)
+## Iteração 4 (P5) — CI/CD + Docker + SonarQube — PR #191 merged, remediação pendente
 
-**Branch:** `feat/p5-ci-deploy-quality` (commit `bc429b0`).
+**Branch main:** PR #191 squash-merged (`689175f` msg, SHA `db60bf9`). Tag `v1.0.0` pushed em `db60bf9` (prematura — move pós-PR #192).
 **Tarefa:** [P5-tarefa5](https://github.com/tacianosilva/eng-software-2/blob/main/tarefas/projetos/P5-tarefa5.md).
 
-### Entregas P5
+### Entregas P5 (PR #191 merged)
 
 - **Cobertura branch 79.65% → 84.53%** (alvo 80%): excluído `src/components/ui/**` (shadcn/Radix wrappers) do coverage vitest + SonarQube exclusions. Issue #188 (fechada).
 - **Docker:** `docker-compose.yml` (postgres:16-alpine + node:22-alpine dev, migrate/seed auto). Issue #189 (fechada).
-- **Docs:** `docs/doc-deploy.md` (deploy Vercel + compose + CI + SemVer + Conventional Commits + AcademicDevFlow) + `docs/sonarqube/config.md` + `docs/sonarqube/scans.md` (1ª exec 2026-07-06, branch 84.53%, gate PASS). Issue #190 (fechada).
-- **CI:** `.github/workflows/ci.yml` ganhou `schedule: cron '3 9 * * 1,4'` + `workflow_dispatch` (SonarQube 2x/semana seg+qui).
-- **Relatório:** `docs/relatorio-testes.md` iter 3→4 (P5), US13 PRD-8 (#187) como US do membro (tela→banco), métricas 1137/1137 unit, 21 E2E, branch 84.53%.
-- **Issues bugs:** #188 #189 #190 criadas + fechadas.
+- **Docs:** `docs/doc-deploy.md` + `docs/sonarqube/config.md` + `docs/sonarqube/scans.md` (1ª exec 2026-07-06, branch 84.53%, gate PASS). Issue #190 (fechada).
+- **CI:** `.github/workflows/ci.yml` `schedule: cron '3 9 * * 1,4'` + `workflow_dispatch` (SonarQube 2x/semana seg+qui).
+- **Relatório:** `docs/relatorio-testes.md` iter 3→4 (P5), US13 PRD-8 (#187) US do membro (tela→banco), 2 tabelas modelo taciano + fluxos A1/A2/A3.
+- **Issues bugs:** #188 #189 #190 criadas + fechadas. #160 (16 SonarQube FP) + #122 (ESLint upstream) permanecem abertas (fora escopo P5).
 
-### Gates
+### Gates (CI PR #191)
 
-typecheck 0 errors · lint 0 errors · 1137/1137 tests · branch 84.53% (≥80% P5).
+13/14 SUCCESS. GitGuardian FAILURE (FP: `POSTGRES_PASSWORD:-postgres` default dev em `docker-compose.yml`).
 
 ### Pendências P5
 
-- 2ª execução SonarQube (2026-07-10, cron automático).
+- **2ª execução SonarQube (2026-07-09, cron automático)** — quinta, não 2026-07-10 (sexta). 4 loc a corrigir R04.
 - SonarCloud action pré-existente usa tag `v2.89.0` (Semgrep WARNING pin SHA) — fora escopo P5.
 
-### Remediação P5 (auditoria docs/configs)
+### Remediação P5 — PR #192 (PENDENTE, branch `fix/p5-review-remediation` ainda não criada)
 
-Pós-auditoria adversarial (3 Explore + 1 code-reviewer agent), branch `feat/p5-ci-deploy-quality` antes do merge PR #191:
+PR #191 merged **sem corrigir 26 reviews** (4 P1, 12 P2, 2 P3 de cubic-dev + coderabbit). Plano auditado em `~/.claude/plans/shimmering-knitting-plum.md`. Auditoria encontrou 3 erros no plano original (R07 escopo, R08 string, tag SHA), corrigidos.
 
-- **T01** ✅ `sonar-project.properties` + `src/lib/actions/**` em `sonar.exclusions` (alinha com vitest + doc-deploy).
-- **T02** ✅ `docs/doc-deploy.md` §3 lista 10 exclusões de cobertura (não 2).
-- **T03** ✅ `docs/sonarqube/config.md` §6 cron `3 9 * * 1,4` alinhado com `ci.yml`.
-- **T04** ✅ `docs/doc-deploy.md` §6 + §8 documentam release `RC-v1.0` (It4), tag `v1.0.0`, GitHub Release, ADF coverage table.
-- **T06** ✅ `docs/sonarqube/scans.md` placeholder 2ª exec 2026-07-10 (PENDING, métricas pós-cron).
-- **T09** ✅ `docs/relatorio-testes.md` auditado — 2 tabelas modelo taciano + fluxos A1/A2/A3 US13.
+- **R01** docker-compose: rm `container_name` (L8,L26); ports bind `127.0.0.1` (L15,L36); `NODE_ENV: development` hardcode (L34); `POSTGRES_PASSWORD:?` (L12).
+- **R02** `sonar-project.properties`: move `src/components/ui/**` de `sonar.exclusions` → `sonar.coverage.exclusions` (mantém análise qualidade nos 74 wrappers).
+- **R03** `docs/doc-deploy.md` §5 L121: warning `SUPABASE_SERVICE_ROLE_KEY` (bypass RLS, Production-only).
+- **R04** Data `2026-07-10` → `2026-07-09` (4 loc: CURRENT-STATE L23,L34; scans.md L8,L12).
+- **R05** `sonar.login` → `sonar.token` (2 loc: config.md §4 L45, doc-deploy §4 L105).
+- **R06** `docs/doc-deploy.md` §3 L87: 10 → 9 patterns (vitest.config.ts tem 9 entries em coverage.exclude).
+- **R07** `docs/sonarqube/config.md` §5 L50-60: `Job sonar` → `Step SonarCloud Scan dentro do job test`; bloco yaml `run: sonar-scanner` shell → action `SonarSource/sonarqube-scan-action` (espelha ci.yml L102-106). scans.md L16 `CI job` → `CI step`.
+- **R08** `docs/sonarqube/config.md` §2 L24: `sonar.test.inclusions` shorthand `ts(x)` → 4 globs exactos `src/**/*.test.ts, src/**/*.test.tsx, src/**/*.spec.ts, src/**/*.spec.tsx`.
+- **R09** `docs/sonarqube/config.md` §7 L84: Code smells `0` → `0 ativos (16 FP em TECHNICAL-DEBT.md)`.
+- **R10** `docs/relatorio-testes.md`: restaurar seção "Bugs Pendentes" (#160 16 SonarQube FP, #122 ESLint upstream); §6 GitGuardian `✅` → `⚠️ FP`; §4 SonarQube `2026-07-10` → `2026-07-09`; §7 Conclusão reword (completed vs pending).
+- **R11** `docker-compose.yml`: comment volume `pweb_pgdata` (POSTGRES_* só 1ª init, mudar requer `docker volume rm pweb_pgdata`); comment app root (generated files root no host Linux).
+- **R12** `docs/doc-deploy.md`: nota POSTGRES_PASSWORD chars especiais (@:#:?) quebram DATABASE_URL parse; prefira alfanuméricos via .env.
+- **R13** branch `fix/p5-review-remediation` de main, aplicar R01-R12, commit `fix(p5): remedia reviews PR #191`, push, PR #192, commitlint 0 errors, CI verde + reviews pass, merge squash.
 
-Não ações (ponytail): aguardar cron 10/07 p/ métricas reais (T06 placeholder), SonarCloud action pin (fora escopo P5).
+### T05 (pós-merge PR #192)
+
+Mover tag `v1.0.0` de `db60bf9` (SHA incompleto) para novo SHA pós-remediação: `git tag -d v1.0.0` + `git push origin :refs/tags/v1.0.0` + `git tag -a v1.0.0 -m "..."` + `git push origin v1.0.0`. CHANGELOG.md `## [1.0.0]` topo. GitHub Release `RC-v1.0 (Iteração 4)`.
+
+Não ações (ponytail): aguardar cron 09/07 p/ métricas reais (T06 placeholder), SonarCloud action pin (fora escopo P5).
 
 ---
 

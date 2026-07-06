@@ -5,15 +5,18 @@
 services:
   db:
     image: postgres:16-alpine
-    container_name: pweb_db
+    # ponytail: sem container_name — compose gera <projeto>_db, evita colisão de namespace
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      # POSTGRES_PASSWORD obrigatório via .env; default fraco removido (GitGuardian flag)
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD obrigatório — definir em .env}
       POSTGRES_DB: ${POSTGRES_DB:-pweb}
     ports:
-      - '${POSTGRES_PORT:-5432}:5432'
+      # bind 127.0.0.1 — não expor DB fora do host
+      - '127.0.0.1:${POSTGRES_PORT:-5432}:5432'
     volumes:
+      # POSTGRES_* só aplicados na 1ª init; mudar senha/db requer `docker volume rm pweb_pgdata`
       - pweb_pgdata:/var/lib/postgresql/data
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-pweb}']
@@ -22,8 +25,8 @@ services:
       retries: 5
 
   app:
+    # roda como root; generated files (.next/, node_modules/.prisma/) ficam root no host Linux
     image: node:22-alpine
-    container_name: pweb_app
     working_dir: /app
     depends_on:
       db:
@@ -31,9 +34,10 @@ services:
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-pweb}?schema=public
       DIRECT_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-pweb}?schema=public
-      NODE_ENV: ${NODE_ENV:-development}
+      NODE_ENV: development
     ports:
-      - '${APP_PORT:-3000}:3000'
+      # bind 127.0.0.1 — não expor dev server fora do host
+      - '127.0.0.1:${APP_PORT:-3000}:3000'
     volumes:
       - .:/app
       - pweb_node_modules:/app/node_modules
