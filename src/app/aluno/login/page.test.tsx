@@ -88,38 +88,9 @@ vi.mock('@/components/ui/separator', () => ({
   Separator: ({ className }: { className?: string }) => <hr className={className} />,
 }));
 
-vi.mock('@/components/ui/form', () => ({
-  Form: ({ children }: { children: ReactNode }) => <form>{children}</form>,
-  FormControl: ({ children }: { children: ReactNode }) => <>{children}</>,
-  FormField: ({ render }: { render: (props: { field: Record<string, unknown> }) => ReactNode }) => {
-    // ponytail: field mirror synced with typeValidCreds — RHF Controller not mocked,
-    // so real RHF never receives typed input. Tests that submit need valid creds in
-    // field.value for the resolver bypass below to echo them into handleFormSubmit.
-    const [value, setValue] = React.useState('');
-    const field = {
-      value,
-      onChange: (e: { target: { value: string } } | string) =>
-        setValue(typeof e === 'string' ? e : e.target.value),
-      onBlur: vi.fn(),
-      name: 'field',
-    };
-    return <>{render({ field })}</>;
-  },
-  FormItem: ({ children }: { children: ReactNode }) => <div>{children}</div>,
-  FormLabel: ({ children }: { children: ReactNode }) => <label>{children}</label>,
-  FormMessage: () => null,
-}));
-
-// ponytail: zodResolver bypass — the Form mock above registers fields with RHF's
-// Controller via the mirrored field, but handleFormSubmit only runs if RHF's
-// resolver reports valid. Default creds removed (PRD-7 §4), so tests type creds
-// and let the resolver pass them straight to handleFormSubmit without zod.
-vi.mock('@hookform/resolvers/zod', () => ({
-  zodResolver: () => (values: Record<string, string>) => ({
-    values,
-    errors: {},
-  }),
-}));
+// Real @/components/ui/form (shadcn = thin FormProvider + RHF Controller wrapper)
+// is used unmocked so typed input reaches RHF's store and handleFormSubmit receives
+// the actual credentials. Real zod schema in page.tsx validates the typed creds.
 
 describe('AlunoLoginPage', () => {
   beforeEach(() => {
@@ -175,7 +146,10 @@ describe('AlunoLoginPage', () => {
     fireEvent.submit(form);
 
     await waitFor(() => {
-      expect(mockSignInWithPassword).toHaveBeenCalled();
+      expect(mockSignInWithPassword).toHaveBeenCalledWith({
+        email: 'ana.silva@example.com',
+        password: '123456',
+      });
       expect(mockPush).toHaveBeenCalledWith('/aluno/dashboard');
     });
   });
