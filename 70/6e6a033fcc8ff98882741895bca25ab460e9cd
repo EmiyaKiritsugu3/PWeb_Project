@@ -1,0 +1,33 @@
+src/app/aluno/login/page.tsx
+  s_2296ce58b9c48f::t_8343e4271089b2 48-49
+  s_2296ce58b9c48f::t_df5d2bb2b44746 94-110,112-120,122,124,129-132,134-138,148-151,153-158,164-172,177-193
+src/app/globals.css
+  s_2296ce58b9c48f::t_eda9633e7b04dd 4-5
+src/app/aluno/login/page.test.tsx
+  s_2296ce58b9c48f::t_25b3299e7fae6e 5
+  s_2296ce58b9c48f::t_fc2da06a403a9c 133-134
+  s_2296ce58b9c48f::t_9a58c3bca763c4 158-168,173
+  s_2296ce58b9c48f::t_07b1b21d355fba 191,215,237
+  s_2296ce58b9c48f::t_34764083bd93e0 95-105,113-121
+  s_2296ce58b9c48f::t_02246c2a99ef33 122-123
+src/app/layout.tsx
+  s_2296ce58b9c48f::t_c15053f6dc3f66 2,9-20
+  s_2296ce58b9c48f::t_b9d5db17b07105 36-40
+  s_2296ce58b9c48f::t_d0fd79f2e6e6d7 21
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "706e6a033fcc8ff98882741895bca25ab460e9cd",
+  "prompts": {},
+  "sessions": {
+    "s_2296ce58b9c48f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "983bfabc-0770-47ca-bd35-ed1636b219b6",
+        "model": "z-ai/glm-5.2"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
