@@ -1,0 +1,50 @@
+docs/relatorio-testes.md
+  s_fb4d7ff952f201::t_01c3eca8726fc0 69
+  s_fb4d7ff952f201::t_a435a7ed741427 105,110
+  s_fb4d7ff952f201::t_633997c1ed0df2 120-123
+  s_fb4d7ff952f201::t_ebb557fddf4adc 116-119
+  s_fb4d7ff952f201::t_577ec6cbbd7efe 111
+docs/CURRENT-STATE.md
+  s_8d36270e3faa7d::t_655bff4c62c4c7 3,5,8,12-15,17,19,23,26,28,30-42,44-48
+docs/doc-deploy.md
+  s_fb4d7ff952f201::t_4bab2456b159e3 89
+  s_fb4d7ff952f201::t_c3b78a7c41386b 107
+  s_fb4d7ff952f201::t_f8de6154a4a174 67-68
+  s_fb4d7ff952f201::t_f2b7b78e601fcc 124
+docker-compose.yml
+  s_fb4d7ff952f201::t_84ca47de7d0bd8 8,12-13,16-17,19,28,37,39-40
+docs/sonarqube/scans.md
+  s_fb4d7ff952f201::t_408cdf562ed3b9 8,12,16
+docs/sonarqube/config.md
+  s_fb4d7ff952f201::t_60741c8e20cc13 46
+  s_fb4d7ff952f201::t_6a35237bf52b1c 53,56-57,60
+  s_fb4d7ff952f201::t_633997c1ed0df2 17-25,81-84,86-87
+  s_fb4d7ff952f201::t_e66908b40d7d11 85
+sonar-project.properties
+  s_fb4d7ff952f201::t_07ea0f40149e21 16
+  s_fb4d7ff952f201::t_31efe7194f7e04 17-18
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "3c712d8b7449d1eb167b1413e7d904680a1d39ee",
+  "prompts": {},
+  "sessions": {
+    "s_8d36270e3faa7d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d7b07447-e2d9-4516-8ed2-a3df9930ae86",
+        "model": "z-ai/glm-5.2"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    },
+    "s_fb4d7ff952f201": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "85942c40-c845-476d-a4d0-52969bedc9bf",
+        "model": "z-ai/glm-5.2"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
