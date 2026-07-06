@@ -59,7 +59,7 @@ export default async function DashboardPage() {
             key={kpi.title}
             className={`glass-card group overflow-hidden border-white/5 transition-all duration-200 active:scale-[0.98] md:hover:border-primary/30 md:duration-500 md:hover:-translate-y-1 ${kpi.glow}`}
           >
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 p-4 md:p-6">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4 pb-2 md:p-6">
               <CardTitle className="text-xs font-bold uppercase tracking-widest text-muted-foreground group-hover:text-foreground transition-colors">
                 {kpi.title}
               </CardTitle>
