@@ -2,8 +2,20 @@
 
 ## Mobile-First Premium Polish (v0.10.0 em andamento)
 
-**Branch ativa:** `fix/meus-treinos-kebab` (PR #181 aberto, aguardando review bots)
-**PRs mobile-first:** PR #176 (PRD-1) ✅ → PR #179 (PRD-3) ✅ → PR #180 (PRD-2) ✅ → PR #181 (PRD-4) 🟡.
+**Branch ativa:** `feat/workout-session-mobile` (PR #182 aberto, aguardando CI)
+**PRs mobile-first:** PR #176 (PRD-1) ✅ → PR #179 (PRD-3) ✅ → PR #180 (PRD-2) ✅ → PR #181 (PRD-4) ✅ → PR #182 (PRD-5) 🟡.
+
+### PRD-5 — Workout Session Fullscreen — PR #182 (open)
+
+`src/components/WorkoutSession.tsx`: mobile fullscreen overlay (`fixed inset-x-0 top-0 z-50 h-dvh bg-background`), desktop inline (`md:static md:bg-transparent`). Card vira flex column: `CardContent` scrollável `overflow-y-auto` + `CardFooter` sticky `backdrop-blur` (timer + Próximo/Finalizar acima da URL bar iOS). Series row `data-testid="series-row"`, check buttons `data-testid={`serie-check-${idx}`}` + `aria-label` + `.touch-target` (44px). `animate-[slide-up_0.3s_ease-out] motion-reduce:animate-none`.
+
+`src/app/globals.css`: `@keyframes slide-up` no utilities layer.
+
+E2E `tests/e2e/specs/workout-session.spec.ts`: `div.grid-cols-4` selector → `getByTestId('serie-check-0')` (2 ocorrências). Stable contra refactor de grid/Tailwind purge.
+
+Unit `src/components/WorkoutSession.test.tsx`: Button mock `filterDomProps` passa `data-*`/`aria-*`/`className`. Toggle test sai de svg/`data-variant` filter frágil → `getByTestId('serie-check-0')`. 15/15 pass, 1133/1133 suite.
+
+### PRD-4 — Meus Treinos Kebab + Primary Action — merged #181
 
 ### PRD-4 — Meus Treinos Kebab + Primary Action — PR #181 (open)
 
