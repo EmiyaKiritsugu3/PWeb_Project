@@ -37,7 +37,7 @@ export const viewport: Viewport = {
 
 Replace `vh`/`screen` with `dvh` globally. Tailwind 4 has `min-h-dvh`, `h-dvh` built-in.
 
-```
+```text
 src/app/page.tsx                 — min-h-[75vh] → min-h-[75dvh]; md:min-h-[85vh] → md:min-h-[85dvh]
 src/app/aluno/aluno-layout.tsx   — min-h-screen → min-h-dvh (wrapper); LoadingSpinner h-screen → h-dvh
 src/app/dashboard/layout.tsx     — min-h-screen → min-h-dvh; overflow-hidden keep
@@ -82,7 +82,7 @@ ponytail: global padding safe — viewportFit cover active. If specific edge-to-
 
 Fixed elements (sticky headers, bottom nav) get safe-area explicitly:
 
-```
+```text
 sticky header: pt-[env(safe-area-inset-top)] on top of own padding
 bottom nav (PRD-3): pb-[env(safe-area-inset-bottom)]
 ```
