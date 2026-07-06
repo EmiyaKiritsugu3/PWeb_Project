@@ -1,0 +1,29 @@
+src/app/dashboard/alunos/[id]/page.tsx
+  s_2296ce58b9c48f::t_734209d4088584 254-255,257-268,270-293
+  s_2296ce58b9c48f::t_05dbd087178e9b 220-223
+  s_2296ce58b9c48f::t_4135702251fccd 182-183,185-200,202-219,224-232
+src/app/dashboard/alunos/[id]/page.test.tsx
+  s_2296ce58b9c48f::t_82c38ca98faeb7 275
+  s_2296ce58b9c48f::t_05dbd087178e9b 422-435,446-448
+  s_2296ce58b9c48f::t_dde071118003ca 376
+  s_2296ce58b9c48f::t_4a9a90dbb949ed 387
+  s_2296ce58b9c48f::t_60885114685340 412-413
+  s_2296ce58b9c48f::t_59ba81234b2d4b 415-421,436-445
+  s_2296ce58b9c48f::t_452ea4df007448 414
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "07895bf9d07046472046bcf9990a2a2b7f310228",
+  "prompts": {},
+  "sessions": {
+    "s_2296ce58b9c48f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "983bfabc-0770-47ca-bd35-ed1636b219b6",
+        "model": "z-ai/glm-5.2"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
