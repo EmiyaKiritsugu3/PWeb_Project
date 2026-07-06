@@ -103,7 +103,7 @@ export default async function DashboardLayout({
 
   return (
     <SidebarProvider>
-      <div className="relative flex min-h-screen w-full overflow-hidden bg-background">
+      <div className="relative flex min-h-dvh w-full overflow-hidden bg-background">
         <div className="absolute inset-0 z-0 pointer-events-none">
           <div className="absolute top-[-10%] left-[-10%] h-[50%] w-[50%] rounded-full bg-primary/5 blur-[120px] animate-glow-pulse" />
           <div

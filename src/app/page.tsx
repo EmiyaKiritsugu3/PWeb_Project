@@ -7,9 +7,9 @@ import Image from 'next/image';
 
 export default function LandingPage() {
   return (
-    <div className="flex min-h-screen flex-col bg-background text-foreground font-body">
+    <div className="flex min-h-dvh flex-col bg-background text-foreground font-body">
       {/* Hero Section */}
-      <section className="relative flex min-h-[75vh] items-center justify-center text-center text-white md:min-h-[85vh]">
+      <section className="relative flex min-h-[75dvh] items-center justify-center text-center text-white md:min-h-[85dvh]">
         <Image
           src="/images/hero_gym_dark.png"
           alt="Academia Five Star - Interior moderno e de alta performance"

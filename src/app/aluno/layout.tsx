@@ -20,7 +20,7 @@ function resolvePhotoURL(meta: Record<string, unknown> | undefined): string {
 function LoadingSpinner() {
   const { t } = useI18n();
   return (
-    <div className="flex h-screen w-full items-center justify-center bg-background">
+    <div className="flex h-dvh w-full items-center justify-center bg-background">
       <div className="flex flex-col items-center gap-4">
         <Dumbbell className="h-12 w-12 animate-pulse text-primary" />
         <p className="text-muted-foreground">{t('common.loading')}</p>
@@ -35,7 +35,7 @@ function LoginPage({ children }: Readonly<{ children: React.ReactNode }>) {
 
 function FallbackSpinner() {
   return (
-    <div className="flex h-screen w-full items-center justify-center bg-background">
+    <div className="flex h-dvh w-full items-center justify-center bg-background">
       <Dumbbell className="h-12 w-12 animate-pulse text-primary" />
     </div>
   );
@@ -71,7 +71,7 @@ function AuthenticatedLayout({
   ];
 
   return (
-    <div className="flex min-h-screen w-full flex-col bg-background">
+    <div className="flex min-h-dvh w-full flex-col bg-background">
       <AlunoHeader
         pathname={pathname}
         navLinks={navLinks}
