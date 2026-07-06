@@ -195,6 +195,25 @@ describe('WorkoutSession', () => {
     });
   });
 
+  it('clamps duracaoMinutos to at least 1 on a very short session', async () => {
+    const { generateWorkoutFeedback } = await import('@/ai/flows/workout-feedback-flow');
+    vi.mocked(generateWorkoutFeedback).mockResolvedValue({
+      title: 'Treino Concluído!',
+      message: 'Excelente trabalho!',
+    });
+
+    render(<WorkoutSession treino={mockTreino} onFinish={mockOnFinish} onCancel={mockOnCancel} />);
+    // Finish immediately — elapsed < 1 min, raw Math.round would yield 0
+    fireEvent.click(screen.getByText(/Próximo/));
+    fireEvent.click(screen.getByText(/Finalizar Treino/));
+
+    await waitFor(() => {
+      expect(mockOnFinish).toHaveBeenCalled();
+    });
+    const historico = mockOnFinish.mock.calls[0][0];
+    expect(historico.duracaoMinutos).toBeGreaterThanOrEqual(1);
+  });
+
   it('shows loading state while generating feedback', async () => {
     const { generateWorkoutFeedback } = await import('@/ai/flows/workout-feedback-flow');
     let resolveFeedback!: (v: { title: string; message: string }) => void;

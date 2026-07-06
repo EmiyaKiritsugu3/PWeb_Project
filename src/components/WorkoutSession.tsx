@@ -170,7 +170,10 @@ export function WorkoutSession({ treino, onFinish, onCancel }: Readonly<WorkoutS
     if (isFinishing) return;
     setIsFinishing(true);
     const endTime = new Date();
-    const duracaoMinutos = Math.round((endTime.getTime() - startTime.getTime()) / 60000);
+    const duracaoMinutos = Math.max(
+      1,
+      Math.round((endTime.getTime() - startTime.getTime()) / 60000)
+    );
 
     const historico: Omit<HistoricoTreino, 'id' | 'alunoId'> = {
       treinoId: treino.id,
