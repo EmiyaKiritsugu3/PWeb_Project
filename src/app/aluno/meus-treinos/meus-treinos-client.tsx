@@ -13,7 +13,24 @@ import {
 import { DIAS_DA_SEMANA } from '@/lib/constants';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { PlusCircle, Trash2, Pencil, FileSignature, User, Play, Sparkles } from 'lucide-react';
+import {
+  PlusCircle,
+  Trash2,
+  Pencil,
+  FileSignature,
+  User,
+  Play,
+  Sparkles,
+  Dumbbell,
+  MoreVertical,
+} from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import type { Treino, HistoricoTreino } from '@/lib/definitions';
 import { useAppNotification } from '@/hooks/use-app-notification';
 import { WorkoutSession } from '@/components/WorkoutSession';
@@ -82,14 +99,20 @@ export default function MeusTreinosClient({
   const [showPlanBanner, setShowPlanBanner] = useState(false);
   const [bannerPlanName, setBannerPlanName] = useState<string | null>(null);
 
+  /* eslint-disable react-hooks/set-state-in-effect -- ponytail: setState-on-prop-change is the legitimate derived-banner-from-hook pattern; reducer adds ceremony for no gain. */
   useEffect(() => {
     if (planName) {
       setBannerPlanName(planName);
       setShowPlanBanner(true);
-      const timer = setTimeout(() => setShowPlanBanner(false), 30000);
-      return () => clearTimeout(timer);
     }
   }, [planName]);
+  /* eslint-enable react-hooks/set-state-in-effect */
+
+  useEffect(() => {
+    if (!showPlanBanner) return;
+    const timer = setTimeout(() => setShowPlanBanner(false), 30000);
+    return () => clearTimeout(timer);
+  }, [showPlanBanner]);
 
   const [treinoEmSessao, setTreinoEmSessao] = useState<Treino | null>(null);
   const [editingTreinoId, setEditingTreinoId] = useState<string | null>(null);
@@ -127,8 +150,9 @@ export default function MeusTreinosClient({
         {treinos.map((treino) => (
           <div
             key={treino.id}
+            data-testid="treino-card"
             className={cn(
-              'rounded-lg border p-4 transition-all flex flex-col sm:flex-row justify-between sm:items-center gap-4',
+              'rounded-lg border p-4 transition-all flex flex-col gap-3',
               treino.diaSemana !== null && 'bg-accent/10 border-accent'
             )}
           >
@@ -146,19 +170,54 @@ export default function MeusTreinosClient({
               </div>
             ) : (
               <>
-                <div className="flex-1">
-                  <div className="flex items-center gap-3">
-                    <h3 className="font-bold text-base">{treino.objetivo}</h3>
-                    {treino.diaSemana !== null && <Badge>{getDiaLabel(treino.diaSemana)}</Badge>}
-                    {treino.instrutorId && treino.instrutorId !== userId && (
-                      <Badge variant="secondary">Do Personal</Badge>
-                    )}
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h3 className="font-headline font-bold text-base">{treino.objetivo}</h3>
+                      {treino.diaSemana !== null && <Badge>{getDiaLabel(treino.diaSemana)}</Badge>}
+                      {treino.instrutorId && treino.instrutorId !== userId && (
+                        <Badge variant="secondary">Do Personal</Badge>
+                      )}
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      {treino.exercicios.length} exercícios
+                    </p>
                   </div>
-                  <p className="text-sm text-muted-foreground">
-                    {treino.exercicios.length} exercícios
-                  </p>
+                  {allowEditing && (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-9 w-9 shrink-0"
+                          data-testid="treino-kebab"
+                          aria-label="Ações do treino"
+                        >
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem
+                          data-testid="editar-treino"
+                          onClick={() => handleEditLocal(treino)}
+                        >
+                          <Pencil className="mr-2 h-4 w-4" />
+                          Editar
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          data-testid="excluir-treino"
+                          className="text-destructive focus:text-destructive"
+                          onClick={() => openDeleteAlert(treino)}
+                        >
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          Excluir
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  )}
                 </div>
-                <div className="flex items-center gap-2 flex-wrap">
+                <div className="flex flex-col sm:flex-row gap-2">
                   <Select
                     value={treino.diaSemana === null ? 'nenhum' : String(treino.diaSemana)}
                     onValueChange={(value) => handleDayChange(treino.id, value)}
@@ -175,36 +234,39 @@ export default function MeusTreinosClient({
                       ))}
                     </SelectContent>
                   </Select>
-                  <Button size="sm" onClick={() => setTreinoEmSessao(treino)}>
+                  <Button
+                    size="sm"
+                    className="flex-1 sm:flex-none"
+                    data-testid="iniciar-treino"
+                    onClick={() => setTreinoEmSessao(treino)}
+                  >
                     <Play className="mr-2 h-4 w-4" />
-                    Iniciar
+                    Iniciar Treino
                   </Button>
-                  {allowEditing && (
-                    <>
-                      <Button variant="secondary" size="sm" onClick={() => handleEditLocal(treino)}>
-                        <Pencil className="mr-2 h-4 w-4" />
-                        Editar
-                      </Button>
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => openDeleteAlert(treino)}
-                      >
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        Excluir
-                      </Button>
-                    </>
-                  )}
                 </div>
               </>
             )}
           </div>
         ))}
         {treinos.length === 0 && (
-          <div className="text-center text-sm text-muted-foreground py-10">
-            {allowEditing
-              ? 'Você ainda não criou nenhum treino.'
-              : 'Nenhum treino prescrito pelo seu personal ainda.'}
+          <div className="flex flex-col items-center justify-center gap-3 py-16 text-center">
+            <div className="rounded-full bg-muted/30 p-4">
+              <Dumbbell className="h-8 w-8 text-muted-foreground" />
+            </div>
+            <div>
+              <p className="font-medium text-foreground">Nenhum treino ainda</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                {allowEditing
+                  ? 'Gere um plano com IA ou crie manualmente para começar.'
+                  : 'Seu personal ainda não prescreveu treinos.'}
+              </p>
+            </div>
+            {allowEditing && (
+              <Button variant="outline" size="sm" onClick={() => setEditingTreinoId('__new__')}>
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Criar primeiro treino
+              </Button>
+            )}
           </div>
         )}
       </CardContent>
