@@ -4,6 +4,21 @@ import { WorkoutSession } from './WorkoutSession';
 import type { Treino } from '@/lib/definitions';
 import type { ReactNode } from 'react';
 
+function filterDomProps(props: Record<string, unknown>): Record<string, unknown> {
+  const domProps: Record<string, unknown> = {};
+  for (const [key, val] of Object.entries(props)) {
+    if (
+      key === 'children' ||
+      key === 'className' ||
+      key.startsWith('data-') ||
+      key.startsWith('aria-')
+    ) {
+      domProps[key] = val;
+    }
+  }
+  return domProps;
+}
+
 vi.mock('react-timer-hook', () => ({
   useTimer: () => ({
     seconds: 0,
@@ -23,13 +38,15 @@ vi.mock('@/components/ui/button', () => ({
     onClick,
     disabled,
     variant,
+    ...rest
   }: {
     children: ReactNode;
     onClick?: () => void;
     disabled?: boolean;
     variant?: string;
+    [key: string]: unknown;
   }) => (
-    <button onClick={onClick} disabled={disabled} data-variant={variant}>
+    <button onClick={onClick} disabled={disabled} data-variant={variant} {...filterDomProps(rest)}>
       {children}
     </button>
   ),
@@ -222,21 +239,18 @@ describe('WorkoutSession', () => {
     expect(mockOnCancel).toHaveBeenCalled();
   });
 
-  it('toggles series completion', () => {
+  it('renders series-row containers with serie-check testids', () => {
     render(<WorkoutSession treino={mockTreino} onFinish={mockOnFinish} onCancel={mockOnCancel} />);
-    const checkButtons = screen
-      .getAllByRole('button')
-      .filter(
-        (btn) => btn.querySelector('svg') !== null && btn.getAttribute('data-variant') === 'outline'
-      );
-    if (checkButtons.length > 0) {
-      fireEvent.click(checkButtons[0]);
-    }
-    const updatedCheckButtons = screen
-      .getAllByRole('button')
-      .filter(
-        (btn) => btn.querySelector('svg') !== null && btn.getAttribute('data-variant') === 'default'
-      );
-    expect(updatedCheckButtons.length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByTestId('series-row')).toHaveLength(3);
+    expect(screen.getByTestId('serie-check-0')).toBeTruthy();
+    expect(screen.getByTestId('serie-check-2')).toBeTruthy();
+  });
+
+  it('toggles series completion via serie-check testid', () => {
+    render(<WorkoutSession treino={mockTreino} onFinish={mockOnFinish} onCancel={mockOnCancel} />);
+    const firstCheck = screen.getByTestId('serie-check-0');
+    expect(firstCheck.getAttribute('data-variant')).toBe('outline');
+    fireEvent.click(firstCheck);
+    expect(screen.getByTestId('serie-check-0').getAttribute('data-variant')).toBe('default');
   });
 });

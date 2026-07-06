@@ -226,89 +226,98 @@ export function WorkoutSession({ treino, onFinish, onCancel }: Readonly<WorkoutS
   }
 
   // --- Tela de Sessão Ativa ---
-
+  // ponytail: mobile fullscreen overlay; desktop inline. slide-up anim via globals keyframe.
   return (
-    <Card className="w-full max-w-2xl mx-auto">
-      <CardHeader>
-        <CardTitle className="text-2xl text-center">
-          {exercicioAtual.exercicioOriginal.nomeExercicio}
-        </CardTitle>
-        <div className="text-center text-muted-foreground">
-          Exercício {exercicioAtualIndex + 1} de {exerciciosEmSessao.length}
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {/* Descrição do Exercício Planejado */}
-        <div className="text-center bg-secondary text-secondary-foreground rounded-lg p-3">
-          <p className="font-bold">
-            Planejado: {exercicioAtual.exercicioOriginal.series} séries x{' '}
-            {exercicioAtual.exercicioOriginal.repeticoes} reps
-          </p>
-          {exercicioAtual.exercicioOriginal.observacoes && (
-            <p className="text-sm">Obs: {exercicioAtual.exercicioOriginal.observacoes}</p>
-          )}
-        </div>
-
-        {/* Tabela de Séries */}
-        <div className="space-y-4">
-          {exercicioAtual.seriesExecutadas.map((serie) => (
-            <div key={serie.id} className="grid grid-cols-4 items-center gap-4">
-              <Label className="text-right">Série {serie.serieNumero}</Label>
-              <Input
-                type="number"
-                placeholder="Peso (kg)"
-                onChange={(e) => handleSerieChange(serie.id, 'peso', e.target.value)}
-              />
-              <Input
-                type="number"
-                placeholder="Reps"
-                onChange={(e) => handleSerieChange(serie.id, 'repeticoesFeitas', e.target.value)}
-              />
-              <Button
-                size="icon"
-                variant={serie.concluido ? 'default' : 'outline'}
-                onClick={() => handleSerieToggle(serie.id)}
-              >
-                <Check className="h-4 w-4" />
-              </Button>
-            </div>
-          ))}
-        </div>
-
-        {/* Cronômetro de Descanso */}
-        {isRunning && (
-          <div className="flex items-center justify-center gap-2 text-2xl font-bold text-primary">
-            <Timer />
-            <span>
-              {minutes.toString().padStart(2, '0')}:{seconds.toString().padStart(2, '0')}
-            </span>
+    <div className="fixed inset-x-0 top-0 z-50 flex h-dvh flex-col bg-background md:static md:z-auto md:h-auto md:bg-transparent animate-[slide-up_0.3s_ease-out] motion-reduce:animate-none">
+      <Card className="flex h-full w-full flex-col md:max-w-2xl md:mx-auto md:h-auto">
+        <CardHeader className="shrink-0">
+          <CardTitle className="text-2xl text-center">
+            {exercicioAtual.exercicioOriginal.nomeExercicio}
+          </CardTitle>
+          <div className="text-center text-muted-foreground">
+            Exercício {exercicioAtualIndex + 1} de {exerciciosEmSessao.length}
           </div>
-        )}
-      </CardContent>
+        </CardHeader>
+        <CardContent className="flex-1 space-y-6 overflow-y-auto">
+          {/* Descrição do Exercício Planejado */}
+          <div className="text-center bg-secondary text-secondary-foreground rounded-lg p-3">
+            <p className="font-bold">
+              Planejado: {exercicioAtual.exercicioOriginal.series} séries x{' '}
+              {exercicioAtual.exercicioOriginal.repeticoes} reps
+            </p>
+            {exercicioAtual.exercicioOriginal.observacoes && (
+              <p className="text-sm">Obs: {exercicioAtual.exercicioOriginal.observacoes}</p>
+            )}
+          </div>
 
-      <CardFooter className="flex justify-between">
-        <Button
-          variant="outline"
-          onClick={handleExercicioAnterior}
-          disabled={exercicioAtualIndex === 0}
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" /> Anterior
-        </Button>
+          {/* Tabela de Séries */}
+          <div className="space-y-4">
+            {exercicioAtual.seriesExecutadas.map((serie, serieIdx) => (
+              <div
+                key={serie.id}
+                data-testid="series-row"
+                className="grid grid-cols-4 items-center gap-2"
+              >
+                <Label className="text-right">Série {serie.serieNumero}</Label>
+                <Input
+                  type="number"
+                  placeholder="Peso (kg)"
+                  onChange={(e) => handleSerieChange(serie.id, 'peso', e.target.value)}
+                />
+                <Input
+                  type="number"
+                  placeholder="Reps"
+                  onChange={(e) => handleSerieChange(serie.id, 'repeticoesFeitas', e.target.value)}
+                />
+                <Button
+                  size="icon"
+                  variant={serie.concluido ? 'default' : 'outline'}
+                  onClick={() => handleSerieToggle(serie.id)}
+                  data-testid={`serie-check-${serieIdx}`}
+                  aria-label={`Marcar série ${serie.serieNumero}`}
+                  className="touch-target"
+                >
+                  <Check className="h-4 w-4" />
+                </Button>
+              </div>
+            ))}
+          </div>
 
-        {exercicioAtualIndex === exerciciosEmSessao.length - 1 ? (
+          {/* Cronômetro de Descanso */}
+          {isRunning && (
+            <div className="flex items-center justify-center gap-2 text-2xl font-bold text-primary">
+              <Timer />
+              <span>
+                {minutes.toString().padStart(2, '0')}:{seconds.toString().padStart(2, '0')}
+              </span>
+            </div>
+          )}
+        </CardContent>
+
+        <CardFooter className="sticky bottom-0 flex shrink-0 justify-between bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 md:bg-transparent md:backdrop-blur-none">
           <Button
-            onClick={handleFinalizarTreino}
-            className="bg-green-600 hover:bg-green-700"
-            disabled={isFinishing}
+            variant="outline"
+            onClick={handleExercicioAnterior}
+            disabled={exercicioAtualIndex === 0}
           >
-            Finalizar Treino
+            <ArrowLeft className="mr-2 h-4 w-4" /> Anterior
           </Button>
-        ) : (
-          <Button onClick={handleProximoExercicio}>
-            Próximo <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
-        )}
-      </CardFooter>
-    </Card>
+
+          {exercicioAtualIndex === exerciciosEmSessao.length - 1 ? (
+            <Button
+              onClick={handleFinalizarTreino}
+              className="bg-green-600 hover:bg-green-700"
+              disabled={isFinishing}
+            >
+              Finalizar Treino
+            </Button>
+          ) : (
+            <Button onClick={handleProximoExercicio}>
+              Próximo <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          )}
+        </CardFooter>
+      </Card>
+    </div>
   );
 }

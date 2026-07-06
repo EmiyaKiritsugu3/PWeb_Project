@@ -16,9 +16,9 @@ test.describe('Workout session — completion flow', () => {
     await expect(iniciarButton).toBeVisible({ timeout: 15_000 });
     await iniciarButton.click();
 
-    // The WorkoutSession card should now be visible — wait for the first series row
-    // Buttons inside div.grid-cols-4 are the series check buttons (icon-only, no text)
-    const seriesCheckButton = page.locator('div.grid-cols-4').getByRole('button').first();
+    // The WorkoutSession card should now be visible — wait for the first series check button
+    // data-testid="serie-check-0" is the icon-only check button for series 0 of current exercise
+    const seriesCheckButton = page.getByTestId('serie-check-0');
     await expect(seriesCheckButton).toBeVisible({ timeout: 10_000 });
     await seriesCheckButton.click();
 
@@ -33,7 +33,7 @@ test.describe('Workout session — completion flow', () => {
         throw new Error('Workout navigation loop exceeded max exercises — UI regression?');
       await proximoButton.click();
       // Mark a series on the next exercise too
-      const nextCheckButton = page.locator('div.grid-cols-4').getByRole('button').first();
+      const nextCheckButton = page.getByTestId('serie-check-0');
       if (await nextCheckButton.isVisible()) await nextCheckButton.click();
     }
 
