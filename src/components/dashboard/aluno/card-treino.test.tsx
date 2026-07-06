@@ -212,6 +212,55 @@ describe('CardTreino', () => {
     expect(button?.disabled).toBe(true);
   });
 
+  it('shows finish hint when no exercises checked', () => {
+    render(
+      <CardTreino
+        treino={mockTreino}
+        onFinishTraining={mockOnFinishTraining}
+        isFeedbackLoading={false}
+        onViewExercicio={mockOnViewExercicio}
+      />
+    );
+    expect(screen.getByTestId('finish-hint')).toBeTruthy();
+    expect(
+      screen.getByText('Marque os exercícios concluídos acima para finalizar o treino.')
+    ).toBeTruthy();
+  });
+
+  it('hides finish hint when an exercise is checked', () => {
+    let checkedExercises: Record<string, boolean> = {};
+    mockUseWorkoutTracker.mockReturnValue({
+      checkedExercises,
+      handleCheckChange: (id: string) => {
+        checkedExercises = { ...checkedExercises, [id]: !checkedExercises[id] };
+        mockUseWorkoutTracker.mockReturnValue({
+          checkedExercises,
+          handleCheckChange: vi.fn(),
+        });
+      },
+    });
+
+    const { rerender } = render(
+      <CardTreino
+        treino={mockTreino}
+        onFinishTraining={mockOnFinishTraining}
+        isFeedbackLoading={false}
+        onViewExercicio={mockOnViewExercicio}
+      />
+    );
+    const checkboxes = screen.getAllByRole('checkbox');
+    fireEvent.click(checkboxes[0]);
+    rerender(
+      <CardTreino
+        treino={mockTreino}
+        onFinishTraining={mockOnFinishTraining}
+        isFeedbackLoading={false}
+        onViewExercicio={mockOnViewExercicio}
+      />
+    );
+    expect(screen.queryByTestId('finish-hint')).toBeNull();
+  });
+
   it('shows loading state when feedback is loading', () => {
     render(
       <CardTreino
