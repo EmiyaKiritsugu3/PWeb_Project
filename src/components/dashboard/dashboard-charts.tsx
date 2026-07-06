@@ -20,9 +20,9 @@ export function DashboardCharts({ data }: Readonly<DashboardChartsProps>) {
           Crescimento de Alunos (Últimos meses)
         </CardTitle>
       </CardHeader>
-      <CardContent className="pt-6 pl-2 pb-2">
-        <ResponsiveContainer width="100%" height={350}>
-          <BarChart data={data}>
+      <CardContent className="pt-6 pl-2 pb-2 h-[200px] md:h-[300px]">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={data} maxBarSize={32}>
             <defs>
               <linearGradient id="neonCyan" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="oklch(0.7 0.25 190)" stopOpacity={0.9} />
@@ -68,7 +68,7 @@ export function DashboardCharts({ data }: Readonly<DashboardChartsProps>) {
               itemStyle={{ color: 'oklch(0.7 0.25 190)', fontSize: '14px' }}
               cursor={{ fill: 'oklch(0.7 0.25 190 / 0.03)' }}
             />
-            <Bar dataKey="alunos" fill="url(#neonCyan)" radius={[8, 8, 0, 0]} barSize={40} />
+            <Bar dataKey="alunos" fill="url(#neonCyan)" radius={[8, 8, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </CardContent>
