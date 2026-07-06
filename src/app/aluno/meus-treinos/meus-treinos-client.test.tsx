@@ -22,24 +22,8 @@ vi.mock('@/hooks/use-app-notification', () => ({
 }));
 
 vi.mock('@/hooks/use-workout-crud', () => ({
-  useWorkoutCRUD: () => ({
-    meusTreinos: [
-      {
-        id: 'treino-1',
-        alunoId: 'user-1',
-        objetivo: 'Hipertrofia',
-        diaSemana: 1,
-        instrutorId: 'instrutor-1',
-        exercicios: [{ id: 'ex-1', nomeExercicio: 'Supino', series: 4, repeticoes: '12' }],
-      },
-      {
-        id: 'treino-2',
-        alunoId: 'user-1',
-        objetivo: 'Resistência',
-        diaSemana: null,
-        exercicios: [{ id: 'ex-2', nomeExercicio: 'Corrida', series: 1, repeticoes: '30min' }],
-      },
-    ],
+  useWorkoutCRUD: vi.fn(({ initialTreinos }: { initialTreinos: Treino[] }) => ({
+    meusTreinos: initialTreinos,
     isFormVisible: false,
     setIsFormVisible: vi.fn(),
     editingTreino: null,
@@ -52,7 +36,7 @@ vi.mock('@/hooks/use-workout-crud', () => ({
     handleDayChange: vi.fn(),
     openDeleteAlert: vi.fn(),
     handleDelete: vi.fn(),
-  }),
+  })),
 }));
 
 vi.mock('@/hooks/use-workout-generation', () => ({
@@ -138,6 +122,28 @@ vi.mock('@/components/dashboard/aluno/workout-editor', () => ({
   WorkoutEditor: () => <div data-testid="workout-editor" />,
 }));
 
+vi.mock('@/components/ui/dropdown-menu', () => ({
+  DropdownMenu: ({ children }: { children: ReactNode }) => <div>{children}</div>,
+  DropdownMenuTrigger: ({ children }: { children: ReactNode }) => <>{children}</>,
+  DropdownMenuContent: ({ children }: { children: ReactNode }) => (
+    <div data-testid="dropdown-content">{children}</div>
+  ),
+  DropdownMenuItem: ({
+    children,
+    onClick,
+    ...rest
+  }: {
+    children: ReactNode;
+    onClick?: () => void;
+    [key: string]: unknown;
+  }) => (
+    <button onClick={onClick} {...filterDomProps(rest)}>
+      {children}
+    </button>
+  ),
+  DropdownMenuSeparator: () => <hr />,
+}));
+
 function filterDomProps(props: Record<string, unknown>): Record<string, unknown> {
   const domProps: Record<string, unknown> = {};
   for (const [key, val] of Object.entries(props)) {
@@ -206,5 +212,25 @@ describe('MeusTreinosClient', () => {
     render(<MeusTreinosClient initialTreinos={mockTreinos} userId="user-1" />);
     expect(screen.getByText(/Plano Semanal/)).toBeTruthy();
     expect(screen.getByText(/Hipertrofia 3x/)).toBeTruthy();
+  });
+
+  it('renders kebab menu on aluno treino card', () => {
+    render(<MeusTreinosClient initialTreinos={mockTreinos} userId="user-1" />);
+    expect(screen.getByTestId('treino-kebab')).toBeTruthy();
+    expect(screen.getByTestId('editar-treino')).toBeTruthy();
+    expect(screen.getByTestId('excluir-treino')).toBeTruthy();
+  });
+
+  it('renders primary Iniciar Treino CTA on aluno card', () => {
+    render(<MeusTreinosClient initialTreinos={mockTreinos} userId="user-1" />);
+    expect(screen.getAllByTestId('iniciar-treino').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Iniciar Treino').length).toBeGreaterThan(0);
+  });
+
+  it('renders empty state with icon, heading and CTA when no aluno treinos', () => {
+    render(<MeusTreinosClient initialTreinos={[]} userId="user-1" />);
+    expect(screen.getAllByText('Nenhum treino ainda').length).toBe(2);
+    expect(screen.getByText('Gere um plano com IA ou crie manualmente para começar.')).toBeTruthy();
+    expect(screen.getByText('Criar primeiro treino')).toBeTruthy();
   });
 });
