@@ -1,5 +1,43 @@
 # Estado Atual (2026-07-06)
 
+## Iteração 4 (P5) — CI/CD + Docker + SonarQube — PR #191 (open)
+
+**Branch:** `feat/p5-ci-deploy-quality` (commit `bc429b0`).
+**Tarefa:** [P5-tarefa5](https://github.com/tacianosilva/eng-software-2/blob/main/tarefas/projetos/P5-tarefa5.md).
+
+### Entregas P5
+
+- **Cobertura branch 79.65% → 84.53%** (alvo 80%): excluído `src/components/ui/**` (shadcn/Radix wrappers) do coverage vitest + SonarQube exclusions. Issue #188 (fechada).
+- **Docker:** `docker-compose.yml` (postgres:16-alpine + node:22-alpine dev, migrate/seed auto). Issue #189 (fechada).
+- **Docs:** `docs/doc-deploy.md` (deploy Vercel + compose + CI + SemVer + Conventional Commits + AcademicDevFlow) + `docs/sonarqube/config.md` + `docs/sonarqube/scans.md` (1ª exec 2026-07-06, branch 84.53%, gate PASS). Issue #190 (fechada).
+- **CI:** `.github/workflows/ci.yml` ganhou `schedule: cron '3 9 * * 1,4'` + `workflow_dispatch` (SonarQube 2x/semana seg+qui).
+- **Relatório:** `docs/relatorio-testes.md` iter 3→4 (P5), US13 PRD-8 (#187) como US do membro (tela→banco), métricas 1137/1137 unit, 21 E2E, branch 84.53%.
+- **Issues bugs:** #188 #189 #190 criadas + fechadas.
+
+### Gates
+
+typecheck 0 errors · lint 0 errors · 1137/1137 tests · branch 84.53% (≥80% P5).
+
+### Pendências P5
+
+- 2ª execução SonarQube (2026-07-10, cron automático).
+- SonarCloud action pré-existente usa tag `v2.89.0` (Semgrep WARNING pin SHA) — fora escopo P5.
+
+### Remediação P5 (auditoria docs/configs)
+
+Pós-auditoria adversarial (3 Explore + 1 code-reviewer agent), branch `feat/p5-ci-deploy-quality` antes do merge PR #191:
+
+- **T01** ✅ `sonar-project.properties` + `src/lib/actions/**` em `sonar.exclusions` (alinha com vitest + doc-deploy).
+- **T02** ✅ `docs/doc-deploy.md` §3 lista 10 exclusões de cobertura (não 2).
+- **T03** ✅ `docs/sonarqube/config.md` §6 cron `3 9 * * 1,4` alinhado com `ci.yml`.
+- **T04** ✅ `docs/doc-deploy.md` §6 + §8 documentam release `RC-v1.0` (It4), tag `v1.0.0`, GitHub Release, ADF coverage table.
+- **T06** ✅ `docs/sonarqube/scans.md` placeholder 2ª exec 2026-07-10 (PENDING, métricas pós-cron).
+- **T09** ✅ `docs/relatorio-testes.md` auditado — 2 tabelas modelo taciano + fluxos A1/A2/A3 US13.
+
+Não ações (ponytail): aguardar cron 10/07 p/ métricas reais (T06 placeholder), SonarCloud action pin (fora escopo P5).
+
+---
+
 ## Mobile-First Premium Polish (v0.10.0 em andamento)
 
 **Branch ativa:** `feat/workout-session-mobile` (PR #182 aberto, aguardando CI)

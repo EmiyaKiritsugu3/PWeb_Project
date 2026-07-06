@@ -13,6 +13,10 @@ on:
       - 'LICENSE'
       - '.prettierignore'
       - '.eslintrc*'
+  # P5 §4: SonarQube 2x/semana (seg + qui 09:03 UTC)
+  schedule:
+    - cron: '3 9 * * 1,4'
+  workflow_dispatch:
 
 env:
   HUSKY: '0'
