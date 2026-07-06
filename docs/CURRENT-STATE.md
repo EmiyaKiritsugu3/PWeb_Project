@@ -14,7 +14,7 @@ Shared `src/components/bottom-nav.tsx` (client, `md:hidden`, 44pt touch-target, 
 
 Refactor `getNavItems(role)` extraído de `DashboardNav` — single source de nav filtrada por role, compartilhada sidebar + bottom bar. `UserMenu` (aluno) perdeu `navLinks` prop + bloco `md:hidden` redundante no dropdown.
 
-Gates: typecheck ✅, lint ✅ (changed files clean), prettier ✅, 1125/1125 tests ✅.
+Gates: typecheck ✅, lint ✅ (changed files clean), prettier ✅, 1129/1129 tests ✅.
 
 ### PRD-1 — Mobile-First Foundation (merged #176)
 
