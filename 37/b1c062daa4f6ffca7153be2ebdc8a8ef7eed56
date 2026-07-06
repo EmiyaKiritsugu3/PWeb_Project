@@ -1,0 +1,24 @@
+src/app/dashboard/page.tsx
+  s_2296ce58b9c48f::t_8e71016a2ea1ad 56,67,74,85
+  s_2296ce58b9c48f::t_21db3a99c3d1d1 60,62
+  s_2296ce58b9c48f::t_cbcea47cd13d1c 72
+src/components/dashboard/dashboard-charts.tsx
+  s_2296ce58b9c48f::t_a9b52db6cec362 23-25
+  s_2296ce58b9c48f::t_53960208ea7a21 71
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "37b1c062daa4f6ffca7153be2ebdc8a8ef7eed56",
+  "prompts": {},
+  "sessions": {
+    "s_2296ce58b9c48f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "983bfabc-0770-47ca-bd35-ed1636b219b6",
+        "model": "z-ai/glm-5.2"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
