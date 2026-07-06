@@ -1,0 +1,38 @@
+docker-compose.yml
+  s_8d36270e3faa7d::t_785bc120a3e656 15,19,36
+  s_8d36270e3faa7d::t_3b46294898f2b7 1-14,16-18,20-35,37-44
+docs/sonarqube/scans.md
+  s_8d36270e3faa7d::t_5472937854d912 1-4,8-15,17-19
+  s_8d36270e3faa7d::t_785bc120a3e656 5-7,16
+.github/workflows/ci.yml
+  s_8d36270e3faa7d::t_601ede533b9f64 16-19
+sonar-project.properties
+  s_8d36270e3faa7d::t_b17dbd1fb96747 16
+vitest.config.ts
+  s_8d36270e3faa7d::t_80accf23f0796d 26-27
+docs/relatorio-testes.md
+  s_8d36270e3faa7d::t_5f5d971ef2aa3b 1,5-6,13
+  s_8d36270e3faa7d::t_785bc120a3e656 15-25,202-208,211,216,222,249-258,262-266
+  s_8d36270e3faa7d::t_97824577f4497c 198-201,209-210,212-215,217-221,223-230
+  s_8d36270e3faa7d::t_d78646e70cf10d 260
+  s_8d36270e3faa7d::t_07362d4b4b63a3 259,261
+docs/sonarqube/config.md
+  s_8d36270e3faa7d::t_785bc120a3e656 17-24,53,70,74,80-86,93,102-104,106,111
+  s_8d36270e3faa7d::t_b99d628556c15d 1-16,25-52,54-69,71-73,75-79,87-92,94-101,105,107-110,112-114
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "bc429b00fbfe56b42c34f7281362bda5b62b9f9c",
+  "prompts": {},
+  "sessions": {
+    "s_8d36270e3faa7d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d7b07447-e2d9-4516-8ed2-a3df9930ae86",
+        "model": "z-ai/glm-5.2"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
