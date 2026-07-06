@@ -16,13 +16,15 @@ import {
 import { SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
 import { logout } from '@/app/actions/auth';
 import { FINANCIAL_ROUTES } from '@/lib/constants';
-import type { NavIconName } from '@/components/bottom-nav';
+import { isNavActive, type NavIconName } from '@/components/bottom-nav';
 
 export type NavItemDef = {
   href: string;
   label: string;
   iconName: NavIconName;
 };
+
+export const DEV_HREF = '/dashboard/dev';
 
 const NAV_ITEM_DEFS: NavItemDef[] = [
   { href: '/dashboard', label: 'Dashboard', iconName: 'layout-dashboard' },
@@ -33,7 +35,7 @@ const NAV_ITEM_DEFS: NavItemDef[] = [
 ];
 
 // ponytail: dev item uses FlaskConical which has no NavIconName slot (dev stays sidebar-only, never reaches BottomNav)
-const DEV_ITEM: NavItemDef = { href: '/dashboard/dev', label: 'Dev', iconName: 'dumbbell' };
+const DEV_ITEM: NavItemDef = { href: DEV_HREF, label: 'Dev', iconName: 'dumbbell' };
 
 function buildAllItems(): NavItemDef[] {
   const items = [...NAV_ITEM_DEFS];
@@ -61,11 +63,9 @@ const SIDEBAR_ICONS: Record<NavIconName, LucideIcon> = {
 
 function iconFor(item: NavItemDef): LucideIcon {
   // dev item sidebar uses FlaskConical — separate from BottomNav's union
-  if (item.href === '/dashboard/dev') return FlaskConical;
+  if (item.href === DEV_HREF) return FlaskConical;
   return SIDEBAR_ICONS[item.iconName];
 }
-
-export type DashboardNavItem = NavItemDef;
 
 interface DashboardNavProps {
   role: string;
@@ -76,17 +76,10 @@ export function DashboardNav({ role }: Readonly<DashboardNavProps>) {
 
   const navItems = getNavItems(role);
 
-  const isActive = (href: string) => {
-    if (href === '/dashboard') {
-      return pathname === href;
-    }
-    return pathname.startsWith(href);
-  };
-
   return (
     <SidebarMenu className="gap-2">
       {navItems.map((item) => {
-        const active = isActive(item.href);
+        const active = isNavActive(item.href, pathname);
         const Icon = iconFor(item);
         return (
           <SidebarMenuItem key={item.href}>

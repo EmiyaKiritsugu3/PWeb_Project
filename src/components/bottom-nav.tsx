@@ -29,9 +29,11 @@ const ICONS: Record<NavIconName, LucideIcon> = {
   'folder-kanban': FolderKanban,
 };
 
-function isActive(href: string, activeHref: string): boolean {
-  // ponytail: exact match for root dashboards, startsWith for sub-paths — mirrors dashboard-nav isActive
-  if (href === '/dashboard' || href === '/aluno/dashboard') {
+// ponytail: root dashboards exact-match (avoid /dashboard active on /dashboard/alunos), startsWith for sub-paths
+const ROOT_HREFS = new Set(['/dashboard', '/aluno/dashboard']);
+
+export function isNavActive(href: string, activeHref: string): boolean {
+  if (ROOT_HREFS.has(href)) {
     return activeHref === href;
   }
   return activeHref.startsWith(href);
@@ -48,7 +50,7 @@ export function BottomNav({
     >
       <div className="flex h-full items-stretch">
         {items.map((item) => {
-          const active = isActive(item.href, activeHref);
+          const active = isNavActive(item.href, activeHref);
           const Icon = ICONS[item.iconName];
           return (
             <Link

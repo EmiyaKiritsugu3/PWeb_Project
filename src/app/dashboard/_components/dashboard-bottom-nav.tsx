@@ -2,9 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import { BottomNav } from '@/components/bottom-nav';
-import { getNavItems } from '@/components/dashboard-nav';
-
-const DEV_HREF = '/dashboard/dev';
+import { DEV_HREF, getNavItems } from '@/components/dashboard-nav';
 
 export function DashboardBottomNav({ role }: Readonly<{ role: string }>) {
   const pathname = usePathname();

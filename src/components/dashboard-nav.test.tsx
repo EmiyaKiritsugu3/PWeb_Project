@@ -59,6 +59,7 @@ vi.mock('lucide-react', () => {
     Settings: () => <MockIcon data-testid="icon-settings" />,
     LogOut: () => <MockIcon data-testid="icon-logout" />,
     FlaskConical: () => <MockIcon data-testid="icon-flask" />,
+    FolderKanban: () => <MockIcon data-testid="icon-folder" />,
   };
 });
 
