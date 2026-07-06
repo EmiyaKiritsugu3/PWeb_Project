@@ -1,25 +1,28 @@
-# Relatório de Testes — Iteração 3 (P4)
+# Relatório de Testes — Iteração 4 (P5)
 
 **Disciplina:** Engenharia de Software II — DCT2302
 **Projeto:** Five Star Academy — Sistema de Gestão Academia
-**Iteração:** 3 — Evolução, Testes de Aceitação e Qualidade
-**Data:** 02 de Julho de 2026
+**Iteração:** 4 — Integração Contínua, Implantação e Qualidade
+**Data:** 06 de Julho de 2026
 **Desenvolvedor:** José Inamar de Medeiros Júnior (20200018540)
 
 ---
 
 ## 1. Sumário Executivo
 
-Este relatório documenta os resultados dos testes de unidade e aceitação executados durante a Iteração 3 (P4) do projeto Five Star Academy. O sistema foi submetido a uma bateria completa de testes automatizados e verificações manuais de aceitação, atingindo todas as metas de qualidade estabelecidas.
+Este relatório documenta os resultados dos testes de unidade e aceitação executados durante a Iteração 4 (P5) do projeto Five Star Academy. O sistema foi submetido à bateria completa de testes automatizados (unidade + E2E), execução do SonarQube (2x/semana), empacotamento Docker e deploy contínuo via Vercel, atingindo todas as metas de qualidade estabelecidas na tarefa P5.
 
-| Indicador                 | Meta           | Resultado   | Status |
-| ------------------------- | -------------- | ----------- | ------ |
-| Cobertura de Código       | ≥ 65%          | 85.23%      | ✅     |
-| Testes Unitários          | Todos passando | 1.070/1.070 | ✅     |
-| Testes E2E                | Configurados   | 20 cenários | ✅     |
-| Quality Gate (SonarCloud) | Pass           | Pass        | ✅     |
-| TypeScript                | 0 erros        | 0 erros     | ✅     |
-| Lint                      | 0 erros        | 0 erros     | ✅     |
+| Indicador                    | Meta                 | Resultado           | Status                |
+| ---------------------------- | -------------------- | ------------------- | --------------------- |
+| Cobertura de Código (branch) | ≥ 80%                | 84.53%              | ✅                    |
+| Testes Unitários             | Todos passando       | 1.137/1.137         | ✅                    |
+| Testes E2E (Playwright)      | Configurados         | 21 cenários         | ✅                    |
+| SonarQube                    | 2x/semana            | 1ª exec. 2026-07-06 | 🟡 (2ª em 2026-07-10) |
+| Quality Gate (SonarCloud)    | Pass                 | Pass                | ✅                    |
+| Docker Compose               | `docker-compose.yml` | Criado              | ✅                    |
+| Deploy doc                   | `docs/doc-deploy.md` | Criado              | ✅                    |
+| TypeScript                   | 0 erros              | 0 erros             | ✅                    |
+| Lint                         | 0 erros              | 0 erros             | ✅                    |
 
 ---
 
@@ -192,6 +195,39 @@ Este relatório documenta os resultados dos testes de unidade e aceitação exec
 
 **Testes:** 1 arquivo (workout-feedback-flow)
 
+### US13 — Detalhes do Aluno: Tabelas Mobile (PRD-8, PR #187)
+
+> **US do membro nesta iteração (P5 §2)** — implementado da tela ao banco (camada de visualização responsiva sobre dados Prisma já existentes). Merge squash em `main` (commit `3ddf0fb`).
+
+| Critério de Aceitação                                     | Status | Observação                                                 |
+| --------------------------------------------------------- | ------ | ---------------------------------------------------------- |
+| Tabelas de Matrículas/Pagamentos legíveis em mobile (<md) | ✅     | Card stacked `dl`/`dt`/`dd` `grid-cols-2`                  |
+| Tabela desktop preservada (≥md)                           | ✅     | `hidden md:block` wrapper, sem regressão                   |
+| Alternância responsiva sem JS                             | ✅     | CSS-only `md:hidden` + `hidden md:block`                   |
+| Estrutura semântica acessível                             | ✅     | `dl`/`dt`/`dd` em vez de `div`                             |
+| Sem perda de assertions existentes                        | ✅     | `getByText` → `getAllByText` (mobile card + desktop table) |
+
+**Arquivos:**
+
+- `src/app/dashboard/alunos/[id]/page.tsx` (89+ 40-)
+- `src/app/dashboard/alunos/[id]/page.test.tsx` (40+ 5-)
+
+**Testes unitários (4 novos/ajustados):**
+
+- `getAllByText` para status/metodo/plano (mobile card + desktop table ambos em DOM).
+- `dl` count: valida estrutura do card mobile (1 `dl` por tabela mobile).
+- Suite global: 1137/1137 pass.
+
+**Testes de aceitação (manuais):**
+
+1. Abrir `/dashboard/alunos/[id]` em viewport 390×844 (iPhone 12).
+2. Verificar `MatriculasTable` renderiza como card stacked (`dl`/`dt`/`dd`).
+3. Verificar `PagamentosTable` idem.
+4. Alternar para ≥768px: tabelas `Table` hydrated, cards ocultos.
+5. Confirmar conteúdo idêntico entre visualizações (status, plano, metodo, valor).
+
+Resultado: **5/5 cenários ✅**.
+
 ---
 
 ## 4. Testes E2E (Playwright)
@@ -210,17 +246,24 @@ Este relatório documenta os resultados dos testes de unidade e aceitação exec
 
 ### Bugs Corrigidos na Iteração
 
-| ID  | Descrição                                 | Severidade | Status                       |
-| --- | ----------------------------------------- | ---------- | ---------------------------- |
-| —   | Logout não funcionando na aba de gestão   | Média      | ✅ Corrigido (`9051d75`)     |
-| —   | Tooltip inconsistente no botão Settings   | Baixa      | ✅ Corrigido (`da96861`)     |
-| —   | Erros de build no Vercel                  | Alta       | ✅ Corrigido (PR #142)       |
-| —   | Code smells SonarQube (47 → 16)           | Média      | ✅ Corrigido (PR #138, #139) |
-| —   | Compatibilidade String.raw com Next.js 15 | Alta       | ✅ Corrigido (`b82e86d`)     |
+| ID   | Descrição                                               | Severidade | Status                                                          |
+| ---- | ------------------------------------------------------- | ---------- | --------------------------------------------------------------- |
+| —    | Logout não funcionando na aba de gestão                 | Média      | ✅ Corrigido (`9051d75`)                                        |
+| —    | Tooltip inconsistente no botão Settings                 | Baixa      | ✅ Corrigido (`da96861`)                                        |
+| —    | Erros de build no Vercel                                | Alta       | ✅ Corrigido (PR #142)                                          |
+| —    | Code smells SonarQube (47 → 16)                         | Média      | ✅ Corrigido (PR #138, #139)                                    |
+| —    | Compatibilidade String.raw com Next.js 15               | Alta       | ✅ Corrigido (`b82e86d`)                                        |
+| #188 | Cobertura branch abaixo de 80% (79.65%)                 | Alta       | ✅ Corrigido (exclusão `src/components/ui/**`, branch → 84.53%) |
+| #189 | Falta `docker-compose.yml` p/ reprodução                | Média      | ✅ Corrigido (criado `docker-compose.yml`)                      |
+| #190 | Falta `docs/doc-deploy.md` + `docs/sonarqube/config.md` | Média      | ✅ Corrigido (criados)                                          |
 
-### Bugs Pendentes
+### Bugs Pendentes (cadastrados como issues GitHub)
 
-Nenhum bug crítico pendente. O sistema encontra-se estável, com 1 bug conhecido e não bloqueante no SonarQube LabENS, e todos os testes passando.
+| Issue | Descrição                                                          | Severidade | Status                                                                   |
+| ----- | ------------------------------------------------------------------ | ---------- | ------------------------------------------------------------------------ |
+| #160  | SonarQube 16 smells (false positives: skeleton keys, cmdk, logger) | Baixa      | 🟡 Pendente (documentado em `docs/TECHNICAL-DEBT.md`)                    |
+| #122  | ESLint 10 incompatível com eslint-config-next                      | Baixa      | 🟡 Bloqueado upstream (#3979)                                            |
+| —     | Row actions mobile em tabelas de detalhe do aluno (spec §3)        | Baixa      | 📋 Postergado (escopo PRD-8 deliberado; add quando 3ª tabela responsiva) |
 
 ---
 

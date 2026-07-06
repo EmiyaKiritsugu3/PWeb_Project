@@ -23,6 +23,8 @@ export default defineConfig({
         'src/app/**/layout.*',
         // Server Actions: tightly coupled to Prisma/Supabase — covered by Playwright E2E (Phase 7)
         'src/lib/actions/**',
+        // shadcn/ui primitives: Radix-generated wrappers, not business logic — covered by E2E
+        'src/components/ui/**',
       ],
       thresholds: {
         // Pure utility functions — no external deps, must stay fully covered
