@@ -39,7 +39,7 @@ export default async function FinanceiroPage() {
   await requireRole(Role.GERENTE);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 bg-black min-h-screen">
+    <div className="max-w-7xl mx-auto px-4 py-8 bg-black min-h-dvh">
       <PageHeader
         title="Gestão Financeira"
         description="Acompanhe pagamentos e matrículas inadimplentes."

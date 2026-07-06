@@ -20,9 +20,9 @@ describe('AlunosPage', () => {
     vi.clearAllMocks();
   });
 
-  it('renders a container with min-h-screen', () => {
+  it('renders a container with min-h-dvh', () => {
     const { container } = render(<AlunosPage />);
-    expect(container.querySelector('.min-h-screen')).toBeTruthy();
+    expect(container.querySelector('.min-h-dvh')).toBeTruthy();
   });
 
   it('renders the page structure with Suspense fallback', () => {

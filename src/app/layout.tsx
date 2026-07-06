@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Toaster } from '@/components/ui/toaster';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import './globals.css';
@@ -8,6 +8,13 @@ import { SupabaseAuthProvider } from '@/components/providers/auth-provider';
 export const metadata: Metadata = {
   title: 'Five Star Gym Manager',
   description: 'Integrated Management System for Academia Five Star',
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+  colorScheme: 'dark',
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

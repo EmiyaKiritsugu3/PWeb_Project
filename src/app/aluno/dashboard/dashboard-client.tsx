@@ -82,7 +82,7 @@ export default function AlunoDashboardClient({
   const progressPerc = aluno.progressPerc as number;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 pb-20 bg-black min-h-screen">
+    <div className="max-w-7xl mx-auto px-4 pb-20 bg-black min-h-dvh">
       <ExercicioViewer
         exercicio={selectedExercicio}
         isOpen={isViewerOpen}
