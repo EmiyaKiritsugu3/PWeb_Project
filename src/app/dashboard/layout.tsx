@@ -10,6 +10,7 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { DashboardNav, DashboardNavBottom } from '@/components/dashboard-nav';
+import { DashboardBottomNav } from '@/app/dashboard/_components/dashboard-bottom-nav';
 import { UserMenu } from '@/app/dashboard/_components/user-menu';
 import { createClient } from '@/utils/supabase/server';
 import { Dumbbell } from 'lucide-react';
@@ -116,7 +117,10 @@ export default async function DashboardLayout({
 
         <SidebarInset className="bg-background/95">
           <DashboardHeader displayName={displayName} email={user.email!} photoURL={photoURL} />
-          <main className="flex-1 p-6 md:p-8 max-w-[1600px] mx-auto w-full">{children}</main>
+          <main className="flex-1 p-6 pb-20 md:p-8 md:pb-8 max-w-[1600px] mx-auto w-full">
+            {children}
+          </main>
+          <DashboardBottomNav role={role} />
         </SidebarInset>
       </div>
     </SidebarProvider>
