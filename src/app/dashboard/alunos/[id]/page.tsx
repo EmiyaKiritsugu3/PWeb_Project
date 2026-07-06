@@ -179,30 +179,59 @@ function MatriculasTable({
         {matriculas.length === 0 ? (
           <p className="text-sm text-muted-foreground">Nenhuma matrícula registrada.</p>
         ) : (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Plano</TableHead>
-                <TableHead>Início</TableHead>
-                <TableHead>Vencimento</TableHead>
-                <TableHead>Status</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
+          <>
+            {/* ponytail: md:hidden/hidden md:block toggle duplicated in PagamentosTable.
+                Extract ResponsiveStack wrapper when 3rd responsive table appears here. */}
+            <div className="md:hidden grid gap-3">
               {matriculas.map((m) => (
-                <TableRow key={m.id}>
-                  <TableCell className="font-medium">{m.Plano.nome}</TableCell>
-                  <TableCell>{format(new Date(m.dataInicio), 'dd/MM/yyyy')}</TableCell>
-                  <TableCell>{format(new Date(m.dataVencimento), 'dd/MM/yyyy')}</TableCell>
-                  <TableCell>
-                    <Badge variant={STATUS_VARIANT[m.status] ?? 'secondary'} className="text-xs">
-                      {m.status}
-                    </Badge>
-                  </TableCell>
-                </TableRow>
+                <Card key={m.id} className="p-4">
+                  <dl className="grid grid-cols-2 gap-y-2 text-sm">
+                    <dt className="text-muted-foreground">Plano</dt>
+                    <dd className="font-medium">{m.Plano.nome}</dd>
+                    <dt className="text-muted-foreground">Início</dt>
+                    <dd>{format(new Date(m.dataInicio), 'dd/MM/yyyy')}</dd>
+                    <dt className="text-muted-foreground">Vencimento</dt>
+                    <dd>{format(new Date(m.dataVencimento), 'dd/MM/yyyy')}</dd>
+                    <dt className="text-muted-foreground">Status</dt>
+                    <dd>
+                      <Badge variant={STATUS_VARIANT[m.status] ?? 'secondary'} className="text-xs">
+                        {m.status}
+                      </Badge>
+                    </dd>
+                  </dl>
+                </Card>
               ))}
-            </TableBody>
-          </Table>
+            </div>
+            <div className="hidden md:block">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Plano</TableHead>
+                    <TableHead>Início</TableHead>
+                    <TableHead>Vencimento</TableHead>
+                    <TableHead>Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {matriculas.map((m) => (
+                    <TableRow key={m.id}>
+                      <TableCell className="font-medium">{m.Plano.nome}</TableCell>
+                      <TableCell>{format(new Date(m.dataInicio), 'dd/MM/yyyy')}</TableCell>
+                      <TableCell>{format(new Date(m.dataVencimento), 'dd/MM/yyyy')}</TableCell>
+                      <TableCell>
+                        <Badge
+                          variant={STATUS_VARIANT[m.status] ?? 'secondary'}
+                          className="text-xs"
+                        >
+                          {m.status}
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </>
         )}
       </CardContent>
     </Card>
@@ -224,26 +253,46 @@ function PagamentosTable({
         {pagamentos.length === 0 ? (
           <p className="text-sm text-muted-foreground">Nenhum pagamento registrado.</p>
         ) : (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Data</TableHead>
-                <TableHead>Valor</TableHead>
-                <TableHead>Método</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
+          <>
+            <div className="md:hidden grid gap-3">
               {pagamentos.map((p) => (
-                <TableRow key={p.id}>
-                  <TableCell>{format(new Date(p.dataPagamento), 'dd/MM/yyyy')}</TableCell>
-                  <TableCell className="font-medium text-green-400">
-                    {p.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-                  </TableCell>
-                  <TableCell>{formatMetodo(p.metodo)}</TableCell>
-                </TableRow>
+                <Card key={p.id} className="p-4">
+                  <dl className="grid grid-cols-2 gap-y-2 text-sm">
+                    <dt className="text-muted-foreground">Data</dt>
+                    <dd>{format(new Date(p.dataPagamento), 'dd/MM/yyyy')}</dd>
+                    <dt className="text-muted-foreground">Valor</dt>
+                    <dd className="font-medium text-green-400">
+                      {p.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                    </dd>
+                    <dt className="text-muted-foreground">Método</dt>
+                    <dd>{formatMetodo(p.metodo)}</dd>
+                  </dl>
+                </Card>
               ))}
-            </TableBody>
-          </Table>
+            </div>
+            <div className="hidden md:block">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Data</TableHead>
+                    <TableHead>Valor</TableHead>
+                    <TableHead>Método</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {pagamentos.map((p) => (
+                    <TableRow key={p.id}>
+                      <TableCell>{format(new Date(p.dataPagamento), 'dd/MM/yyyy')}</TableCell>
+                      <TableCell className="font-medium text-green-400">
+                        {p.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                      </TableCell>
+                      <TableCell>{formatMetodo(p.metodo)}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </>
         )}
       </CardContent>
     </Card>
