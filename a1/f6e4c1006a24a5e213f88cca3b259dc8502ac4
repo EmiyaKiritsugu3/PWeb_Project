@@ -1,0 +1,22 @@
+src/components/dashboard/aluno/card-treino.tsx
+  s_a4ca894d705db2::t_7edc3bb2c8af5d 126,146-150
+src/components/dashboard/aluno/card-treino.test.tsx
+  s_a4ca894d705db2::t_8d3164ef49be4c 231-243,253-260
+  s_a4ca894d705db2::t_8c9b9085eab42e 215-230,244-252,261-263
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "a1f6e4c1006a24a5e213f88cca3b259dc8502ac4",
+  "prompts": {},
+  "sessions": {
+    "s_a4ca894d705db2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "01e618e4-deb7-4a0f-88d3-2ef0e00b6920",
+        "model": "z-ai/glm-5.2"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
