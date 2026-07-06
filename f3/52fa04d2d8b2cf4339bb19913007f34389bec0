@@ -1,0 +1,23 @@
+docs/CURRENT-STATE.md
+  s_fb4d7ff952f201::t_3056754bb4c597 26-28
+docs/sonarqube/config.md
+  s_fb4d7ff952f201::t_d24f6fa1354817 57
+.github/workflows/ci.yml
+  s_fb4d7ff952f201::t_55469fb06ffd06 103
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "f352fa04d2d8b2cf4339bb19913007f34389bec0",
+  "prompts": {},
+  "sessions": {
+    "s_fb4d7ff952f201": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "85942c40-c845-476d-a4d0-52969bedc9bf",
+        "model": "z-ai/glm-5.2"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
