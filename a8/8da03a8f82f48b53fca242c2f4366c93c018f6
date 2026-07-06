@@ -1,0 +1,19 @@
+src/components/WorkoutSession.tsx
+  s_a4ca894d705db2::t_abea4270aaf2ea 173-176
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "a88da03a8f82f48b53fca242c2f4366c93c018f6",
+  "prompts": {},
+  "sessions": {
+    "s_a4ca894d705db2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "01e618e4-deb7-4a0f-88d3-2ef0e00b6920",
+        "model": "z-ai/glm-5.2"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
