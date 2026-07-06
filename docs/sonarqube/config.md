@@ -71,7 +71,7 @@ Agendamento sugerido (cron GitHub Actions):
 ```yaml
 on:
   schedule:
-    - cron: '0 9 * * 1,4' # seg + qui às 09:00 UTC
+    - cron: '3 9 * * 1,4' # seg + qui às 09:03 UTC (alinhado com ci.yml)
   workflow_dispatch:
 ```
 

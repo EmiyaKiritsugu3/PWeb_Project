@@ -23,6 +23,19 @@ typecheck 0 errors · lint 0 errors · 1137/1137 tests · branch 84.53% (≥80% 
 - 2ª execução SonarQube (2026-07-10, cron automático).
 - SonarCloud action pré-existente usa tag `v2.89.0` (Semgrep WARNING pin SHA) — fora escopo P5.
 
+### Remediação P5 (auditoria docs/configs)
+
+Pós-auditoria adversarial (3 Explore + 1 code-reviewer agent), branch `feat/p5-ci-deploy-quality` antes do merge PR #191:
+
+- **T01** ✅ `sonar-project.properties` + `src/lib/actions/**` em `sonar.exclusions` (alinha com vitest + doc-deploy).
+- **T02** ✅ `docs/doc-deploy.md` §3 lista 10 exclusões de cobertura (não 2).
+- **T03** ✅ `docs/sonarqube/config.md` §6 cron `3 9 * * 1,4` alinhado com `ci.yml`.
+- **T04** ✅ `docs/doc-deploy.md` §6 + §8 documentam release `RC-v1.0` (It4), tag `v1.0.0`, GitHub Release, ADF coverage table.
+- **T06** ✅ `docs/sonarqube/scans.md` placeholder 2ª exec 2026-07-10 (PENDING, métricas pós-cron).
+- **T09** ✅ `docs/relatorio-testes.md` auditado — 2 tabelas modelo taciano + fluxos A1/A2/A3 US13.
+
+Não ações (ponytail): aguardar cron 10/07 p/ métricas reais (T06 placeholder), SonarCloud action pin (fora escopo P5).
+
 ---
 
 ## Mobile-First Premium Polish (v0.10.0 em andamento)
