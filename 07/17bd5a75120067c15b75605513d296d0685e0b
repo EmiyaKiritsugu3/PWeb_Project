@@ -1,0 +1,19 @@
+src/app/dashboard/alunos/[id]/page.tsx
+  s_2296ce58b9c48f::t_cf3c7160985063 183-184
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "0717bd5a75120067c15b75605513d296d0685e0b",
+  "prompts": {},
+  "sessions": {
+    "s_2296ce58b9c48f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "983bfabc-0770-47ca-bd35-ed1636b219b6",
+        "model": "z-ai/glm-5.2"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
