@@ -272,7 +272,7 @@ describe('AlunoDetalhesPage', () => {
 
     expect(screen.getByText('Histórico de Matrículas')).toBeTruthy();
     expect(screen.getAllByText('Premium').length).toBeGreaterThanOrEqual(1);
-    expect(screen.getByText('Básico')).toBeTruthy();
+    expect(screen.getAllByText('Básico').length).toBeGreaterThanOrEqual(1);
   });
 
   it('renders pagamentos table with formatted values', async () => {
@@ -373,7 +373,7 @@ describe('AlunoDetalhesPage', () => {
 
     render(await AlunoDetalhesPage({ params: makeParams(fullAluno.id) }));
 
-    expect(screen.getByText('Cartão')).toBeTruthy();
+    expect(screen.getAllByText('Cartão').length).toBeGreaterThanOrEqual(1);
   });
 
   it('formats unknown metodo as-is', async () => {
@@ -384,7 +384,7 @@ describe('AlunoDetalhesPage', () => {
 
     render(await AlunoDetalhesPage({ params: makeParams(fullAluno.id) }));
 
-    expect(screen.getByText('BOLETO')).toBeTruthy();
+    expect(screen.getAllByText('BOLETO').length).toBeGreaterThanOrEqual(1);
   });
 
   it('renders Nível, Streak, Treinos labels', async () => {
@@ -409,7 +409,42 @@ describe('AlunoDetalhesPage', () => {
 
     render(await AlunoDetalhesPage({ params: makeParams(fullAluno.id) }));
 
-    expect(screen.getByText('INATIVA')).toBeTruthy();
-    expect(screen.getByText('VENCIDA')).toBeTruthy();
+    expect(screen.getAllByText('INATIVA').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText('VENCIDA').length).toBeGreaterThanOrEqual(1);
+  });
+
+  // PRD-8: mobile card variant renders one <dl> per matricula + one per pagamento
+  // (both md:hidden cards and hidden md:block table live in DOM — CSS show/hide).
+  it('renders mobile card stack dl count matching matriculas + pagamentos', async () => {
+    const aluno = {
+      ...fullAluno,
+      Matriculas: [
+        {
+          id: 'm1',
+          Plano: { nome: 'Premium' },
+          dataInicio: '2026-01-01',
+          dataVencimento: '2026-02-01',
+          status: 'ATIVA',
+        },
+        {
+          id: 'm2',
+          Plano: { nome: 'Básico' },
+          dataInicio: '2026-01-01',
+          dataVencimento: '2026-02-01',
+          status: 'ATIVA',
+        },
+      ],
+      Pagamentos: [
+        { id: 'p1', dataPagamento: '2026-01-10', valor: 199.9, metodo: 'PIX' },
+        { id: 'p2', dataPagamento: '2026-02-10', valor: 99.9, metodo: 'DINHEIRO' },
+      ],
+    };
+    mockGetAlunoDetalhes.mockResolvedValue(aluno);
+
+    const { container } = render(await AlunoDetalhesPage({ params: makeParams(fullAluno.id) }));
+
+    expect(container.querySelectorAll('dl').length).toBe(
+      aluno.Matriculas.length + aluno.Pagamentos.length
+    );
   });
 });
