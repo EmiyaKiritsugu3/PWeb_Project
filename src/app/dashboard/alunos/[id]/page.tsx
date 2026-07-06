@@ -180,6 +180,8 @@ function MatriculasTable({
           <p className="text-sm text-muted-foreground">Nenhuma matrícula registrada.</p>
         ) : (
           <>
+            {/* ponytail: md:hidden/hidden md:block toggle duplicated in PagamentosTable.
+                Extract ResponsiveStack wrapper when 3rd responsive table appears here. */}
             <div className="md:hidden grid gap-3">
               {matriculas.map((m) => (
                 <Card key={m.id} className="p-4">
