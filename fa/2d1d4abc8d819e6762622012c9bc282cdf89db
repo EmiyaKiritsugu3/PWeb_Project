@@ -1,0 +1,19 @@
+src/app/dashboard/page.tsx
+  s_2296ce58b9c48f::t_66d35f06a7e53f 62
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "fa2d1d4abc8d819e6762622012c9bc282cdf89db",
+  "prompts": {},
+  "sessions": {
+    "s_2296ce58b9c48f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "983bfabc-0770-47ca-bd35-ed1636b219b6",
+        "model": "z-ai/glm-5.2"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
