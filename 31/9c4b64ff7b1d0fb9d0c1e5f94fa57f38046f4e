@@ -1,0 +1,30 @@
+DESIGN.md
+  s_89f4ddbf47c779::t_c8766cd1a5df73 59-60
+  s_89f4ddbf47c779::t_03c9282736c634 157-162
+  s_89f4ddbf47c779::t_8ba5f051c3e6af 151
+  s_576986fb855fc0::t_88660404e189a5 1-58,61-150,152-156,163-164
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "319c4b64ff7b1d0fb9d0c1e5f94fa57f38046f4e",
+  "prompts": {},
+  "sessions": {
+    "s_576986fb855fc0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ses_0c3323a29ffewl5oFjW4OyG7zQ",
+        "model": "unknown"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    },
+    "s_89f4ddbf47c779": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ses_0c36a49abffeHhJc87Y14zqD3j",
+        "model": "unknown"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
