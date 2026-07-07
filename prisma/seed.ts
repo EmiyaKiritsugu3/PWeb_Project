@@ -46,6 +46,7 @@ async function main() {
   console.log('🌱 Seeding database...');
 
   // 1. Limpar dados existentes (ordem reversa das dependências)
+  await prisma.historicoTreino.deleteMany();
   await prisma.exercicio.deleteMany();
   await prisma.treino.deleteMany();
   await prisma.pagamento.deleteMany();
@@ -258,12 +259,14 @@ async function main() {
   console.log('✅ Seed complete!');
 }
 
-try {
-  await main();
-} catch (e) {
-  console.error(e);
-  process.exit(1);
-} finally {
-  await prisma.$disconnect();
-  await pool.end();
-}
+(async () => {
+  try {
+    await main();
+  } catch (e) {
+    console.error(e);
+    process.exit(1);
+  } finally {
+    await prisma.$disconnect();
+    await pool.end();
+  }
+})();
