@@ -1,0 +1,37 @@
+src/components/ui/card.tsx
+  s_89f4ddbf47c779::t_40250293d69140 28,30
+src/components/ui/circular-progress.tsx
+  s_89f4ddbf47c779::t_090fa9ea9f1647 61
+  s_2608955e70af59::t_f4228f762bf5e9 62-65
+src/app/aluno/login/page.tsx
+  s_89f4ddbf47c779::t_904efd9d6eaaf3 89-90
+  s_89f4ddbf47c779::t_710c3d75eb029c 57
+  s_89f4ddbf47c779::t_c4487c6b0195ce 44
+  s_89f4ddbf47c779::t_00f43d3fe2f554 128-136
+  s_89f4ddbf47c779::t_de35b553c12966 148-151
+  s_89f4ddbf47c779::t_c2195e4a633e95 173
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "e43c7ef280b48ba00700c1d68b99cf359cfa841e",
+  "prompts": {},
+  "sessions": {
+    "s_2608955e70af59": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0c36a49abffeHhJc87Y14zqD3j",
+        "model": "Nvidia-GLM5.2"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    },
+    "s_89f4ddbf47c779": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ses_0c36a49abffeHhJc87Y14zqD3j",
+        "model": "unknown"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
