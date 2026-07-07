@@ -1,0 +1,52 @@
+src/lib/constants.ts
+  s_89f4ddbf47c779::t_ec88b642ddd286 8-9
+src/app/auth/callback/route.ts
+  s_a42c0913e00387::t_a2a0c463a7bdc0 1-4,15-37,39-43,50-64
+  s_a42c0913e00387::t_1bb45ffb6568d8 5-14,38,44-49
+src/utils/supabase/middleware.ts
+  s_89f4ddbf47c779::t_aca2390143b367 65-66
+src/lib/actions/auth.ts
+  s_89f4ddbf47c779::t_d7b84b0f42e0ac 1-64
+src/components/dashboard/aluno/card-treino.tsx
+  s_89f4ddbf47c779::t_d31014d71d1993 23,31
+  s_89f4ddbf47c779::t_a153767570d1a2 129-139
+  s_89f4ddbf47c779::t_e239f648011fdf 12
+src/app/aluno/dashboard/dashboard-client.tsx
+  s_89f4ddbf47c779::t_2e3ef9f564d06e 7,10,14
+  s_89f4ddbf47c779::t_08337fadc3cda5 37
+  s_89f4ddbf47c779::t_59fc7f76d265ae 83-95
+  s_6018b6899b4b0d::t_20b24389766606 205
+  s_6018b6899b4b0d::t_9630d12f564489 96-105
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "62c9221ae99e4bdce9c640ed8f1de9409bac7f92",
+  "prompts": {},
+  "sessions": {
+    "s_6018b6899b4b0d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ses_0c31a014cffelYHLWyZdD8n11R",
+        "model": "unknown"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    },
+    "s_89f4ddbf47c779": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ses_0c36a49abffeHhJc87Y14zqD3j",
+        "model": "unknown"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    },
+    "s_a42c0913e00387": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ses_0c310ef4affejyCfTlxioWkOqs",
+        "model": "unknown"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
