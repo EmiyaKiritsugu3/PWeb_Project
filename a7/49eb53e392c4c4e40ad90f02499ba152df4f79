@@ -1,0 +1,27 @@
+.env.example
+  s_89f4ddbf47c779::t_d29af8d0b2250c 94-96
+prisma/seed.ts
+  s_89f4ddbf47c779::t_da18c7c2f860b5 3
+  s_89f4ddbf47c779::t_0df7d1e8599088 71-92
+  s_89f4ddbf47c779::t_7116f8d8f37970 19-21,23
+  s_89f4ddbf47c779::t_93d8d92e76a5d0 179-257
+  s_89f4ddbf47c779::t_d5d0a26e92a3ac 16-18,24-44
+  s_89f4ddbf47c779::t_246d7c2f667269 6
+  s_89f4ddbf47c779::t_da2d8559981449 22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "a749eb53e392c4c4e40ad90f02499ba152df4f79",
+  "prompts": {},
+  "sessions": {
+    "s_89f4ddbf47c779": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ses_0c36a49abffeHhJc87Y14zqD3j",
+        "model": "unknown"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
