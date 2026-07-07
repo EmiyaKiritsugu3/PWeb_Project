@@ -79,7 +79,7 @@ vi.mock('@/components/providers/i18n-provider', () => ({
         'dashboard.level': 'Nível',
         'dashboard.xp': 'XP',
         'dashboard.streak': `${params?.count ?? 0} dias seguidos`,
-        'dashboard.workoutsThisMonth': `${params?.count ?? 0} treinos no mês`,
+        'dashboard.workoutsThisMonth': '{count} treinos no mês',
       };
       return map[key] || key;
     },

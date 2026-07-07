@@ -1,8 +1,9 @@
 /* eslint-disable no-console -- CLI seed script */
 
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Role } from '@prisma/client';
 import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import * as dotenv from 'dotenv';
 
 dotenv.config({ path: '.env.local' });
@@ -12,10 +13,41 @@ const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool as any);
 const prisma = new PrismaClient({ adapter });
 
+const DEFAULT_PASSWORD = process.env.SEED_DEFAULT_PASSWORD;
+const E2E_PW = process.env.E2E_DEFAULT_PASSWORD || 'Test1234!';
+
+async function createAuthUser(
+  supabase: SupabaseClient,
+  email: string,
+  password: string,
+  id?: string
+): Promise<void> {
+  const { error } = await supabase.auth.admin.createUser({
+    email,
+    password,
+    email_confirm: true,
+    ...(id ? { id } : {}),
+  });
+
+  if (error) {
+    if (
+      error.message.includes('already been registered') ||
+      error.message.includes('already exists')
+    ) {
+      console.log(`  Auth user ${email} already exists (expected on re-seed)`);
+    } else {
+      console.warn(`  ⚠️  Auth user ${email}: ${error.message}`);
+    }
+  } else {
+    console.log(`  ✅ Auth user created: ${email} (password: ***)`);
+  }
+}
+
 async function main() {
   console.log('🌱 Seeding database...');
 
   // 1. Limpar dados existentes (ordem reversa das dependências)
+  await prisma.historicoTreino.deleteMany();
   await prisma.exercicio.deleteMany();
   await prisma.treino.deleteMany();
   await prisma.pagamento.deleteMany();
@@ -38,28 +70,28 @@ async function main() {
   const recepcionistaId = crypto.randomUUID();
 
   // 2. Funcionários
-  await prisma.funcionario.createMany({
-    data: [
-      {
-        id: instrutorId,
-        nomeCompleto: 'João Instrutor',
-        email: 'joao.instrutor@academia.com',
-        role: 'INSTRUTOR',
-      },
-      {
-        id: gerenteId,
-        nomeCompleto: 'Maria Gerente',
-        email: 'maria.gerente@academia.com',
-        role: 'GERENTE',
-      },
-      {
-        id: recepcionistaId,
-        nomeCompleto: 'Carlos Recepcionista',
-        email: 'carlos.recepcionista@academia.com',
-        role: 'RECEPCIONISTA',
-      },
-    ],
-  });
+  const funcionarios = [
+    {
+      id: instrutorId,
+      nomeCompleto: 'João Instrutor',
+      email: 'joao.instrutor@academia.com',
+      role: 'INSTRUTOR' as const,
+    },
+    {
+      id: gerenteId,
+      nomeCompleto: 'Maria Gerente',
+      email: 'maria.gerente@academia.com',
+      role: 'GERENTE' as const,
+    },
+    {
+      id: recepcionistaId,
+      nomeCompleto: 'Carlos Recepcionista',
+      email: 'carlos.recepcionista@academia.com',
+      role: 'RECEPCIONISTA' as const,
+    },
+  ];
+
+  await prisma.funcionario.createMany({ data: funcionarios });
 
   // 3. Planos
   const planos = [
@@ -146,15 +178,101 @@ async function main() {
     },
   });
 
+  // 6. E2E Test Users — cria registros Prisma para usuários de teste
+  // (IDs fixos batem com prisma/seed-e2e.ts e tests/e2e/helpers/auth.ts)
+  const e2eGerenteId = '550e8400-e29b-41d4-a716-000000000001';
+  const e2eRecepcionistaId = '550e8400-e29b-41d4-a716-000000000002';
+  const e2eInstrutorId = '550e8400-e29b-41d4-a716-000000000003';
+  const e2eAlunoId = '550e8400-e29b-41d4-a716-000000000004';
+
+  await prisma.funcionario.upsert({
+    where: { id: e2eGerenteId },
+    update: { role: Role.GERENTE },
+    create: {
+      id: e2eGerenteId,
+      email: 'gerente@test.com',
+      nomeCompleto: 'Gerente E2E',
+      role: Role.GERENTE,
+    },
+  });
+  await prisma.funcionario.upsert({
+    where: { id: e2eRecepcionistaId },
+    update: { role: Role.RECEPCIONISTA },
+    create: {
+      id: e2eRecepcionistaId,
+      email: 'recep@test.com',
+      nomeCompleto: 'Recepcionista E2E',
+      role: Role.RECEPCIONISTA,
+    },
+  });
+  await prisma.funcionario.upsert({
+    where: { id: e2eInstrutorId },
+    update: { role: Role.INSTRUTOR },
+    create: {
+      id: e2eInstrutorId,
+      email: 'instrutor@test.com',
+      nomeCompleto: 'Instrutor E2E',
+      role: Role.INSTRUTOR,
+    },
+  });
+  await prisma.aluno.upsert({
+    where: { id: e2eAlunoId },
+    update: {},
+    create: {
+      id: e2eAlunoId,
+      email: 'aluno@test.com',
+      nomeCompleto: 'Aluno E2E',
+      cpf: '000.000.000-04',
+      telefone: '11999990004',
+    },
+  });
+
+  // 7. Supabase Auth Users — cria credenciais de login para todos os usuários
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!serviceRoleKey || !supabaseUrl || !DEFAULT_PASSWORD) {
+    const missing = [
+      !serviceRoleKey && 'SUPABASE_SERVICE_ROLE_KEY',
+      !supabaseUrl && 'NEXT_PUBLIC_SUPABASE_URL',
+      !DEFAULT_PASSWORD && 'SEED_DEFAULT_PASSWORD',
+    ].filter(Boolean);
+    console.log(`⚠️  Missing env vars: ${missing.join(', ')}`);
+    console.log(
+      '   Auth users NOT created. Set env vars and re-run seed to create login credentials.'
+    );
+  } else {
+    console.log('🔐 Creating Supabase Auth users...');
+    const supabase = createClient(supabaseUrl, serviceRoleKey, {
+      auth: { autoRefreshToken: false, persistSession: false },
+    });
+
+    // Seed staff
+    for (const emp of funcionarios) {
+      await createAuthUser(supabase, emp.email, DEFAULT_PASSWORD, emp.id);
+    }
+    // Seed alunos
+    for (const aluno of alunos) {
+      await createAuthUser(supabase, aluno.email, DEFAULT_PASSWORD, aluno.id);
+    }
+    // E2E test users — use E2E_DEFAULT_PASSWORD to keep parity with seed-e2e.ts
+    await createAuthUser(supabase, 'gerente@test.com', E2E_PW, e2eGerenteId);
+    await createAuthUser(supabase, 'recep@test.com', E2E_PW, e2eRecepcionistaId);
+    await createAuthUser(supabase, 'instrutor@test.com', E2E_PW, e2eInstrutorId);
+    await createAuthUser(supabase, 'aluno@test.com', E2E_PW, e2eAlunoId);
+  }
+
   console.log('✅ Seed complete!');
 }
 
-try {
-  await main();
-} catch (e) {
-  console.error(e);
-  process.exit(1);
-} finally {
-  await prisma.$disconnect();
-  await pool.end();
-}
+(async () => {
+  try {
+    await main();
+  } catch (e) {
+    console.error(e);
+    process.exit(1);
+  } finally {
+    await prisma.$disconnect();
+    await pool.end();
+  }
+})();
