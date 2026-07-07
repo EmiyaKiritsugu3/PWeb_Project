@@ -1,0 +1,41 @@
+src/app/login/page.tsx
+  s_89f4ddbf47c779::t_6fe8419502eab3 18
+  s_89f4ddbf47c779::t_0462e98b5a4dbc 74-80
+  s_89f4ddbf47c779::t_1865e624f06f09 188-198
+  s_2608955e70af59::t_0e1cb1f9eef222 199-203
+src/app/aluno/login/page.tsx
+  s_89f4ddbf47c779::t_8b16b065f47e65 131-140
+  s_89f4ddbf47c779::t_45155ff69d6550 249-259
+  s_89f4ddbf47c779::t_7b36c663ca912a 201
+  s_89f4ddbf47c779::t_b9dc34f8ca98ea 31-36
+  s_2608955e70af59::t_1280e0bafef171 260-264
+src/lib/actions/auth.ts
+  s_89f4ddbf47c779::t_2103ddd4862b12 66-69
+  s_89f4ddbf47c779::t_3e6f22d4e72337 65
+  s_89f4ddbf47c779::t_729399415cefbd 70-72
+  s_89f4ddbf47c779::t_9a024c685a1040 73-78
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "0fedb03e8ad189c249fb5cc9d9fa456da35fa046",
+  "prompts": {},
+  "sessions": {
+    "s_2608955e70af59": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0c36a49abffeHhJc87Y14zqD3j",
+        "model": "Nvidia-GLM5.2"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    },
+    "s_89f4ddbf47c779": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ses_0c36a49abffeHhJc87Y14zqD3j",
+        "model": "unknown"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
