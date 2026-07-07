@@ -181,6 +181,14 @@ export default function MeusTreinosClient({
                     </div>
                     <p className="text-sm text-muted-foreground">
                       {treino.exercicios.length} exercícios
+                      {treino.exercicios.length > 0 && (
+                        <span className="block text-xs text-muted-foreground/70 truncate max-w-[200px]">
+                          {treino.exercicios
+                            .slice(0, 3)
+                            .map((e) => e.nomeExercicio)
+                            .join(', ')}
+                        </span>
+                      )}
                     </p>
                   </div>
                   {allowEditing && (
