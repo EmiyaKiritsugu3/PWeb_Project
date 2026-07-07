@@ -1,0 +1,40 @@
+docs/PRODUTO/PRD-UI-Aluno-Aprimoramento.md
+  s_89f4ddbf47c779::t_b2e93241ce16db 154,186
+prisma/seed.ts
+  s_89f4ddbf47c779::t_37507d265a4cd3 258-262
+  s_89f4ddbf47c779::t_6d6ecd27bd4432 42
+  s_89f4ddbf47c779::t_8e487e5fb871a6 37
+  s_89f4ddbf47c779::t_6a55f4e1dca926 16-17
+  s_89f4ddbf47c779::t_e0eece4c0d333a 234-240
+src/app/aluno/dashboard/dashboard-client.test.tsx
+  s_4c0801aec203fa::t_a51292750f19c0 82
+.gitignore
+  s_89f4ddbf47c779::t_0fdb5cd98e55a8 169
+  s_4c0801aec203fa::t_bac4500cc61778 168
+src/app/aluno/dashboard/dashboard-client.tsx
+  s_89f4ddbf47c779::t_614710df92e64c 139
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "56dcac5af95318e12cefb57f1cbe18a8ac19f0e6",
+  "prompts": {},
+  "sessions": {
+    "s_4c0801aec203fa": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b046e3c2-996d-4a31-b4f6-def1b4018e32",
+        "model": "deepseek-v4-pro"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    },
+    "s_89f4ddbf47c779": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ses_0c36a49abffeHhJc87Y14zqD3j",
+        "model": "unknown"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
