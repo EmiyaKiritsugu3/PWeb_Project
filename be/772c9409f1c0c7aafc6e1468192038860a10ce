@@ -1,0 +1,32 @@
+src/app/auth/callback/route.test.ts
+  s_3b599950fef488::t_ca9d7c12d588dd 44
+  s_3b599950fef488::t_7654d2019da501 2
+src/app/login/page.tsx
+  s_89f4ddbf47c779::t_c0865b106e2f36 79
+  s_89f4ddbf47c779::t_7e3cc6f85054a0 70
+  s_89f4ddbf47c779::t_08aee30ad15c8a 61
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "be772c9409f1c0c7aafc6e1468192038860a10ce",
+  "prompts": {},
+  "sessions": {
+    "s_3b599950fef488": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ses_0c2f86f81fferzA9K5SrooHVyp",
+        "model": "unknown"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    },
+    "s_89f4ddbf47c779": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ses_0c36a49abffeHhJc87Y14zqD3j",
+        "model": "unknown"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
