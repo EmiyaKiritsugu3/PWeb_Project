@@ -151,7 +151,7 @@ Auditoria exaustiva da superfície Aluno (PWeb_Project / Five Star Gym / Aegis F
 
 ## 8. Workflow sugerido (execução)
 
-### Abordagem: feature branch + PRs por fase + workflow ultracode opcional
+### Abordagem: feature branch + PRs por fase
 
 #### 8.1. Setup (1 comando)
 
@@ -183,46 +183,7 @@ git checkout feat/008-aluno-ui-premium
 git rebase main
 ```
 
-#### 8.3. Workflow ultracode (opcional, para verificação adversarial)
-
-Se quiser validar as 25 tasks com agentes adversariais antes de commitar:
-
-```bash
-# Estrutura do script (salvo em .claude/workflows/aluno-ui-premium-exec-wf.js)
-export const meta = {
-  name: 'aluno-ui-premium-exec',
-  description: 'Implementar 25 tasks do PRD Aluno UI',
-  phases: [
-    { title: 'T01-T05 Home' },
-    { title: 'T11-T13 Login' },
-    { title: 'T14-T16 A11y' },
-    { title: 'T06-T10 Treinos' },
-    { title: 'T17-T20 Drift' },
-    { title: 'T21-T25 Polish' },
-    { title: 'Verify' },
-  ],
-}
-
-phase('T01-T05 Home')
-const home = await parallel(['T01','T02','T03','T04','T05'].map(id => () =>
-  agent(`Implementar task ${id} do PRD Aluno UI Premium. PRD: docs/PRODUTO/PRD-UI-Aluno-Aprimoramento.md. Task details: ${JSON.stringify(TASKS.find(t => t.id === id))}. Aplique mudanças cirúrgicas, sem novas deps. Rode npm run typecheck após.`, {
-    label: `impl:${id}`,
-    phase: 'T01-T05 Home',
-    isolation: 'worktree',
-  })
-))
-
-// Repetir para cada fase
-
-phase('Verify')
-const verified = await parallel(
-  TASKS.map(t => () => agent(`Verificar ${t.id}...`))
-)
-```
-
-**Custo estimado**: ~600k tokens (similar ao audit). Vale a pena se você quiser blindagem contra regressão.
-
-#### 8.4. Validação final
+#### 8.3. Validação final
 
 Após merge de todas as fases:
 
@@ -272,5 +233,3 @@ Esta PRD está DONE quando:
 - Audit workflow: `wf_eaffd9ce-9c6` (synthesis falhou; plano derivado inline)
 - DESIGN.md: `docs/...` (spec a ser atualizado em T23)
 - Memory: `project_mobile_first_prds.md`, `project_prd3_plan_pending.md`
-- Workflow scripts: `.claude/projects/.../workflows/scripts/aluno-ui-audit-plan-wf_dff2b41d-422.js`
-- Exec workflow: `.claude/workflows/aluno-ui-premium-exec-wf.js`

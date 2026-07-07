@@ -13,7 +13,8 @@ const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool as any);
 const prisma = new PrismaClient({ adapter });
 
-const DEFAULT_PASSWORD = process.env.SEED_DEFAULT_PASSWORD || 'Test1234!';
+const DEFAULT_PASSWORD = process.env.SEED_DEFAULT_PASSWORD;
+const E2E_PW = process.env.E2E_DEFAULT_PASSWORD || 'Test1234!';
 
 async function createAuthUser(
   supabase: SupabaseClient,
@@ -33,12 +34,12 @@ async function createAuthUser(
       error.message.includes('already been registered') ||
       error.message.includes('already exists')
     ) {
-      console.log(`  Auth user ${email} already exists — skipped`);
+      console.log(`  Auth user ${email} already exists (expected on re-seed)`);
     } else {
       console.warn(`  ⚠️  Auth user ${email}: ${error.message}`);
     }
   } else {
-    console.log(`  ✅ Auth user created: ${email} (password: ${password})`);
+    console.log(`  ✅ Auth user created: ${email} (password: ***)`);
   }
 }
 
@@ -230,8 +231,13 @@ async function main() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-  if (!serviceRoleKey || !supabaseUrl) {
-    console.log('⚠️  SUPABASE_SERVICE_ROLE_KEY or NEXT_PUBLIC_SUPABASE_URL not set');
+  if (!serviceRoleKey || !supabaseUrl || !DEFAULT_PASSWORD) {
+    const missing = [
+      !serviceRoleKey && 'SUPABASE_SERVICE_ROLE_KEY',
+      !supabaseUrl && 'NEXT_PUBLIC_SUPABASE_URL',
+      !DEFAULT_PASSWORD && 'SEED_DEFAULT_PASSWORD',
+    ].filter(Boolean);
+    console.log(`⚠️  Missing env vars: ${missing.join(', ')}`);
     console.log(
       '   Auth users NOT created. Set env vars and re-run seed to create login credentials.'
     );
@@ -249,11 +255,11 @@ async function main() {
     for (const aluno of alunos) {
       await createAuthUser(supabase, aluno.email, DEFAULT_PASSWORD, aluno.id);
     }
-    // E2E test users
-    await createAuthUser(supabase, 'gerente@test.com', DEFAULT_PASSWORD, e2eGerenteId);
-    await createAuthUser(supabase, 'recep@test.com', DEFAULT_PASSWORD, e2eRecepcionistaId);
-    await createAuthUser(supabase, 'instrutor@test.com', DEFAULT_PASSWORD, e2eInstrutorId);
-    await createAuthUser(supabase, 'aluno@test.com', DEFAULT_PASSWORD, e2eAlunoId);
+    // E2E test users — use E2E_DEFAULT_PASSWORD to keep parity with seed-e2e.ts
+    await createAuthUser(supabase, 'gerente@test.com', E2E_PW, e2eGerenteId);
+    await createAuthUser(supabase, 'recep@test.com', E2E_PW, e2eRecepcionistaId);
+    await createAuthUser(supabase, 'instrutor@test.com', E2E_PW, e2eInstrutorId);
+    await createAuthUser(supabase, 'aluno@test.com', E2E_PW, e2eAlunoId);
   }
 
   console.log('✅ Seed complete!');

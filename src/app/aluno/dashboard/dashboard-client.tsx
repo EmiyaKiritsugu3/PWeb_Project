@@ -136,7 +136,7 @@ export default function AlunoDashboardClient({
             >
               <div className="text-center">
                 <p className="text-[10px] uppercase text-zinc-400 font-bold tracking-widest">
-                  {t('dashboard.workoutsThisMonth', { count: aluno.treinosNoMes })}
+                  treinos no mês
                 </p>
                 <p className="text-2xl font-mono font-bold tracking-tight text-cyan-400">
                   {aluno.treinosNoMes}
