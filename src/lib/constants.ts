@@ -5,6 +5,8 @@
  */
 export const FINANCIAL_ROUTES = ['/dashboard/financeiro', '/dashboard/planos'] as const;
 
+export const AUTH_CALLBACK_PATH = '/auth/callback';
+
 export const DIAS_DA_SEMANA = [
   { value: 1, label: 'Segunda-feira' },
   { value: 2, label: 'Terça-feira' },

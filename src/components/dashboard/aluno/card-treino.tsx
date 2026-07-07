@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
-import { CalendarOff, Sparkles, BrainCircuit, Info } from 'lucide-react';
+import { CalendarOff, Sparkles, BrainCircuit, Info, Play } from 'lucide-react';
 import { CircularProgress } from '@/components/ui/circular-progress';
 import { cn } from '@/lib/utils';
 import type { Treino, Exercicio } from '@/lib/definitions';
@@ -20,6 +20,7 @@ interface CardTreinoProps {
   onFinishTraining: (completedExercises: string[]) => void;
   isFeedbackLoading: boolean;
   onViewExercicio: (exercicio: Exercicio) => void;
+  onStartWorkout?: () => void;
 }
 
 export function CardTreino({
@@ -27,6 +28,7 @@ export function CardTreino({
   onFinishTraining,
   isFeedbackLoading,
   onViewExercicio,
+  onStartWorkout,
 }: Readonly<CardTreinoProps>) {
   const { checkedExercises, handleCheckChange } = useWorkoutTracker(treino);
 
@@ -124,6 +126,17 @@ export function CardTreino({
         ))}
       </CardContent>
       <CardFooter className="bg-white/5 p-6 border-t border-white/5 flex flex-col gap-3">
+        {onStartWorkout && (
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={onStartWorkout}
+            className="w-full text-lg h-14 font-bold tracking-tight rounded-xl border-primary/30 hover:bg-primary/10"
+          >
+            <Play className="mr-2 h-5 w-5" />
+            Iniciar Treino
+          </Button>
+        )}
         <Button
           variant="premium"
           size="lg"
