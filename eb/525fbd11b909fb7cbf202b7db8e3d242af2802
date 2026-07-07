@@ -1,0 +1,48 @@
+src/app/aluno/login/page.tsx
+  s_7f7af2bc9509ed::t_f202d12ad39caa 101-139
+  s_7f7af2bc9509ed::t_16fc01a7a3dd09 46-49
+  s_7f7af2bc9509ed::t_d1ad94a7abdcdd 210,226
+  s_89f4ddbf47c779::t_23d8790aa2da20 31,188-209,219-225,267
+  s_7f7af2bc9509ed::t_ba3b9c5391d9c3 169-187,211-218,227-266,268-279
+src/app/login/page.tsx
+  s_5b5c215f8efc50::t_e7fce20d750515 14
+  s_5b5c215f8efc50::t_6f8d6b93d01b0d 18
+  s_5b5c215f8efc50::t_b3a7306d9f82fd 151-168,170-177,179-187
+  s_5b5c215f8efc50::t_eb4bf0cf9a1bc5 169
+  s_5b5c215f8efc50::t_863bc19fab81ef 178
+  s_5b5c215f8efc50::t_8bda35ba904cbc 60-73
+src/app/aluno/login/page.test.tsx
+  s_7f7af2bc9509ed::t_e33720eedaf64d 131-132,134-135
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "eb525fbd11b909fb7cbf202b7db8e3d242af2802",
+  "prompts": {},
+  "sessions": {
+    "s_5b5c215f8efc50": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ses_0c30ed292ffegfyFqKuvs2k4F1",
+        "model": "unknown"
+      },
+      "human_author": null
+    },
+    "s_7f7af2bc9509ed": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ses_0c30ee6b7ffeky2KVYlnWXuSrb",
+        "model": "unknown"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    },
+    "s_89f4ddbf47c779": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ses_0c36a49abffeHhJc87Y14zqD3j",
+        "model": "unknown"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
