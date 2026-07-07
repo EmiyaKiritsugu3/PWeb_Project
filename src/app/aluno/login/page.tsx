@@ -41,6 +41,7 @@ export default function AlunoLoginPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
   const supabase = createClient();
 
   const form = useForm<FormValues>({
@@ -53,6 +54,7 @@ export default function AlunoLoginPage() {
 
   const handleFormSubmit = async (data: FormValues) => {
     setIsLoading(true);
+    setAuthError(null);
     try {
       const { error } = await supabase.auth.signInWithPassword({
         email: data.email,
@@ -84,8 +86,8 @@ export default function AlunoLoginPage() {
       notify.success('Login bem-sucedido!');
       router.push('/aluno/dashboard');
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
-      notify.error('Erro de autenticação', errorMessage, error);
+      const message = error instanceof Error ? error.message : 'Erro desconhecido';
+      setAuthError(message);
     } finally {
       setIsLoading(false);
     }
@@ -123,6 +125,15 @@ export default function AlunoLoginPage() {
         <CardContent className="pt-4">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(handleFormSubmit)} className="grid gap-5">
+              {authError && (
+                <div
+                  role="alert"
+                  aria-live="assertive"
+                  className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400"
+                >
+                  {authError}
+                </div>
+              )}
               <FormField
                 control={form.control}
                 name="email"
@@ -134,6 +145,10 @@ export default function AlunoLoginPage() {
                     <FormControl>
                       <Input
                         placeholder="seu@email.com"
+                        type="email"
+                        autoComplete="email"
+                        inputMode="email"
+                        autoCapitalize="none"
                         className="bg-background/50 border-white/5 focus-visible:ring-primary/50 transition-all"
                         {...field}
                       />
@@ -155,6 +170,7 @@ export default function AlunoLoginPage() {
                         <Input
                           type={showPassword ? 'text' : 'password'}
                           placeholder="••••••••"
+                          autoComplete="current-password"
                           className="bg-background/50 border-white/5 focus-visible:ring-primary/50 transition-all pr-10"
                           {...field}
                         />

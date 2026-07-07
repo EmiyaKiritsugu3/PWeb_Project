@@ -58,7 +58,11 @@ const CircularProgress = React.forwardRef<HTMLDivElement, CircularProgressProps>
         className={cn('relative flex items-center justify-center', sizes[size], className)}
         {...props}
       >
-        <svg className="w-full h-full transform -rotate-90">
+        <svg
+          className="w-full h-full transform -rotate-90"
+          viewBox="0 0 100 100"
+          aria-hidden="true"
+        >
           <defs>
             <linearGradient id="cyan-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#22d3ee" />
