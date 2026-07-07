@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import type { NextRequest } from 'next/server';
 
 const mockExchangeCodeForSession = vi.fn();
 
@@ -40,7 +41,7 @@ function req(url: string) {
     searchParams: u.searchParams,
     search: u.search,
   };
-  return { nextUrl, cookies: { getAll: vi.fn().mockReturnValue([]) } } as unknown as Request;
+  return { nextUrl, cookies: { getAll: vi.fn().mockReturnValue([]) } } as unknown as NextRequest;
 }
 
 describe('GET /auth/callback', () => {

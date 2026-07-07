@@ -58,7 +58,7 @@ export default function LoginPage() {
   };
 
   const handleGoogleLogin = async () => {
-    const result = await signInWithGoogle();
+    const result = await signInWithGoogle('/dashboard');
     if (result.error?.startsWith('http')) {
       window.location.href = result.error;
     } else if (result.error) {
@@ -67,7 +67,7 @@ export default function LoginPage() {
   };
 
   const handleGitHubLogin = async () => {
-    const result = await signInWithGitHub();
+    const result = await signInWithGitHub('/dashboard');
     if (result.error?.startsWith('http')) {
       window.location.href = result.error;
     } else if (result.error) {
@@ -76,7 +76,7 @@ export default function LoginPage() {
   };
 
   const handleAppleLogin = async () => {
-    const result = await signInWithApple();
+    const result = await signInWithApple('/dashboard');
     if (result.error?.startsWith('http')) {
       window.location.href = result.error;
     } else if (result.error) {
