@@ -11,10 +11,11 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Dumbbell } from 'lucide-react';
+import { Code, Dumbbell, Globe } from 'lucide-react';
 import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
 import { createClient } from '@/utils/supabase/client';
+import { signInWithGoogle, signInWithGitHub } from '@/lib/actions/auth';
 
 export default function LoginPage() {
   const [error, setError] = useState('');
@@ -54,6 +55,20 @@ export default function LoginPage() {
     // router.push sends soft RSC that reaches middleware before cookie
     // is available, causing redirect back to /login.
     window.location.href = '/dashboard';
+  };
+
+  const handleGoogleLogin = async () => {
+    const result = await signInWithGoogle();
+    if (result.error?.startsWith('http')) {
+      window.location.href = result.error;
+    }
+  };
+
+  const handleGitHubLogin = async () => {
+    const result = await signInWithGitHub();
+    if (result.error?.startsWith('http')) {
+      window.location.href = result.error;
+    }
   };
 
   return (
@@ -133,6 +148,43 @@ export default function LoginPage() {
               <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:translate-x-full transition-transform duration-1000" />
             </Button>
           </form>
+
+          {/* Separator above social */}
+          <div className="flex w-full items-center gap-4 px-2 pt-4">
+            <Separator className="flex-1 opacity-20" />
+            <span className="text-[10px] uppercase tracking-widest text-muted-foreground/50">
+              OU
+            </span>
+            <Separator className="flex-1 opacity-20" />
+          </div>
+
+          {/* Social login buttons */}
+          <div className="flex flex-col sm:flex-row gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              className="flex-1 gap-2 border-white/10 hover:bg-white/5"
+              onClick={handleGoogleLogin}
+            >
+              <Globe className="h-4 w-4" />
+              Entrar com Google
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              className="flex-1 gap-2 border-white/10 hover:bg-white/5"
+              onClick={handleGitHubLogin}
+            >
+              <Code className="h-4 w-4" />
+              Entrar com GitHub
+            </Button>
+          </div>
+
+          {/* Separator below social */}
+          <div className="flex w-full items-center gap-4 px-2">
+            <Separator className="flex-1 opacity-20" />
+            <Separator className="flex-1 opacity-20" />
+          </div>
         </CardContent>
         <CardFooter className="flex-col gap-4 pb-8">
           <div className="flex w-full items-center gap-4 px-2">

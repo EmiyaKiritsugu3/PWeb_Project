@@ -128,8 +128,11 @@ describe('AlunoLoginPage', () => {
 
   // PRD-7: default creds removed from aluno/login — tests must type valid creds
   // before submit (zodResolver blocks empty fields, signIn never called).
+  // Note: there are now 2 inputs with placeholder 'seu@email.com' (magic link + form).
+  // We target the last one (the form email field).
   const typeValidCreds = () => {
-    fireEvent.change(screen.getByPlaceholderText('seu@email.com'), {
+    const emailInputs = screen.getAllByPlaceholderText('seu@email.com');
+    fireEvent.change(emailInputs[emailInputs.length - 1], {
       target: { value: 'ana.silva@example.com' },
     });
     fireEvent.change(screen.getByPlaceholderText('••••••••'), {
