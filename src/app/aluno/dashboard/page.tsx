@@ -76,9 +76,21 @@ export default async function AlunoDashboardPage() {
 
   const treinoDoDia = await treinoPromise;
 
+  // Remap Prisma relation name (Exercicios) → Zod/Treino type (exercicios)
+  const mappedTreino = treinoDoDia
+    ? {
+        id: treinoDoDia.id,
+        objetivo: treinoDoDia.objetivo,
+        diaSemana: treinoDoDia.diaSemana,
+        exercicios: treinoDoDia.Exercicios,
+      }
+    : null;
+
   // 2. Serializar objetos de forma eficiente
   const serializedAluno = structuredClone(aluno) as unknown as Aluno;
-  const serializedTreino = treinoDoDia ? (structuredClone(treinoDoDia) as unknown as Treino) : null;
+  const serializedTreino = mappedTreino
+    ? (structuredClone(mappedTreino) as unknown as Treino)
+    : null;
 
   return <AlunoDashboardClient aluno={serializedAluno} initialTreino={serializedTreino} />;
 }
