@@ -14,14 +14,15 @@
 
 ## 2. Configuração (`sonar-project.properties`)
 
-| Prop                                | Valor                                                  | Descrição                                       |
-| ----------------------------------- | ------------------------------------------------------ | ----------------------------------------------- |
-| `sonar.projectKey`                  | `EmiyaKiritsugu3_PWeb_Project`                         | id projeto SonarCloud                           |
-| `sonar.organization`                | `emiyakiritsugu3`                                      | slug organização                                |
-| `sonar.javascript.lcov.reportPaths` | `coverage/lcov.info`                                   | relatório LCOV gerado pelo Vitest               |
-| `sonar.exclusions`                  | testes, coverage, node_modules, `src/components/ui/**` | shadcn/Radix wrappers não são lógica de negócio |
-| `sonar.tests`                       | `src`                                                  | diretório raiz de testes                        |
-| `sonar.test.inclusions`             | `src/**/*.test.ts(x)`, `**.spec.ts(x)`                 | arquivos de teste                               |
+| Prop                                | Valor                                                                      | Descrição                                                              |
+| ----------------------------------- | -------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| `sonar.projectKey`                  | `EmiyaKiritsugu3_PWeb_Project`                                             | id projeto SonarCloud                                                  |
+| `sonar.organization`                | `emiyakiritsugu3`                                                          | slug organização                                                       |
+| `sonar.javascript.lcov.reportPaths` | `coverage/lcov.info`                                                       | relatório LCOV gerado pelo Vitest                                      |
+| `sonar.exclusions`                  | testes, coverage, node_modules, `src/lib/actions/**`                       | server actions coupled Prisma/Supabase (E2E-tested)                    |
+| `sonar.coverage.exclusions`         | `src/components/ui/**`                                                     | shadcn/Radix wrappers: exclui do coverage, mantém análise de qualidade |
+| `sonar.tests`                       | `src`                                                                      | diretório raiz de testes                                               |
+| `sonar.test.inclusions`             | `src/**/*.test.ts, src/**/*.test.tsx, src/**/*.spec.ts, src/**/*.spec.tsx` | arquivos de teste (4 globs exactos, sem grupos parentéticos)           |
 
 ## 3. Pré-requisitos
 
@@ -42,21 +43,21 @@ npm test                   # ou: npx vitest run --coverage
 sonar-scanner \
   -Dsonar.projectKey=EmiyaKiritsugu3_PWeb_Project \
   -Dsonar.organization=emiyakiritsugu3 \
-  -Dsonar.login=$SONAR_TOKEN
+  -Dsonar.token=$SONAR_TOKEN
 ```
 
 Saída: link para o dashboard SonarCloud com o novo scan.
 
 ## 5. CI (GitHub Actions)
 
-Job `sonar` no `.github/workflows/ci.yml` (quando `SONAR_TOKEN` presente):
+Step `SonarCloud Scan` dentro do job `test` no `.github/workflows/ci.yml` (executado após `Run tests with coverage`, quando `SONAR_TOKEN` presente):
 
 ```yaml
-- name: SonarQube Scan
-  run: sonar-scanner
+- name: SonarCloud Scan
+  uses: SonarSource/sonarqube-scan-action@713881670b6b3676cda39549040e2d88c70d582e
   env:
-    SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 ```
 
 `GITHUB_TOKEN` habilita PR Decoration (comentários inline no PR).
@@ -77,13 +78,13 @@ on:
 
 ## 7. Métricas-alvo (P5)
 
-| Métrica           | Alvo    | Atual      |
-| ----------------- | ------- | ---------- |
-| Coverage (branch) | ≥ 80%   | **84.53%** |
-| Duplicação        | < 3%    | < 3%       |
-| Code smells       | 0 novos | 0          |
-| Vulnerabilidades  | 0       | 0          |
-| Bugs              | 0       | 0          |
+| Métrica           | Alvo    | Atual                                             |
+| ----------------- | ------- | ------------------------------------------------- |
+| Coverage (branch) | ≥ 80%   | **84.53%**                                        |
+| Duplicação        | < 3%    | < 3%                                              |
+| Code smells       | 0 novos | 0 ativos (16 FP em `docs/TECHNICAL-DEBT.md` #160) |
+| Vulnerabilidades  | 0       | 0                                                 |
+| Bugs              | 0       | 0                                                 |
 
 Pendências conhecidas (false positives): 16 smells documentados em `docs/TECHNICAL-DEBT.md` (#160) — skeleton keys, cmdk, logger.
 

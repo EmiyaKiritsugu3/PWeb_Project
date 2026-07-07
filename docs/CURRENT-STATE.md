@@ -1,40 +1,37 @@
 # Estado Atual (2026-07-06)
 
-## Iteração 4 (P5) — CI/CD + Docker + SonarQube — PR #191 (open)
+## Iteração 4 (P5) — CI/CD + Docker + SonarQube — PR #191 merged, remediação pendente
 
-**Branch:** `feat/p5-ci-deploy-quality` (commit `bc429b0`).
+**Branch main:** PR #191 squash-merged (`689175f` msg, SHA `db60bf9`). Tag `v1.0.0` pushed em `db60bf9` (prematura — move pós-PR #192).
 **Tarefa:** [P5-tarefa5](https://github.com/tacianosilva/eng-software-2/blob/main/tarefas/projetos/P5-tarefa5.md).
 
-### Entregas P5
+### Entregas P5 (PR #191 merged)
 
 - **Cobertura branch 79.65% → 84.53%** (alvo 80%): excluído `src/components/ui/**` (shadcn/Radix wrappers) do coverage vitest + SonarQube exclusions. Issue #188 (fechada).
 - **Docker:** `docker-compose.yml` (postgres:16-alpine + node:22-alpine dev, migrate/seed auto). Issue #189 (fechada).
-- **Docs:** `docs/doc-deploy.md` (deploy Vercel + compose + CI + SemVer + Conventional Commits + AcademicDevFlow) + `docs/sonarqube/config.md` + `docs/sonarqube/scans.md` (1ª exec 2026-07-06, branch 84.53%, gate PASS). Issue #190 (fechada).
-- **CI:** `.github/workflows/ci.yml` ganhou `schedule: cron '3 9 * * 1,4'` + `workflow_dispatch` (SonarQube 2x/semana seg+qui).
-- **Relatório:** `docs/relatorio-testes.md` iter 3→4 (P5), US13 PRD-8 (#187) como US do membro (tela→banco), métricas 1137/1137 unit, 21 E2E, branch 84.53%.
-- **Issues bugs:** #188 #189 #190 criadas + fechadas.
+- **Docs:** `docs/doc-deploy.md` + `docs/sonarqube/config.md` + `docs/sonarqube/scans.md` (1ª exec 2026-07-06, branch 84.53%, gate PASS). Issue #190 (fechada).
+- **CI:** `.github/workflows/ci.yml` `schedule: cron '3 9 * * 1,4'` + `workflow_dispatch` (SonarQube 2x/semana seg+qui).
+- **Relatório:** `docs/relatorio-testes.md` iter 3→4 (P5), US13 PRD-8 (#187) US do membro (tela→banco), 2 tabelas modelo taciano + fluxos A1/A2/A3.
+- **Issues bugs:** #188 #189 #190 criadas + fechadas. #160 (16 SonarQube FP) + #122 (ESLint upstream) permanecem abertas (fora escopo P5).
 
-### Gates
+### Gates (CI PR #191)
 
-typecheck 0 errors · lint 0 errors · 1137/1137 tests · branch 84.53% (≥80% P5).
+13/14 SUCCESS. GitGuardian FAILURE (FP: `POSTGRES_PASSWORD:-postgres` default dev em `docker-compose.yml`).
 
 ### Pendências P5
 
-- 2ª execução SonarQube (2026-07-10, cron automático).
+- **2ª execução SonarQube (2026-07-09, cron automático)** — quinta, não 2026-07-10 (sexta). 4 loc a corrigir R04.
 - SonarCloud action pré-existente usa tag `v2.89.0` (Semgrep WARNING pin SHA) — fora escopo P5.
 
-### Remediação P5 (auditoria docs/configs)
+### Remediação P5 — PR #192 (OPEN, branch `fix/p5-review-remediation`)
 
-Pós-auditoria adversarial (3 Explore + 1 code-reviewer agent), branch `feat/p5-ci-deploy-quality` antes do merge PR #191:
+PR #191 merged **sem corrigir 26 reviews** (4 P1, 12 P2, 2 P3 de cubic-dev + coderabbit). Plano auditado em `~/.claude/plans/shimmering-knitting-plum.md`. R01-R12 aplicados (commit `3c712d8`), PR #192 aberta 2026-07-06. Gates locais: lint ✅ typecheck ✅ test 1137/1137 ✅ format ✅ commitlint ✅. GitGuardian ✅ (R01 removeu FP default password).
 
-- **T01** ✅ `sonar-project.properties` + `src/lib/actions/**` em `sonar.exclusions` (alinha com vitest + doc-deploy).
-- **T02** ✅ `docs/doc-deploy.md` §3 lista 10 exclusões de cobertura (não 2).
-- **T03** ✅ `docs/sonarqube/config.md` §6 cron `3 9 * * 1,4` alinhado com `ci.yml`.
-- **T04** ✅ `docs/doc-deploy.md` §6 + §8 documentam release `RC-v1.0` (It4), tag `v1.0.0`, GitHub Release, ADF coverage table.
-- **T06** ✅ `docs/sonarqube/scans.md` placeholder 2ª exec 2026-07-10 (PENDING, métricas pós-cron).
-- **T09** ✅ `docs/relatorio-testes.md` auditado — 2 tabelas modelo taciano + fluxos A1/A2/A3 US13.
+### T05 (pós-merge PR #192)
 
-Não ações (ponytail): aguardar cron 10/07 p/ métricas reais (T06 placeholder), SonarCloud action pin (fora escopo P5).
+Mover tag `v1.0.0` de `db60bf9` (SHA incompleto) para novo SHA pós-remediação: `git tag -d v1.0.0` + `git push origin :refs/tags/v1.0.0` + `git tag -a v1.0.0 -m "..."` + `git push origin v1.0.0`. CHANGELOG.md `## [1.0.0]` topo. GitHub Release `RC-v1.0 (Iteração 4)`.
+
+Não ações (ponytail): aguardar cron 09/07 p/ métricas reais (T06 placeholder), SonarCloud action pin (fora escopo P5).
 
 ---
 

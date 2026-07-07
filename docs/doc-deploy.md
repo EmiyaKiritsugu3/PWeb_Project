@@ -64,6 +64,8 @@ npm install && npx prisma migrate deploy && npx prisma db seed && npm run dev
 docker compose down -v   # derruba + apaga volume do DB
 ```
 
+> ⚠️ **POSTGRES_PASSWORD com chars especiais** (`@`, `:`, `#`, `?`) quebram o parse de `DATABASE_URL`/`DIRECT_URL` (URL-encoded). Prefira senha alfanumérica via `.env`; se precisar de especiais, URL-encode na string de conexão.
+
 > **Nota:** Auth Supabase é externa ao compose. Para Auth + PostgREST local, use o Supabase CLI local (`supabase start`, ports 54321/54322) — ver `docs/CURRENT-STATE.md` seção E2E.
 
 ---
@@ -84,7 +86,7 @@ E2E (`npm run e2e`) roda em branch de staging contra Supabase local.
 ### Cobertura
 - Reporter: Vitest v8 (`coverage/lcov.info`)
 - Threshold: branch ≥ 80% (atual: **84.53%**)
-- Exclusões (10 patterns, alinhadas com `vitest.config.ts`):
+- Exclusões (9 patterns, alinhadas com `vitest.config.ts`):
   - `src/lib/actions/**` (server actions, E2E Prisma/Supabase)
   - `src/components/ui/**` (shadcn/Radix wrappers, E2E)
   - `src/test/**` (infra de teste)
@@ -102,7 +104,7 @@ Frequência: **2x por semana** (segunda + quinta).
 ```bash
 sonar-scanner \
   -Dsonar.projectKey=PWeb_Project \
-  -Dsonar.login=$SONAR_TOKEN
+  -Dsonar.token=$SONAR_TOKEN
 ```
 
 Cobertura importada de `coverage/lcov.info` (`sonar.javascript.lcov.reportPaths`).
@@ -119,6 +121,7 @@ Ver detalhes em `docs/sonarqube/config.md`.
 4. Variáveis de ambiente (Vercel → Settings → Environment Variables):
    - `DATABASE_URL`, `DIRECT_URL` (Vercel Postgres)
    - `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY`, `SUPABASE_SERVICE_ROLE_KEY`
+     > ⚠️ **`SUPABASE_SERVICE_ROLE_KEY` é Production-only e bypassa RLS.** Nunca expor no client nem commitar; usar apenas em server actions/routes com authz explícita.
    - `GEMINI_API_KEY` / `GOOGLE_GENAI_API_KEY`
    - `NEXT_PUBLIC_APP_URL`, `SENTRY_DSN`, `SENTRY_AUTH_TOKEN`
 5. Domínios: produção `app.dominio.com`, preview automático por branch.

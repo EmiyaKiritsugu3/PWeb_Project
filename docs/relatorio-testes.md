@@ -66,7 +66,7 @@
 | Cobertura de Código (branch) | ≥ 80%                | 84.53%              | ✅                    |
 | Testes Unitários             | Todos passando       | 1.137/1.137         | ✅                    |
 | Testes E2E (Playwright)      | Configurados         | 21 cenários         | ✅                    |
-| SonarQube                    | 2x/semana            | 1ª exec. 2026-07-06 | 🟡 (2ª em 2026-07-10) |
+| SonarQube                    | 2x/semana            | 1ª exec. 2026-07-06 | 🟡 (2ª em 2026-07-09) |
 | Quality Gate (SonarCloud)    | Pass                 | Pass                | ✅                    |
 | Docker Compose               | `docker-compose.yml` | Criado              | ✅                    |
 | Deploy doc                   | `docs/doc-deploy.md` | Criado              | ✅                    |
@@ -102,16 +102,25 @@
 | CodeQL                          | ✅                |
 | Semgrep SAST                    | ✅                |
 | Semgrep Secrets                 | ✅                |
-| GitGuardian                     | ✅                |
+| GitGuardian                     | ⚠️ FP (post)      |
 | Vercel Preview Deploy           | ✅                |
 
 SonarQube 2x/semana via cron `3 9 * * 1,4` (seg + qui 09:03 UTC) + `workflow_dispatch`.
+
+> ⚠️ **GitGuardian** sinaliza `POSTGRES_PASSWORD:-postgres` em `docker-compose.yml` — **falso positivo** (default dev-only, removido por R01: `POSTGRES_PASSWORD:?` obrigatório via `.env`). Silenciar via `aa-secret-scan-ignore` ou documentar como accepted risk.
 
 ---
 
 ## 7. Conclusão
 
-A Iteração 4 (P5) foi concluída com sucesso. A User Story do membro (US13 — Detalhes do Aluno: Tabelas Responsivas Mobile, PRD-8, PR #187) foi implementada da tela ao banco e todos os seus fluxos (A1, A2, A3) passaram nos testes. As providências da Tabela 2 (cobertura, Docker, docs) foram executadas e validadas. A cobertura de branch atingiu 84.53% (meta ≥80%), todos os 1.137 testes unitários passam, o Quality Gate do SonarCloud está aprovado e o pipeline CI/CD está 100% verde (10/10 checks). Ambiente Docker reproduzível criado e documentação de implantação completa.
+A Iteração 4 (P5) entregou: US13 (Detalhes do Aluno: Tabelas Responsivas Mobile, PRD-8, PR #187) implementada da tela ao banco com fluxos A1/A2/A3 validados; providências da Tabela 2 (cobertura, Docker, docs) executadas; cobertura de branch 84.53% (meta ≥80%); 1.137/1.137 testes unitários passando; Quality Gate SonarCloud aprovado; pipeline CI/CD 9/10 verde (GitGuardian = FP pendente de silenciamento); ambiente Docker reproduzível e documentação de implantação completos.
+
+### 7.1 Bugs Pendentes (fora escopo P5)
+
+| Issue | Descrição                                                                     | Status                                           |
+| ----- | ----------------------------------------------------------------------------- | ------------------------------------------------ |
+| #160  | 16 SonarQube code smells (false positives: skeleton keys, cmdk, logger S2068) | Aberta — documentada em `docs/TECHNICAL-DEBT.md` |
+| #122  | ESLint upstream block (eslint-config-next #3979)                              | Aberta — aguarda upstream                        |
 
 ---
 
