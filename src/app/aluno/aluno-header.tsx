@@ -72,7 +72,7 @@ export function UserMenu({
         <Button
           variant="ghost"
           className="touch-target relative h-11 w-11 rounded-full"
-          aria-label="Perfil do usuario"
+          aria-label="Menu do aluno"
         >
           <Avatar>
             <AvatarImage src={photoURL} alt="Aluno" />

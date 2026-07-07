@@ -12,7 +12,7 @@ export default function LandingPage() {
       <section className="relative flex min-h-[75dvh] items-center justify-center text-center text-white md:min-h-[85dvh]">
         <Image
           src="/images/hero_gym_dark.png"
-          alt="Academia Five Star - Interior moderno e de alta performance"
+          alt="Five Star Gym - Interior moderno e de alta performance"
           fill
           className="object-cover"
           priority
@@ -25,7 +25,7 @@ export default function LandingPage() {
             <Dumbbell className="h-12 w-12 text-primary md:h-16 md:w-16 drop-shadow-[0_0_15px_oklch(0.7_0.25_190_/_0.8)]" />
           </div>
           <h1 className="font-headline text-5xl font-extrabold tracking-tight md:text-7xl lg:text-8xl drop-shadow-lg">
-            Academia <span className="text-primary">Five Star</span>
+            Five Star Gym
           </h1>
           <p className="max-w-2xl text-lg text-gray-300 md:text-2xl font-light tracking-wide">
             O ambiente definitivo para alcançar seu potencial máximo. Gestão inteligente, treinos

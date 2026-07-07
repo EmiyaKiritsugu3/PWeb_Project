@@ -238,7 +238,7 @@ export default function AlunoDashboardClient({
                   CONQUISTAS
                 </h3>
               </div>
-              <div className="flex justify-around gap-2">
+              <div className="flex justify-center gap-2">
                 <div className="flex flex-col items-center gap-1 opacity-100 group cursor-pointer">
                   <div className="w-14 h-14 rounded-full bg-amber-500/20 border border-amber-500/50 flex items-center justify-center glow-gold text-amber-500">
                     <Award className="h-8 w-8" />
