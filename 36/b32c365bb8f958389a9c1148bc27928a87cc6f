@@ -1,0 +1,19 @@
+CHANGELOG.md
+  s_fb4d7ff952f201::t_6c49de6e5b4f93 8-31
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "36b32c365bb8f958389a9c1148bc27928a87cc6f",
+  "prompts": {},
+  "sessions": {
+    "s_fb4d7ff952f201": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "85942c40-c845-476d-a4d0-52969bedc9bf",
+        "model": "z-ai/glm-5.2"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
