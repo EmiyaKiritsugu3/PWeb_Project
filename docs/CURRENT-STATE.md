@@ -1,8 +1,8 @@
 # Estado Atual (2026-07-06)
 
-## Iteração 4 (P5) — CI/CD + Docker + SonarQube — PR #191 merged, remediação pendente
+## Iteração 4 (P5) — CI/CD + Docker + SonarQube — PR #191 + #192 merged, tag estabilizada
 
-**Branch main:** PR #191 squash-merged (`689175f` msg, SHA `db60bf9`). Tag `v1.0.0` pushed em `db60bf9` (prematura — move pós-PR #192).
+**Branch main:** PR #191 (`db60bf9`) + PR #192 (`41dc8a6`) squash-merged. Tag `v1.0.0` em `36b32c3` (CHANGELOG commit). Release `RC-v1.0 (Iteração 4)` publicada.
 **Tarefa:** [P5-tarefa5](https://github.com/tacianosilva/eng-software-2/blob/main/tarefas/projetos/P5-tarefa5.md).
 
 ### Entregas P5 (PR #191 merged)
@@ -23,13 +23,13 @@
 - **2ª execução SonarQube (2026-07-09, cron automático)** — quinta, não 2026-07-10 (sexta). 4 loc a corrigir R04.
 - SonarCloud action pré-existente usa tag `v2.89.0` (Semgrep WARNING pin SHA) — fora escopo P5.
 
-### Remediação P5 — PR #192 (OPEN, branch `fix/p5-review-remediation`)
+### Remediação P5 — PR #192 (MERGED)
 
-PR #191 merged **sem corrigir 26 reviews** (4 P1, 12 P2, 2 P3 de cubic-dev + coderabbit). Plano auditado em `~/.claude/plans/shimmering-knitting-plum.md`. R01-R12 aplicados (commit `3c712d8`), PR #192 aberta 2026-07-06. Gates locais: lint ✅ typecheck ✅ test 1137/1137 ✅ format ✅ commitlint ✅. GitGuardian ✅ (R01 removeu FP default password).
+PR #191 merged **sem corrigir 26 reviews** (4 P1, 12 P2, 2 P3 de cubic-dev + coderabbit). Plano auditado em `~/.claude/plans/shimmering-knitting-plum.md`. R01-R12 aplicados (commit `3c712d8`) + cubic P1 bump `sonarqube-scan-action` v4.2.2 → v8.2.0 SHA. PR #192 squash-merged `41dc8a6`. Gates locais: lint ✅ typecheck ✅ test 1137/1137 ✅ format ✅ commitlint ✅. CI 14/14 SUCCESS. GitGuardian ✅ (R01 removeu FP default password).
 
-### T05 (pós-merge PR #192)
+### T05 ✅ DONE
 
-Mover tag `v1.0.0` de `db60bf9` (SHA incompleto) para novo SHA pós-remediação: `git tag -d v1.0.0` + `git push origin :refs/tags/v1.0.0` + `git tag -a v1.0.0 -m "..."` + `git push origin v1.0.0`. CHANGELOG.md `## [1.0.0]` topo. GitHub Release `RC-v1.0 (Iteração 4)`.
+Tag `v1.0.0` movida de `db60bf9` → `36b32c3` (CHANGELOG commit em main). CHANGELOG.md `## [1.0.0]` topo. Release `RC-v1.0 (Iteração 4)` publicada: https://github.com/EmiyaKiritsugu3/PWeb_Project/releases/tag/v1.0.0
 
 Não ações (ponytail): aguardar cron 09/07 p/ métricas reais (T06 placeholder), SonarCloud action pin (fora escopo P5).
 
