@@ -62,3 +62,17 @@ export async function signInWithGitHub(next?: string): Promise<{ error?: string 
   if (data.url) return { error: data.url };
   return { error: 'No redirect URL returned' };
 }
+
+export async function signInWithApple(next?: string): Promise<{ error?: string }> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'apple',
+    options: {
+      redirectTo: callbackUrl(next),
+    },
+  });
+
+  if (error) return { error: error.message };
+  if (data.url) return { error: data.url };
+  return { error: 'No redirect URL returned' };
+}
