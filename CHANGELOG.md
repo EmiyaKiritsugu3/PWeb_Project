@@ -5,6 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0] — 2026-07-06 — Iteração 4 (P5): CI/CD + Docker + SonarQube (estabilizada)
+
+### Fixed
+
+- **Remediação P5 reviews PR #191** (PR #192, R01-R12):
+  - `docker-compose.yml`: removido `container_name` (namespace duplo); ports bind `127.0.0.1` (DB + dev server não expostos fora do host); `NODE_ENV: development` hardcode (evita override host); `POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?...}` obrigatório via `.env` (remove default fraco — GitGuardian FP).
+  - `sonar-project.properties`: `src/components/ui/**` movido de `sonar.exclusions` → `sonar.coverage.exclusions` (mantém análise de qualidade nos 74 wrappers Radix; exclui apenas coverage).
+  - `docs/doc-deploy.md`: warning `SUPABASE_SERVICE_ROLE_KEY` (bypass RLS, Production-only); `sonar.login` → `sonar.token`; 10 → 9 patterns coverage; nota POSTGRES_PASSWORD chars especiais quebram DATABASE_URL.
+  - `docs/sonarqube/config.md`: `Job sonar` → `Step SonarCloud Scan dentro do job test` + action `SonarSource/sonarqube-scan-action` (espelha ci.yml); `sonar.test.inclusions` → 4 globs exactos; code smells `0 ativos (16 FP TECHNICAL-DEBT)`.
+  - `docs/sonarqube/scans.md` + `docs/CURRENT-STATE.md` + `docs/relatorio-testes.md`: data 2ª exec SonarQube 2026-07-10 → 2026-07-09. `docs/relatorio-testes.md`: restaurada seção "Bugs Pendentes" (#160 16 SonarQube FP, #122 ESLint upstream); §6 GitGuardian `✅` → `⚠️ FP`; §7 Conclusão reword.
+  - `docker-compose.yml`: comments volume `pweb_pgdata` (POSTGRES_* só 1ª init) + app root (generated files root no host Linux).
+
+### Security
+
+- **`sonarqube-scan-action` v4.2.2 → v8.2.0** (cubic P1, ci.yml + config.md §5): v4.2.2 EOL emitia `::warning` runtime de security vulnerability; v8.2.0 SHA `713881670b6b3676cda39549040e2d88c70d582e` adiciona GPG signature verification. Env `GITHUB_TOKEN`/`SONAR_TOKEN` inalterado.
+
+### Quality
+
+- Gates locais: lint ✅ typecheck ✅ test 1137/1137 ✅ format ✅ commitlint ✅.
+- CI: 14/14 checks SUCCESS (SonarCloud Code Analysis, CodeQL, E2E, Tests & Coverage 84.53% branch).
+- Tag `v1.0.0` movida de `db60bf9` (SHA incompleto PR #191) → `dc6b1ef` (HEAD main pós-PR #192).
+
+---
+
 ## [1.5.0] — 2026-06-06 — Library Drift Audit (Context7)
 
 ### Fixed
