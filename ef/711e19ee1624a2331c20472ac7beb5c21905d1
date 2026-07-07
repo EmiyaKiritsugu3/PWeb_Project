@@ -1,0 +1,38 @@
+src/app/aluno/login/page.tsx
+  s_4c0801aec203fa::t_d7a1af9ca1a55a 25
+  s_4c0801aec203fa::t_89a457725cd150 154-175
+  s_4c0801aec203fa::t_c6708f6d43678d 43
+src/app/aluno/aluno-header.tsx
+  s_89f4ddbf47c779::t_cf8038bd514505 75
+src/app/page.tsx
+  s_89f4ddbf47c779::t_ec218d124dae1a 15
+  s_89f4ddbf47c779::t_a3ca9abfc6d2e4 28
+src/app/aluno/dashboard/dashboard-client.tsx
+  s_89f4ddbf47c779::t_8e92df818e6719 241
+docs/superpowers/plans/2026-07-07-aluno-ui-10-fixes.md
+  s_89f4ddbf47c779::t_5641b4c0ec6909 1-47
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "ef711e19ee1624a2331c20472ac7beb5c21905d1",
+  "prompts": {},
+  "sessions": {
+    "s_4c0801aec203fa": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b046e3c2-996d-4a31-b4f6-def1b4018e32",
+        "model": "deepseek-v4-pro"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    },
+    "s_89f4ddbf47c779": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ses_0c36a49abffeHhJc87Y14zqD3j",
+        "model": "unknown"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
