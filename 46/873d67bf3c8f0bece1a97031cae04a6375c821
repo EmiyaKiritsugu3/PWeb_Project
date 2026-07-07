@@ -1,0 +1,28 @@
+src/app/aluno/dashboard/page.tsx
+  s_89f4ddbf47c779::t_cb3212601c4be4 79-88,91
+  s_2608955e70af59::t_64ae332cc2eca2 92-93
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "46873d67bf3c8f0bece1a97031cae04a6375c821",
+  "prompts": {},
+  "sessions": {
+    "s_2608955e70af59": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0c36a49abffeHhJc87Y14zqD3j",
+        "model": "Nvidia-GLM5.2"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    },
+    "s_89f4ddbf47c779": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ses_0c36a49abffeHhJc87Y14zqD3j",
+        "model": "unknown"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
