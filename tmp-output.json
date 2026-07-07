@@ -1,0 +1,42 @@
+{
+  "changes": [
+    {
+      "file": "src/app/aluno/dashboard/dashboard-client.tsx",
+      "description": "Remove pb-20 from container div, let layout control bottom spacing",
+      "rationale": "Layout main has pb-16 for bottom-nav. Adding pb-20 on inner container creates ~9rem dead space. Let layout control bottom spacing.",
+      "region": "line 85: change className from pb-20 bg-black to bg-black"
+    },
+    {
+      "file": "src/app/aluno/dashboard/dashboard-client.tsx",
+      "description": "Fix i18n replaceAll workaround by passing real count number",
+      "rationale": "Template {count} treinos no mes already accepts number. Passing empty string then stripping ': ' is fragile. Use real aluno.treinosNoMes.",
+      "region": "lines 140-141: replace t() call with replaceAll(': ','').trim() with t('dashboard.workoutsThisMonth', { count: aluno.treinosNoMes })"
+    },
+    {
+      "file": "src/app/aluno/dashboard/dashboard-client.tsx",
+      "description": "Remove fake Meta Semanal and Power Index stats grid including divider",
+      "rationale": "Both values 80% and 752 are fabricated constants with no backend. Remove divider line and grid. Real data (XP, level, progress ring) stays.",
+      "region": "lines 223-239: remove divider div and grid-cols-2 block"
+    },
+    {
+      "file": "src/app/aluno/dashboard/dashboard-client.tsx",
+      "description": "Remove inert Ver Todas Button from achievements section",
+      "rationale": "Button has no onClick, no href, no /aluno/conquistas route exists. Inert button is clear UX failure. Remove it.",
+      "region": "lines 258-263: remove Button variant ghost block"
+    }
+  ],
+  "filesToUpdate": ["src/app/aluno/dashboard/dashboard-client.tsx"],
+  "newFiles": [],
+  "testChanges": [
+    {
+      "file": "src/app/aluno/dashboard/dashboard-client.test.tsx",
+      "description": "Update workoutThisMonth mock to return correct template format without replaceAll"
+    },
+    {
+      "file": "src/app/aluno/dashboard/dashboard-client.test.tsx",
+      "description": "Remove assertions for Ver Todas button and Meta Semanal/Power Index text"
+    }
+  ],
+  "removeFakeData": true,
+  "verTodasAction": "remove"
+}

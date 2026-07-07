@@ -3,8 +3,7 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Trophy, TrendingUp, Zap, Target, Award } from 'lucide-react';
+import { Trophy, Zap, Target, Award } from 'lucide-react';
 import type { Treino, Aluno, Exercicio } from '@/lib/definitions';
 import { Logger } from '@/lib/logger';
 import { finalizarTreinoAction } from '@/lib/actions/alunos';
@@ -82,7 +81,7 @@ export default function AlunoDashboardClient({
   const progressPerc = aluno.progressPerc as number;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 pb-20 bg-black min-h-dvh">
+    <div className="max-w-7xl mx-auto px-4 bg-black min-h-dvh">
       <ExercicioViewer
         exercicio={selectedExercicio}
         isOpen={isViewerOpen}
@@ -137,7 +136,7 @@ export default function AlunoDashboardClient({
             >
               <div className="text-center">
                 <p className="text-[10px] uppercase text-zinc-400 font-bold tracking-widest">
-                  {t('dashboard.workoutsThisMonth', { count: '' }).replaceAll(': ', '').trim()}
+                  {t('dashboard.workoutsThisMonth', { count: aluno.treinosNoMes })}
                 </p>
                 <p className="text-2xl font-mono font-bold tracking-tight text-cyan-400">
                   {aluno.treinosNoMes}
@@ -220,23 +219,6 @@ export default function AlunoDashboardClient({
                     <span className="text-cyan-400">{t('dashboard.xp')}</span>
                   </p>
                 </div>
-                <div className="w-full h-[1px] bg-white/10 my-6" />
-                <div className="grid grid-cols-2 gap-4 w-full">
-                  <div className="p-4 rounded-xl bg-white/5 border border-white/10">
-                    <TrendingUp className="h-5 w-5 text-cyan-400 mx-auto mb-2" />
-                    <p className="text-[10px] uppercase text-zinc-400 font-bold italic">
-                      Meta Semanal
-                    </p>
-                    <p className="text-lg font-mono font-bold tracking-tight text-cyan-400">80%</p>
-                  </div>
-                  <div className="p-4 rounded-xl bg-white/5 border border-white/10">
-                    <Zap className="h-5 w-5 text-yellow-400 mx-auto mb-2" />
-                    <p className="text-[10px] uppercase text-zinc-400 font-bold italic">
-                      Power Index
-                    </p>
-                    <p className="text-lg font-mono font-bold tracking-tight text-cyan-400">752</p>
-                  </div>
-                </div>
               </div>
             </Card>
           </motion.div>
@@ -255,13 +237,6 @@ export default function AlunoDashboardClient({
                   <Trophy className="h-5 w-5 text-amber-500" />
                   CONQUISTAS
                 </h3>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-8 text-[10px] uppercase font-bold text-amber-500"
-                >
-                  Ver Todas
-                </Button>
               </div>
               <div className="flex justify-around gap-2">
                 <div className="flex flex-col items-center gap-1 opacity-100 group cursor-pointer">
