@@ -91,7 +91,12 @@ export default function AlunoLoginPage() {
       notify.success('Login bem-sucedido!');
       router.push('/aluno/dashboard');
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : 'Erro desconhecido';
+      const message =
+        error instanceof Error
+          ? error.message
+          : typeof error === 'object' && error && 'message' in error
+            ? String((error as { message: unknown }).message)
+            : 'Erro desconhecido';
       setAuthError(message);
     } finally {
       setIsLoading(false);

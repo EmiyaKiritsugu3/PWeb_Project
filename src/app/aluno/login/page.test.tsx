@@ -195,11 +195,7 @@ describe('AlunoLoginPage', () => {
 
     await waitFor(() => {
       expect(mockSignUp).toHaveBeenCalled();
-      expect(mockNotify.error).toHaveBeenCalledWith(
-        'Erro de autenticação',
-        expect.any(String),
-        expect.any(Object)
-      );
+      expect(screen.getByRole('alert')).toHaveTextContent('Signup failed');
       expect(mockPush).not.toHaveBeenCalled();
     });
   });
