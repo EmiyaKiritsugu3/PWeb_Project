@@ -2,7 +2,7 @@
 
 ## Iteração 4 (P5) — CI/CD + Docker + SonarQube — PR #191 + #192 merged, tag estabilizada
 
-**Branch main:** PR #191 (`db60bf9`) + PR #192 (`41dc8a6`) squash-merged. Tag `v1.0.0` em `36b32c3` (CHANGELOG commit). Release `RC-v1.0 (Iteração 4)` publicada.
+**Branch main:** PR #191 (`db60bf9`) + PR #192 (`41dc8a6`) squash-merged. Tag `v1.0.0` em `1a68112` (CHANGELOG commit). Release `RC-v1.0 (Iteração 4)` publicada.
 **Tarefa:** [P5-tarefa5](https://github.com/tacianosilva/eng-software-2/blob/main/tarefas/projetos/P5-tarefa5.md).
 
 ### Entregas P5 (PR #191 merged)
@@ -29,7 +29,7 @@ PR #191 merged **sem corrigir 26 reviews** (4 P1, 12 P2, 2 P3 de cubic-dev + cod
 
 ### T05 ✅ DONE
 
-Tag `v1.0.0` movida de `db60bf9` → `36b32c3` (CHANGELOG commit em main). CHANGELOG.md `## [1.0.0]` topo. Release `RC-v1.0 (Iteração 4)` publicada: https://github.com/EmiyaKiritsugu3/PWeb_Project/releases/tag/v1.0.0
+Tag `v1.0.0` movida de `db60bf9` → `1a68112` (CHANGELOG commit em main pós-rebase). CHANGELOG.md `## [1.0.0]` topo. Release `RC-v1.0 (Iteração 4)` publicada: https://github.com/EmiyaKiritsugu3/PWeb_Project/releases/tag/v1.0.0
 
 Não ações (ponytail): aguardar cron 09/07 p/ métricas reais (T06 placeholder), SonarCloud action pin (fora escopo P5).
 
