@@ -1,0 +1,35 @@
+src/app/aluno/meus-treinos/meus-treinos-client.tsx
+  s_89f4ddbf47c779::t_950484edd53277 184-188
+  s_2608955e70af59::t_ddac4eaad82dbc 189-191
+src/app/aluno/perfil/page.tsx
+  s_89f4ddbf47c779::t_7d3e014804ff37 1-10
+src/components/dashboard/aluno/card-treino.tsx
+  s_89f4ddbf47c779::t_6e00ab8821e3f6 85
+src/app/aluno/aluno-header.tsx
+  s_89f4ddbf47c779::t_4a78aa871fb6e8 4
+  s_89f4ddbf47c779::t_191cec99b8c032 69,91
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "385edbf5d821751c28b0bfbe69e5bf34ec8f7739",
+  "prompts": {},
+  "sessions": {
+    "s_2608955e70af59": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0c36a49abffeHhJc87Y14zqD3j",
+        "model": "Nvidia-GLM5.2"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    },
+    "s_89f4ddbf47c779": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ses_0c36a49abffeHhJc87Y14zqD3j",
+        "model": "unknown"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
