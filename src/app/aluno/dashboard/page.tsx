@@ -34,7 +34,74 @@ export default async function AlunoDashboardPage() {
     },
   });
 
-  const aluno = await alunoPromise;
+  let aluno = await alunoPromise;
+
+  // Auto-provision: OAuth users (Google/GitHub/Apple) who have no aluno row get
+  // one created lazily on first dashboard visit. Email+name come from Supabase
+  // auth.user_metadata; CPF is required @unique but unknown from Google, so we
+  // mint a deterministic placeholder from the auth user id (uniqueness from the
+  // already-unique auth uid). Admin can fix the real CPF later. Throws on the
+  // rare race where two concurrent requests both miss findUnique — caught below
+  // surfaces as the original empty-state so the next request finds the row.
+  if (!aluno) {
+    const meta = user.user_metadata ?? {};
+    const nomeCompleto =
+      (meta.full_name as string | undefined) ??
+      (meta.name as string | undefined) ??
+      user.email ??
+      'Aluno Google';
+    const fotoUrl = (meta.avatar_url as string | undefined) ?? null;
+    const cpfPlaceholder = `OAUTH-${user.id.slice(0, 18)}`;
+    try {
+      aluno = await prisma.aluno.create({
+        data: {
+          email: user.email!,
+          nomeCompleto,
+          fotoUrl,
+          cpf: cpfPlaceholder,
+        },
+        select: {
+          id: true,
+          nomeCompleto: true,
+          fotoUrl: true,
+          nivel: true,
+          exp: true,
+          statusMatricula: true,
+          streakDiasSeguidos: true,
+          treinosNoMes: true,
+          ultimoTreinoData: true,
+          Matriculas: {
+            where: { status: 'ATIVA' },
+            orderBy: { dataVencimento: 'desc' },
+            take: 1,
+            select: { id: true, status: true, dataVencimento: true, planoId: true },
+          },
+        },
+      });
+    } catch {
+      // Race: another request created the row. Refetch instead of crashing.
+      aluno = await prisma.aluno.findUnique({
+        where: { email: user.email },
+        select: {
+          id: true,
+          nomeCompleto: true,
+          fotoUrl: true,
+          nivel: true,
+          exp: true,
+          statusMatricula: true,
+          streakDiasSeguidos: true,
+          treinosNoMes: true,
+          ultimoTreinoData: true,
+          Matriculas: {
+            where: { status: 'ATIVA' },
+            orderBy: { dataVencimento: 'desc' },
+            take: 1,
+            select: { id: true, status: true, dataVencimento: true, planoId: true },
+          },
+        },
+      });
+    }
+  }
 
   if (!aluno) {
     return (
