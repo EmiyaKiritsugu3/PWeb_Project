@@ -58,9 +58,14 @@ export async function GET(request: NextRequest) {
 
   if (error) {
     // Capture before redirect so auth failures are observable — a bare
-    // redirect here silently drops the Supabase exchange error.
+    // redirect here silently drops the Supabase exchange error. Strip the
+    // query string: request.url carries the OAuth `code`, a bearer-like
+    // credential that must not persist in third-party Sentry logs.
     Sentry.captureException(error, {
-      extra: { callbackUrl: request.url, next },
+      extra: {
+        callbackUrl: request.nextUrl.origin + request.nextUrl.pathname,
+        next,
+      },
     });
     const errorUrl = request.nextUrl.clone();
     errorUrl.pathname = '/login';

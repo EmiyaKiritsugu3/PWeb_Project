@@ -6,9 +6,17 @@ import { createClient } from '@/utils/supabase/server';
 import { AUTH_CALLBACK_PATH } from '@/lib/constants';
 import { validateNext } from '@/lib/auth-redirect';
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001';
-
+// `NEXT_PUBLIC_APP_URL` must be set in any environment that sends magic-link
+// or OAuth redirect URLs — otherwise the link target would point at localhost
+// and silently break auth in prod/preview. Read it lazily inside `callbackUrl`
+// (not at module load) so test harnesses that inject env after import still work.
 function callbackUrl(next?: string | null): string {
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+  if (!appUrl) {
+    throw new Error(
+      'NEXT_PUBLIC_APP_URL is not set; magic-link and OAuth redirects cannot be built.'
+    );
+  }
   const validated = validateNext(next);
   // validateNext's inert fallback is '/'; for the OAuth callback we need a
   // concrete post-login destination, so map the inert '/' → '/login' the same

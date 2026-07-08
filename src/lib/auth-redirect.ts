@@ -22,8 +22,14 @@ export function validateNext(next: string | null | undefined): string {
   if (next.startsWith('//')) return '/';
 
   // Normalize so `/aluno/../admin` collapses to `/admin` before the prefix
-  // check, defeating path traversal bypasses.
-  const normalized = new URL(next, 'http://localhost').pathname;
+  // check, defeating path traversal bypasses. Malformed `next` (e.g.
+  // `http://[::1`) makes `new URL()` throw — treat as inert rather than 500.
+  let normalized: string;
+  try {
+    normalized = new URL(next, 'http://localhost').pathname;
+  } catch {
+    return '/';
+  }
   const safe = ALLOWED_PREFIXES.some((p) => normalized === p || normalized.startsWith(`${p}/`));
   return safe ? normalized : '/';
 }
