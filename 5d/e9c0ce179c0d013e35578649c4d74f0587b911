@@ -1,0 +1,19 @@
+docs/superpowers/specs/2026-07-08-auth-redirect-fix-design.md
+  s_2f67f9c6099a15::t_0b648e0a8541cc 1-245
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "5de9c0ce179c0d013e35578649c4d74f0587b911",
+  "prompts": {},
+  "sessions": {
+    "s_2f67f9c6099a15": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "644ac70f-5361-42e1-aa69-4e4f3b4c3e82",
+        "model": "z-ai/glm-5.2"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
