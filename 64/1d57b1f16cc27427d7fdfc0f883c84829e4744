@@ -1,0 +1,19 @@
+supabase/config.toml
+  s_20d955652379b8::t_94439a62ac5de2 158
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "641d57b1f16cc27427d7fdfc0f883c84829e4744",
+  "prompts": {},
+  "sessions": {
+    "s_20d955652379b8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ses_0be8347daffeo20BJnPHUPNw20",
+        "model": "unknown"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
