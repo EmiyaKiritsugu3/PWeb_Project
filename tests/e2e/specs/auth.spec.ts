@@ -20,8 +20,11 @@ test.describe('Authentication — critical path', () => {
   test('Invalid credentials stay on /login with error', async ({ page }) => {
     await page.goto('/login');
     await page.getByLabel(/email/i).fill('naoexiste@test.com');
-    await page.getByLabel(/senha|password/i).fill('WrongPass99!');
-    await page.getByRole('button', { name: /entrar|login/i }).click();
+    // See helpers/auth.ts for why label locator on password is fragile on
+    // the aluno page; here on /login it works, but input[type] is uniform.
+    await page.locator('input[type="password"]').fill('WrongPass99!');
+    // Anchored regex — unanchored /entrar/i matches the 3 login buttons.
+    await page.getByRole('button', { name: /^entrar( no sistema)?$/i }).click();
     // Must stay on /login and show an error message
     await expect(page).toHaveURL(/\/login/, { timeout: 8_000 });
     await expect(page.getByText(/inválid|incorret|erro|invalid/i)).toBeVisible({ timeout: 8_000 });
