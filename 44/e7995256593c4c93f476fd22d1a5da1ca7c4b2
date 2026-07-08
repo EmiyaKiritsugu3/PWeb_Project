@@ -1,0 +1,19 @@
+docs/CURRENT-STATE.md
+  s_8a97627f646f18::t_731b7092cde108 1-29
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "44e7995256593c4c93f476fd22d1a5da1ca7c4b2",
+  "prompts": {},
+  "sessions": {
+    "s_8a97627f646f18": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3e983c60-fcd6-4c89-bd65-ead8afd08d88",
+        "model": "z-ai/glm-5.2"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
