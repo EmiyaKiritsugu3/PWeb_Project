@@ -1,0 +1,23 @@
+tests/e2e/specs/student-portal.spec.ts
+  s_2f67f9c6099a15::t_3d49681abd7075 23-27
+tests/e2e/helpers/auth.ts
+  s_2f67f9c6099a15::t_461b61af2c50b2 48-64
+tests/e2e/specs/auth.spec.ts
+  s_2f67f9c6099a15::t_9af137006ae173 23-27
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "6ab8af1fbcf6991480cec72a853ac2232959df96",
+  "prompts": {},
+  "sessions": {
+    "s_2f67f9c6099a15": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "644ac70f-5361-42e1-aa69-4e4f3b4c3e82",
+        "model": "z-ai/glm-5.2"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
