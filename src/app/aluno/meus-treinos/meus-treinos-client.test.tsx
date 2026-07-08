@@ -233,4 +233,20 @@ describe('MeusTreinosClient', () => {
     expect(screen.getByText('Gere um plano com IA ou crie manualmente para começar.')).toBeTruthy();
     expect(screen.getByText('Criar primeiro treino')).toBeTruthy();
   });
+
+  // O8Gaq: exercise names render under treino title, sliced to first 3, joined.
+  it('renders exercise names on treino cards', () => {
+    render(<MeusTreinosClient initialTreinos={mockTreinos} userId="user-1" />);
+    expect(screen.getByText('Supino')).toBeTruthy();
+    expect(screen.getByText('Corrida')).toBeTruthy();
+  });
+
+  it('omits exercise name list when treino has no exercises', () => {
+    const emptyExTreino: Treino[] = [
+      { id: 't-empty', alunoId: 'user-1', objetivo: 'Vazio', diaSemana: 2, exercicios: [] },
+    ];
+    render(<MeusTreinosClient initialTreinos={emptyExTreino} userId="user-1" />);
+    expect(screen.getByText('Vazio')).toBeTruthy();
+    expect(screen.getByText('0 exercícios')).toBeTruthy();
+  });
 });

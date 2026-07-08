@@ -84,7 +84,7 @@ export function CardTreino({
           <div
             key={exercicio.id}
             className={cn(
-              'group rounded-xl border border-white/5 p-4 flex items-center justify-between transition-all duration-300 hover:bg-white/5 active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-primary',
+              'group rounded-xl border border-white/5 p-4 flex items-center justify-between transition-all duration-300 hover:bg-white/5 active:scale-[0.98] focus-within:ring-2 focus-within:ring-primary',
               checkedExercises[exercicio.id] && 'bg-cyan-500/10 border-cyan-500/30'
             )}
           >

@@ -15,7 +15,7 @@ import { signInWithMagicLink, signInWithGoogle, signInWithGitHub, signInWithAppl
 
 beforeEach(() => {
   vi.clearAllMocks();
-  process.env.NEXT_PUBLIC_APP_URL = 'http://localhost:3001';
+  process.env.NEXT_PUBLIC_APP_URL = 'http://localhost:3000';
 });
 
 describe('signInWithMagicLink', () => {
@@ -50,22 +50,32 @@ describe('signInWithMagicLink', () => {
 describe('OAuth providers', () => {
   const url = 'https://provider/oauth';
 
-  it('signInWithGoogle returns redirect URL', async () => {
+  it('signInWithGoogle returns redirect URL via `url` field', async () => {
     mockSignInWithOAuth.mockResolvedValue({ data: { url }, error: null });
-    expect((await signInWithGoogle()).error).toBe(url);
+    const result = await signInWithGoogle();
+    expect(result.url).toBe(url);
+    expect(result.error).toBeUndefined();
     expect(mockSignInWithOAuth).toHaveBeenCalledWith(
       expect.objectContaining({ provider: 'google' })
     );
   });
 
-  it('signInWithGitHub returns redirect URL', async () => {
+  it('signInWithGitHub returns redirect URL via `url` field', async () => {
     mockSignInWithOAuth.mockResolvedValue({ data: { url }, error: null });
-    expect((await signInWithGitHub()).error).toBe(url);
+    const result = await signInWithGitHub();
+    expect(result.url).toBe(url);
+    expect(mockSignInWithOAuth).toHaveBeenCalledWith(
+      expect.objectContaining({ provider: 'github' })
+    );
   });
 
-  it('signInWithApple returns redirect URL', async () => {
+  it('signInWithApple returns redirect URL via `url` field', async () => {
     mockSignInWithOAuth.mockResolvedValue({ data: { url }, error: null });
-    expect((await signInWithApple()).error).toBe(url);
+    const result = await signInWithApple();
+    expect(result.url).toBe(url);
+    expect(mockSignInWithOAuth).toHaveBeenCalledWith(
+      expect.objectContaining({ provider: 'apple' })
+    );
   });
 
   it('returns Supabase error on failure', async () => {

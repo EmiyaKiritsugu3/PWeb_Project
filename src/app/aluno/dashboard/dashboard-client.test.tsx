@@ -27,8 +27,26 @@ vi.mock('motion/react', () => ({
   },
 }));
 
+const {
+  mockNotify,
+  mockFinalizarTreinoAction,
+  mockGenerateWorkoutFeedback,
+  mockLogger,
+  mockRegistrarHistorico,
+  mockRefresh,
+} = vi.hoisted(() => ({
+  mockNotify: { success: vi.fn(), error: vi.fn(), warn: vi.fn() },
+  mockFinalizarTreinoAction: vi.fn().mockResolvedValue({ success: true }),
+  mockGenerateWorkoutFeedback: vi
+    .fn()
+    .mockResolvedValue({ title: 'Mandou bem!', message: 'Ótimo treino!' }),
+  mockLogger: { error: vi.fn(), info: vi.fn() },
+  mockRegistrarHistorico: vi.fn().mockResolvedValue({ success: true }),
+  mockRefresh: vi.fn(),
+}));
+
 vi.mock('next/navigation', () => ({
-  useRouter: () => ({ refresh: vi.fn() }),
+  useRouter: () => ({ refresh: mockRefresh }),
 }));
 
 vi.mock('@/components/ui/card', () => ({
@@ -43,22 +61,18 @@ vi.mock('@/components/ui/button', () => ({
   ),
 }));
 
-const { mockNotify, mockFinalizarTreinoAction, mockGenerateWorkoutFeedback, mockLogger } =
-  vi.hoisted(() => ({
-    mockNotify: { success: vi.fn(), error: vi.fn(), warn: vi.fn() },
-    mockFinalizarTreinoAction: vi.fn().mockResolvedValue({ success: true }),
-    mockGenerateWorkoutFeedback: vi
-      .fn()
-      .mockResolvedValue({ title: 'Mandou bem!', message: 'Ótimo treino!' }),
-    mockLogger: { error: vi.fn(), info: vi.fn() },
-  }));
-
 vi.mock('@/lib/logger', () => ({
   Logger: mockLogger,
 }));
 
 vi.mock('@/lib/actions/alunos', () => ({
   finalizarTreinoAction: (...args: unknown[]) => mockFinalizarTreinoAction(...args),
+}));
+
+// Mock treinos action before real import — Prisma eager init would hit
+// DATABASE_URL at import time and fail the whole file in CI/local.
+vi.mock('@/lib/actions/treinos', () => ({
+  registrarHistoricoTreinoAction: (...args: unknown[]) => mockRegistrarHistorico(...args),
 }));
 
 vi.mock('@/hooks/use-app-notification', () => ({
@@ -101,15 +115,20 @@ vi.mock('@/components/dashboard/aluno/card-matricula', () => ({
 vi.mock('@/components/dashboard/aluno/card-treino', () => ({
   CardTreino: ({
     onFinishTraining,
+    onStartWorkout,
   }: {
     treino: Treino | null;
     onFinishTraining: (exIds: string[]) => void;
     isFeedbackLoading: boolean;
     onViewExercicio: (ex: unknown) => void;
+    onStartWorkout: () => void;
   }) => (
     <div data-testid="card-treino">
       <button data-testid="btn-finish-training" onClick={() => onFinishTraining(['ex-1'])}>
         Finish Training
+      </button>
+      <button data-testid="btn-start-workout" onClick={onStartWorkout}>
+        Start Workout
       </button>
     </div>
   ),
@@ -117,6 +136,37 @@ vi.mock('@/components/dashboard/aluno/card-treino', () => ({
 
 vi.mock('@/components/dashboard/aluno/card-feedback', () => ({
   CardFeedback: () => <div data-testid="card-feedback" />,
+}));
+
+// WorkoutSession gates the onFinish/onCancel contract handleFinishWorkout uses.
+vi.mock('@/components/WorkoutSession', () => ({
+  WorkoutSession: ({
+    onFinish,
+    onCancel,
+  }: {
+    treino: Treino;
+    onFinish: (h: Omit<unknown, never>) => void;
+    onCancel: () => void;
+  }) => (
+    <div data-testid="workout-session">
+      <button
+        data-testid="btn-session-finish"
+        onClick={() =>
+          onFinish({
+            treinoId: 'treino-1',
+            data: '2026-07-08',
+            duracaoMinutos: 30,
+            exerciciosConcluidos: 1,
+          })
+        }
+      >
+        Finish Session
+      </button>
+      <button data-testid="btn-session-cancel" onClick={onCancel}>
+        Cancel Session
+      </button>
+    </div>
+  ),
 }));
 
 vi.mock('@/ai/flows/workout-feedback-flow', () => ({
@@ -251,6 +301,65 @@ describe('AlunoDashboardClient', () => {
 
     await waitFor(() => {
       expect(mockNotify.error).toHaveBeenCalledWith('Erro ao salvar treino');
+    });
+  });
+
+  // O9FaX: clicking "Start Workout" toggles treinoEmSessao state, swapping
+  // the dashboard render for the WorkoutSession gate.
+  it('toggles WorkoutSession on start workout click', () => {
+    render(<AlunoDashboardClient aluno={mockAluno} initialTreino={mockTreino} />);
+    expect(screen.getByTestId('card-treino')).toBeTruthy();
+    expect(screen.queryByTestId('workout-session')).toBeNull();
+
+    fireEvent.click(screen.getByTestId('btn-start-workout'));
+
+    expect(screen.queryByTestId('card-treino')).toBeNull();
+    expect(screen.getByTestId('workout-session')).toBeTruthy();
+  });
+
+  it('cancels WorkoutSession back to dashboard', () => {
+    render(<AlunoDashboardClient aluno={mockAluno} initialTreino={mockTreino} />);
+    fireEvent.click(screen.getByTestId('btn-start-workout'));
+    expect(screen.getByTestId('workout-session')).toBeTruthy();
+
+    fireEvent.click(screen.getByTestId('btn-session-cancel'));
+    expect(screen.queryByTestId('workout-session')).toBeNull();
+    expect(screen.getByTestId('card-treino')).toBeTruthy();
+  });
+
+  // PMTVI: successful handleFinishWorkout must call router.refresh() so the
+  // mounted client re-fetches RSC (XP/level/streak) — props stay stale otherwise.
+  it('calls router.refresh after registrarHistoricoTreinoAction success', async () => {
+    render(<AlunoDashboardClient aluno={mockAluno} initialTreino={mockTreino} />);
+    fireEvent.click(screen.getByTestId('btn-start-workout'));
+    fireEvent.click(screen.getByTestId('btn-session-finish'));
+
+    await waitFor(() => {
+      expect(mockRegistrarHistorico).toHaveBeenCalledWith(
+        expect.objectContaining({ treinoId: 'treino-1', duracaoMinutos: 30 })
+      );
+      expect(mockNotify.success).toHaveBeenCalledWith(
+        'Treino Finalizado!',
+        'Seu progresso e XP foram salvos!'
+      );
+      expect(mockRefresh).toHaveBeenCalled();
+    });
+  });
+
+  it('shows error notification without router.refresh on registrarHistorico failure', async () => {
+    mockRegistrarHistorico.mockResolvedValue({ success: false, error: 'DB down' });
+
+    render(<AlunoDashboardClient aluno={mockAluno} initialTreino={mockTreino} />);
+    fireEvent.click(screen.getByTestId('btn-start-workout'));
+    fireEvent.click(screen.getByTestId('btn-session-finish'));
+
+    await waitFor(() => {
+      expect(mockNotify.error).toHaveBeenCalledWith(
+        'Erro ao salvar histórico',
+        undefined,
+        expect.any(Error)
+      );
+      expect(mockRefresh).not.toHaveBeenCalled();
     });
   });
 });

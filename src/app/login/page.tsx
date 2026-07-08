@@ -57,11 +57,11 @@ export default function LoginPage() {
     window.location.href = '/dashboard';
   };
 
-  const handleOAuthLogin = async (action: () => Promise<{ error?: string }>) => {
+  const handleOAuthLogin = async (action: () => Promise<{ url?: string; error?: string }>) => {
     setError('');
     const result = await action();
-    if (result.error?.startsWith('http')) {
-      window.location.href = result.error;
+    if (result.url) {
+      window.location.href = result.url;
     } else if (result.error) {
       setError(result.error);
     }

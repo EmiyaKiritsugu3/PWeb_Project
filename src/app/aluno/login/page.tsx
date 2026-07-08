@@ -114,11 +114,11 @@ export default function AlunoLoginPage() {
     }
   };
 
-  const handleOAuthSignIn = async (action: () => Promise<{ error?: string }>) => {
+  const handleOAuthSignIn = async (action: () => Promise<{ url?: string; error?: string }>) => {
     setAuthError(null);
     const result = await action();
-    if (result.error?.startsWith('http')) {
-      window.location.href = result.error;
+    if (result.url) {
+      window.location.href = result.url;
     } else if (result.error) {
       setAuthError(result.error);
     }

@@ -50,9 +50,9 @@ export async function signInWithMagicLink(formData: FormData): Promise<{ error?:
 }
 
 /**
- * Shared OAuth sign-in. `data.url` is the provider authorize URL; tunnel it
- * through `error` (existing public API contract) so the client can
- * `window.location.href = result.error` when it starts with `http`.
+ * Shared OAuth sign-in. `data.url` is the provider authorize URL; return it
+ * on a dedicated `url` field, and errors on `error`, so the client never has
+ * to disambiguate by inspecting the error string.
  */
 async function signInWithOAuth(provider: 'google' | 'github' | 'apple', next?: string) {
   const supabase = await createClient();
@@ -65,18 +65,18 @@ async function signInWithOAuth(provider: 'google' | 'github' | 'apple', next?: s
     Sentry.captureException(error, { tags: { auth: provider } });
     return { error: error.message };
   }
-  if (data.url) return { error: data.url };
+  if (data.url) return { url: data.url };
   return { error: 'No redirect URL returned' };
 }
 
-export async function signInWithGoogle(next?: string): Promise<{ error?: string }> {
+export async function signInWithGoogle(next?: string): Promise<{ url?: string; error?: string }> {
   return signInWithOAuth('google', next);
 }
 
-export async function signInWithGitHub(next?: string): Promise<{ error?: string }> {
+export async function signInWithGitHub(next?: string): Promise<{ url?: string; error?: string }> {
   return signInWithOAuth('github', next);
 }
 
-export async function signInWithApple(next?: string): Promise<{ error?: string }> {
+export async function signInWithApple(next?: string): Promise<{ url?: string; error?: string }> {
   return signInWithOAuth('apple', next);
 }
