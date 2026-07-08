@@ -1,0 +1,26 @@
+src/app/auth/callback/route.ts
+  s_8a97627f646f18::t_b42855ee7df7bc 61-63,65-68
+src/lib/actions/auth.ts
+  s_8a97627f646f18::t_17ff15f9ce8a3e 11-12,14-19
+  s_8a97627f646f18::t_7d57d813540a96 9-10
+src/lib/auth-redirect.ts
+  s_8a97627f646f18::t_0a2ff2e9665363 25-32
+.env.example
+  s_8a97627f646f18::t_cb9c30011cfdf4 88
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "7397157f9f4e32b4a6828e03e934c7af9a11813c",
+  "prompts": {},
+  "sessions": {
+    "s_8a97627f646f18": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3e983c60-fcd6-4c89-bd65-ead8afd08d88",
+        "model": "z-ai/glm-5.2"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
