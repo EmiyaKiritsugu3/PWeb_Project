@@ -1,0 +1,52 @@
+src/lib/actions/auth.test.ts
+  s_20d955652379b8::t_f17109e978472f 1
+  s_99742847cda4d2::t_494d5f5a3c24dd 110-147,149-157,159-195
+  s_20d955652379b8::t_c51dca96112789 148,158
+src/lib/actions/auth.ts
+  s_8dee9051f0d7f2::t_96b827f1317060 17-18,24
+  s_20d955652379b8::t_cb3a8155d15d34 14-16,19-21
+supabase/config.toml
+  s_b554ef37d4d2e0::t_9927af0c07742f 154,156-160
+.env.example
+  s_b554ef37d4d2e0::t_6cbce22e0e107a 87-88
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "a5f35c02f6a3c4b8b7a727adc6436b2b560f9a90",
+  "prompts": {},
+  "sessions": {
+    "s_20d955652379b8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ses_0be8347daffeo20BJnPHUPNw20",
+        "model": "unknown"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    },
+    "s_8dee9051f0d7f2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ses_0be81d9feffeYXFhYpYqVWvlMT",
+        "model": "unknown"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    },
+    "s_99742847cda4d2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ses_0be7ee950ffenK7uN2Fu550OAn",
+        "model": "unknown"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    },
+    "s_b554ef37d4d2e0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ses_0be81b5f6ffeE1D8dtBc6hSE27",
+        "model": "unknown"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
