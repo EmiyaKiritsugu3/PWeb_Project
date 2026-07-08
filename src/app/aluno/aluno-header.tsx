@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -65,6 +66,7 @@ export function UserMenu({
   onLogout: () => void;
 }>) {
   const { t } = useI18n();
+  const router = useRouter();
 
   return (
     <DropdownMenu>
@@ -72,7 +74,7 @@ export function UserMenu({
         <Button
           variant="ghost"
           className="touch-target relative h-11 w-11 rounded-full"
-          aria-label="Perfil do usuario"
+          aria-label="Menu do aluno"
         >
           <Avatar>
             <AvatarImage src={photoURL} alt="Aluno" />
@@ -86,7 +88,7 @@ export function UserMenu({
           <p className="text-xs font-normal text-muted-foreground">{email}</p>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem disabled>
+        <DropdownMenuItem onClick={() => router.push('/aluno/perfil')}>
           <UserIcon className="mr-2 h-4 w-4" />
           <span>{t('common.profile')}</span>
         </DropdownMenuItem>

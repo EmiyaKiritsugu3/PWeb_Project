@@ -1,15 +1,18 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion } from 'motion/react';
 import { Card } from '@/components/ui/card';
 import { Trophy, Zap, Target, Award } from 'lucide-react';
-import type { Treino, Aluno, Exercicio } from '@/lib/definitions';
+import type { Treino, Aluno, Exercicio, HistoricoTreino } from '@/lib/definitions';
 import { Logger } from '@/lib/logger';
 import { finalizarTreinoAction } from '@/lib/actions/alunos';
+import { registrarHistoricoTreinoAction } from '@/lib/actions/treinos';
 import { useAppNotification } from '@/hooks/use-app-notification';
 import { CircularProgress } from '@/components/ui/circular-progress';
 import { useI18n } from '@/components/providers/i18n-provider';
+import { WorkoutSession } from '@/components/WorkoutSession';
 
 import { ExercicioViewer } from '@/components/dashboard/aluno/exercicio-viewer';
 import { CardMatricula } from '@/components/dashboard/aluno/card-matricula';
@@ -27,11 +30,13 @@ export default function AlunoDashboardClient({
 }: Readonly<AlunoDashboardClientProps>) {
   const notify = useAppNotification();
   const { t } = useI18n();
+  const router = useRouter();
 
   const [feedback, setFeedback] = useState<{ title: string; message: string } | null>(null);
   const [isFeedbackLoading, setIsFeedbackLoading] = useState(false);
   const [isViewerOpen, setIsViewerOpen] = useState(false);
   const [selectedExercicio, setSelectedExercicio] = useState<Exercicio | null>(null);
+  const [treinoEmSessao, setTreinoEmSessao] = useState(false);
 
   const handleViewExercicio = (exercicio: Exercicio) => {
     setSelectedExercicio(exercicio);
@@ -76,6 +81,33 @@ export default function AlunoDashboardClient({
       setIsFeedbackLoading(false);
     }
   };
+
+  const handleFinishWorkout = async (historico: Omit<HistoricoTreino, 'id' | 'alunoId'>) => {
+    try {
+      const res = await registrarHistoricoTreinoAction(historico);
+      if (res.success) {
+        notify.success('Treino Finalizado!', 'Seu progresso e XP foram salvos!');
+        // revalidatePath in the action invalidates the cache but this mounted
+        // client keeps stale `aluno` props (XP/level/streak). router.refresh()
+        // re-fetches the RSC payload so the dashboard reflects the new state.
+        router.refresh();
+      } else {
+        throw new Error(res.error);
+      }
+    } catch (error) {
+      notify.error('Erro ao salvar histórico', undefined, error);
+    }
+  };
+
+  if (treinoEmSessao && initialTreino) {
+    return (
+      <WorkoutSession
+        treino={initialTreino}
+        onFinish={handleFinishWorkout}
+        onCancel={() => setTreinoEmSessao(false)}
+      />
+    );
+  }
 
   const xpToNextLevel = aluno.xpToNextLevel as number;
   const progressPerc = aluno.progressPerc as number;
@@ -176,6 +208,7 @@ export default function AlunoDashboardClient({
             onFinishTraining={handleFinishTraining}
             isFeedbackLoading={isFeedbackLoading}
             onViewExercicio={handleViewExercicio}
+            onStartWorkout={() => setTreinoEmSessao(true)}
           />
           <CardFeedback feedback={feedback} isLoading={isFeedbackLoading} />
         </motion.div>
@@ -238,7 +271,7 @@ export default function AlunoDashboardClient({
                   CONQUISTAS
                 </h3>
               </div>
-              <div className="flex justify-around gap-2">
+              <div className="flex justify-center gap-2">
                 <div className="flex flex-col items-center gap-1 opacity-100 group cursor-pointer">
                   <div className="w-14 h-14 rounded-full bg-amber-500/20 border border-amber-500/50 flex items-center justify-center glow-gold text-amber-500">
                     <Award className="h-8 w-8" />

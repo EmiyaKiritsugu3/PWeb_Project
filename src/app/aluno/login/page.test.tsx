@@ -128,8 +128,11 @@ describe('AlunoLoginPage', () => {
 
   // PRD-7: default creds removed from aluno/login — tests must type valid creds
   // before submit (zodResolver blocks empty fields, signIn never called).
+  // Note: there are now 2 inputs with placeholder 'seu@email.com' (magic link + form).
+  // We target the last one (the form email field).
   const typeValidCreds = () => {
-    fireEvent.change(screen.getByPlaceholderText('seu@email.com'), {
+    const emailInputs = screen.getAllByPlaceholderText('seu@email.com');
+    fireEvent.change(emailInputs[emailInputs.length - 1], {
       target: { value: 'ana.silva@example.com' },
     });
     fireEvent.change(screen.getByPlaceholderText('••••••••'), {
@@ -192,11 +195,7 @@ describe('AlunoLoginPage', () => {
 
     await waitFor(() => {
       expect(mockSignUp).toHaveBeenCalled();
-      expect(mockNotify.error).toHaveBeenCalledWith(
-        'Erro de autenticação',
-        expect.any(String),
-        expect.any(Object)
-      );
+      expect(screen.getByRole('alert')).toHaveTextContent('Signup failed');
       expect(mockPush).not.toHaveBeenCalled();
     });
   });
@@ -214,6 +213,53 @@ describe('AlunoLoginPage', () => {
 
     await waitFor(() => {
       expect(mockSignUp).not.toHaveBeenCalled();
+    });
+  });
+
+  // PMTVN: account-enumeration guard — signUp "User already registered" must
+  // surface as the generic credential error, not leak the registration leak.
+  it('masks "User already registered" as generic credential error', async () => {
+    mockSignInWithPassword.mockResolvedValue({
+      data: {},
+      error: { message: 'Invalid login credentials' },
+    });
+    mockSignUp.mockResolvedValue({
+      data: {},
+      error: { message: 'User already registered' },
+    });
+
+    render(<AlunoLoginPage />);
+    typeValidCreds();
+    const form = screen.getByRole('button', { name: /entrar/i }).closest('form')!;
+    fireEvent.submit(form);
+
+    await waitFor(() => {
+      const alert = screen.getByRole('alert');
+      expect(alert).toHaveTextContent('E-mail ou senha inválidos. Por favor, tente novamente.');
+      expect(alert).not.toHaveTextContent('User already registered');
+      expect(mockPush).not.toHaveBeenCalled();
+    });
+  });
+
+  it('masks "User has already been registered" variant', async () => {
+    mockSignInWithPassword.mockResolvedValue({
+      data: {},
+      error: { message: 'Invalid login credentials' },
+    });
+    mockSignUp.mockResolvedValue({
+      data: {},
+      error: { message: 'User has already been registered' },
+    });
+
+    render(<AlunoLoginPage />);
+    typeValidCreds();
+    const form = screen.getByRole('button', { name: /entrar/i }).closest('form')!;
+    fireEvent.submit(form);
+
+    await waitFor(() => {
+      const alert = screen.getByRole('alert');
+      expect(alert).toHaveTextContent('E-mail ou senha inválidos. Por favor, tente novamente.');
+      expect(alert).not.toHaveTextContent('registered');
     });
   });
 });

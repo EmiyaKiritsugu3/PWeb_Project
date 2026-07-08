@@ -1,4 +1,32 @@
-# Estado Atual (2026-07-06)
+# Estado Atual (2026-07-08)
+
+## PR #194 `feat/aluno-ui-10-fixes` — review remediation completa (cubic + coderabbit)
+
+**Branch:** `feat/aluno-ui-10-fixes` (PR #194, +956/-371, 23 files). 4 commits de remediação: `f07f39f` (P0-P2), `48d6dd7` (sfU+se1), `7397157` (sfi+PLDGo), `641831d` (P2/P3 test coverage + a11y).
+
+### Remediação final — commit `641831d`
+
+28+ comentários triaged (4 bots: cubic ×2, coderabbit ×2) → 16 fixed / 4 FP / 8 deferred. Última batch resolveu os 8 deferred:
+
+- **O8GbK (P3)**: `card-treino` `focus-visible`→`focus-within` em exercise row div (container não-focusable; focus-within dispara no child focado).
+- **O9Faj (P2)**: `.env.example` `NEXT_PUBLIC_APP_URL` revertido para `:3000` (match `next dev` default; `:3001` quebrava dev parity + test env).
+- **O9Fap + O9Fa4 (P2)**: OAuth return contract split — campos dedicados `url`/`error` substituem heuristic `startsWith('http')`. `auth.ts` + 2 login pages + `auth.test.ts` atualizados.
+- **O8Gaq (P2)**: `meus-treinos-client.test` — assert exercise names render (sliced 3, joined), omitidos quando 0 exercícios.
+- **O9FaX + PMTVI (P2)**: `dashboard-client.test` — mock `@/lib/actions/treinos` (desbloqueia Prisma DATABASE_URL import-time failure) + WorkoutSession gate. Cobertura: WorkoutSession state toggle, `router.refresh()` pós `registrarHistoricoTreinoAction` success, error path.
+- **PMTVN (P2)**: `aluno/login.test` — account-enumeration guard: "User already registered" + "User has already been registered" ambos mascarados p/ credential error genérico, sem leak, sem push.
+- **sfi (resolved prior)**: lazy `NEXT_PUBLIC_APP_URL` read dentro de `callbackUrl()` (não module load) p/ test harness injetar env pós-import.
+
+### Gates
+
+112 test files / 1159 tests pass. Typecheck clean. Lint clean (prettier reformatou hoisted block). Push `641831d` em `7397157..641831d`.
+
+### Threads GitHub
+
+8 threads cubic-dev-ai resolvidas via `resolveReviewThread` (O8Gaq, O8GbK, O9FaX, O9Faj, O9Fap, O9Fa4, PMTVI, PMTVN). 0 unresolved restantes no PR #194.
+
+---
+
+## Iteração 4 (P5) — CI/CD + Docker + SonarQube — PR #191 + #192 merged, tag estabilizada
 
 ## Iteração 4 (P5) — CI/CD + Docker + SonarQube — PR #191 + #192 merged, tag estabilizada
 

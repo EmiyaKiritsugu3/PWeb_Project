@@ -43,8 +43,7 @@ vi.mock('lucide-react', () => ({
 describe('LandingPage', () => {
   it('renders the academy name', () => {
     render(<LandingPage />);
-    expect(screen.getByText('Academia')).toBeTruthy();
-    expect(screen.getByText('Five Star')).toBeTruthy();
+    expect(screen.getByText('Five Star Gym')).toBeTruthy();
   });
 
   it('renders the hero description', () => {

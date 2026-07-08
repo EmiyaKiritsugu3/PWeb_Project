@@ -20,7 +20,11 @@ test.describe('Student portal — critical path', () => {
     await loginAs(page, 'ALUNO');
     await page.goto('/aluno/meus-treinos');
     await expect(page).toHaveURL(/\/aluno\/meus-treinos/);
-    await expect(page.getByRole('heading', { name: 'Meus Treinos' })).toBeVisible({
+    // Pin to h1 — nav/sidebar reuse i18n "myWorkouts":"Meus Treinos" as a
+    // label, and shadcn CardTitle renders <h3>, so an unscoped heading query
+    // resolves to 2+ elements (PageHeader <h1> + mirrored nav heading).
+    // level:1 targets only the page's PageHeader heading.
+    await expect(page.getByRole('heading', { name: 'Meus Treinos', level: 1 })).toBeVisible({
       timeout: 15_000,
     });
   });

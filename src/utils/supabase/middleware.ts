@@ -62,6 +62,8 @@ export const updateSession = async (request: NextRequest) => {
   const isAlunoRoute = pathname.startsWith('/aluno') && !pathname.startsWith('/aluno/login');
   const isProtectedRoute = isDashboardRoute || isAlunoRoute;
 
+  if (pathname.startsWith('/auth/callback')) return supabaseResponse;
+
   if (!isProtectedRoute) return supabaseResponse;
 
   const auth = await getAuthForRoute(supabase, pathname, request);

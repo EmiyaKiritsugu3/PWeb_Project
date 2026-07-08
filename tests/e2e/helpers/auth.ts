@@ -45,8 +45,23 @@ export async function loginAs(page: Page, role: TestRole): Promise<void> {
   await page.goto(loginPath);
   await logout(page);
   await page.getByLabel(/email/i).fill(email);
-  await page.getByLabel(/senha|password/i).fill(password);
-  await page.getByRole('button', { name: /entrar|login/i }).click();
+  // ponytail: input[type] beats getByLabel across both login idioms.
+  // /login uses <label htmlFor="password">. /aluno/login uses RHF FormLabel
+  // without htmlFor + an aria-toggle button named "Mostrar senha" that
+  // getByLabel(/senha/i) wrongly resolves to (cannot .fill() a button).
+  // Type-selector pins the editable input on both pages. Upgrade path: add
+  // explicit id="password" to aluno input if we want getByLabel parity.
+  const passwordInput = page
+    .locator('input[type="password"], input[type="text"]')
+    .filter({ hasNot: page.getByRole('button') })
+    .first();
+  await passwordInput.fill(password);
+  // Anchor the regex — unanchored /entrar/i matches all three login buttons
+  // (submit "Entrar no Sistema" / "Entrar" + OAuth "Entrar com Google" /
+  // "Entrar com GitHub"), tripping Playwright strict-mode. Staff btn texts
+  // "Entrar no Sistema", aluno btn texts "Entrar". Anchored regex matches
+  // exactly those, skipping the OAuth pair which prefix-match "entrar com".
+  await page.getByRole('button', { name: /^entrar( no sistema)?$/i }).click();
   // For staff roles: server action redirect — wait for any departure from the login page,
   // then do a hard GET so the browser sends the fresh session cookie.
   // For ALUNO: client-side auth + router.push — wait for URL to reach the dashboard directly.
