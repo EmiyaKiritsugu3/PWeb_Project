@@ -132,20 +132,25 @@ guard from PR #194 unchanged).
 site_url = "http://localhost:3000"
 additional_redirect_urls = [
   "http://localhost:3000/auth/callback",
-  "https://*-*.vercel.app/auth/callback",
+  "https://**.vercel.app/auth/callback",
   "https://smartmanagementsystem.vercel.app/auth/callback"
 ]
 ```
 
 - `localhost` (not `127.0.0.1`) — matches dev server bind + browser resolution.
 - `http://localhost:3000/auth/callback` (not `https`) — local is plain HTTP.
-- `https://*-*.vercel.app/auth/callback` — Supabase wildcard. `*` matches a
-  single label segment within a hostname component per Supabase's glob rules;
-  `*-*.vercel.app` covers `smartmanagementsystem-6rfj2hapr-emiyakiritsugu3s-projects`.
-  vercel.app and all sibling preview / dev aliases.
+- `https://**.vercel.app/auth/callback` — Supabase wildcard. Per Context7
+  (supabase.com/docs/guides/auth/redirect-urls): `*` matches a sequence of
+  non-separator chars (separators are `.` and `/`), `**` matches any sequence
+  of chars. Preview deploy hostnames are multi-hyphen-group
+  (`smartmanagementsystem-6rfj2hapr-emiyakiritsugu3s-projects.vercel.app`) —
+  `-` is not a separator, so a single `*` could span it, but `**` is the
+  documented, unambiguous choice for "any sequence of characters" and is the
+  Supabase-recommended pattern for Netlify/Vercel preview URLs.
 - `https://smartmanagementsystem.vercel.app/auth/callback` — Production
   canonical alias. Also covered by the glob, but listed explicitly so a future
-  allowlist-glob regression can't break prod silently.
+  allowlist-glob regression can't break prod silently. Supabase docs recommend
+  exact paths for production even though `**` covers preview/localhost.
 
 `/auth/callback` suffix included because `callbackUrl()` builds
 `${base}${AUTH_CALLBACK_PATH}` with `AUTH_CALLBACK_PATH = '/auth/callback'`
