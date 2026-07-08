@@ -77,11 +77,11 @@ mirror Fix B's entries or cloud auth fails regardless of code.
 
 | File / surface | Change |
 |---|---|
-| `src/lib/actions/auth.ts` | Rewrite `callbackUrl()` — empty-string guard + `VERCEL_URL` fallback + localhost default. No throw. |
+| `src/lib/actions/auth.ts` | Rewrite `callbackUrl()` — empty-string guard + `NEXT_PUBLIC_VERCEL_URL` fallback + localhost default. No throw. |
 | `supabase/config.toml` | `site_url` → `http://localhost:3000`; `additional_redirect_urls` → localhost + vercel.app glob + prod. |
-| `.env.example` | Add comment: Preview should leave `NEXT_PUBLIC_APP_URL` unset for `VERCEL_URL` fallback. Prod must set canonical URL. |
+| `.env.example` | Add comment: Preview should leave `NEXT_PUBLIC_APP_URL` unset for `NEXT_PUBLIC_VERCEL_URL` fallback. Prod must set canonical URL. |
 | Vercel env (Production) | Remove empty `NEXT_PUBLIC_APP_URL`, set `https://smartmanagementsystem.vercel.app`. |
-| Vercel env (Preview) | Leave `NEXT_PUBLIC_APP_URL` unset — `VERCEL_URL` fallback applies. |
+| Vercel env (Preview) | Leave `NEXT_PUBLIC_APP_URL` unset — `NEXT_PUBLIC_VERCEL_URL` fallback applies. |
 | Cloud Supabase Dashboard | Manual: mirror allowlist from Fix B. (Documented step, not code.) |
 | `src/lib/actions/auth.test.ts` | New test file — `callbackUrl` resolution tiers. |
 
@@ -97,16 +97,17 @@ the allowlist because Supabase sent the redirect there). The bug is purely in
 
 ```ts
 function callbackUrl(next?: string | null): string {
-  // .trim() before nullish check: Vercel Production has NEXT_PUBLIC_APP_URL=""
-  // (empty string set, not undefined). "" falsy-but-defined defeats ??.
+  // .trim() before nullish: Vercel Production has NEXT_PUBLIC_APP_URL=""
+  // (empty string set, not undefined). "" is falsy but not nullish, so
+  // explicit || null converts falsy → null for ?? to fall through.
   const explicit = process.env.NEXT_PUBLIC_APP_URL?.trim();
   const base =
-    explicit
-    ?? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null)
+    (explicit || null)
+    ?? (process.env.NEXT_PUBLIC_VERCEL_URL ? 'https://' + process.env.NEXT_PUBLIC_VERCEL_URL : null)
     ?? 'http://localhost:3000';
   const validated = validateNext(next);
   const safeNext = validated === '/' ? '/login' : validated;
-  return `${base}${AUTH_CALLBACK_PATH}?next=${encodeURIComponent(safeNext)}`;
+  return base + AUTH_CALLBACK_PATH + '?next=' + encodeURIComponent(safeNext);
 }
 ```
 
@@ -114,9 +115,9 @@ Resolution tiers (first non-empty wins):
 
 1. **`NEXT_PUBLIC_APP_URL`** (trimmed) — Production. Operator sets canonical
    domain. Trim guards against accidental `" "` / `""`.
-2. **`VERCEL_URL`** — Preview deployments. Vercel auto-injects per-deploy
-   hostname; prefix `https://`. This URL is unique per deployment, so it must
-   be covered by the `*-*.vercel.app/*` glob in the Supabase allowlist.
+2. **`NEXT_PUBLIC_VERCEL_URL`** — Preview deployments. Vercel auto-injects
+   per-deploy hostname; prefix `https://`. This URL is unique per deployment,
+   so it must be covered by the `**.vercel.app/*` glob in the Supabase allowlist.
 3. **`http://localhost:3000`** — Local dev default. No env needed. Tests run
    on this tier.
 
@@ -171,7 +172,7 @@ Manual confirmation: `vercel env pull /tmp/v.json --environment production` →
 ### Fix D — Vercel env (Preview)
 
 Intentionally **unset** `NEXT_PUBLIC_APP_URL` in Preview. With `callbackUrl()`
-fixed, preview falls to the `VERCEL_URL` tier — each preview deploy gets its
+fixed, preview falls to the `NEXT_PUBLIC_VERCEL_URL` tier — each preview deploy gets its
 own deploy-host callback URL, all matching the allowlist glob.
 
 ### Fix E — Cloud Supabase Dashboard
@@ -194,7 +195,7 @@ code fix lands — the cloud allowlist must be updated in lockstep.
 Annotate the existing line:
 
 ```
-# Preview deploys: leave unset so callbackUrl() falls back to VERCEL_URL.
+# Preview deploys: leave unset so callbackUrl() falls back to NEXT_PUBLIC_VERCEL_URL.
 # Production: set to the canonical domain (e.g. https://smartmanagementsystem.vercel.app).
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
@@ -205,8 +206,8 @@ New file `src/lib/actions/auth.test.ts`, vitest. Covers the resolution tiers
 via env manipulation in `beforeEach` / `afterEach`:
 
 1. `NEXT_PUBLIC_APP_URL` set → used (trimmed if whitespace).
-2. `NEXT_PUBLIC_APP_URL=""` → falls to `VERCEL_URL`.
-3. `NEXT_PUBLIC_APP_URL` unset + `VERCEL_URL` set → `https://${VERCEL_URL}`.
+2. `NEXT_PUBLIC_APP_URL=""` → falls to `NEXT_PUBLIC_VERCEL_URL`.
+3. `NEXT_PUBLIC_APP_URL` unset + `NEXT_PUBLIC_VERCEL_URL` set → `https://${NEXT_PUBLIC_VERCEL_URL}`.
 4. Both unset → `http://localhost:3000`.
 5. `next` param validated by `validateNext` (`/aluno/../admin` → `/admin`
    rejected → `/login`; `/aluno/dashboard` → preserved).

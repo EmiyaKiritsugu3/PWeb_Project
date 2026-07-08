@@ -110,12 +110,12 @@ describe('OAuth providers', () => {
 
 describe('callbackUrl tier resolution', () => {
   afterEach(() => {
-    delete process.env.VERCEL_URL;
+    delete process.env.NEXT_PUBLIC_VERCEL_URL;
   });
 
   it('tier 1: uses NEXT_PUBLIC_APP_URL when set and non-empty', async () => {
     process.env.NEXT_PUBLIC_APP_URL = 'https://myapp.com';
-    delete process.env.VERCEL_URL;
+    delete process.env.NEXT_PUBLIC_VERCEL_URL;
     mockSignInWithOtp.mockResolvedValue({ error: null });
     const fd = new FormData();
     fd.append('email', 'test@example.com');
@@ -131,7 +131,7 @@ describe('callbackUrl tier resolution', () => {
 
   it('tier 1: trims whitespace from NEXT_PUBLIC_APP_URL', async () => {
     process.env.NEXT_PUBLIC_APP_URL = '  https://myapp.com  ';
-    delete process.env.VERCEL_URL;
+    delete process.env.NEXT_PUBLIC_VERCEL_URL;
     mockSignInWithOtp.mockResolvedValue({ error: null });
     const fd = new FormData();
     fd.append('email', 'test@example.com');
@@ -145,9 +145,9 @@ describe('callbackUrl tier resolution', () => {
     );
   });
 
-  it('tier 1: empty NEXT_PUBLIC_APP_URL="" falls to VERCEL_URL (explicit||null → null)', async () => {
+  it('tier 1: empty NEXT_PUBLIC_APP_URL="" falls to NEXT_PUBLIC_VERCEL_URL (explicit||null → null)', async () => {
     process.env.NEXT_PUBLIC_APP_URL = '';
-    process.env.VERCEL_URL = 'preview.vercel.app';
+    process.env.NEXT_PUBLIC_VERCEL_URL = 'preview.vercel.app';
     mockSignInWithOtp.mockResolvedValue({ error: null });
     const fd = new FormData();
     fd.append('email', 'test@example.com');
@@ -161,9 +161,9 @@ describe('callbackUrl tier resolution', () => {
     );
   });
 
-  it('tier 2: uses VERCEL_URL when NEXT_PUBLIC_APP_URL is not set', async () => {
+  it('tier 2: uses NEXT_PUBLIC_VERCEL_URL when NEXT_PUBLIC_APP_URL is not set', async () => {
     delete process.env.NEXT_PUBLIC_APP_URL;
-    process.env.VERCEL_URL = 'preview.vercel.app';
+    process.env.NEXT_PUBLIC_VERCEL_URL = 'preview.vercel.app';
     mockSignInWithOtp.mockResolvedValue({ error: null });
     const fd = new FormData();
     fd.append('email', 'test@example.com');
@@ -179,7 +179,7 @@ describe('callbackUrl tier resolution', () => {
 
   it('tier 3: falls to localhost:3000 when both unset', async () => {
     delete process.env.NEXT_PUBLIC_APP_URL;
-    delete process.env.VERCEL_URL;
+    delete process.env.NEXT_PUBLIC_VERCEL_URL;
     mockSignInWithOtp.mockResolvedValue({ error: null });
     const fd = new FormData();
     fd.append('email', 'test@example.com');

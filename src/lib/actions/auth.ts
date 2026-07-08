@@ -17,7 +17,7 @@ function callbackUrl(next?: string | null): string {
   const explicit = process.env.NEXT_PUBLIC_APP_URL?.trim();
   const base =
     (explicit || null) ??
-    (process.env.VERCEL_URL ? 'https://' + process.env.VERCEL_URL : null) ??
+    (process.env.NEXT_PUBLIC_VERCEL_URL ? 'https://' + process.env.NEXT_PUBLIC_VERCEL_URL : null) ??
     'http://localhost:3000';
   const validated = validateNext(next);
   const safeNext = validated === '/' ? '/login' : validated;
