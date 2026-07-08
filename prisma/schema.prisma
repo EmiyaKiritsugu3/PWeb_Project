@@ -26,6 +26,12 @@ model Aluno {
   dataCadastro       DateTime          @default(now())
   fotoUrl            String?
   biometriaHash      String?           @unique
+  cep                String?
+  endereco           String?
+  numero             String?
+  bairro             String?
+  cidade             String?
+  estado             String?
   statusMatricula    StatusAluno       @default(ATIVA)
   nivel              Int               @default(1)
   exp                Int               @default(0)

@@ -150,8 +150,11 @@ max_indexes = 5
 [auth]
 enabled = true
 # The base URL of your website. Used as an allow-list for redirects and for constructing URLs used
-# in emails.
-site_url = "http://localhost:3000"
+# in emails. Must be the production URL — Supabase falls back to this when a `redirectTo`
+# fails allowlist validation, so leaving it as localhost in a linked cloud project sends
+# users to localhost on every OAuth redirect mismatch. Local dev resolves via
+# additional_redirect_urls (localhost entry) instead.
+site_url = "https://smartmanagementsystem.vercel.app"
 # A list of *exact* URLs that auth providers are permitted to redirect to post authentication.
 additional_redirect_urls = [
   "http://localhost:3000/auth/callback",

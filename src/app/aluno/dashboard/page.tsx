@@ -2,7 +2,6 @@ import { getUser } from '@/utils/supabase/server';
 import { prisma } from '@/lib/prisma';
 import AlunoDashboardClient from './dashboard-client';
 import { redirect } from 'next/navigation';
-import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import type { Aluno, Treino } from '@/lib/definitions';
 
 export default async function AlunoDashboardPage() {
@@ -36,22 +35,11 @@ export default async function AlunoDashboardPage() {
 
   const aluno = await alunoPromise;
 
+  // No alunos row → first-time OAuth user. Send to onboarding to collect
+  // required CPF + address. The onboarding action is the sole writer of new
+  // OAuth-origin rows (replaces the old placeholder-CPF auto-provision).
   if (!aluno) {
-    return (
-      <div className="flex h-[80vh] items-center justify-center">
-        <Card className="max-w-md text-center">
-          <CardHeader>
-            <h2 className="text-2xl font-semibold leading-none tracking-tight">Sinto muito!</h2>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <p>Seu perfil de aluno não foi encontrado no novo sistema.</p>
-            <p>
-              Por favor, procure o administrador da academia para vincular seu email ({user.email}).
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-    );
+    redirect('/aluno/onboarding');
   }
 
   const today = new Date().getDay();
