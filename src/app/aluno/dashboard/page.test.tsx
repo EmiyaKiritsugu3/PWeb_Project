@@ -99,14 +99,14 @@ describe('AlunoDashboardPage', () => {
     expect(mockRedirect).toHaveBeenCalledWith('/aluno/login');
   });
 
-  it('renders not found card when aluno is null in database', async () => {
+  it('redirects to onboarding when aluno is null in database', async () => {
     mockGetUser.mockResolvedValue({
       user: { id: '1', email: 'test@test.com' },
       error: null,
     } as never);
     mockPrismaAluno.mockResolvedValue(null);
-    render(await AlunoDashboardPage());
-    expect(screen.getByText('Sinto muito!')).toBeTruthy();
+    await expect(AlunoDashboardPage()).rejects.toThrow('NEXT_REDIRECT');
+    expect(mockRedirect).toHaveBeenCalledWith('/aluno/onboarding');
   });
 
   it('renders dashboard client when aluno is found', async () => {

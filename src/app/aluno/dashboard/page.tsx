@@ -2,7 +2,6 @@ import { getUser } from '@/utils/supabase/server';
 import { prisma } from '@/lib/prisma';
 import AlunoDashboardClient from './dashboard-client';
 import { redirect } from 'next/navigation';
-import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import type { Aluno, Treino } from '@/lib/definitions';
 
 export default async function AlunoDashboardPage() {
@@ -34,91 +33,13 @@ export default async function AlunoDashboardPage() {
     },
   });
 
-  let aluno = await alunoPromise;
+  const aluno = await alunoPromise;
 
-  // Auto-provision: OAuth users (Google/GitHub/Apple) who have no aluno row get
-  // one created lazily on first dashboard visit. Email+name come from Supabase
-  // auth.user_metadata; CPF is required @unique but unknown from Google, so we
-  // mint a deterministic placeholder from the auth user id (uniqueness from the
-  // already-unique auth uid). Admin can fix the real CPF later. Throws on the
-  // rare race where two concurrent requests both miss findUnique — caught below
-  // surfaces as the original empty-state so the next request finds the row.
+  // No alunos row → first-time OAuth user. Send to onboarding to collect
+  // required CPF + address. The onboarding action is the sole writer of new
+  // OAuth-origin rows (replaces the old placeholder-CPF auto-provision).
   if (!aluno) {
-    const meta = user.user_metadata ?? {};
-    const nomeCompleto =
-      (meta.full_name as string | undefined) ??
-      (meta.name as string | undefined) ??
-      user.email ??
-      'Aluno Google';
-    const fotoUrl = (meta.avatar_url as string | undefined) ?? null;
-    const cpfPlaceholder = `OAUTH-${user.id.slice(0, 18)}`;
-    try {
-      aluno = await prisma.aluno.create({
-        data: {
-          email: user.email!,
-          nomeCompleto,
-          fotoUrl,
-          cpf: cpfPlaceholder,
-        },
-        select: {
-          id: true,
-          nomeCompleto: true,
-          fotoUrl: true,
-          nivel: true,
-          exp: true,
-          statusMatricula: true,
-          streakDiasSeguidos: true,
-          treinosNoMes: true,
-          ultimoTreinoData: true,
-          Matriculas: {
-            where: { status: 'ATIVA' },
-            orderBy: { dataVencimento: 'desc' },
-            take: 1,
-            select: { id: true, status: true, dataVencimento: true, planoId: true },
-          },
-        },
-      });
-    } catch {
-      // Race: another request created the row. Refetch instead of crashing.
-      aluno = await prisma.aluno.findUnique({
-        where: { email: user.email },
-        select: {
-          id: true,
-          nomeCompleto: true,
-          fotoUrl: true,
-          nivel: true,
-          exp: true,
-          statusMatricula: true,
-          streakDiasSeguidos: true,
-          treinosNoMes: true,
-          ultimoTreinoData: true,
-          Matriculas: {
-            where: { status: 'ATIVA' },
-            orderBy: { dataVencimento: 'desc' },
-            take: 1,
-            select: { id: true, status: true, dataVencimento: true, planoId: true },
-          },
-        },
-      });
-    }
-  }
-
-  if (!aluno) {
-    return (
-      <div className="flex h-[80vh] items-center justify-center">
-        <Card className="max-w-md text-center">
-          <CardHeader>
-            <h2 className="text-2xl font-semibold leading-none tracking-tight">Sinto muito!</h2>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <p>Seu perfil de aluno não foi encontrado no novo sistema.</p>
-            <p>
-              Por favor, procure o administrador da academia para vincular seu email ({user.email}).
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-    );
+    redirect('/aluno/onboarding');
   }
 
   const today = new Date().getDay();

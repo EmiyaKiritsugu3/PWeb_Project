@@ -33,6 +33,52 @@ export const AlunoSchema = AlunoBaseSchema.extend({
 });
 
 export type AlunoBase = z.infer<typeof AlunoBaseSchema>;
+
+// --- Onboarding (first Google OAuth login) ---
+// Strict CPF validation: format regex + check-digit verification. The
+// placeholder `OAUTH-...` CPF minted by the removed auto-provision block
+// violates this regex, so only real onboarding-submitted CPFs pass.
+const CPF_REGEX = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
+
+function cpfCheckDigit(value: string): boolean {
+  const digits = value.replaceAll(/\D/g, '');
+  if (digits.length !== 11 || /^(\d)\1{10}$/.test(digits)) return false;
+  let sum = 0;
+  for (let i = 0; i < 9; i++) sum += Number(digits[i]) * (10 - i);
+  let d1 = (sum * 10) % 11;
+  if (d1 === 10) d1 = 0;
+  if (d1 !== Number(digits[9])) return false;
+  sum = 0;
+  for (let i = 0; i < 10; i++) sum += Number(digits[i]) * (11 - i);
+  let d2 = (sum * 10) % 11;
+  if (d2 === 10) d2 = 0;
+  return d2 === Number(digits[10]);
+}
+
+const CEP_REGEX = /^\d{5}-\d{3}$/;
+const UF_REGEX = /^[A-Z]{2}$/;
+
+/** Esquema para o formulário de onboarding (primeiro login OAuth) */
+export const OnboardingBaseSchema = z.object({
+  nomeCompleto: z.string().min(3, { message: 'Nome deve ter pelo menos 3 caracteres' }),
+  email: z.email({ error: 'Email inválido' }),
+  cpf: z
+    .string()
+    .regex(CPF_REGEX, { message: 'CPF inválido. Use o formato xxx.xxx.xxx-xx.' })
+    .refine(cpfCheckDigit, { message: 'CPF inválido (dígitos verificadores não conferem).' }),
+  telefone: z.string().min(10, { message: 'Telefone inválido' }),
+  dataNascimento: z.string().refine((val) => !Number.isNaN(Date.parse(val)), {
+    message: 'Data de nascimento inválida.',
+  }),
+  cep: z.string().regex(CEP_REGEX, { message: 'CEP inválido. Use o formato xxxxx-xxx.' }),
+  endereco: z.string().min(3, { message: 'Endereço inválido' }),
+  numero: z.string().min(1, { message: 'Número é obrigatório' }),
+  bairro: z.string().min(2, { message: 'Bairro inválido' }),
+  cidade: z.string().min(2, { message: 'Cidade inválida' }),
+  estado: z.string().regex(UF_REGEX, { message: 'UF inválida (2 letras)' }),
+});
+
+export type OnboardingBase = z.infer<typeof OnboardingBaseSchema>;
 export type Aluno = z.infer<typeof AlunoSchema>;
 
 // --- Schemas & Tipos: Treino & Exercício ---
