@@ -1,0 +1,20 @@
+supabase/config.toml
+  s_c858e8cdd45b40::t_cbccde14b50c36 158-159
+  s_c858e8cdd45b40::t_4601129846dcb1 318-323
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "32a71b2dfcd8c86c02cf57ce1e363c57ebbec675",
+  "prompts": {},
+  "sessions": {
+    "s_c858e8cdd45b40": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8279208b-b78b-4f30-a66a-6024c766bdb3",
+        "model": "z-ai/glm-5.2"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
