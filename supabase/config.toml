@@ -156,7 +156,6 @@ site_url = "http://localhost:3000"
 additional_redirect_urls = [
   "http://localhost:3000/auth/callback",
   "https://smartmanagementsystem-emiyakiritsugu3s-projects.vercel.app/auth/callback",
-  "https://smartmanagementsystem-git-main-emiyakiritsugu3s-projects.vercel.app/auth/callback",
   "https://smartmanagementsystem-*-emiyakiritsugu3s-projects.vercel.app/auth/callback",
   "https://smartmanagementsystem.vercel.app/auth/callback"
 ]
