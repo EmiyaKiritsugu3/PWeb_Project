@@ -11,18 +11,17 @@ import { validateNext } from '@/lib/auth-redirect';
 // and silently break auth in prod/preview. Read it lazily inside `callbackUrl`
 // (not at module load) so test harnesses that inject env after import still work.
 function callbackUrl(next?: string | null): string {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL;
-  if (!appUrl) {
-    throw new Error(
-      'NEXT_PUBLIC_APP_URL is not set; magic-link and OAuth redirects cannot be built.'
-    );
-  }
+  // .trim() before nullish: Vercel Production has NEXT_PUBLIC_APP_URL=""
+  // (empty string set, not undefined). "" is falsy but not nullish, so
+  // explicit || null converts falsy → null for ?? to fall through.
+  const explicit = process.env.NEXT_PUBLIC_APP_URL?.trim();
+  const base =
+    (explicit || null) ??
+    (process.env.VERCEL_URL ? 'https://' + process.env.VERCEL_URL : null) ??
+    'http://localhost:3000';
   const validated = validateNext(next);
-  // validateNext's inert fallback is '/'; for the OAuth callback we need a
-  // concrete post-login destination, so map the inert '/' → '/login' the same
-  // way callback/route.ts does.
   const safeNext = validated === '/' ? '/login' : validated;
-  return `${appUrl}${AUTH_CALLBACK_PATH}?next=${encodeURIComponent(safeNext)}`;
+  return base + AUTH_CALLBACK_PATH + '?next=' + encodeURIComponent(safeNext);
 }
 
 const MagicLinkSchema = z.object({
