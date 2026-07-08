@@ -1,5 +1,7 @@
+import * as Sentry from '@sentry/nextjs';
 import { createServerClient } from '@supabase/ssr';
 import { type NextRequest, NextResponse } from 'next/server';
+import { validateNext } from '@/lib/auth-redirect';
 
 export async function GET(request: NextRequest) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -16,11 +18,13 @@ export async function GET(request: NextRequest) {
   const code = searchParams.get('code');
   const next = searchParams.get('next') ?? '/login';
 
-  // Open redirect prevention: only allow paths under /dashboard or /aluno
-  const validatedNext =
-    next.startsWith('/dashboard') || next.startsWith('/aluno') ? next : '/login';
+  // Open-redirect prevention: single shared helper so this route and the auth
+  // server actions cannot drift. validateNext rejects protocol-relative
+  // (`//`), path traversal (`/aluno/../admin`), and sibling-prefix spoofing
+  // (`/alunox`). Falls back to '/login' for OAuth callback context.
+  const validatedRoot = validateNext(next);
+  const validatedNext = validatedRoot === '/' ? '/login' : validatedRoot;
 
-  // Missing code — cannot proceed with exchange
   if (!code) {
     const errorUrl = request.nextUrl.clone();
     errorUrl.pathname = '/login';
@@ -28,7 +32,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(errorUrl);
   }
 
-  // Build the success redirect early so cookies.setAll can attach to it
   const redirectUrl = request.nextUrl.clone();
   redirectUrl.pathname = validatedNext;
   redirectUrl.search = '';
@@ -54,6 +57,11 @@ export async function GET(request: NextRequest) {
   const { error } = await supabase.auth.exchangeCodeForSession(code);
 
   if (error) {
+    // Capture before redirect so auth failures are observable — a bare
+    // redirect here silently drops the Supabase exchange error.
+    Sentry.captureException(error, {
+      extra: { callbackUrl: request.url, next },
+    });
     const errorUrl = request.nextUrl.clone();
     errorUrl.pathname = '/login';
     errorUrl.searchParams.set('error', 'auth_callback_failed');

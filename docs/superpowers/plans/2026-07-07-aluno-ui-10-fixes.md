@@ -36,12 +36,12 @@
 
 | ID | File | Change |
 |---|---|---|
-| P01 | `button.tsx:8` | `rounded-md` → `rounded-full` |
+| P01 | `button.tsx:8` | ~~`rounded-md` → `rounded-full`~~ Reverted: DESIGN.md standardizes buttons on `rounded-md`; `rounded-full` contradicted spec. Kept `rounded-md`. |
 | P02 | `DESIGN.md` | document Inter+Outfit split |
 
 ---
 
 ## Gates
 ```
-npm run lint && npm run typecheck && npm test
+npm run lint && npm run typecheck && npm test && npm run e2e
 ```

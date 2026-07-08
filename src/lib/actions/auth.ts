@@ -1,78 +1,74 @@
 'use server';
 
+import * as Sentry from '@sentry/nextjs';
+import { z } from 'zod/v4';
 import { createClient } from '@/utils/supabase/server';
 import { AUTH_CALLBACK_PATH } from '@/lib/constants';
+import { validateNext } from '@/lib/auth-redirect';
 
 const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001';
 
-function validateNext(next: string | null): string {
-  const allowedPrefixes = ['/dashboard', '/aluno'] as const;
-  if (next && allowedPrefixes.some((p) => next.startsWith(p)) && !next.startsWith('//')) {
-    return next;
-  }
-  return '/login';
-}
-
 function callbackUrl(next?: string | null): string {
-  const safeNext = validateNext(next ?? null);
+  const validated = validateNext(next);
+  // validateNext's inert fallback is '/'; for the OAuth callback we need a
+  // concrete post-login destination, so map the inert '/' → '/login' the same
+  // way callback/route.ts does.
+  const safeNext = validated === '/' ? '/login' : validated;
   return `${appUrl}${AUTH_CALLBACK_PATH}?next=${encodeURIComponent(safeNext)}`;
 }
 
+const MagicLinkSchema = z.object({
+  email: z.email({ error: 'Email is required' }),
+});
+
 export async function signInWithMagicLink(formData: FormData): Promise<{ error?: string }> {
-  const email = formData.get('email') as string;
-  if (!email) return { error: 'Email is required' };
+  const parsed = MagicLinkSchema.safeParse({ email: formData.get('email') });
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'Email is required' };
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithOtp({
-    email,
+    email: parsed.data.email,
     options: {
       emailRedirectTo: callbackUrl('/aluno/dashboard'),
       shouldCreateUser: true,
     },
   });
 
-  if (error) return { error: error.message };
+  if (error) {
+    Sentry.captureException(error, { tags: { auth: 'magic-link' } });
+    return { error: error.message };
+  }
   return {};
 }
 
-export async function signInWithGoogle(next?: string): Promise<{ error?: string }> {
+/**
+ * Shared OAuth sign-in. `data.url` is the provider authorize URL; tunnel it
+ * through `error` (existing public API contract) so the client can
+ * `window.location.href = result.error` when it starts with `http`.
+ */
+async function signInWithOAuth(provider: 'google' | 'github' | 'apple', next?: string) {
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
-    options: {
-      redirectTo: callbackUrl(next),
-    },
+    provider,
+    options: { redirectTo: callbackUrl(next) },
   });
 
-  if (error) return { error: error.message };
+  if (error) {
+    Sentry.captureException(error, { tags: { auth: provider } });
+    return { error: error.message };
+  }
   if (data.url) return { error: data.url };
   return { error: 'No redirect URL returned' };
+}
+
+export async function signInWithGoogle(next?: string): Promise<{ error?: string }> {
+  return signInWithOAuth('google', next);
 }
 
 export async function signInWithGitHub(next?: string): Promise<{ error?: string }> {
-  const supabase = await createClient();
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'github',
-    options: {
-      redirectTo: callbackUrl(next),
-    },
-  });
-
-  if (error) return { error: error.message };
-  if (data.url) return { error: data.url };
-  return { error: 'No redirect URL returned' };
+  return signInWithOAuth('github', next);
 }
 
 export async function signInWithApple(next?: string): Promise<{ error?: string }> {
-  const supabase = await createClient();
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'apple',
-    options: {
-      redirectTo: callbackUrl(next),
-    },
-  });
-
-  if (error) return { error: error.message };
-  if (data.url) return { error: data.url };
-  return { error: 'No redirect URL returned' };
+  return signInWithOAuth('apple', next);
 }

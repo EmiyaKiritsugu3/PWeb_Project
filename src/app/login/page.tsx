@@ -57,8 +57,9 @@ export default function LoginPage() {
     window.location.href = '/dashboard';
   };
 
-  const handleGoogleLogin = async () => {
-    const result = await signInWithGoogle('/dashboard');
+  const handleOAuthLogin = async (action: () => Promise<{ error?: string }>) => {
+    setError('');
+    const result = await action();
     if (result.error?.startsWith('http')) {
       window.location.href = result.error;
     } else if (result.error) {
@@ -66,23 +67,9 @@ export default function LoginPage() {
     }
   };
 
-  const handleGitHubLogin = async () => {
-    const result = await signInWithGitHub('/dashboard');
-    if (result.error?.startsWith('http')) {
-      window.location.href = result.error;
-    } else if (result.error) {
-      setError(result.error);
-    }
-  };
-
-  const handleAppleLogin = async () => {
-    const result = await signInWithApple('/dashboard');
-    if (result.error?.startsWith('http')) {
-      window.location.href = result.error;
-    } else if (result.error) {
-      setError(result.error);
-    }
-  };
+  const handleGoogleLogin = () => handleOAuthLogin(() => signInWithGoogle('/dashboard'));
+  const handleGitHubLogin = () => handleOAuthLogin(() => signInWithGitHub('/dashboard'));
+  const handleAppleLogin = () => handleOAuthLogin(() => signInWithApple('/dashboard'));
 
   return (
     <div className="relative flex min-h-dvh flex-col items-center justify-center overflow-hidden bg-background px-4">
@@ -172,7 +159,7 @@ export default function LoginPage() {
           </div>
 
           {/* Social login buttons */}
-          <div className="flex flex-col sm:flex-row gap-2">
+          <div className="flex flex-col gap-2">
             <Button
               type="button"
               variant="outline"

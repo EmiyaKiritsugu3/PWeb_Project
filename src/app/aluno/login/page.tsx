@@ -108,9 +108,9 @@ export default function AlunoLoginPage() {
     }
   };
 
-  const handleGoogleSignIn = async () => {
+  const handleOAuthSignIn = async (action: () => Promise<{ error?: string }>) => {
     setAuthError(null);
-    const result = await signInWithGoogle('/aluno/dashboard');
+    const result = await action();
     if (result.error?.startsWith('http')) {
       window.location.href = result.error;
     } else if (result.error) {
@@ -118,25 +118,9 @@ export default function AlunoLoginPage() {
     }
   };
 
-  const handleGitHubSignIn = async () => {
-    setAuthError(null);
-    const result = await signInWithGitHub('/aluno/dashboard');
-    if (result.error?.startsWith('http')) {
-      window.location.href = result.error;
-    } else if (result.error) {
-      setAuthError(result.error);
-    }
-  };
-
-  const handleAppleSignIn = async () => {
-    setAuthError(null);
-    const result = await signInWithApple('/aluno/dashboard');
-    if (result.error?.startsWith('http')) {
-      window.location.href = result.error;
-    } else if (result.error) {
-      setAuthError(result.error);
-    }
-  };
+  const handleGoogleSignIn = () => handleOAuthSignIn(() => signInWithGoogle('/aluno/dashboard'));
+  const handleGitHubSignIn = () => handleOAuthSignIn(() => signInWithGitHub('/aluno/dashboard'));
+  const handleAppleSignIn = () => handleOAuthSignIn(() => signInWithApple('/aluno/dashboard'));
 
   const handleMagicLinkSubmit = async () => {
     if (!magicLinkEmail) return;
@@ -147,14 +131,16 @@ export default function AlunoLoginPage() {
     const formData = new FormData();
     formData.append('email', magicLinkEmail);
 
-    const result = await signInWithMagicLink(formData);
-
-    if (result.error) {
-      setMagicLinkError(result.error);
-    } else {
-      setMagicLinkSent(true);
+    try {
+      const result = await signInWithMagicLink(formData);
+      if (result.error) {
+        setMagicLinkError(result.error);
+      } else {
+        setMagicLinkSent(true);
+      }
+    } finally {
+      setMagicLinkLoading(false);
     }
-    setMagicLinkLoading(false);
   };
 
   return (

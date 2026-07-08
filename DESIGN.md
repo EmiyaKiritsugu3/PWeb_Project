@@ -1,6 +1,6 @@
-# Aegis Fitness OS - Design System
+# Five Star Gym - Design System
 
-This document outlines the master visual identity for **Aegis Fitness OS**, a next-generation gym and personal training platform.
+This document outlines the master visual identity for **Five Star Gym**, a next-generation gym and personal training platform.
 
 ## Design Philosophy
 
