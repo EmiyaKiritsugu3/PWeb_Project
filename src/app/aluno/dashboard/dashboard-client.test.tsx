@@ -27,6 +27,10 @@ vi.mock('motion/react', () => ({
   },
 }));
 
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ refresh: vi.fn() }),
+}));
+
 vi.mock('@/components/ui/card', () => ({
   Card: ({ children, className }: { children: ReactNode; className?: string }) => (
     <div className={className}>{children}</div>

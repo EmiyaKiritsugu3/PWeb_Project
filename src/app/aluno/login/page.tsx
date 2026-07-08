@@ -96,12 +96,18 @@ export default function AlunoLoginPage() {
       notify.success('Login bem-sucedido!');
       router.push('/aluno/dashboard');
     } catch (error: unknown) {
-      const message =
+      const rawMessage =
         error instanceof Error
           ? error.message
           : typeof error === 'object' && error && 'message' in error
             ? String((error as { message: unknown }).message)
             : 'Erro desconhecido';
+      // Avoid account enumeration: if the signUp fallback discovers the email
+      // is already registered, surface the same generic credential error as a
+      // failed login rather than leaking "User already registered" to callers.
+      const message = /already\s+(been\s+)?registered|user\s+already/i.test(rawMessage)
+        ? 'E-mail ou senha inválidos. Por favor, tente novamente.'
+        : rawMessage;
       setAuthError(message);
     } finally {
       setIsLoading(false);

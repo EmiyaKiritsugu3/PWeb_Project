@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion } from 'motion/react';
 import { Card } from '@/components/ui/card';
 import { Trophy, Zap, Target, Award } from 'lucide-react';
@@ -29,6 +30,7 @@ export default function AlunoDashboardClient({
 }: Readonly<AlunoDashboardClientProps>) {
   const notify = useAppNotification();
   const { t } = useI18n();
+  const router = useRouter();
 
   const [feedback, setFeedback] = useState<{ title: string; message: string } | null>(null);
   const [isFeedbackLoading, setIsFeedbackLoading] = useState(false);
@@ -85,6 +87,10 @@ export default function AlunoDashboardClient({
       const res = await registrarHistoricoTreinoAction(historico);
       if (res.success) {
         notify.success('Treino Finalizado!', 'Seu progresso e XP foram salvos!');
+        // revalidatePath in the action invalidates the cache but this mounted
+        // client keeps stale `aluno` props (XP/level/streak). router.refresh()
+        // re-fetches the RSC payload so the dashboard reflects the new state.
+        router.refresh();
       } else {
         throw new Error(res.error);
       }
