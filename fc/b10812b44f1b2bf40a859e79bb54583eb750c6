@@ -1,0 +1,21 @@
+src/app/aluno/aluno-header.test.tsx
+  s_89f4ddbf47c779::t_bbbf293b0c9b67 29-32
+src/app/page.test.tsx
+  s_89f4ddbf47c779::t_32905fc37c0c4f 46
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "fcb10812b44f1b2bf40a859e79bb54583eb750c6",
+  "prompts": {},
+  "sessions": {
+    "s_89f4ddbf47c779": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ses_0c36a49abffeHhJc87Y14zqD3j",
+        "model": "unknown"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
