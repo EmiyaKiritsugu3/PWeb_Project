@@ -1,0 +1,22 @@
+src/app/dashboard/_components/kpi-card.test.tsx
+  s_802a29791e913e::t_2f3267ea8c14aa 1-23
+src/app/dashboard/_components/kpi-card.tsx
+  s_802a29791e913e::t_4b6d9d7ea76123 47
+  s_802a29791e913e::t_33ec1fd2e0353e 1-46,48-53
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "7806e45df9117e44d3408fb6a75d1b9f018e16d7",
+  "prompts": {},
+  "sessions": {
+    "s_802a29791e913e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "17673ca8-d823-48f0-b65f-018fd30b4597",
+        "model": "z-ai/glm-5.2"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
