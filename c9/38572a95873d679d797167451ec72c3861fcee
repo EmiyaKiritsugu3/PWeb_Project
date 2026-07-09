@@ -1,0 +1,21 @@
+docs/CURRENT-STATE.md
+  s_802a29791e913e::t_9a2f1f0a75264f 31-32
+docs/superpowers/plans/2026-07-09-gerente-dashboard-audit-fixes.md
+  s_802a29791e913e::t_a3f46f618a9ab5 1-516
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "c938572a95873d679d797167451ec72c3861fcee",
+  "prompts": {},
+  "sessions": {
+    "s_802a29791e913e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "17673ca8-d823-48f0-b65f-018fd30b4597",
+        "model": "deepseek-v4-pro"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
