@@ -1,0 +1,19 @@
+docs/superpowers/specs/2026-07-09-gerente-dashboard-refactor-design.md
+  s_802a29791e913e::t_c96c3689d25f32 1-129
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "5f1fec616435fd3716e0ba89f0dd67531de76b80",
+  "prompts": {},
+  "sessions": {
+    "s_802a29791e913e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "17673ca8-d823-48f0-b65f-018fd30b4597",
+        "model": "tencent/Hy3"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
