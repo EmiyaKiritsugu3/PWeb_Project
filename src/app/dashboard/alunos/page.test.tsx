@@ -29,4 +29,11 @@ describe('AlunosPage', () => {
     render(<AlunosPage />);
     expect(screen.getByTestId('table-skeleton')).toBeTruthy();
   });
+
+  it('uses tokens, not bg-black, and clears bottom nav', () => {
+    const { container } = render(<AlunosPage />);
+    const html = container.innerHTML;
+    expect(html).not.toContain('bg-black');
+    expect(html).toContain('pb-20');
+  });
 });

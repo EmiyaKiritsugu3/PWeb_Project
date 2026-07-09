@@ -77,4 +77,11 @@ describe('FinanceiroPage', () => {
     render(await FinanceiroPage());
     expect(screen.getByTestId('premium-skeleton')).toBeTruthy();
   });
+
+  it('uses tokens, not bg-black, and clears bottom nav', async () => {
+    const { container } = render(await FinanceiroPage());
+    const html = container.innerHTML;
+    expect(html).not.toContain('bg-black');
+    expect(html).toContain('pb-20');
+  });
 });

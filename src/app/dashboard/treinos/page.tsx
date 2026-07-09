@@ -1,8 +1,19 @@
+import { Suspense } from 'react';
 import { prisma } from '@/lib/prisma';
 import { requireAnyRole } from '@/lib/auth';
 import { PageHeader } from '@/components/page-header';
+import { Skeleton } from '@/components/ui/skeleton';
 import TreinosManagementClient from './treinos-client';
 import type { Aluno } from '@/lib/definitions';
+
+function TreinosSkeleton() {
+  return (
+    <div className="space-y-4">
+      <Skeleton className="h-10 w-64" />
+      <Skeleton className="h-48 w-full rounded-xl" />
+    </div>
+  );
+}
 
 export default async function TreinosPage() {
   await requireAnyRole(['INSTRUTOR', 'GERENTE']);
@@ -30,12 +41,14 @@ export default async function TreinosPage() {
   }));
 
   return (
-    <>
+    <div className="pb-20">
       <PageHeader
         title="Gestão de Treinos"
         description="Monte treinos manualmente ou use a IA para gerar sugestões personalizadas para os alunos."
       />
-      <TreinosManagementClient initialAlunos={alunosData} />
-    </>
+      <Suspense fallback={<TreinosSkeleton />}>
+        <TreinosManagementClient initialAlunos={alunosData} />
+      </Suspense>
+    </div>
   );
 }
