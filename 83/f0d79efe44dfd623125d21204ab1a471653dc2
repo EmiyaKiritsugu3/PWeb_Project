@@ -1,0 +1,20 @@
+src/app/dashboard/page.test.tsx
+  s_802a29791e913e::t_8b23b5c7072262 1,4
+  s_802a29791e913e::t_0c459b938472db 99-133
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "83f0d79efe44dfd623125d21204ab1a471653dc2",
+  "prompts": {},
+  "sessions": {
+    "s_802a29791e913e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "17673ca8-d823-48f0-b65f-018fd30b4597",
+        "model": "unknown"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
