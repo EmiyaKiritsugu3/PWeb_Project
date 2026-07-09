@@ -15,8 +15,8 @@ function formatDelta(delta: number): string {
 }
 
 export function KpiCard({ title, value, delta, icon }: Readonly<KpiCardProps>) {
-  const hasDelta = delta !== undefined;
-  const positive = delta !== undefined && delta >= 0;
+  const hasDelta = delta !== undefined && delta !== 0;
+  const positive = hasDelta && delta! >= 0;
 
   return (
     <Card

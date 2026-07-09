@@ -20,4 +20,11 @@ describe('KpiCard', () => {
     render(<KpiCard title="X" value="1" icon={<Users />} />);
     expect(screen.queryByText(/%/)).toBeNull();
   });
+
+  it('omits delta badge when delta === 0 (neutral, not positive)', () => {
+    render(<KpiCard title="Sem mudança" value="100" delta={0} icon={<Users />} />);
+    const card = screen.getByTestId('kpi-Sem mudança');
+    expect(card).toBeTruthy();
+    expect(card.textContent).not.toMatch(/%/);
+  });
 });
