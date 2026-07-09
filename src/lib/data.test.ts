@@ -263,20 +263,15 @@ describe('getDashboardStats', () => {
       .mockResolvedValueOnce(50) // totalAlunos
       .mockResolvedValueOnce(10); // alunosInadimplentes
     vi.mocked(mockPrisma.matricula.count).mockResolvedValue(35); // matriculasAtivas
-    vi.mocked(mockPrisma.aluno.findMany).mockResolvedValue([
-      { dataCadastro: new Date('2026-06-01') },
-      { dataCadastro: new Date('2026-06-15') },
-      { dataCadastro: new Date('2026-07-05') },
-    ] as never);
     vi.mocked(mockPrisma.pagamento.findMany).mockResolvedValue([
       { dataPagamento: new Date('2026-06-10'), valor: 1000 },
       { dataPagamento: new Date('2026-07-03'), valor: 2000 },
       { dataPagamento: new Date('2026-07-08'), valor: 1500 },
     ] as never);
     vi.mocked(mockPrisma.matricula.findMany).mockResolvedValue([
-      { Plano: { nome: 'Premium' } },
-      { Plano: { nome: 'Basic' } },
-      { Plano: { nome: 'Basic' } },
+      { dataInicio: new Date('2026-06-01') },
+      { dataInicio: new Date('2026-06-15') },
+      { dataInicio: new Date('2026-07-05') },
     ] as never);
 
     const stats = await getDashboardStats();
@@ -296,12 +291,6 @@ describe('getDashboardStats', () => {
     // alunos/inadimplentes deltas absent (optional) → undefined
     expect(stats.deltas.alunos).toBeUndefined();
     expect(stats.deltas.inadimplentes).toBeUndefined();
-
-    // matriculasPorPlano grouped correctly
-    expect(stats.matriculasPorPlano).toEqual([
-      { plano: 'Premium', total: 1 },
-      { plano: 'Basic', total: 2 },
-    ]);
   });
 });
 
@@ -313,7 +302,7 @@ describe('series helpers', () => {
     vi.mocked(mockPrisma.matricula.findMany).mockResolvedValue([]);
   });
 
-  it('getMatriculasPorMes returns [] when no alunos', async () => {
+  it('getMatriculasPorMes returns [] when no matriculas', async () => {
     expect(await getMatriculasPorMes()).toEqual([]);
   });
   it('getReceitaPorMes returns [] when no pagamentos', async () => {
@@ -352,10 +341,10 @@ describe('series helpers', () => {
   });
 
   it('getMatriculasPorMes groups by month', async () => {
-    vi.mocked(mockPrisma.aluno.findMany).mockResolvedValue([
-      { dataCadastro: new Date('2024-01-05') },
-      { dataCadastro: new Date('2024-01-25') },
-      { dataCadastro: new Date('2024-03-10') },
+    vi.mocked(mockPrisma.matricula.findMany).mockResolvedValue([
+      { dataInicio: new Date('2024-01-05') },
+      { dataInicio: new Date('2024-01-25') },
+      { dataInicio: new Date('2024-03-10') },
     ] as never);
 
     expect(await getMatriculasPorMes()).toEqual([

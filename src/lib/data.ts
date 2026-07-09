@@ -119,13 +119,11 @@ export async function getMatriculasPorMes() {
   thirteenMonthsAgo.setMonth(thirteenMonthsAgo.getMonth() - 13, 1);
   thirteenMonthsAgo.setHours(0, 0, 0, 0);
 
-  // ponytail: Prisma groupBy can't group by date-trunc directly; we window to 13 months
-  // and group in JS. Upgrade to prisma.$queryRaw with DATE_TRUNC if row count grows.
-  const rows = await prisma.aluno.findMany({
-    where: { dataCadastro: { gte: thirteenMonthsAgo } },
-    select: { dataCadastro: true },
+  const rows = await prisma.matricula.findMany({
+    where: { dataInicio: { gte: thirteenMonthsAgo } },
+    select: { dataInicio: true },
   });
-  return groupByMonth(rows.map((r) => ({ date: r.dataCadastro })));
+  return groupByMonth(rows.map((r) => ({ date: r.dataInicio })));
 }
 
 export async function getReceitaPorMes() {
