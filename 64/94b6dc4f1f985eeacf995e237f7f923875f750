@@ -1,0 +1,20 @@
+src/app/dashboard/treinos/page.test.tsx
+  s_802a29791e913e::t_85c26273830bba 44-46,52-54,60-62,85-87
+  s_802a29791e913e::t_372c06f8069b9f 2
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "6494b6dc4f1f985eeacf995e237f7f923875f750",
+  "prompts": {},
+  "sessions": {
+    "s_802a29791e913e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "17673ca8-d823-48f0-b65f-018fd30b4597",
+        "model": "deepseek-v4-pro"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
