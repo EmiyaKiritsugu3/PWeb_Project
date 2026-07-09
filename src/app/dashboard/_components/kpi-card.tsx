@@ -44,7 +44,8 @@ export function KpiCard({ title, value, delta, icon }: Readonly<KpiCardProps>) {
               positive ? 'text-green-400' : 'text-red-400'
             )}
           >
-            {positive ? '▲' : '▼'} <span>{formatDelta(delta!)}</span>
+            <span aria-hidden="true">{positive ? '▲' : '▼'}</span>{' '}
+            <span>{formatDelta(delta!)}</span>
           </span>
         )}
       </CardContent>

@@ -56,6 +56,7 @@ export default async function DashboardPage() {
         ))}
       </div>
 
+      <h2 className="sr-only">Visão geral dos gráficos</h2>
       <DashboardChartsMulti
         matriculasPorMes={stats.matriculasPorMes}
         receitaPorMes={stats.receitaPorMes}
