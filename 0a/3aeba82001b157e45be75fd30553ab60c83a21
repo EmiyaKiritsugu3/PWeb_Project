@@ -1,0 +1,25 @@
+src/lib/data.test.ts
+  s_802a29791e913e::t_2a632635497d9a 238-254,256-261,263-269,272-280,282-287,289-292,295-301,303-307,310
+  s_802a29791e913e::t_bb49bf014e0eed 21-24,27
+  s_802a29791e913e::t_7e10034f329738 35
+  s_802a29791e913e::t_f70d3f0fe4bf1c 36-44,311-315,317-320
+src/lib/data.ts
+  s_802a29791e913e::t_a376a89f83f4fc 102-104,106-127,129-182
+  s_802a29791e913e::t_ea9c5b035836bd 183-190
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "0a3aeba82001b157e45be75fd30553ab60c83a21",
+  "prompts": {},
+  "sessions": {
+    "s_802a29791e913e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "17673ca8-d823-48f0-b65f-018fd30b4597",
+        "model": "z-ai/glm-5.2"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
