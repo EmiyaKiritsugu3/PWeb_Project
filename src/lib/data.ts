@@ -115,12 +115,28 @@ function groupByMonth(rows: { date: Date }[]) {
 }
 
 export async function getMatriculasPorMes() {
-  const rows = await prisma.aluno.findMany({ select: { dataCadastro: true } });
+  const thirteenMonthsAgo = new Date();
+  thirteenMonthsAgo.setMonth(thirteenMonthsAgo.getMonth() - 13, 1);
+  thirteenMonthsAgo.setHours(0, 0, 0, 0);
+
+  // ponytail: Prisma groupBy can't group by date-trunc directly; we window to 13 months
+  // and group in JS. Upgrade to prisma.$queryRaw with DATE_TRUNC if row count grows.
+  const rows = await prisma.aluno.findMany({
+    where: { dataCadastro: { gte: thirteenMonthsAgo } },
+    select: { dataCadastro: true },
+  });
   return groupByMonth(rows.map((r) => ({ date: r.dataCadastro })));
 }
 
 export async function getReceitaPorMes() {
-  const rows = await prisma.pagamento.findMany({ select: { dataPagamento: true, valor: true } });
+  const thirteenMonthsAgo = new Date();
+  thirteenMonthsAgo.setMonth(thirteenMonthsAgo.getMonth() - 13, 1);
+  thirteenMonthsAgo.setHours(0, 0, 0, 0);
+
+  const rows = await prisma.pagamento.findMany({
+    where: { dataPagamento: { gte: thirteenMonthsAgo } },
+    select: { dataPagamento: true, valor: true },
+  });
   const map = new Map<string, number>();
   for (const { dataPagamento, valor } of rows) {
     const k = monthKey(dataPagamento);

@@ -1020,6 +1020,35 @@ describe('DashboardStatsSchema', () => {
     });
     expect(withFake.success).toBe(false);
   });
+
+  it('rejects unknown key even when all required fields present (.strict isolation)', () => {
+    const withFake = DashboardStatsSchema.safeParse({
+      totalAlunos: 10,
+      matriculasAtivas: 8,
+      alunosInadimplentes: 1,
+      faturamentoMensal: 1000,
+      matriculasPorMes: [{ mes: '2026-01', total: 5 }],
+      receitaPorMes: [{ mes: '2026-01', total: 500 }],
+      matriculasPorPlano: [{ plano: 'Bronze', total: 3 }],
+      deltas: { receita: -0.05, novos: 0.2 },
+      crescimentoAnual: [{ mes: 'Jan', alunos: 1 }], // extra key .strict() must reject
+    });
+    expect(withFake.success).toBe(false);
+  });
+
+  it('parses valid payload without unknown keys (strict allows)', () => {
+    const result = DashboardStatsSchema.safeParse({
+      totalAlunos: 10,
+      matriculasAtivas: 8,
+      alunosInadimplentes: 1,
+      faturamentoMensal: 1000,
+      matriculasPorMes: [{ mes: '2026-01', total: 5 }],
+      receitaPorMes: [{ mes: '2026-01', total: 500 }],
+      matriculasPorPlano: [{ plano: 'Bronze', total: 3 }],
+      deltas: { receita: -0.05, novos: 0.2 },
+    });
+    expect(result.success).toBe(true);
+  });
 });
 
 // --- V_FrequenciaAlunosSchema ---
