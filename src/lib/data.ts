@@ -132,6 +132,8 @@ export async function getReceitaPorMes() {
 }
 
 export async function getMatriculasPorPlano() {
+  // ponytail: findMany + JS group per brief's spirit (groupBy); swap to prisma.matricula.groupBy
+  // by planoId if row count grows past gym scale.
   const rows = await prisma.matricula.findMany({
     where: { status: 'ATIVA' },
     select: { Plano: { select: { nome: true } } },
@@ -154,7 +156,6 @@ export async function getDashboardStats() {
     totalAlunos,
     matriculasAtivas,
     alunosInadimplentes,
-    faturamentoMensal,
     matriculasPorMes,
     receitaPorMes,
     matriculasPorPlano,
@@ -162,7 +163,6 @@ export async function getDashboardStats() {
     prisma.aluno.count(),
     prisma.matricula.count({ where: { status: 'ATIVA' } }),
     prisma.aluno.count({ where: { statusMatricula: 'INADIMPLENTE' } }),
-    prisma.pagamento.aggregate({ _sum: { valor: true } }).then((r) => r._sum.valor ?? 0),
     getMatriculasPorMes(),
     getReceitaPorMes(),
     getMatriculasPorPlano(),
@@ -171,10 +171,12 @@ export async function getDashboardStats() {
   const last = (s: { total: number }[]) => s[s.length - 1]?.total ?? 0;
   const prev = (s: { total: number }[]) => s[s.length - 2]?.total ?? 0;
 
+  // Faturamento = receita do último bucket mensal (honest: mês mais recente), não soma total.
+  const faturamentoMensal = last(receitaPorMes);
+
   const deltas = {
-    alunos: pctDelta(matriculasPorMes.length ? totalAlunos : 0, prev(matriculasPorMes)),
+    // alunos + inadimplentes sem delta honesto (sem snapshot histórico) — ver schema.
     receita: pctDelta(last(receitaPorMes), prev(receitaPorMes)),
-    inadimplentes: pctDelta(alunosInadimplentes, alunosInadimplentes),
     novos: pctDelta(last(matriculasPorMes), prev(matriculasPorMes)),
   };
 

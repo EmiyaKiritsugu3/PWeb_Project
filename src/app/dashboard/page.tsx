@@ -27,7 +27,7 @@ export default async function DashboardPage() {
       icon: <UserX className="h-5 w-5" />,
     },
     {
-      title: 'Faturamento Mensal',
+      title: 'Faturamento Recente',
       value: stats.faturamentoMensal.toLocaleString('pt-BR', {
         style: 'currency',
         currency: 'BRL',

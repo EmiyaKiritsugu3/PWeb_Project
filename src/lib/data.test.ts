@@ -243,7 +243,6 @@ describe('getDashboardStats', () => {
     vi.mocked(mockPrisma.matricula.count).mockResolvedValue(0);
     vi.mocked(mockPrisma.aluno.findMany).mockResolvedValue([]);
     vi.mocked(mockPrisma.pagamento.findMany).mockResolvedValue([]);
-    vi.mocked(mockPrisma.pagamento.aggregate).mockResolvedValue({ _sum: { valor: 0 } });
     vi.mocked(mockPrisma.matricula.findMany).mockResolvedValue([]);
 
     const stats = await getDashboardStats();
@@ -266,7 +265,6 @@ describe('series helpers', () => {
     vi.mocked(mockPrisma.aluno.findMany).mockResolvedValue([]);
     vi.mocked(mockPrisma.pagamento.findMany).mockResolvedValue([]);
     vi.mocked(mockPrisma.matricula.findMany).mockResolvedValue([]);
-    vi.mocked(mockPrisma.pagamento.aggregate).mockResolvedValue({ _sum: { valor: 0 } });
   });
 
   it('getMatriculasPorMes returns [] when no alunos', async () => {

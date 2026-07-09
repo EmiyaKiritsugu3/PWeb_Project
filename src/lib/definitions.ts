@@ -224,9 +224,12 @@ export const PlanTotalSchema = z.object({
 export type PlanTotal = z.infer<typeof PlanTotalSchema>;
 
 export const DashboardDeltasSchema = z.object({
-  alunos: z.number(),
+  // ponytail: alunos + inadimplentes deltas omitted — no historical snapshot table,
+  // so cumulative total / point-in-time count have no honest period-over-period.
+  // Add when a daily snapshot or prior-period count exists.
+  alunos: z.number().optional(),
   receita: z.number(),
-  inadimplentes: z.number(),
+  inadimplentes: z.number().optional(),
   novos: z.number(),
 });
 
@@ -246,12 +249,6 @@ export const DashboardStatsSchema = z
   .strict();
 
 export type DashboardStats = z.infer<typeof DashboardStatsSchema>;
-
-export const V_FaturamentoMensalSchema = z.object({
-  Mes: z.string(),
-  TotalRecebido: z.number(),
-  QtdPagamentos: z.coerce.number().int(),
-});
 
 export const V_FrequenciaAlunosSchema = z.object({
   nomeCompleto: z.string(),

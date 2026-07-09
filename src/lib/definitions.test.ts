@@ -18,7 +18,6 @@ import {
   PagamentoBaseSchema,
   PagamentoSchema,
   DashboardStatsSchema,
-  V_FaturamentoMensalSchema,
   V_FrequenciaAlunosSchema,
 } from './definitions';
 
@@ -1020,51 +1019,6 @@ describe('DashboardStatsSchema', () => {
       crescimentoAnual: [{ mes: 'Jan', alunos: 1 }],
     });
     expect(withFake.success).toBe(false);
-  });
-});
-
-// --- V_FaturamentoMensalSchema ---
-
-describe('V_FaturamentoMensalSchema', () => {
-  it('accepts valid data', () => {
-    const result = V_FaturamentoMensalSchema.parse({
-      Mes: 'Janeiro',
-      TotalRecebido: 15000,
-      QtdPagamentos: 50,
-    });
-    expect(result.Mes).toBe('Janeiro');
-    expect(result.QtdPagamentos).toBe(50);
-  });
-
-  it('coerces QtdPagamentos from string', () => {
-    const result = V_FaturamentoMensalSchema.parse({
-      Mes: 'Janeiro',
-      TotalRecebido: 15000,
-      QtdPagamentos: '50',
-    });
-    expect(result.QtdPagamentos).toBe(50);
-  });
-
-  it('rejects missing Mes', () => {
-    expect(() =>
-      V_FaturamentoMensalSchema.parse({ TotalRecebido: 15000, QtdPagamentos: 50 })
-    ).toThrow();
-  });
-
-  it('rejects missing TotalRecebido', () => {
-    expect(() => V_FaturamentoMensalSchema.parse({ Mes: 'Janeiro', QtdPagamentos: 50 })).toThrow();
-  });
-
-  it('rejects missing QtdPagamentos', () => {
-    expect(() =>
-      V_FaturamentoMensalSchema.parse({ Mes: 'Janeiro', TotalRecebido: 15000 })
-    ).toThrow();
-  });
-
-  it('rejects non-numeric TotalRecebido', () => {
-    expect(() =>
-      V_FaturamentoMensalSchema.parse({ Mes: 'Janeiro', TotalRecebido: 'abc', QtdPagamentos: 50 })
-    ).toThrow();
   });
 });
 
