@@ -19,9 +19,9 @@ vi.mock('recharts', () => ({
 }));
 
 const mockData = [
-  { mes: '2026-01', total: 10 },
-  { mes: '2026-02', total: 15 },
-  { mes: '2026-03', total: 8 },
+  { mes: 'Jan', alunos: 10 },
+  { mes: 'Fev', alunos: 15 },
+  { mes: 'Mar', alunos: 8 },
 ];
 
 describe('DashboardCharts', () => {

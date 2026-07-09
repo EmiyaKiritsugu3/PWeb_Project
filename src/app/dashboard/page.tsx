@@ -89,7 +89,7 @@ export default async function DashboardPage() {
       </div>
 
       <div className="mt-6 grid grid-cols-1">
-        <DashboardCharts data={stats.matriculasPorMes} />
+        <DashboardCharts data={stats.crescimentoAnual} />
       </div>
     </div>
   );

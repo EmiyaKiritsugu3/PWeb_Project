@@ -235,7 +235,7 @@ describe('getDashboardStats', () => {
     expect(result.matriculasAtivas).toBe(40);
     expect(result.alunosInadimplentes).toBe(0);
     expect(result.faturamentoMensal).toBe(4500.5);
-    expect(result.matriculasPorMes).toHaveLength(6);
+    expect(result.crescimentoAnual).toHaveLength(6);
   });
 
   it('sets faturamentoMensal to 0 when view query fails', async () => {
@@ -261,7 +261,7 @@ describe('getDashboardStats', () => {
     expect(result.matriculasAtivas).toBe(0);
     expect(result.alunosInadimplentes).toBe(0);
     expect(result.faturamentoMensal).toBe(0);
-    expect(result.matriculasPorMes).toEqual([]);
+    expect(result.crescimentoAnual).toEqual([]);
     expect(mockCaptureException).toHaveBeenCalled();
   });
 
@@ -272,6 +272,12 @@ describe('getDashboardStats', () => {
 
     const result = await getDashboardStats();
 
-    expect(result.matriculasPorMes[0].total).toBeGreaterThanOrEqual(0);
+    // GROWTH_BASE_FACTOR = 0.7, GROWTH_INCREMENT = 0.05
+    // Month 0: floor(100 * 0.7) = 70
+    // Month 1: floor(100 * 0.75) = 75
+    // Month 5: floor(100 * 0.95) = 95
+    expect(result.crescimentoAnual[0].alunos).toBe(70);
+    expect(result.crescimentoAnual[1].alunos).toBe(75);
+    expect(result.crescimentoAnual[5].alunos).toBe(95);
   });
 });

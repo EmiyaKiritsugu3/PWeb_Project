@@ -216,41 +216,13 @@ export const GrowthDataSchema = z.object({
 
 export type GrowthData = z.infer<typeof GrowthDataSchema>;
 
-export const MonthTotalSchema = z.object({
-  mes: z.string(),
-  total: z.number(),
+export const DashboardStatsSchema = z.object({
+  totalAlunos: z.number().int().default(0),
+  matriculasAtivas: z.number().int().default(0),
+  alunosInadimplentes: z.number().int().default(0),
+  faturamentoMensal: z.number().default(0),
+  crescimentoAnual: z.array(GrowthDataSchema).default([]),
 });
-
-export type MonthTotal = z.infer<typeof MonthTotalSchema>;
-
-export const PlanTotalSchema = z.object({
-  plano: z.string(),
-  total: z.number(),
-});
-
-export type PlanTotal = z.infer<typeof PlanTotalSchema>;
-
-export const DashboardDeltasSchema = z.object({
-  alunos: z.number(),
-  receita: z.number(),
-  inadimplentes: z.number(),
-  novos: z.number(),
-});
-
-export type DashboardDeltas = z.infer<typeof DashboardDeltasSchema>;
-
-export const DashboardStatsSchema = z
-  .object({
-    totalAlunos: z.number().int().default(0),
-    matriculasAtivas: z.number().int().default(0),
-    alunosInadimplentes: z.number().int().default(0),
-    faturamentoMensal: z.number().default(0),
-    matriculasPorMes: z.array(MonthTotalSchema).default([]),
-    receitaPorMes: z.array(MonthTotalSchema).default([]),
-    matriculasPorPlano: z.array(PlanTotalSchema).default([]),
-    deltas: DashboardDeltasSchema.default({ alunos: 0, receita: 0, inadimplentes: 0, novos: 0 }),
-  })
-  .strict();
 
 export type DashboardStats = z.infer<typeof DashboardStatsSchema>;
 
