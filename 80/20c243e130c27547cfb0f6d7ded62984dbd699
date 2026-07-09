@@ -1,0 +1,25 @@
+src/lib/definitions.test.ts
+  s_802a29791e913e::t_d201da236ddefd 1023-1051
+src/lib/data.ts
+  s_802a29791e913e::t_cffc24f712ce28 118-127
+  s_802a29791e913e::t_fcde420d0ea373 132-139
+src/lib/data.test.ts
+  s_802a29791e913e::t_ec3944754c987e 260-289,295-305
+  s_802a29791e913e::t_05f92082d7fb91 290-294
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "8020c243e130c27547cfb0f6d7ded62984dbd699",
+  "prompts": {},
+  "sessions": {
+    "s_802a29791e913e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "17673ca8-d823-48f0-b65f-018fd30b4597",
+        "model": "deepseek-v4-pro"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
