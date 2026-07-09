@@ -1,0 +1,34 @@
+src/app/dashboard/financeiro/page.tsx
+  s_802a29791e913e::t_8b5144dbb5b73d 42
+  s_802a29791e913e::t_541cf8e7910b3d 47
+  s_802a29791e913e::t_3e0b76c35580d7 49
+  s_802a29791e913e::t_73c89b67727588 52
+src/app/dashboard/treinos/page.tsx
+  s_802a29791e913e::t_4dc389d7010604 44,49-52
+  s_802a29791e913e::t_22f5c730d7f35a 1,5,9-16
+  s_802a29791e913e::t_6055f10741c286 17
+src/app/dashboard/financeiro/page.test.tsx
+  s_802a29791e913e::t_87fadc6a28e8eb 80-86
+src/app/dashboard/planos/page.tsx
+  s_802a29791e913e::t_78712ea9b28cf1 36-40
+src/app/dashboard/alunos/page.test.tsx
+  s_802a29791e913e::t_b6af16c7808afa 32-38
+src/app/dashboard/alunos/page.tsx
+  s_802a29791e913e::t_e6fbcab2359cd6 19
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "c87ef7fe1976441db10a05662668d831dee37920",
+  "prompts": {},
+  "sessions": {
+    "s_802a29791e913e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "17673ca8-d823-48f0-b65f-018fd30b4597",
+        "model": "z-ai/glm-5.2"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
