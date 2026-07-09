@@ -228,9 +228,9 @@ export const DashboardDeltasSchema = z.object({
   // so cumulative total / point-in-time count have no honest period-over-period.
   // Add when a daily snapshot or prior-period count exists.
   alunos: z.number().optional(),
-  receita: z.number(),
+  receita: z.number().optional(),
   inadimplentes: z.number().optional(),
-  novos: z.number(),
+  novos: z.number().optional(),
 });
 
 export type DashboardDeltas = z.infer<typeof DashboardDeltasSchema>;

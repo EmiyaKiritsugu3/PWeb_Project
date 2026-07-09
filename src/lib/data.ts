@@ -160,8 +160,8 @@ export async function getMatriculasPorPlano() {
   return [...map.entries()].map(([plano, total]) => ({ plano, total }));
 }
 
-function pctDelta(curr: number, prev: number) {
-  if (prev === 0) return curr === 0 ? 0 : 1;
+function pctDelta(curr: number, prev: number): number | undefined {
+  if (prev === 0) return undefined;
   return (curr - prev) / prev;
 }
 
