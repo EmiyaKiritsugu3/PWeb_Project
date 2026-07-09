@@ -1,0 +1,22 @@
+src/components/dashboard/dashboard-charts-multi.tsx
+  s_802a29791e913e::t_1ed827d69a46fd 116,128-129
+  s_802a29791e913e::t_9ed6c4d504d8a5 110-113,115
+  s_802a29791e913e::t_a3fdfacd6a7dac 126-127
+  s_802a29791e913e::t_ab1f275c200a99 114
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "ba206367f45460733434301949efc99fd395866d",
+  "prompts": {},
+  "sessions": {
+    "s_802a29791e913e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "17673ca8-d823-48f0-b65f-018fd30b4597",
+        "model": "unknown"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
