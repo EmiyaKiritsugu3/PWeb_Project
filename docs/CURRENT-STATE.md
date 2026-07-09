@@ -28,6 +28,8 @@
 
 - TS7 NO-GO (Next 15.5 build crash + typescript-eslint crash + Prisma block). Mantido TS 6.0.3. Skill `compiler-major-bump-feasibility-audit` extraída.
 - `financeiro/page.test.tsx` ganhou assertions `#18181B`+`text-zinc-400` post-review (spec checklist gap do implementer).
+- **Audit fix wave (T1-T8)**: 8 tasks from multi-dimension audit — renamed "Matrículas Ativas"→"Novas Matrículas" (match deltas.novos), narrowed DeltasSchema default (receita+novos only), honest-mock test variant (optional deltas→no badge), isolated .strict() rejection test, golden-path getDashboardStats test, heading hierarchy a11y (EmptyState h2 + sr-only h2), aria-hidden KpiCard triangle, 13-month window on getMatriculasPorMes+getReceitaPorMes. Gates: Vitest 1172/0 (+6 tests), tsc clean, lint 0/0. Plan: `docs/superpowers/plans/2026-07-09-gerente-dashboard-audit-fixes.md`.
+- PR #199 aberto em main.
 - Treinos Suspense é inerte (data fetch no page body precede boundary) — `ponytail:`: brief-mandated, mantém; mover Suspense para dentro de client component se quiser fallback real durante fetch.
 - Commits de fixup (`eb98934`, `a5abe6e`) podem ser squashed antes do PR se desejado.
 
