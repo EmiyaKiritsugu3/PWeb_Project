@@ -2,7 +2,6 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import DashboardPage from './page';
 import type { ReactNode } from 'react';
-import type { DashboardStats } from '@/lib/definitions';
 
 vi.mock('@/lib/data', () => ({
   getDashboardStats: vi.fn().mockResolvedValue({
@@ -10,16 +9,16 @@ vi.mock('@/lib/data', () => ({
     matriculasAtivas: 120,
     alunosInadimplentes: 15,
     faturamentoMensal: 45000,
-    crescimentoAnual: [
-      { mes: 'Jan', alunos: 10 },
-      { mes: 'Fev', alunos: 15 },
-    ],
-  } satisfies DashboardStats),
+    matriculasPorMes: [{ mes: '2026-01', total: 5 }],
+    receitaPorMes: [{ mes: '2026-01', total: 500 }],
+    matriculasPorPlano: [{ plano: 'Bronze', total: 3 }],
+    deltas: { alunos: 0.1, receita: -0.05, inadimplentes: 0, novos: 0.2 },
+  }),
 }));
 
-vi.mock('@/components/dashboard/dashboard-charts', () => ({
-  DashboardCharts: ({ data }: { data: unknown[] }) => (
-    <div data-testid="dashboard-charts">{data.length} items</div>
+vi.mock('@/components/dashboard/dashboard-charts-multi', () => ({
+  DashboardChartsMulti: ({ matriculasPorMes }: { matriculasPorMes: unknown[] }) => (
+    <div data-testid="dashboard-charts-multi">{matriculasPorMes.length} items</div>
   ),
 }));
 
@@ -33,8 +32,16 @@ vi.mock('@/components/page-header', () => ({
 }));
 
 vi.mock('@/components/ui/card', () => ({
-  Card: ({ children, className }: { children: ReactNode; className?: string }) => (
-    <div className={className} data-testid="card">
+  Card: ({
+    children,
+    className,
+    'data-testid': testId,
+  }: {
+    children: ReactNode;
+    className?: string;
+    'data-testid'?: string;
+  }) => (
+    <div className={className} data-testid={testId}>
       {children}
     </div>
   ),
@@ -61,16 +68,18 @@ describe('DashboardPage', () => {
     expect(screen.getByText('Bem-vindo ao centro de comando da Five Star Gym.')).toBeTruthy();
   });
 
-  it('renders KPI cards', async () => {
+  it('renders KPI grid with delta badge', async () => {
+    render(await DashboardPage());
+    expect(screen.getByTestId('kpi-Total de Alunos')).toBeTruthy();
+    expect(screen.getByText('+10%')).toBeTruthy();
+  });
+
+  it('renders KPI card titles and values', async () => {
     render(await DashboardPage());
     expect(screen.getByText('Total de Alunos')).toBeTruthy();
     expect(screen.getByText('Matrículas Ativas')).toBeTruthy();
     expect(screen.getByText('Inadimplentes')).toBeTruthy();
     expect(screen.getByText('Faturamento Mensal')).toBeTruthy();
-  });
-
-  it('renders formatted stat values', async () => {
-    render(await DashboardPage());
     expect(screen.getByText('150')).toBeTruthy();
     expect(screen.getByText('120')).toBeTruthy();
     expect(screen.getByText('15')).toBeTruthy();
@@ -83,6 +92,6 @@ describe('DashboardPage', () => {
 
   it('renders the charts component', async () => {
     render(await DashboardPage());
-    expect(screen.getByTestId('dashboard-charts')).toBeTruthy();
+    expect(screen.getByTestId('dashboard-charts-multi')).toBeTruthy();
   });
 });
