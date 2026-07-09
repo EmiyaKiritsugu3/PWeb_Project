@@ -1,0 +1,21 @@
+src/app/dashboard/page.test.tsx
+  s_802a29791e913e::t_51137daf53b964 80
+src/app/dashboard/page.tsx
+  s_802a29791e913e::t_707145f71c9f90 18
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "dcbf0d697ef2cdd8c6b51024ac63fc187b557fb8",
+  "prompts": {},
+  "sessions": {
+    "s_802a29791e913e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "17673ca8-d823-48f0-b65f-018fd30b4597",
+        "model": "deepseek-v4-pro"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
