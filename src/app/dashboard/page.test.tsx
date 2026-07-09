@@ -1,6 +1,7 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import DashboardPage from './page';
+import { getDashboardStats } from '@/lib/data';
 import type { ReactNode } from 'react';
 
 vi.mock('@/lib/data', () => ({
@@ -93,5 +94,40 @@ describe('DashboardPage', () => {
   it('renders the charts component', async () => {
     render(await DashboardPage());
     expect(screen.getByTestId('dashboard-charts-multi')).toBeTruthy();
+  });
+});
+
+describe('DashboardPage — honest deltas (no alunos/inadimplentes badge)', () => {
+  beforeEach(() => {
+    vi.mocked(getDashboardStats).mockResolvedValue({
+      totalAlunos: 150,
+      matriculasAtivas: 120,
+      alunosInadimplentes: 15,
+      faturamentoMensal: 45000,
+      matriculasPorMes: [],
+      receitaPorMes: [],
+      matriculasPorPlano: [],
+      deltas: { receita: -0.05, novos: 0.2 },
+    } as never);
+  });
+
+  it('does NOT render % badge on Total de Alunos (no honest delta)', async () => {
+    render(await DashboardPage());
+    const alunosCard = screen.getByTestId('kpi-Total de Alunos');
+    expect(alunosCard).toBeTruthy();
+    expect(alunosCard.textContent).not.toMatch(/%/);
+  });
+
+  it('does NOT render % badge on Inadimplentes (no honest delta)', async () => {
+    render(await DashboardPage());
+    const inadimplentesCard = screen.getByTestId('kpi-Inadimplentes');
+    expect(inadimplentesCard).toBeTruthy();
+    expect(inadimplentesCard.textContent).not.toMatch(/%/);
+  });
+
+  it('DOES render % badge on Novas Matrículas + Faturamento Recente (honest deltas)', async () => {
+    render(await DashboardPage());
+    expect(screen.getByText('-5%')).toBeTruthy();
+    expect(screen.getByText('+20%')).toBeTruthy();
   });
 });
