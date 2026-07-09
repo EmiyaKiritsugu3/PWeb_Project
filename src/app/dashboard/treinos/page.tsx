@@ -15,10 +15,7 @@ function TreinosSkeleton() {
   );
 }
 
-export default async function TreinosPage() {
-  await requireAnyRole(['INSTRUTOR', 'GERENTE']);
-
-  // Buscar todos os alunos para a seleção via Prisma
+async function TreinosDataWrapper() {
   const alunosPrisma = await prisma.aluno.findMany({
     orderBy: { nomeCompleto: 'asc' },
   });
@@ -40,6 +37,12 @@ export default async function TreinosPage() {
     ultimoTreinoData: a.ultimoTreinoData?.toISOString() || null,
   }));
 
+  return <TreinosManagementClient initialAlunos={alunosData} />;
+}
+
+export default async function TreinosPage() {
+  await requireAnyRole(['INSTRUTOR', 'GERENTE']);
+
   return (
     <div className="pb-20">
       <PageHeader
@@ -47,7 +50,7 @@ export default async function TreinosPage() {
         description="Monte treinos manualmente ou use a IA para gerar sugestões personalizadas para os alunos."
       />
       <Suspense fallback={<TreinosSkeleton />}>
-        <TreinosManagementClient initialAlunos={alunosData} />
+        <TreinosDataWrapper />
       </Suspense>
     </div>
   );
