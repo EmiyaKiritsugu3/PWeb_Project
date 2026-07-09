@@ -244,7 +244,7 @@ export const DashboardStatsSchema = z
     matriculasPorMes: z.array(MonthTotalSchema).default([]),
     receitaPorMes: z.array(MonthTotalSchema).default([]),
     matriculasPorPlano: z.array(PlanTotalSchema).default([]),
-    deltas: DashboardDeltasSchema.default({ alunos: 0, receita: 0, inadimplentes: 0, novos: 0 }),
+    deltas: DashboardDeltasSchema.default({ receita: 0, novos: 0 }),
   })
   .strict();
 
