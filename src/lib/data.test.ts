@@ -250,7 +250,7 @@ describe('getDashboardStats', () => {
     expect(stats.matriculasPorMes).toEqual([]);
     expect(stats.receitaPorMes).toEqual([]);
     expect(stats.matriculasPorPlano).toEqual([]);
-    expect(stats.crescimentoAnual).toBeUndefined();
+    expect((stats as Record<string, unknown>).crescimentoAnual).toBeUndefined();
   });
 
   it('re-throws on DB failure (no silent default)', async () => {
