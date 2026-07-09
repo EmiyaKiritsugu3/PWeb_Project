@@ -41,3 +41,17 @@ export function FinanceiroSkeleton() {
     </div>
   );
 }
+
+export function DashboardOverviewSkeleton() {
+  return (
+    <div data-testid="overview-skeleton" className="space-y-8">
+      <PremiumSkeleton className="h-10 w-[300px]" />
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        {['k0', 'k1', 'k2', 'k3'].map((k) => (
+          <PremiumSkeleton key={k} className="h-32 rounded-xl" />
+        ))}
+      </div>
+      <PremiumSkeleton className="h-[300px] w-full rounded-xl" />
+    </div>
+  );
+}
