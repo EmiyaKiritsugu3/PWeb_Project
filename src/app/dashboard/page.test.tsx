@@ -10,10 +10,13 @@ vi.mock('@/lib/data', () => ({
     matriculasAtivas: 120,
     alunosInadimplentes: 15,
     faturamentoMensal: 45000,
-    crescimentoAnual: [
-      { mes: 'Jan', alunos: 10 },
-      { mes: 'Fev', alunos: 15 },
+    matriculasPorMes: [
+      { mes: '2026-01', total: 10 },
+      { mes: '2026-02', total: 15 },
     ],
+    receitaPorMes: [],
+    matriculasPorPlano: [],
+    deltas: { alunos: 0, receita: 0, inadimplentes: 0, novos: 0 },
   } satisfies DashboardStats),
 }));
 

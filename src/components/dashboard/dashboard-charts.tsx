@@ -2,14 +2,10 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
-
-interface ChartDataPoint {
-  mes: string;
-  alunos: number;
-}
+import type { MonthTotal } from '@/lib/definitions';
 
 interface DashboardChartsProps {
-  data: ChartDataPoint[];
+  data: MonthTotal[];
 }
 
 export function DashboardCharts({ data }: Readonly<DashboardChartsProps>) {
@@ -17,7 +13,7 @@ export function DashboardCharts({ data }: Readonly<DashboardChartsProps>) {
     <Card className="glass-card overflow-hidden border-white/5 hover:border-primary/30 transition-all duration-500 glow-cyan">
       <CardHeader className="border-b border-white/5 bg-background/20 pb-4">
         <CardTitle className="font-headline tracking-wide font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 uppercase text-sm">
-          Crescimento de Alunos (Últimos meses)
+          Crescimento de Alunos (matriculas por mes)
         </CardTitle>
       </CardHeader>
       <CardContent className="pt-6 pl-2 pb-2 h-[200px] md:h-[300px]">
@@ -68,7 +64,7 @@ export function DashboardCharts({ data }: Readonly<DashboardChartsProps>) {
               itemStyle={{ color: 'oklch(0.7 0.25 190)', fontSize: '14px' }}
               cursor={{ fill: 'oklch(0.7 0.25 190 / 0.03)' }}
             />
-            <Bar dataKey="alunos" fill="url(#neonCyan)" radius={[8, 8, 0, 0]} />
+            <Bar dataKey="total" fill="url(#neonCyan)" radius={[8, 8, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </CardContent>

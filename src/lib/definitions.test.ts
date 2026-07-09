@@ -1049,7 +1049,7 @@ describe('DashboardStatsSchema', () => {
     expect(result.matriculasAtivas).toBe(0);
     expect(result.alunosInadimplentes).toBe(0);
     expect(result.faturamentoMensal).toBe(0);
-    expect(result.crescimentoAnual).toEqual([]);
+    expect(result.matriculasPorMes).toEqual([]);
   });
 
   it('accepts full data', () => {
@@ -1058,14 +1058,14 @@ describe('DashboardStatsSchema', () => {
       matriculasAtivas: 120,
       alunosInadimplentes: 10,
       faturamentoMensal: 15000,
-      crescimentoAnual: [
-        { mes: 'Janeiro', alunos: 100 },
-        { mes: 'Fevereiro', alunos: 110 },
-      ],
+      matriculasPorMes: [{ mes: '2026-01', total: 10 }],
+      receitaPorMes: [{ mes: '2026-01', total: 1000 }],
+      matriculasPorPlano: [{ plano: 'Bronze', total: 5 }],
+      deltas: { alunos: 0.1, receita: -0.05, inadimplentes: 0, novos: 0.2 },
     };
     const result = DashboardStatsSchema.parse(data);
     expect(result.totalAlunos).toBe(150);
-    expect(result.crescimentoAnual).toHaveLength(2);
+    expect(result.matriculasPorMes).toHaveLength(1);
   });
 
   it('rejects non-integer totalAlunos', () => {
@@ -1080,17 +1080,44 @@ describe('DashboardStatsSchema', () => {
     expect(() => DashboardStatsSchema.parse({ alunosInadimplentes: 1.5 })).toThrow();
   });
 
-  it('rejects invalid crescimentoAnual entry', () => {
+  it('rejects invalid matriculasPorMes entry', () => {
     expect(() =>
       DashboardStatsSchema.parse({
-        crescimentoAnual: [{ mes: 'Janeiro' }],
+        matriculasPorMes: [{ mes: '2026-01' }],
+      })
+    ).toThrow();
+  });
+
+  it('rejects extra crescimentoAnual field', () => {
+    expect(() =>
+      DashboardStatsSchema.parse({
+        crescimentoAnual: [{ mes: 'Janeiro', alunos: 100 }],
       })
     ).toThrow();
   });
 
   it('infers correct type', () => {
     expectTypeOf<DashboardStats>().toHaveProperty('totalAlunos');
-    expectTypeOf<DashboardStats>().toHaveProperty('crescimentoAnual');
+    expectTypeOf<DashboardStats>().toHaveProperty('matriculasPorMes');
+    expectTypeOf<DashboardStats>().toHaveProperty('deltas');
+  });
+
+  it('accepts real series + deltas, rejects synthetic crescimentoAnual', () => {
+    const stats = DashboardStatsSchema.parse({
+      totalAlunos: 10,
+      matriculasAtivas: 8,
+      alunosInadimplentes: 1,
+      faturamentoMensal: 1000,
+      matriculasPorMes: [{ mes: '2026-01', total: 5 }],
+      receitaPorMes: [{ mes: '2026-01', total: 500 }],
+      matriculasPorPlano: [{ plano: 'Bronze', total: 3 }],
+      deltas: { alunos: 0.1, receita: -0.05, inadimplentes: 0, novos: 0.2 },
+    });
+    expect(stats.matriculasPorMes).toHaveLength(1);
+    const withFake = DashboardStatsSchema.safeParse({
+      crescimentoAnual: [{ mes: 'Jan', alunos: 1 }],
+    });
+    expect(withFake.success).toBe(false);
   });
 });
 
