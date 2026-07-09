@@ -1,0 +1,19 @@
+src/app/dashboard/error.tsx
+  s_802a29791e913e::t_154820f714545c 2,5-6,9-13,18-20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "d576c4f31a06148fa0e5d066aa04db4b26c34e18",
+  "prompts": {},
+  "sessions": {
+    "s_802a29791e913e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "17673ca8-d823-48f0-b65f-018fd30b4597",
+        "model": "deepseek-v4-pro"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
