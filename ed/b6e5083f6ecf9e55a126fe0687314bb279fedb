@@ -1,0 +1,21 @@
+src/app/dashboard/_components/empty-state.test.tsx
+  s_802a29791e913e::t_71c1c0a76328c2 1-19
+src/app/dashboard/_components/empty-state.tsx
+  s_802a29791e913e::t_fd72037478924b 1-25
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "edb6e5083f6ecf9e55a126fe0687314bb279fedb",
+  "prompts": {},
+  "sessions": {
+    "s_802a29791e913e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "17673ca8-d823-48f0-b65f-018fd30b4597",
+        "model": "z-ai/glm-5.2"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
