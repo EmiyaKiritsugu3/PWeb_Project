@@ -77,7 +77,7 @@ describe('DashboardPage', () => {
   it('renders KPI card titles and values', async () => {
     render(await DashboardPage());
     expect(screen.getByText('Total de Alunos')).toBeTruthy();
-    expect(screen.getByText('Matrículas Ativas')).toBeTruthy();
+    expect(screen.getByText('Novas Matrículas')).toBeTruthy();
     expect(screen.getByText('Inadimplentes')).toBeTruthy();
     expect(screen.getByText('Faturamento Recente')).toBeTruthy();
     expect(screen.getByText('150')).toBeTruthy();

@@ -15,7 +15,7 @@ export default async function DashboardPage() {
       icon: <Users className="h-5 w-5" />,
     },
     {
-      title: 'Matrículas Ativas',
+      title: 'Novas Matrículas',
       value: stats.matriculasAtivas.toLocaleString('pt-BR'),
       delta: stats.deltas.novos,
       icon: <UserCheck className="h-5 w-5" />,
