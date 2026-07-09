@@ -82,6 +82,8 @@ describe('FinanceiroPage', () => {
     const { container } = render(await FinanceiroPage());
     const html = container.innerHTML;
     expect(html).not.toContain('bg-black');
+    expect(html).not.toContain('#18181B');
+    expect(html).not.toContain('text-zinc-400');
     expect(html).toContain('pb-20');
   });
 });
