@@ -1,0 +1,27 @@
+src/app/dashboard/loading.tsx
+  s_802a29791e913e::t_1fed50bfa3a2e4 1-4
+src/app/dashboard/error.test.tsx
+  s_802a29791e913e::t_e4c3b68268389f 1-11
+src/components/ui/dashboard-skeletons.tsx
+  s_802a29791e913e::t_7f57d214fd61fb 44-57
+src/app/dashboard/error.tsx
+  s_802a29791e913e::t_dc806b7d8fe387 1-14
+src/app/dashboard/loading.test.tsx
+  s_802a29791e913e::t_1dbc8b42dec48e 1-9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "cd89df5727934ad86a556a3d1c68963aaec3eb6f",
+  "prompts": {},
+  "sessions": {
+    "s_802a29791e913e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "17673ca8-d823-48f0-b65f-018fd30b4597",
+        "model": "z-ai/glm-5.2"
+      },
+      "human_author": "Emiya Kiritsugu <emiyakiritsugu3@users.noreply.github.com>"
+    }
+  }
+}
