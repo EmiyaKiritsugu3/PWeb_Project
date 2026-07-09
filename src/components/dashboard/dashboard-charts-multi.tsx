@@ -107,6 +107,13 @@ export function DashboardChartsMulti({
                   tickLine={false}
                   axisLine={false}
                   dx={-12}
+                  tickFormatter={(v) =>
+                    Number(v).toLocaleString('pt-BR', {
+                      style: 'currency',
+                      currency: 'BRL',
+                      maximumFractionDigits: 0,
+                    })
+                  }
                 />
                 <Tooltip
                   cursor={{ fill: 'color-mix(in oklch, var(--color-primary) 3%, transparent)' }}
@@ -116,6 +123,10 @@ export function DashboardChartsMulti({
                     borderRadius: '14px',
                     color: 'var(--color-foreground)',
                   }}
+                  formatter={(v) => [
+                    Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
+                    'Faturamento',
+                  ]}
                 />
                 <Bar dataKey="total" fill="var(--color-primary)" radius={[8, 8, 0, 0]} />
               </BarChart>
