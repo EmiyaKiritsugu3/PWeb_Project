@@ -209,28 +209,46 @@ export type Pagamento = z.infer<typeof PagamentoSchema>;
 
 // --- Schemas & Tipos: Dashboard & Views ---
 
-export const GrowthDataSchema = z.object({
+export const MonthTotalSchema = z.object({
   mes: z.string(),
-  alunos: z.number().int(),
+  total: z.number(),
 });
 
-export type GrowthData = z.infer<typeof GrowthDataSchema>;
+export type MonthTotal = z.infer<typeof MonthTotalSchema>;
 
-export const DashboardStatsSchema = z.object({
-  totalAlunos: z.number().int().default(0),
-  matriculasAtivas: z.number().int().default(0),
-  alunosInadimplentes: z.number().int().default(0),
-  faturamentoMensal: z.number().default(0),
-  crescimentoAnual: z.array(GrowthDataSchema).default([]),
+export const PlanTotalSchema = z.object({
+  plano: z.string(),
+  total: z.number(),
 });
+
+export type PlanTotal = z.infer<typeof PlanTotalSchema>;
+
+export const DashboardDeltasSchema = z.object({
+  // ponytail: alunos + inadimplentes deltas omitted — no historical snapshot table,
+  // so cumulative total / point-in-time count have no honest period-over-period.
+  // Add when a daily snapshot or prior-period count exists.
+  alunos: z.number().optional(),
+  receita: z.number().optional(),
+  inadimplentes: z.number().optional(),
+  novos: z.number().optional(),
+});
+
+export type DashboardDeltas = z.infer<typeof DashboardDeltasSchema>;
+
+export const DashboardStatsSchema = z
+  .object({
+    totalAlunos: z.number().int().default(0),
+    matriculasAtivas: z.number().int().default(0),
+    alunosInadimplentes: z.number().int().default(0),
+    faturamentoMensal: z.number().default(0),
+    matriculasPorMes: z.array(MonthTotalSchema).default([]),
+    receitaPorMes: z.array(MonthTotalSchema).default([]),
+    matriculasPorPlano: z.array(PlanTotalSchema).default([]),
+    deltas: DashboardDeltasSchema.default({ receita: 0, novos: 0 }),
+  })
+  .strict();
 
 export type DashboardStats = z.infer<typeof DashboardStatsSchema>;
-
-export const V_FaturamentoMensalSchema = z.object({
-  Mes: z.string(),
-  TotalRecebido: z.number(),
-  QtdPagamentos: z.coerce.number().int(),
-});
 
 export const V_FrequenciaAlunosSchema = z.object({
   nomeCompleto: z.string(),

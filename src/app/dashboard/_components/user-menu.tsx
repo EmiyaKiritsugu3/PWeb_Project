@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -10,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { LogOut } from 'lucide-react';
+import { LogOut, User, Settings } from 'lucide-react';
 import { logout } from '@/app/actions/auth';
 
 interface UserMenuProps {
@@ -20,6 +21,8 @@ interface UserMenuProps {
 }
 
 export function UserMenu({ displayName, email, photoURL }: Readonly<UserMenuProps>) {
+  const router = useRouter();
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -43,10 +46,18 @@ export function UserMenu({ displayName, email, photoURL }: Readonly<UserMenuProp
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator className="bg-white/10" />
-        <DropdownMenuItem className="focus:bg-primary/20 focus:text-primary cursor-pointer">
+        <DropdownMenuItem
+          className="focus:bg-primary/20 focus:text-primary cursor-pointer"
+          onClick={() => router.push('/dashboard/perfil')}
+        >
+          <User className="mr-2 h-4 w-4" />
           Perfil
         </DropdownMenuItem>
-        <DropdownMenuItem className="focus:bg-primary/20 focus:text-primary cursor-pointer">
+        <DropdownMenuItem
+          className="focus:bg-primary/20 focus:text-primary cursor-pointer"
+          onClick={() => router.push('/dashboard/configuracoes')}
+        >
+          <Settings className="mr-2 h-4 w-4" />
           Configurações
         </DropdownMenuItem>
         <DropdownMenuSeparator className="bg-white/10" />

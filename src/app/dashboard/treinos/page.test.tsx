@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
 import TreinosPage from './page';
 
 const mockRequireAnyRole = vi.fn().mockResolvedValue(undefined);
@@ -41,19 +41,25 @@ describe('TreinosPage', () => {
 
   it('renders the page header', async () => {
     mockFindMany.mockResolvedValue([]);
-    render(await TreinosPage());
+    await act(async () => {
+      render(await TreinosPage());
+    });
     expect(screen.getByText('Gestão de Treinos')).toBeTruthy();
   });
 
   it('renders the TreinosManagementClient', async () => {
     mockFindMany.mockResolvedValue([]);
-    render(await TreinosPage());
+    await act(async () => {
+      render(await TreinosPage());
+    });
     expect(screen.getByTestId('treinos-client')).toBeTruthy();
   });
 
   it('passes empty alunos data by default', async () => {
     mockFindMany.mockResolvedValue([]);
-    render(await TreinosPage());
+    await act(async () => {
+      render(await TreinosPage());
+    });
     expect(screen.getByText('0 alunos')).toBeTruthy();
   });
 
@@ -76,7 +82,9 @@ describe('TreinosPage', () => {
         ultimoTreinoData: null,
       },
     ]);
-    render(await TreinosPage());
+    await act(async () => {
+      render(await TreinosPage());
+    });
     expect(screen.getByText('1 alunos')).toBeTruthy();
   });
 });

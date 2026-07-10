@@ -5,7 +5,6 @@ import {
   PlanoSchema,
   TreinoSchema,
   DashboardStatsSchema,
-  V_FaturamentoMensalSchema,
   type Aluno,
   type Plano,
   type Treino,
@@ -100,56 +99,109 @@ export async function getAlunoDetalhes(id: string) {
   }
 }
 
-type RawFaturamento = { TotalRecebido: number; Mes: string; QtdPagamentos: number };
+function monthKey(d: Date) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+}
+
+function groupByMonth(rows: { date: Date }[]) {
+  const map = new Map<string, number>();
+  for (const { date } of rows) {
+    const k = monthKey(date);
+    map.set(k, (map.get(k) ?? 0) + 1);
+  }
+  return [...map.entries()]
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([mes, total]) => ({ mes, total }));
+}
+
+export async function getMatriculasPorMes() {
+  const thirteenMonthsAgo = new Date();
+  thirteenMonthsAgo.setMonth(thirteenMonthsAgo.getMonth() - 13, 1);
+  thirteenMonthsAgo.setHours(0, 0, 0, 0);
+
+  const rows = await prisma.matricula.findMany({
+    where: { dataInicio: { gte: thirteenMonthsAgo } },
+    select: { dataInicio: true },
+  });
+  return groupByMonth(rows.map((r) => ({ date: r.dataInicio })));
+}
+
+export async function getReceitaPorMes() {
+  const thirteenMonthsAgo = new Date();
+  thirteenMonthsAgo.setMonth(thirteenMonthsAgo.getMonth() - 13, 1);
+  thirteenMonthsAgo.setHours(0, 0, 0, 0);
+
+  const rows = await prisma.pagamento.findMany({
+    where: { dataPagamento: { gte: thirteenMonthsAgo } },
+    select: { dataPagamento: true, valor: true },
+  });
+  const map = new Map<string, number>();
+  for (const { dataPagamento, valor } of rows) {
+    const k = monthKey(dataPagamento);
+    map.set(k, (map.get(k) ?? 0) + valor);
+  }
+  return [...map.entries()]
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([mes, total]) => ({ mes, total }));
+}
+
+export async function getMatriculasPorPlano() {
+  // ponytail: findMany + JS group per brief's spirit (groupBy); swap to prisma.matricula.groupBy
+  // by planoId if row count grows past gym scale.
+  const rows = await prisma.matricula.findMany({
+    where: { status: 'ATIVA' },
+    select: { Plano: { select: { nome: true } } },
+  });
+  const map = new Map<string, number>();
+  for (const r of rows) {
+    const nome = r.Plano?.nome ?? 'Sem plano';
+    map.set(nome, (map.get(nome) ?? 0) + 1);
+  }
+  return [...map.entries()].map(([plano, total]) => ({ plano, total }));
+}
+
+function pctDelta(curr: number, prev: number): number | undefined {
+  if (prev === 0) return undefined;
+  return (curr - prev) / prev;
+}
 
 export async function getDashboardStats() {
-  try {
-    const [totalAlunos, matriculasAtivas, alunosInadimplentes] = await Promise.all([
-      prisma.aluno.count(),
-      prisma.matricula.count({ where: { status: 'ATIVA' } }),
-      prisma.aluno.count({ where: { statusMatricula: 'INADIMPLENTE' } }),
-    ]);
+  const [
+    totalAlunos,
+    matriculasAtivas,
+    alunosInadimplentes,
+    matriculasPorMes,
+    receitaPorMes,
+    matriculasPorPlano,
+  ] = await Promise.all([
+    prisma.aluno.count(),
+    prisma.matricula.count({ where: { status: 'ATIVA' } }),
+    prisma.aluno.count({ where: { statusMatricula: 'INADIMPLENTE' } }),
+    getMatriculasPorMes(),
+    getReceitaPorMes(),
+    getMatriculasPorPlano(),
+  ]);
 
-    // Busca faturamento via View SQL
-    let faturamentoMensal = 0;
-    try {
-      const rawFaturamento = await prisma.$queryRaw`SELECT * FROM "V_FaturamentoMensal" LIMIT 1`;
-      const faturamentoValidado = V_FaturamentoMensalSchema.safeParse(
-        (rawFaturamento as RawFaturamento[])?.[0]
-      );
+  const last = (s: { total: number }[]) => s[s.length - 1]?.total ?? 0;
+  const prev = (s: { total: number }[]) => s[s.length - 2]?.total ?? 0;
 
-      if (faturamentoValidado.success) {
-        faturamentoMensal = faturamentoValidado.data.TotalRecebido;
-      }
-      // sonar-ignore-next-line
-    } catch (_viewError) {
-      Sentry.captureMessage(
-        'Aviso: Falha ao ler V_FaturamentoMensal. O banco pode estar vazio ou a view ausente.',
-        {
-          level: 'warning',
-          extra: { viewError: String(_viewError) },
-        }
-      );
-    }
+  // Faturamento = receita do último bucket mensal (honest: mês mais recente), não soma total.
+  const faturamentoMensal = last(receitaPorMes);
 
-    // Projeção de Crescimento Validada
-    const GROWTH_BASE_FACTOR = 0.7;
-    const GROWTH_INCREMENT = 0.05;
-    const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'];
-    const crescimentoAnual = meses.map((mes, idx) => ({
-      mes,
-      alunos: Math.floor(totalAlunos * (GROWTH_BASE_FACTOR + idx * GROWTH_INCREMENT)),
-    }));
+  const deltas = {
+    // alunos + inadimplentes sem delta honesto (sem snapshot histórico) — ver schema.
+    receita: pctDelta(last(receitaPorMes), prev(receitaPorMes)),
+    novos: pctDelta(last(matriculasPorMes), prev(matriculasPorMes)),
+  };
 
-    return DashboardStatsSchema.parse({
-      totalAlunos,
-      matriculasAtivas,
-      alunosInadimplentes,
-      faturamentoMensal,
-      crescimentoAnual,
-    });
-  } catch (error) {
-    Sentry.captureException(error);
-    return DashboardStatsSchema.parse({}); // Retorna valores padrão seguros do schema
-  }
+  return DashboardStatsSchema.parse({
+    totalAlunos,
+    matriculasAtivas,
+    alunosInadimplentes,
+    faturamentoMensal,
+    matriculasPorMes,
+    receitaPorMes,
+    matriculasPorPlano,
+    deltas,
+  });
 }

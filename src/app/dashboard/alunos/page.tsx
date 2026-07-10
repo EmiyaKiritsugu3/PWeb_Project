@@ -16,7 +16,7 @@ async function AlunosDataWrapper() {
 // 2. Wrap the data component in a Suspense boundary with the Premium Skeleton
 export default function AlunosPage() {
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 bg-black min-h-dvh">
+    <div className="max-w-7xl mx-auto px-4 py-8 pb-20 bg-background min-h-dvh">
       <Suspense fallback={<TableSkeleton />}>
         <AlunosDataWrapper />
       </Suspense>

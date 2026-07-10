@@ -117,9 +117,9 @@ export default async function DashboardLayout({
 
         <SidebarInset className="bg-background/95">
           <DashboardHeader displayName={displayName} email={user.email!} photoURL={photoURL} />
-          <main className="flex-1 p-6 pb-20 md:p-8 md:pb-8 max-w-[1600px] mx-auto w-full">
+          <div className="flex-1 p-6 pb-20 md:p-8 md:pb-8 max-w-[1600px] mx-auto w-full">
             {children}
-          </main>
+          </div>
         </SidebarInset>
         {/* ponytail: nav outside <main> (SidebarInset renders <main>) — avoids nesting nav landmark inside main, matches aluno layout */}
         <DashboardBottomNav role={role} />

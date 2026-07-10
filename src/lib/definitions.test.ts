@@ -17,9 +17,7 @@ import {
   MatriculaSchema,
   PagamentoBaseSchema,
   PagamentoSchema,
-  GrowthDataSchema,
   DashboardStatsSchema,
-  V_FaturamentoMensalSchema,
   V_FrequenciaAlunosSchema,
 } from './definitions';
 
@@ -40,8 +38,6 @@ import type {
   Matricula,
   PagamentoBase,
   Pagamento,
-  GrowthData,
-  DashboardStats,
 } from './definitions';
 
 // --- Test Helpers ---
@@ -1004,138 +1000,54 @@ describe('PagamentoSchema', () => {
   });
 });
 
-// --- GrowthDataSchema ---
-
-describe('GrowthDataSchema', () => {
-  it('accepts valid data', () => {
-    const result = GrowthDataSchema.parse({ mes: 'Janeiro', alunos: 120 });
-    expect(result.mes).toBe('Janeiro');
-    expect(result.alunos).toBe(120);
-  });
-
-  it('accepts zero alunos', () => {
-    const result = GrowthDataSchema.parse({ mes: 'Fevereiro', alunos: 0 });
-    expect(result.alunos).toBe(0);
-  });
-
-  it('rejects missing mes', () => {
-    expect(() => GrowthDataSchema.parse({ alunos: 10 })).toThrow();
-  });
-
-  it('rejects missing alunos', () => {
-    expect(() => GrowthDataSchema.parse({ mes: 'Janeiro' })).toThrow();
-  });
-
-  it('rejects non-integer alunos', () => {
-    expect(() => GrowthDataSchema.parse({ mes: 'Janeiro', alunos: 1.5 })).toThrow();
-  });
-
-  it('rejects string alunos', () => {
-    expect(() => GrowthDataSchema.parse({ mes: 'Janeiro', alunos: 'abc' })).toThrow();
-  });
-
-  it('infers correct type', () => {
-    expectTypeOf<GrowthData>().toHaveProperty('mes');
-    expectTypeOf<GrowthData>().toHaveProperty('alunos');
-  });
-});
-
 // --- DashboardStatsSchema ---
 
 describe('DashboardStatsSchema', () => {
-  it('accepts empty object (all fields have defaults)', () => {
-    const result = DashboardStatsSchema.parse({});
-    expect(result.totalAlunos).toBe(0);
-    expect(result.matriculasAtivas).toBe(0);
-    expect(result.alunosInadimplentes).toBe(0);
-    expect(result.faturamentoMensal).toBe(0);
-    expect(result.crescimentoAnual).toEqual([]);
-  });
-
-  it('accepts full data', () => {
-    const data = {
-      totalAlunos: 150,
-      matriculasAtivas: 120,
-      alunosInadimplentes: 10,
-      faturamentoMensal: 15000,
-      crescimentoAnual: [
-        { mes: 'Janeiro', alunos: 100 },
-        { mes: 'Fevereiro', alunos: 110 },
-      ],
-    };
-    const result = DashboardStatsSchema.parse(data);
-    expect(result.totalAlunos).toBe(150);
-    expect(result.crescimentoAnual).toHaveLength(2);
-  });
-
-  it('rejects non-integer totalAlunos', () => {
-    expect(() => DashboardStatsSchema.parse({ totalAlunos: 1.5 })).toThrow();
-  });
-
-  it('rejects non-integer matriculasAtivas', () => {
-    expect(() => DashboardStatsSchema.parse({ matriculasAtivas: 1.5 })).toThrow();
-  });
-
-  it('rejects non-integer alunosInadimplentes', () => {
-    expect(() => DashboardStatsSchema.parse({ alunosInadimplentes: 1.5 })).toThrow();
-  });
-
-  it('rejects invalid crescimentoAnual entry', () => {
-    expect(() =>
-      DashboardStatsSchema.parse({
-        crescimentoAnual: [{ mes: 'Janeiro' }],
-      })
-    ).toThrow();
-  });
-
-  it('infers correct type', () => {
-    expectTypeOf<DashboardStats>().toHaveProperty('totalAlunos');
-    expectTypeOf<DashboardStats>().toHaveProperty('crescimentoAnual');
-  });
-});
-
-// --- V_FaturamentoMensalSchema ---
-
-describe('V_FaturamentoMensalSchema', () => {
-  it('accepts valid data', () => {
-    const result = V_FaturamentoMensalSchema.parse({
-      Mes: 'Janeiro',
-      TotalRecebido: 15000,
-      QtdPagamentos: 50,
+  it('accepts real series + deltas, rejects synthetic crescimentoAnual', () => {
+    const stats = DashboardStatsSchema.parse({
+      totalAlunos: 10,
+      matriculasAtivas: 8,
+      alunosInadimplentes: 1,
+      faturamentoMensal: 1000,
+      matriculasPorMes: [{ mes: '2026-01', total: 5 }],
+      receitaPorMes: [{ mes: '2026-01', total: 500 }],
+      matriculasPorPlano: [{ plano: 'Bronze', total: 3 }],
+      deltas: { alunos: 0.1, receita: -0.05, inadimplentes: 0, novos: 0.2 },
     });
-    expect(result.Mes).toBe('Janeiro');
-    expect(result.QtdPagamentos).toBe(50);
-  });
-
-  it('coerces QtdPagamentos from string', () => {
-    const result = V_FaturamentoMensalSchema.parse({
-      Mes: 'Janeiro',
-      TotalRecebido: 15000,
-      QtdPagamentos: '50',
+    expect(stats.matriculasPorMes).toHaveLength(1);
+    const withFake = DashboardStatsSchema.safeParse({
+      crescimentoAnual: [{ mes: 'Jan', alunos: 1 }],
     });
-    expect(result.QtdPagamentos).toBe(50);
+    expect(withFake.success).toBe(false);
   });
 
-  it('rejects missing Mes', () => {
-    expect(() =>
-      V_FaturamentoMensalSchema.parse({ TotalRecebido: 15000, QtdPagamentos: 50 })
-    ).toThrow();
+  it('rejects unknown key even when all required fields present (.strict isolation)', () => {
+    const withFake = DashboardStatsSchema.safeParse({
+      totalAlunos: 10,
+      matriculasAtivas: 8,
+      alunosInadimplentes: 1,
+      faturamentoMensal: 1000,
+      matriculasPorMes: [{ mes: '2026-01', total: 5 }],
+      receitaPorMes: [{ mes: '2026-01', total: 500 }],
+      matriculasPorPlano: [{ plano: 'Bronze', total: 3 }],
+      deltas: { receita: -0.05, novos: 0.2 },
+      crescimentoAnual: [{ mes: 'Jan', alunos: 1 }], // extra key .strict() must reject
+    });
+    expect(withFake.success).toBe(false);
   });
 
-  it('rejects missing TotalRecebido', () => {
-    expect(() => V_FaturamentoMensalSchema.parse({ Mes: 'Janeiro', QtdPagamentos: 50 })).toThrow();
-  });
-
-  it('rejects missing QtdPagamentos', () => {
-    expect(() =>
-      V_FaturamentoMensalSchema.parse({ Mes: 'Janeiro', TotalRecebido: 15000 })
-    ).toThrow();
-  });
-
-  it('rejects non-numeric TotalRecebido', () => {
-    expect(() =>
-      V_FaturamentoMensalSchema.parse({ Mes: 'Janeiro', TotalRecebido: 'abc', QtdPagamentos: 50 })
-    ).toThrow();
+  it('parses valid payload without unknown keys (strict allows)', () => {
+    const result = DashboardStatsSchema.safeParse({
+      totalAlunos: 10,
+      matriculasAtivas: 8,
+      alunosInadimplentes: 1,
+      faturamentoMensal: 1000,
+      matriculasPorMes: [{ mes: '2026-01', total: 5 }],
+      receitaPorMes: [{ mes: '2026-01', total: 500 }],
+      matriculasPorPlano: [{ plano: 'Bronze', total: 3 }],
+      deltas: { receita: -0.05, novos: 0.2 },
+    });
+    expect(result.success).toBe(true);
   });
 });
 

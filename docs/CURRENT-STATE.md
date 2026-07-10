@@ -1,4 +1,39 @@
-# Estado Atual (2026-07-08)
+# Estado Atual (2026-07-09)
+
+## `feat/gerente-dashboard-refactor` — dashboard GERENTE refactor completo (10/10 tasks)
+
+**Branch:** `feat/gerente-dashboard-refactor`. Spec: `docs/superpowers/specs/2026-07-09-gerente-dashboard-refactor-design.md`. Plano: `docs/superpowers/plans/...` (10 tasks TDD, SDD pipeline). Objetivo: equalar dashboard GERENTE ao padrão ALUNO — dados reais (zero fake), tokens de design, empty-states honestos, sem gamification.
+
+### Tarefas (SDD: fresh subagent + task reviewer por task)
+
+- **T1** (`45f193f`): schema real series — `MonthTotalSchema`/`PlanTotalSchema`/`DashboardDeltasSchema` substituem `crescimentoAnual` sintético. `.strict()` em `DashboardStatsSchema`.
+- **T2** (`0a3aeba`+`eb98934`): queries Prisma reais (`getMatriculasPorMes` groupBy dataCadastro, `getReceitaPorMes` groupBy dataPagamento, `getMatriculasPorPlano` count ATIVA). `pctDelta()` para KPI deltas. Re-throw em erro DB (sem try/catch swallowing).
+- **T3** (`7806e45`): `KpiCard` — Card glass + delta badge (▲▼ ícone+texto verde/vermelho, não só cor), `aria-label`, `data-testid="kpi-<title>"`.
+- **T4** (`edb6e50`): `EmptyState` — Card glass tracejado, portado do padrão `card-treino.tsx`. Props `{icon, title, description, testId?}`.
+- **T5** (`6d08e64`+`a5abe6e`): `DashboardChartsMulti` — 3 BarCharts recharts tokenizados (matrículas/mês, faturamento/mês, distribuição/plano). `role="img"`+`aria-label` por chart (wrapper div, não BarChart — fix jsdom ResponsiveContainer 0×0). `EmptyState` quando 3 séries vazias.
+- **T6** (`68c9d90`): overview page wiring — grid 4 `KpiCard` (Total Alunos, Matrículas Ativas, Inadimplentes, Faturamento Mensal) + `DashboardChartsMulti`. Mapeamento deltas: `.alunos`→Total, `.novos`→Ativas, `.inadimplentes`→Inadimplentes, `.receita`→Faturamento. Moeda BRL.
+- **T7** (`6a58de1`): fix double `<main>` landmark — removido `<main>` extra em `layout.tsx`, `pb-20` no inner div. `SidebarInset` (sidebar.tsx) retém `<main>`.
+- **T8** (`c87ef7f`+`c2830e6`): tokenize 4 sub-pages (alunos/financeiro/planos/treinos) — `bg-black`→`bg-background`, `#18181B`→`glass-card glow-cyan`, `text-zinc-400`→`text-muted-foreground`, `pb-20`. Suspense em treinos (inerte — prisma findMany precede boundary; `ponytail:` brief-mandated).
+- **T9** (`cd89df5`): `loading.tsx` (`DashboardOverviewSkeleton`) + `error.tsx` (`'use client'`, AlertTriangle, `role="alert"`, Button `reset()` "Tentar novamente").
+- **T10** (`15f9343`): delete legacy `dashboard-charts.tsx` (+test) — substituído por `dashboard-charts-multi.tsx`. Zero importers.
+
+### Gates (4/4)
+
+- **Vitest**: 1172 pass, 0 fail (subiu de 1164 — novos testes T3-T9).
+- **TypeScript** strict: No errors.
+- **ESLint**: 0 errors, 0 warnings.
+- **E2E**: DEFERIDO para merge-time. Requer Supabase local (54321/54322) + `.env.test` + dev server. Risco baixo: refactor toca só render/token/componente — nenhuma rota/auth/middleware/middleware-rota/API-contract alterado. `npm run e2e` validável antes do PR.
+
+### Notas
+
+- TS7 NO-GO (Next 15.5 build crash + typescript-eslint crash + Prisma block). Mantido TS 6.0.3. Skill `compiler-major-bump-feasibility-audit` extraída.
+- `financeiro/page.test.tsx` ganhou assertions `#18181B`+`text-zinc-400` post-review (spec checklist gap do implementer).
+- **Audit fix wave (T1-T8)**: 8 tasks from multi-dimension audit — renamed "Matrículas Ativas"→"Novas Matrículas" (match deltas.novos), narrowed DeltasSchema default (receita+novos only), honest-mock test variant (optional deltas→no badge), isolated .strict() rejection test, golden-path getDashboardStats test, heading hierarchy a11y (EmptyState h2 + sr-only h2), aria-hidden KpiCard triangle, 13-month window on getMatriculasPorMes+getReceitaPorMes. Gates: Vitest 1172/0 (+6 tests), tsc clean, lint 0/0. Plan: `docs/superpowers/plans/2026-07-09-gerente-dashboard-audit-fixes.md`.
+- PR #199 aberto em main.
+- Treinos Suspense é inerte (data fetch no page body precede boundary) — `ponytail:`: brief-mandated, mantém; mover Suspense para dentro de client component se quiser fallback real durante fetch.
+- Commits de fixup (`eb98934`, `a5abe6e`) podem ser squashed antes do PR se desejado.
+
+---
 
 ## PR #194 `feat/aluno-ui-10-fixes` — review remediation completa (cubic + coderabbit)
 

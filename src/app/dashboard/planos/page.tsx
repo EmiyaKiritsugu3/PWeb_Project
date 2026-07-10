@@ -33,8 +33,10 @@ function PlanosSkeleton() {
 export default async function PlanosPage() {
   await requireRole(Role.GERENTE);
   return (
-    <Suspense fallback={<PlanosSkeleton />}>
-      <PlanosDataWrapper />
-    </Suspense>
+    <div className="space-y-6 pb-20">
+      <Suspense fallback={<PlanosSkeleton />}>
+        <PlanosDataWrapper />
+      </Suspense>
+    </div>
   );
 }

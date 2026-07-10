@@ -39,17 +39,17 @@ export default async function FinanceiroPage() {
   await requireRole(Role.GERENTE);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 bg-black min-h-dvh">
+    <div className="max-w-7xl mx-auto px-4 py-8 pb-20 bg-background min-h-dvh">
       <PageHeader
         title="Gestão Financeira"
         description="Acompanhe pagamentos e matrículas inadimplentes."
       />
-      <Card className="bg-[#18181B] border-white/10 rounded-xl shadow-[0_0_15px_rgba(34,211,238,0.05)] hover:shadow-[0_0_15px_rgba(34,211,238,0.2)] transition-shadow">
+      <Card glass className="border-white/10 rounded-xl glow-cyan transition-shadow">
         <CardHeader>
-          <CardTitle className="text-white font-extrabold tracking-tight">
+          <CardTitle className="text-foreground font-extrabold tracking-tight">
             Alunos Inadimplentes
           </CardTitle>
-          <CardDescription className="text-zinc-400 font-medium">
+          <CardDescription className="text-muted-foreground font-medium">
             Lista de alunos com pagamentos pendentes. Registre um pagamento para reativar a
             matrícula e estender o vencimento em 30 dias.
           </CardDescription>
