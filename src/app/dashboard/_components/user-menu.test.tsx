@@ -30,6 +30,12 @@ vi.mock('@/app/actions/auth', () => ({
   logout: vi.fn(),
 }));
 
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: vi.fn(),
+  }),
+}));
+
 describe('UserMenu', () => {
   it('renders user display name', () => {
     render(<UserMenu displayName="João" email="joao@test.com" photoURL="" />);
