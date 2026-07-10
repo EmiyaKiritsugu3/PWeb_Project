@@ -4,6 +4,7 @@ import DashboardLayout from './layout';
 
 vi.mock('next/navigation', () => ({
   usePathname: () => '/dashboard',
+  useRouter: () => ({ push: vi.fn() }),
   redirect: vi.fn(),
 }));
 
